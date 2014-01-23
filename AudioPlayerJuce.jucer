@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="IUyUss" name="AudioPlayerJuce" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.AudioPlayerJuce" jucerVersion="3.1.0"
+              includeBinaryInAppConfig="1">
+  <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
+    <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
+      <FILE id="uhez9b" name="media-playback-pause.png" compile="0" resource="1"
+            file="Icons/media-playback-pause.png"/>
+      <FILE id="EILTXm" name="media-playback-start.png" compile="0" resource="1"
+            file="Icons/media-playback-start.png"/>
+      <FILE id="YCndk5" name="media-playback-stop.png" compile="0" resource="1"
+            file="Icons/media-playback-stop.png"/>
+      <FILE id="TQuQI8" name="media-seek-backward.png" compile="0" resource="1"
+            file="Icons/media-seek-backward.png"/>
+      <FILE id="KHWRl1" name="media-seek-forward.png" compile="0" resource="1"
+            file="Icons/media-seek-forward.png"/>
+      <FILE id="v0ASv9" name="media-skip-backward.png" compile="0" resource="1"
+            file="Icons/media-skip-backward.png"/>
+      <FILE id="paEPxA" name="media-skip-forward.png" compile="0" resource="1"
+            file="Icons/media-skip-forward.png"/>
+      <FILE id="jjpz91" name="emblem-system.png" compile="0" resource="1"
+            file="Icons/emblem-system.png"/>
+      <FILE id="ptaJmZ" name="document-new.png" compile="0" resource="1"
+            file="Icons/document-new.png"/>
+    </GROUP>
+    <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="XPNZmU" name="TracksComponent.cpp" compile="1" resource="0"
+            file="Source/TracksComponent.cpp"/>
+      <FILE id="CSEcYH" name="TracksComponent.h" compile="0" resource="0"
+            file="Source/TracksComponent.h"/>
+      <FILE id="MbiCPb" name="Track.cpp" compile="1" resource="0" file="Source/Track.cpp"/>
+      <FILE id="JMGgdW" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
+      <FILE id="OBFTZF" name="Player.h" compile="0" resource="0" file="Source/Player.h"/>
+      <FILE id="jYRLE9" name="PlayerChannelComponent.cpp" compile="1" resource="0"
+            file="Source/PlayerChannelComponent.cpp"/>
+      <FILE id="pkgf42" name="PlayerChannelComponent.h" compile="0" resource="0"
+            file="Source/PlayerChannelComponent.h"/>
+      <FILE id="LNf3Xd" name="PlaylistPlayerWindow.h" compile="0" resource="0"
+            file="Source/PlaylistPlayerWindow.h"/>
+      <FILE id="qxV0Yk" name="PlaylistPlayerWindow.cpp" compile="1" resource="0"
+            file="Source/PlaylistPlayerWindow.cpp"/>
+      <FILE id="cYGNL6" name="ChannelVolumeAudioSource.cpp" compile="1" resource="0"
+            file="Source/ChannelVolumeAudioSource.cpp"/>
+      <FILE id="tJtxYS" name="ChannelVolumeAudioSource.h" compile="0" resource="0"
+            file="Source/ChannelVolumeAudioSource.h"/>
+      <FILE id="CjxKBf" name="ChannelMapping.cpp" compile="1" resource="0"
+            file="Source/ChannelMapping.cpp"/>
+      <FILE id="t01lMb" name="ChannelMapping.h" compile="0" resource="0"
+            file="Source/ChannelMapping.h"/>
+      <FILE id="NhXE8w" name="MixerComponent.cpp" compile="1" resource="0"
+            file="Source/MixerComponent.cpp"/>
+      <FILE id="tfmUCI" name="MixerComponent.h" compile="0" resource="0"
+            file="Source/MixerComponent.h"/>
+      <FILE id="IcYQLD" name="AudioConfiguration.h" compile="0" resource="0"
+            file="Source/AudioConfiguration.h"/>
+      <FILE id="jS4Ju4" name="AudioConfiguration.cpp" compile="1" resource="0"
+            file="Source/AudioConfiguration.cpp"/>
+      <FILE id="rL5aSl" name="JinglePlayerWindow.h" compile="0" resource="0"
+            file="Source/JinglePlayerWindow.h"/>
+      <FILE id="thbyOJ" name="JinglePlayerWindow.cpp" compile="1" resource="0"
+            file="Source/JinglePlayerWindow.cpp"/>
+      <FILE id="YC8tG2" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="ijWbEQ" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="OFYDuJ" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <EXPORTFORMATS>
+    <VS2010 targetFolder="Builds/VisualStudio2010">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_opengl" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_events" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_cryptography" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_core" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
+      </MODULEPATHS>
+    </VS2010>
+  </EXPORTFORMATS>
+  <JUCEOPTIONS JUCE_ASIO="enabled"/>
+</JUCERPROJECT>
