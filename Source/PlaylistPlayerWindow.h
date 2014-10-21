@@ -69,6 +69,8 @@ public:
     void restoreFromXml (const XmlElement& element);
 	
 	void setGain(float gain);
+
+	void configureChannels();
 private:
 
     // audio output

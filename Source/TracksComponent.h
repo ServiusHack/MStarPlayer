@@ -13,6 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Track.h"
+#include "MixerComponent.h"
 
 //==============================================================================
 /*
@@ -20,16 +21,26 @@
 class TracksComponent    : public Component
 {
 public:
-    TracksComponent();
+    TracksComponent(MixerComponent* mixer);
     ~TracksComponent();
 
     void paint (Graphics&);
     void resized();
 
+	void addMonoTrack();
+	void addStereoTrack();
+
+	void play();
+	void pause();
+	void stop();
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TracksComponent)
 
 	OwnedArray<Track> tracks;
+
+	MixerComponent* mixer;
+	MixerAudioSource tracksMixer;
 };
 
 

@@ -22,6 +22,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	// play button
 	playButton = new ImageButton("Play");
 	Image normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
+	playButton->addListener(this);
 	playButton->setImages(true, true, true, 
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
@@ -106,7 +107,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
     digitalDisplay->setColour (Label::backgroundColourId, Colours::white);
 
 	addAndMakeVisible( tracksViewport = new Viewport());
-	tracksViewport->setViewedComponent(tracks = new TracksComponent());
+	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer), false);
 
 	
 	mixer->registerPlayer(this);
@@ -141,6 +142,7 @@ void PlaylistPlayerWindow::resized()
 	configureButton->setBounds(7 * buttonWidth, 0, buttonWidth, buttonHeight);
 	digitalDisplay->setBounds(8 * buttonWidth, 0, 3 * buttonWidth, buttonHeight);
 	tracksViewport->setBounds(0,buttonHeight, getWidth(), getHeight() - buttonHeight);
+	tracks->setBounds(0,0, tracksViewport->getMaximumVisibleWidth(), tracks->getHeight());
 }
 
 void PlaylistPlayerWindow::setOutputChannels(int outputChannels_)
@@ -150,10 +152,32 @@ void PlaylistPlayerWindow::setOutputChannels(int outputChannels_)
 
 void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 {
+	if (event.eventComponent != configureButton)
+		return;
+
+	PopupMenu m;
+	m.addItem (1, "add stereo track");
+	m.addItem (2, "add mono track");
+	m.addItem (3, "configure channels");
+	const int result = m.show();
+
+	if (result == 1)
+		tracks->addStereoTrack();
+	else if (result == 2)
+		tracks->addMonoTrack();
+	else if (result == 3)
+		configureChannels();
 }
 
-void PlaylistPlayerWindow::buttonClicked(Button * /*button*/)
+void PlaylistPlayerWindow::buttonClicked(Button * button)
 {
+	if (button == playButton) {
+		tracks->play();
+	} else if (button == pauseButton) {
+		tracks->pause();
+	} else if (button == stopButton) {
+		tracks->stop();
+	}
 }
 
 void PlaylistPlayerWindow::timerCallback()
@@ -190,5 +214,9 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	setName(nameXml->getAllSubText().trim());
+}
+
+void PlaylistPlayerWindow::configureChannels()
+{
 
 }
