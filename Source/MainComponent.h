@@ -59,9 +59,6 @@ private:
     ScopedPointer<MyMultiDocumentPanel> multiDocumentPanel;
     ScopedPointer<AudioDeviceManager> audioDeviceManager;
 
-    OwnedArray<JinglePlayerWindow> jinglePlayers;
-    OwnedArray<PlaylistPlayerWindow> playlistPlayers;
-
     //==============================================================================
     // Commands for menu
     enum CommandIDs

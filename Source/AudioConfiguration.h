@@ -26,11 +26,6 @@ public:
 
 private:
     /**
-        AudioDeviceManager used by the whole application.
-    */
-    AudioDeviceManager* audioDeviceManager;
-
-    /**
         JUCE component to configure the audio device for audio output.
     */
     ScopedPointer<AudioDeviceSelectorComponent> selector;

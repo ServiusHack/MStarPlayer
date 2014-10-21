@@ -19,9 +19,8 @@
 //==============================================================================
 /*
 */
-class PlaylistPlayerWindow    : public Component,
+class PlaylistPlayerWindow    : public Player,
                                 public Button::Listener,
-							    public Player,
                                 private Timer
 {
 public:
@@ -55,13 +54,13 @@ public:
         If the user reconfigures his audio settings the number of output channels
         might change. This method is called to propagate this change to this player.
     */
-    void setOutputChannels(int outputChannels);
+    void setOutputChannels(int outputChannels) override;
 	
     //==============================================================================
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    void saveToXml(XmlElement* element) const;
+    XmlElement* saveToXml() const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
@@ -71,6 +70,7 @@ public:
 	void setGain(float gain);
 
 	void configureChannels();
+
 private:
 
     // audio output

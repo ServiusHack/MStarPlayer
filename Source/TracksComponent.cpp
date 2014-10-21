@@ -22,6 +22,7 @@ TracksComponent::TracksComponent(MixerComponent* mixer)
 TracksComponent::~TracksComponent()
 {
 	mixer->getMixerAudioSource().removeInputSource(&tracksMixer);
+	tracks.clear();
 }
 
 void TracksComponent::paint (Graphics& g)

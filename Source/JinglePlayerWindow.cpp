@@ -194,8 +194,11 @@ String JinglePlayerWindow::formatSeconds(double totalSeconds)
 	return String::formatted("%02i:%02i:%03i", minutes, seconds, milliseconds);
 }
 
-void JinglePlayerWindow::saveToXml(XmlElement* element) const
+XmlElement* JinglePlayerWindow::saveToXml() const
 {
+    XmlElement* element = new XmlElement("Player");
+    element->setAttribute("type", "jingle");
+
 	Rectangle<int> bounds = getBounds();
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
@@ -218,6 +221,8 @@ void JinglePlayerWindow::saveToXml(XmlElement* element) const
 	XmlElement* channelMappingXml = new XmlElement("ChannelMapping");
 	channelMappingXml->addChildElement(remappingAudioSource->createXml());
 	element->addChildElement(channelMappingXml);
+
+	return element;
 }
 
 void JinglePlayerWindow::restoreFromXml (const XmlElement& element)

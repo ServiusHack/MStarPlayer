@@ -28,7 +28,7 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager_) :
 
     // setup audio playback
     audioDeviceManager->addAudioCallback (&audioSourcePlayer);
-    channelVolumeAudioSource = new ChannelVolumeAudioSource(&mixerAudioSource, false);
+    channelVolumeAudioSource = new ChannelVolumeAudioSource(&mixerAudioSource);
     audioSourcePlayer.setSource (channelVolumeAudioSource);
 
     setSize(100,112);

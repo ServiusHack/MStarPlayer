@@ -184,9 +184,11 @@ void PlaylistPlayerWindow::timerCallback()
 {
 }
 
-
-void PlaylistPlayerWindow::saveToXml(XmlElement* element) const
+XmlElement* PlaylistPlayerWindow::saveToXml() const
 {
+    XmlElement* element = new XmlElement("Player");
+    element->setAttribute("type", "playlist");
+
 	Rectangle<int> bounds = getBounds();
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
@@ -199,7 +201,8 @@ void PlaylistPlayerWindow::saveToXml(XmlElement* element) const
 	XmlElement* nameXml = new XmlElement("Name");
 	nameXml->addTextElement(getName());
 	element->addChildElement(nameXml);
-	
+
+	return element;
 }
 
 void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)

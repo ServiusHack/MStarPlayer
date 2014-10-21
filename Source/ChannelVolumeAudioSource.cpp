@@ -11,9 +11,8 @@
 #include "ChannelVolumeAudioSource.h"
 
 
-ChannelVolumeAudioSource::ChannelVolumeAudioSource (AudioSource* const source_,
-                                                          const bool deleteSourceWhenDeleted)
-   : source (source_, deleteSourceWhenDeleted)
+ChannelVolumeAudioSource::ChannelVolumeAudioSource (AudioSource* const source_)
+   : source (source_)
 {
 }
 

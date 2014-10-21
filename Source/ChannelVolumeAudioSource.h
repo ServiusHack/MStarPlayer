@@ -25,8 +25,7 @@ public:
                             when this object is deleted, if false, the caller is
                             responsible for its deletion
     */
-    ChannelVolumeAudioSource (AudioSource* source,
-                                 bool deleteSourceWhenDeleted);
+    ChannelVolumeAudioSource (AudioSource* source);
     
     //==============================================================================	
     /** Resets all volumes.
@@ -58,7 +57,7 @@ public:
 
 private:
     //==============================================================================
-    OptionalScopedPointer<AudioSource> source;
+    AudioSource* source;
     Array<float> volumes;
 
     CriticalSection lock;

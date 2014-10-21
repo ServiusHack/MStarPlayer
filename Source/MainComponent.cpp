@@ -36,6 +36,7 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 
 MainContentComponent::~MainContentComponent()
 {
+	delete mixerComponent.release();
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -191,7 +192,6 @@ bool MainContentComponent::perform (const InvocationInfo& info)
             window->setBounds(0,0, 300, 150);
             window->setName("Jingle Player");
             multiDocumentPanel->addDocument(window, Colours::white, true);
-            jinglePlayers.add(window);
             projectModified = true;
         }
         break;
@@ -206,7 +206,6 @@ bool MainContentComponent::perform (const InvocationInfo& info)
             window->setBounds(0,0, 300, 150);
             window->setName("Playlist Player");
             multiDocumentPanel->addDocument(window, Colours::white, true);
-            playlistPlayers.add(window);
             projectModified = true;
         }
         break;
@@ -373,7 +372,6 @@ void MainContentComponent::readProjectFile()
                 window->restoreFromXml(*player);
 
                 multiDocumentPanel->addDocument(window, Colours::white, true);
-                jinglePlayers.add(window);
             }
 
             else if (type == "playlist")
@@ -386,7 +384,6 @@ void MainContentComponent::readProjectFile()
                 window->restoreFromXml(*player);
 
                 multiDocumentPanel->addDocument(window, Colours::white, true);
-                playlistPlayers.add(window);
             }
 
         }
@@ -408,19 +405,11 @@ void MainContentComponent::writeProjectFile()
     root->addChildElement(mixer);
 
     XmlElement* players = new XmlElement("Players");
-    
-    for (int i = 0; i < jinglePlayers.size(); i++) {
-        XmlElement* player = new XmlElement("Player");
-        player->setAttribute("type", "jingle");
-        jinglePlayers.getUnchecked(i)->saveToXml(player);
-        players->addChildElement(player);
-    }
-    for (int i = 0; i < playlistPlayers.size(); i++) {
-        XmlElement* player = new XmlElement("Player");
-        player->setAttribute("type", "playlist");
-        playlistPlayers.getUnchecked(i)->saveToXml(player);
-        players->addChildElement(player);
-    }
+
+	for (int i = 0; i < multiDocumentPanel->getNumChildComponents(); ++i) {
+        players->addChildElement(static_cast<Player*>(multiDocumentPanel->getDocument(i))->saveToXml());
+	}
+
     root->addChildElement(players);
 
     if (!root->writeToFile(projectFile, ""))
@@ -435,9 +424,8 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster * /*source*
     audioDeviceManager->getAudioDeviceSetup(deviceSetup);
 
     int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
-
-    for (int i = 0; i < jinglePlayers.size(); i++)
-    {
-        jinglePlayers.getUnchecked(i)->setOutputChannels(outputChannels);
+	
+	for (int i = 0; i < multiDocumentPanel->getNumChildComponents(); ++i) {
+        static_cast<Player*>(multiDocumentPanel->getDocument(i))->setOutputChannels(outputChannels);
     }
 }
