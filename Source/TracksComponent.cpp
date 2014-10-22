@@ -12,8 +12,8 @@
 #include "TracksComponent.h"
 
 //==============================================================================
-TracksComponent::TracksComponent(MixerComponent* mixer)
-	: mixer(mixer)
+TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels)
+: mixer(mixer), _outputChannels(outputChannels)
 {
 	mixer->getMixerAudioSource().addInputSource(&tracksMixer, false);
 	setBounds(0,0,100,100);
@@ -44,16 +44,18 @@ void TracksComponent::resized()
 
 void TracksComponent::addMonoTrack()
 {
-	Track* track = new Track(tracksMixer, false);
+	Track* track = new Track(tracksMixer, false, _outputChannels);
 	addAndMakeVisible(track);
 	tracks.add(track);
+	resized();
 }
 
 void TracksComponent::addStereoTrack()
 {
-	Track* track = new Track(tracksMixer, true);
+	Track* track = new Track(tracksMixer, true, _outputChannels);
 	addAndMakeVisible(track);
 	tracks.add(track);
+	resized();
 }
 
 void TracksComponent::play()
@@ -65,10 +67,32 @@ void TracksComponent::play()
 
 void TracksComponent::pause()
 {
-
+	for (int i = 0; i < tracks.size(); ++i) {
+		tracks[i]->pause();
+	}
 }
 
 void TracksComponent::stop()
 {
+	for (int i = 0; i < tracks.size(); ++i) {
+		tracks[i]->stop();
+	}
+}
 
+int TracksComponent::playerCount()
+{
+	return tracks.size();
+}
+
+Track& TracksComponent::player(int index)
+{
+	return *tracks[index];
+}
+
+void TracksComponent::setOutputChannels(int outputChannels)
+{
+	_outputChannels = outputChannels;
+	for (int i = 0; i < tracks.size(); ++i) {
+		tracks[i]->setOutputChannels(outputChannels);
+	}
 }

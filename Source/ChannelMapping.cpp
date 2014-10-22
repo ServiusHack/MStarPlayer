@@ -10,6 +10,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include <algorithm>
+
 #include "ChannelMapping.h"
 
 
@@ -62,8 +64,8 @@ private:
 };
 
 //==============================================================================
-ChannelMapping::ChannelMapping(int outputChannels_, ChannelRemappingAudioSource& audioSource_, int channels_) :
-outputChannels(outputChannels_), audioSource(audioSource_), font (14.0f), channels(channels_)
+ChannelMapping::ChannelMapping(int outputChannels_, std::vector<int> mapping, const ChangeMappingCallback callback) :
+outputChannels(outputChannels_), m_mapping(mapping), font(14.0f), m_callback(callback)
 {
         addAndMakeVisible (&table);
         table.setModel (this);
@@ -73,7 +75,7 @@ outputChannels(outputChannels_), audioSource(audioSource_), font (14.0f), channe
         table.setOutlineThickness (1);
 
         // set the table header columns
-        table.getHeader().addColumn ("File Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
+        table.getHeader().addColumn ("Player Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
         table.getHeader().addColumn ("Output Channel", 2, 100, 50, 400, TableHeaderComponent::defaultFlags);
         
 }
@@ -85,7 +87,7 @@ void ChannelMapping::resized()
 
 int ChannelMapping::getNumRows()
 {
-    return channels;
+    return m_mapping.size();
 }
 
 void ChannelMapping::paintRowBackground (Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
@@ -139,22 +141,22 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 
 int ChannelMapping::getOutputChannel(int row)
 {
-    return audioSource.getRemappedOutputChannel(row) + 1;
+    return m_mapping[row] + 1;
 }
 
 void ChannelMapping::setChannelMapping(int row, int outputChannel)
 {
-    audioSource.setOutputChannelMapping(row, outputChannel - 1);
+	m_callback(row, outputChannel - 1);
 }
 
 
 //==============================================================================
-ChannelMappingWindow::ChannelMappingWindow(int outputChannels, ChannelRemappingAudioSource& audioSource_, int channels)  : DialogWindow ("Configure Channels",
+ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback) : DialogWindow("Configure Channels",
                                         Colours::lightgrey,
                                         true,
                                         true)
 {
-    component = new ChannelMapping(outputChannels, audioSource_, channels);
+	component = new ChannelMapping(outputChannels, mapping, callback);
     component->setSize(400,400);
     
     setContentOwned (component, true);

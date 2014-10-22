@@ -19,7 +19,7 @@
 class Track    : public Component
 {
 public:
-	Track(MixerAudioSource &tracksMixer, bool stereo);
+	Track(MixerAudioSource &tracksMixer, bool stereo, int outputChannels);
 	~Track();
 
 	void paint (Graphics&);
@@ -28,6 +28,14 @@ public:
 	void mouseDown (const MouseEvent & event);
 
 	void play();
+	void pause();
+	void stop();
+
+	std::vector<int> getMapping();
+	int getNumChannels();
+
+	void setOutputChannels(int outputChannels);
+	void setOutputChannelMapping(int source, int target);
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Track)
@@ -41,6 +49,7 @@ private:
 	ScopedPointer<TextButton> soloButton;
 	ScopedPointer<TextButton> muteButton;
 	ScopedPointer<AudioThumbnail> audioThumbnail;
+	ScopedPointer<ChannelRemappingAudioSource> remappingAudioSource;
 	AudioThumbnailCache audioThumbnailCache;
 	AudioFormatManager formatManager;
 
@@ -51,6 +60,7 @@ private:
 	MixerAudioSource &tracksMixer;
 	TimeSliceThread thread;
 	AudioTransportSource transportSource;
+	AudioFormatReaderSource* currentAudioFileSource;
 };
 
 

@@ -11,7 +11,13 @@
 #ifndef CHANNELMAPPING_H_INCLUDED
 #define CHANNELMAPPING_H_INCLUDED
 
+#include <vector>
+#include <functional>
+
 #include "../JuceLibraryCode/JuceHeader.h"
+
+
+typedef std::function<void(int, int)> ChangeMappingCallback;
 
 //==============================================================================
 /** Show a mapping from audio source channels to output channels.
@@ -39,7 +45,7 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-    ChannelMapping(int outputChannels, ChannelRemappingAudioSource& audioSource, int channels);
+	ChannelMapping(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback);
 
     void resized();
 
@@ -73,10 +79,10 @@ public:
 private:
     TableListBox table;     // the table component itself
     Font font;
-    int channels;
     
     int outputChannels;
-    ChannelRemappingAudioSource &audioSource;
+	std::vector<int> m_mapping;
+	const ChangeMappingCallback m_callback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMapping)
 };
@@ -94,7 +100,7 @@ public:
 
         @see ChannelMapping
     */
-    ChannelMappingWindow(int outputChannels, ChannelRemappingAudioSource& audioSource, int channels);
+	ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback);
 
     /** Delete (and thus close) the window when requested by the user.
     */

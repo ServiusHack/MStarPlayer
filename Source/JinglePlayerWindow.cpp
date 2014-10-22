@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+#include <list>
+#include <stdint.h>
+
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "JinglePlayerWindow.h"
@@ -127,7 +130,14 @@ void JinglePlayerWindow::loadFile()
 
 void JinglePlayerWindow::configureChannels()
 {
-	new ChannelMappingWindow(outputChannels, *remappingAudioSource, currentAudioFileSource->getAudioFormatReader()->numChannels);
+	std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
+	for (int channel = 0; channel < mapping.size(); ++channel) {
+		mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
+	}
+
+	new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
+		remappingAudioSource->setOutputChannelMapping(source, target);
+	});
 }
 
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)

@@ -21,7 +21,7 @@
 class TracksComponent    : public Component
 {
 public:
-    TracksComponent(MixerComponent* mixer);
+    TracksComponent(MixerComponent* mixer, int outputChannels);
     ~TracksComponent();
 
     void paint (Graphics&);
@@ -34,6 +34,12 @@ public:
 	void pause();
 	void stop();
 
+	int playerCount();
+	Track& player(int index);
+
+	void setOutputChannels(int outputChannels);
+
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TracksComponent)
 
@@ -41,6 +47,8 @@ private:
 
 	MixerComponent* mixer;
 	MixerAudioSource tracksMixer;
+
+	int _outputChannels;
 };
 
 

@@ -7,10 +7,13 @@
 
   ==============================================================================
 */
+
+#include <vector>
 #include <algorithm>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PlaylistPlayerWindow.h"
+#include "ChannelMapping.h"
 
 //==============================================================================
 PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputChannels_) :
@@ -32,6 +35,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	
 	// pause button
 	pauseButton = new ImageButton("Pause");
+	pauseButton->addListener(this);
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
 	pauseButton->setImages(true, true, true, 
                                 normalImage, 0.7f, Colours::transparentBlack,
@@ -42,6 +46,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	
 	// stop button
 	stopButton = new ImageButton("Stop");
+	stopButton->addListener(this);
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
 	stopButton->setImages(true, true, true, 
                                 normalImage, 0.7f, Colours::transparentBlack,
@@ -107,10 +112,12 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
     digitalDisplay->setColour (Label::backgroundColourId, Colours::white);
 
 	addAndMakeVisible( tracksViewport = new Viewport());
-	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer), false);
+	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer, outputChannels), false);
 
 	
 	mixer->registerPlayer(this);
+
+	setSize(150, 80);
 }
 
 PlaylistPlayerWindow::~PlaylistPlayerWindow()
@@ -148,6 +155,7 @@ void PlaylistPlayerWindow::resized()
 void PlaylistPlayerWindow::setOutputChannels(int outputChannels_)
 {
 	outputChannels = outputChannels_;
+	tracks->setOutputChannels(outputChannels);
 }
 
 void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
@@ -161,12 +169,16 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 	m.addItem (3, "configure channels");
 	const int result = m.show();
 
-	if (result == 1)
+	if (result == 1) {
 		tracks->addStereoTrack();
-	else if (result == 2)
+		repaint();
+		parentSizeChanged();
+	} else if (result == 2) {
 		tracks->addMonoTrack();
-	else if (result == 3)
+		repaint();
+	} else if (result == 3) {
 		configureChannels();
+	}
 }
 
 void PlaylistPlayerWindow::buttonClicked(Button * button)
@@ -221,5 +233,23 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 
 void PlaylistPlayerWindow::configureChannels()
 {
+	std::vector<int> mapping;
+	for (int i = 0; i < tracks->playerCount(); ++i) {
+		std::vector<int> playerMapping = tracks->player(i).getMapping();
+		mapping.insert(mapping.end(), playerMapping.begin(), playerMapping.end());
+	}
+	/*for (int channel = 0; channel < outputChannels; ++channel) {
+		mapping[chanenl] = (remappingAudioSource->getRemappedOutputChannel(channel));
+	}*/
 
+	new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
+
+		for (int i = 0; i < tracks->playerCount(); ++i) {
+			if (source - tracks->player(i).getNumChannels() <= 0) {
+				tracks->player(i).setOutputChannelMapping(source, target);
+				break;
+			}
+			source -= tracks->player(i).getNumChannels();
+		}
+	});
 }

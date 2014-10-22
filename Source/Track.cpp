@@ -12,7 +12,7 @@
 #include "Track.h"
 
 //==============================================================================
-Track::Track(MixerAudioSource &tracksMixer, bool stereo)
+Track::Track(MixerAudioSource &tracksMixer, bool stereo, int outputChannels)
 	: audioThumbnailCache(1)
 	, stereo(stereo)
 	, tracksMixer(tracksMixer)
@@ -20,7 +20,14 @@ Track::Track(MixerAudioSource &tracksMixer, bool stereo)
 {
 	formatManager.registerBasicFormats();
 	thread.startThread (3);
-	tracksMixer.addInputSource(&transportSource, false);
+
+	remappingAudioSource = new ChannelRemappingAudioSource(&transportSource, false);
+	remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
+	// TODO: Probably do this for outputChannels times.
+	remappingAudioSource->setOutputChannelMapping(0, 0);
+	remappingAudioSource->setOutputChannelMapping(1, 1);
+
+	tracksMixer.addInputSource(remappingAudioSource, false);
 
 	idLabel = new Label();
 	addAndMakeVisible(idLabel);
@@ -52,7 +59,7 @@ Track::Track(MixerAudioSource &tracksMixer, bool stereo)
 
 Track::~Track()
 {
-	tracksMixer.removeInputSource(&transportSource);
+	tracksMixer.removeInputSource(remappingAudioSource);
 }
 
 
@@ -75,9 +82,10 @@ void Track::loadFile()
 		
 		AudioFormatReader* reader = formatManager.createReaderFor (audioFile);
 
-		//audioThumbnail->setReader(reader, 0);
+		audioThumbnail->setSource(new FileInputSource(audioFile));
+		repaint();
 
-		AudioFormatReaderSource* currentAudioFileSource = new AudioFormatReaderSource (reader, true);
+		currentAudioFileSource = new AudioFormatReaderSource (reader, true);
 		// ..and plug it into our transport source
 		transportSource.setSource (currentAudioFileSource,
 								   32768, // tells it to buffer this many samples ahead
@@ -105,5 +113,41 @@ void Track::resized()
 
 void Track::play()
 {
+	transportSource.setPosition (0);
 	transportSource.start();
+}
+
+void Track::pause()
+{
+	transportSource.stop();
+}
+
+void Track::stop()
+{
+	transportSource.stop();
+	transportSource.setPosition (0);
+}
+
+std::vector<int> Track::getMapping()
+{
+	std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
+	for (int channel = 0; channel < mapping.size(); ++channel) {
+		mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
+	}
+	return mapping;
+}
+
+void Track::setOutputChannels(int outputChannels)
+{
+	remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
+}
+
+void Track::setOutputChannelMapping(int source, int target)
+{
+	remappingAudioSource->setOutputChannelMapping(source, target);
+}
+
+int Track::getNumChannels()
+{
+	return currentAudioFileSource->getAudioFormatReader()->numChannels;
 }

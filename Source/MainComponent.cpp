@@ -31,11 +31,12 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
     addAndMakeVisible(multiDocumentPanel);
     multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
 
-    setSize (500, 400);
+    setSize (600, 600);
 }
 
 MainContentComponent::~MainContentComponent()
 {
+	delete multiDocumentPanel.release();
 	delete mixerComponent.release();
 }
 
@@ -406,7 +407,7 @@ void MainContentComponent::writeProjectFile()
 
     XmlElement* players = new XmlElement("Players");
 
-	for (int i = 0; i < multiDocumentPanel->getNumChildComponents(); ++i) {
+	for (int i = 0; i < multiDocumentPanel->getNumDocuments(); ++i) {
         players->addChildElement(static_cast<Player*>(multiDocumentPanel->getDocument(i))->saveToXml());
 	}
 
