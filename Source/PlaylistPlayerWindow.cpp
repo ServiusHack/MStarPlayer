@@ -251,5 +251,6 @@ void PlaylistPlayerWindow::configureChannels()
 			}
 			source -= tracks->player(i).getNumChannels();
 		}
+	}, [&]() {
 	});
 }

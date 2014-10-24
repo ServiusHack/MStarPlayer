@@ -14,13 +14,14 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "JinglePlayerWindow.h"
-#include "ChannelMapping.h"
 
 //==============================================================================
 JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer_, int outputChannels_)
-	: mixer (mixer_),
-	  outputChannels(outputChannels_),
-	  thread ("audio file preview")
+	: mixer (mixer_)
+	, outputChannels(outputChannels_)
+	, thread ("audio file preview")
+	, playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
+	, stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
 {
 	// progress bar
 	progress = 0.0;
@@ -32,13 +33,16 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer_, int outputChannel
 	// total duration text
 	totalDurationText = new DrawableText();
 	addAndMakeVisible(totalDurationText);
+	totalDurationText->setJustification(Justification(Justification::centredRight));
 	totalDurationText->setText("00:00:000");
 
 	// play button
-	playButton = new ArrowButton("Play", 0, Colours::black);
+	playButton = new DrawableButton("Play", DrawableButton::ImageFitted);
 	addAndMakeVisible(playButton);
+	playButton->setImages(playImage);
 	playButton->setEnabled(false);
 	playButton->addListener(this);
+	playButton->setEdgeIndent(30);
 
 	// configuration button
 	configureButton = new ImageButton("Configure");
@@ -85,11 +89,11 @@ void JinglePlayerWindow::setOutputChannels(int outputChannels_)
 void JinglePlayerWindow::paint (Graphics& g)
 {
 	int progressBarHeight = 20;
-	int totalDurationTextWidth = 80;
+	int totalDurationTextWidth = 70;
 
 	configureButton->setBounds(0, getHeight() - progressBarHeight, progressBarHeight, progressBarHeight);
 
-	progressBar->setBounds(configureButton->getWidth(), getHeight() - progressBarHeight, getWidth() - totalDurationTextWidth, progressBarHeight);
+	progressBar->setBounds(configureButton->getWidth(), getHeight() - progressBarHeight, getWidth() - configureButton->getWidth() - totalDurationTextWidth, progressBarHeight);
 
 	totalDurationText->setBounds(getWidth() - totalDurationTextWidth, getHeight() - progressBarHeight, totalDurationTextWidth, progressBarHeight);
 
@@ -120,7 +124,7 @@ void JinglePlayerWindow::loadFile()
 {
 	FileChooser myChooser ("Please select the audio file you want to load ...",
 			File::getSpecialLocation (File::userHomeDirectory),
-			"*.mp3");
+			formatManager.getWildcardForAllFormats());
 	if (myChooser.browseForFileToOpen())
 	{
 		audioFile = File(myChooser.getResult());
@@ -130,23 +134,33 @@ void JinglePlayerWindow::loadFile()
 
 void JinglePlayerWindow::configureChannels()
 {
-	std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
-	for (int channel = 0; channel < mapping.size(); ++channel) {
-		mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
-	}
+	if (channelMappingWindow.get() == nullptr) {
+		std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
+		for (size_t channel = 0; channel < mapping.size(); ++channel) {
+			mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
+		}
 
-	new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
-		remappingAudioSource->setOutputChannelMapping(source, target);
-	});
+		channelMappingWindow.set(new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
+			remappingAudioSource->setOutputChannelMapping(source, target);
+		}, [&]() {
+			// clear is not working
+			delete channelMappingWindow.release();
+		}), true);
+	}
+	channelMappingWindow->addToDesktop();
+	channelMappingWindow->toFront(true);
+
 }
 
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)
 {
 	if (transportSource.isPlaying()) {
+		playButton->setImages(playImage);
 		transportSource.stop();
 		transportSource.setPosition (0);
 	}
 	else {
+		playButton->setImages(stopImage);
 		transportSource.setPosition (0);
 		transportSource.start();
 	}
@@ -160,6 +174,7 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 	transportSource.stop();
 	transportSource.setSource (nullptr);
 	currentAudioFileSource = nullptr;
+	playButton->setImages(playImage);
 
 	AudioFormatReader* reader = formatManager.createReaderFor (audioFile);
 
@@ -175,6 +190,16 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 								   &thread, // this is the background thread to use for reading-ahead
 								   reader->sampleRate);
 		startTimer(50);
+
+		if (channelMappingWindow.get() != nullptr) {
+			std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
+			for (size_t channel = 0; channel < mapping.size(); ++channel) {
+				mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
+			}
+
+			channelMappingWindow->setMapping(mapping);
+
+		}
 	}
 }
 
@@ -184,6 +209,7 @@ void JinglePlayerWindow::timerCallback()
 	double totalLength = transportSource.getLengthInSeconds();
 	
 	if (position > totalLength) {
+		playButton->setImages(playImage);
 		position = 0;
 		progress = 0.0;
 	} else {

@@ -14,6 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MixerComponent.h"
 #include "Player.h"
+#include "ChannelMapping.h"
 
 //==============================================================================
 /** A jingle player shown within the application.
@@ -83,8 +84,10 @@ private:
     // ui components
     ScopedPointer<ProgressBar>  progressBar;
     ScopedPointer<DrawableText> totalDurationText;
-    ScopedPointer<ArrowButton>  playButton;
+    ScopedPointer<DrawableButton>  playButton;
     ScopedPointer<ImageButton>  configureButton;
+	ScopedPointer<Drawable> playImage;
+	ScopedPointer<Drawable> stopImage;
     
     // configuration menu actions
     void loadFile();
@@ -93,6 +96,7 @@ private:
     // audio output
     MixerComponent* mixer;
     int outputChannels;
+	OptionalScopedPointer<ChannelMappingWindow> channelMappingWindow;
 
     // audio file loading
     File audioFile;

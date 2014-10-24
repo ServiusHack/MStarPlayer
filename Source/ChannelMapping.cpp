@@ -151,10 +151,13 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 
 
 //==============================================================================
-ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback) : DialogWindow("Configure Channels",
+ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback) : DialogWindow("Configure Channels",
                                         Colours::lightgrey,
                                         true,
-                                        true)
+                                        false)
+										, outputChannels(outputChannels)
+										, changeCallback(callback)
+										, closeCallback(closeCallback)
 {
 	component = new ChannelMapping(outputChannels, mapping, callback);
     component->setSize(400,400);
@@ -167,5 +170,13 @@ ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> 
 
 void ChannelMappingWindow::closeButtonPressed()
 {
-    delete this;
+	closeCallback();
+}
+
+void ChannelMappingWindow::setMapping(std::vector<int> mapping)
+{
+	component = new ChannelMapping(outputChannels, mapping, changeCallback);
+	component->setSize(400, 400);
+
+	setContentOwned(component, true);
 }

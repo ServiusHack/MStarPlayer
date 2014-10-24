@@ -18,6 +18,7 @@
 
 
 typedef std::function<void(int, int)> ChangeMappingCallback;
+typedef std::function<void()> CloseCallback;
 
 //==============================================================================
 /** Show a mapping from audio source channels to output channels.
@@ -100,14 +101,19 @@ public:
 
         @see ChannelMapping
     */
-	ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback);
+	ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback);
 
     /** Delete (and thus close) the window when requested by the user.
     */
     void closeButtonPressed();
 
+	void setMapping(std::vector<int> mapping);
+
 private:
+	int outputChannels;
+	const ChangeMappingCallback changeCallback;
     ScopedPointer<ChannelMapping> component;
+	const CloseCallback closeCallback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMappingWindow)
 };

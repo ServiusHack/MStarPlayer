@@ -5,6 +5,8 @@
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
+      <FILE id="GaAg09" name="stop.svg" compile="0" resource="1" file="Icons/stop.svg"/>
+      <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
       <FILE id="uhez9b" name="media-playback-pause.png" compile="0" resource="1"
             file="Icons/media-playback-pause.png"/>
       <FILE id="EILTXm" name="media-playback-start.png" compile="0" resource="1"
