@@ -44,7 +44,16 @@ void TracksComponent::resized()
 
 void TracksComponent::addMonoTrack()
 {
-	Track* track = new Track(tracksMixer, false, _outputChannels);
+	Track* track = new Track(tracksMixer, tracks.size() + 1, false, _outputChannels, [&]() {
+		double longestDuration = 0;
+		for (Track* track : tracks) {
+			longestDuration = std::max(longestDuration, track->getDuration());
+		}
+
+		for (Track* track : tracks) {
+			track->setLongestDuration(longestDuration);
+		}
+	});
 	addAndMakeVisible(track);
 	tracks.add(track);
 	resized();
@@ -52,7 +61,16 @@ void TracksComponent::addMonoTrack()
 
 void TracksComponent::addStereoTrack()
 {
-	Track* track = new Track(tracksMixer, true, _outputChannels);
+	Track* track = new Track(tracksMixer, tracks.size() + 1, true, _outputChannels, [&]() {
+		double longestDuration = 0;
+		for (Track* track : tracks) {
+			longestDuration = std::max(longestDuration, track->getDuration());
+		}
+
+		for (Track* track : tracks) {
+			track->setLongestDuration(longestDuration);
+		}
+	});
 	addAndMakeVisible(track);
 	tracks.add(track);
 	resized();

@@ -13,7 +13,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PlaylistPlayerWindow.h"
-#include "ChannelMapping.h"
 
 //==============================================================================
 PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputChannels_) :
@@ -117,7 +116,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	
 	mixer->registerPlayer(this);
 
-	setSize(150, 80);
+	setSize(250, 180);
 }
 
 PlaylistPlayerWindow::~PlaylistPlayerWindow()
@@ -233,24 +232,26 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 
 void PlaylistPlayerWindow::configureChannels()
 {
-	std::vector<int> mapping;
-	for (int i = 0; i < tracks->playerCount(); ++i) {
-		std::vector<int> playerMapping = tracks->player(i).getMapping();
-		mapping.insert(mapping.end(), playerMapping.begin(), playerMapping.end());
-	}
-	/*for (int channel = 0; channel < outputChannels; ++channel) {
-		mapping[chanenl] = (remappingAudioSource->getRemappedOutputChannel(channel));
-	}*/
-
-	new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
-
+	if (channelMappingWindow.get() == nullptr) {
+		std::vector<int> mapping;
 		for (int i = 0; i < tracks->playerCount(); ++i) {
-			if (source - tracks->player(i).getNumChannels() <= 0) {
-				tracks->player(i).setOutputChannelMapping(source, target);
-				break;
-			}
-			source -= tracks->player(i).getNumChannels();
+			std::vector<int> playerMapping = tracks->player(i).getMapping();
+			mapping.insert(mapping.end(), playerMapping.begin(), playerMapping.end());
 		}
-	}, [&]() {
-	});
+
+		channelMappingWindow.set(new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
+			for (int i = 0; i < tracks->playerCount(); ++i) {
+				if (source - tracks->player(i).getNumChannels() <= 0) {
+					tracks->player(i).setOutputChannelMapping(source, target);
+					break;
+				}
+				source -= tracks->player(i).getNumChannels();
+			}
+		}, [&]() {
+			// clear is not working
+			delete channelMappingWindow.release();
+		}), true);
+	}
+	channelMappingWindow->addToDesktop();
+	channelMappingWindow->toFront(true);
 }

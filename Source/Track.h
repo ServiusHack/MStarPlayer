@@ -11,16 +11,25 @@
 #ifndef TRACK_H_INCLUDED
 #define TRACK_H_INCLUDED
 
+#include <functional>
+
 #include "../JuceLibraryCode/JuceHeader.h"
+
+typedef std::function<void()> DurationChangedCallback;
 
 //==============================================================================
 /*
 */
-class Track    : public Component
+class Track	: public Component
+			, public ChangeListener
+            , public Button::Listener
 {
 public:
-	Track(MixerAudioSource &tracksMixer, bool stereo, int outputChannels);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback);
 	~Track();
+
+	/** Play or stop the audio playback. */
+	void buttonClicked(Button * /*button*/);
 
 	void paint (Graphics&);
 	void resized();
@@ -31,15 +40,22 @@ public:
 	void pause();
 	void stop();
 
+	double getDuration();
+
 	std::vector<int> getMapping();
 	int getNumChannels();
 
 	void setOutputChannels(int outputChannels);
 	void setOutputChannelMapping(int source, int target);
 
-private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Track)
+	void changeListenerCallback(ChangeBroadcaster *source);
 
+	void setLongestDuration(double duration);
+
+private:
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
+
+	void updateIdText();
 	void loadFile();
 
 	ScopedPointer<Label> idLabel;
@@ -56,11 +72,18 @@ private:
 	File audioFile;
 	bool stereo;
 
+	int trackIndex;
+
 	//AudioFormatManager formatManager;
 	MixerAudioSource &tracksMixer;
 	TimeSliceThread thread;
 	AudioTransportSource transportSource;
 	AudioFormatReaderSource* currentAudioFileSource;
+
+	double m_duration;
+	double m_longestDuration;
+
+	DurationChangedCallback durationChangedCallback;
 };
 
 

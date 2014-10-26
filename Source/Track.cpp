@@ -11,12 +11,16 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Track.h"
 
+#include <sstream>
+
 //==============================================================================
-Track::Track(MixerAudioSource &tracksMixer, bool stereo, int outputChannels)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback)
 	: audioThumbnailCache(1)
+	, trackIndex(trackIndex)
 	, stereo(stereo)
 	, tracksMixer(tracksMixer)
 	, thread ("track")
+	, durationChangedCallback(callback)
 {
 	formatManager.registerBasicFormats();
 	thread.startThread (3);
@@ -31,7 +35,7 @@ Track::Track(MixerAudioSource &tracksMixer, bool stereo, int outputChannels)
 
 	idLabel = new Label();
 	addAndMakeVisible(idLabel);
-	idLabel->setText("1 St", sendNotification);
+	updateIdText();
 
 	descriptionLabel = new Label();
 	addAndMakeVisible(descriptionLabel);
@@ -50,16 +54,40 @@ Track::Track(MixerAudioSource &tracksMixer, bool stereo, int outputChannels)
 	addAndMakeVisible(soloButton);
 	muteButton = new TextButton("mute");
 	muteButton->setClickingTogglesState(true);
+	muteButton->addListener(this);
 	addAndMakeVisible(muteButton);
 
 	//formatManager.registerBasicFormats();
 
 	audioThumbnail = new AudioThumbnail(1000, formatManager, audioThumbnailCache);
+	audioThumbnail->addChangeListener(this);
 }
 
 Track::~Track()
 {
 	tracksMixer.removeInputSource(remappingAudioSource);
+}
+
+void Track::buttonClicked(Button *button)
+{
+	if (button == muteButton) {
+		transportSource.setGain(muteButton->getToggleState() ? 0.0 : 1.0);
+	}
+}
+
+void Track::updateIdText()
+{
+	std::stringstream stream;
+	stream << trackIndex;
+	stream << " ";
+	stream << (stereo ? "St" : "Mo");
+	idLabel->setText(stream.str(), sendNotification);
+}
+
+void Track::changeListenerCallback(ChangeBroadcaster *source)
+{
+	if (source == audioThumbnail)
+		repaint();
 }
 
 
@@ -75,12 +103,60 @@ void Track::loadFile()
 {
 	FileChooser myChooser ("Please select the audio file you want to load ...",
 			File::getSpecialLocation (File::userHomeDirectory),
-			"*.mp3");
+			formatManager.getWildcardForAllFormats());
 	if (myChooser.browseForFileToOpen())
 	{
 		audioFile = File(myChooser.getResult());
 		
 		AudioFormatReader* reader = formatManager.createReaderFor (audioFile);
+
+		if (reader->numChannels > 2) {
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+				"AudioPlayerJuce",
+				"The selected file has more than two channels. This is not supported."
+				);
+			return;
+		}
+
+		if (!stereo && reader->numChannels != 1) {
+			int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+				"AudioPlayerJuce",
+				"You have selected a stereo file for a mono track.",
+				"Convert to stereo track",
+				"Play file in mono",
+				"Abort",
+				this,
+				nullptr
+				);
+			switch (result) {
+			case 1:
+				stereo = true;
+				updateIdText();
+				break;
+			default:
+				return;
+			}
+		}
+
+		if (stereo && reader->numChannels != 2) {
+			int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+				"AudioPlayerJuce",
+				"You have selected a mono file for a stereo track.",
+				"Convert to mono track",
+				"Play file in stereo",
+				"Abort",
+				this,
+				nullptr
+				);
+			switch (result) {
+			case 1:
+				stereo = false;
+				updateIdText();
+				break;
+			default:
+				return;
+			}
+		}
 
 		audioThumbnail->setSource(new FileInputSource(audioFile));
 		repaint();
@@ -91,12 +167,18 @@ void Track::loadFile()
 								   32768, // tells it to buffer this many samples ahead
 								   &thread, // this is the background thread to use for reading-ahead
 								   reader->sampleRate);
+
+		m_duration = transportSource.getLengthInSeconds();
+		durationChangedCallback();
 	}
 }
 
 void Track::paint (Graphics& g)
 {
-	audioThumbnail->drawChannels(g, Rectangle<int>(100 + 40 + 40,0,getWidth(), getHeight()), 0, audioThumbnail->getTotalLength(), 1.0f);
+	int drawWidth = getWidth();
+	if (m_longestDuration != 0)
+		drawWidth = static_cast<int>(drawWidth * audioThumbnail->getTotalLength() / m_longestDuration);
+	audioThumbnail->drawChannels(g, Rectangle<int>(100 + 40 + 40,0,drawWidth, getHeight()), 0, audioThumbnail->getTotalLength(), 1.0f);
 }
 
 void Track::resized()
@@ -131,7 +213,7 @@ void Track::stop()
 std::vector<int> Track::getMapping()
 {
 	std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
-	for (int channel = 0; channel < mapping.size(); ++channel) {
+	for (size_t channel = 0; channel < mapping.size(); ++channel) {
 		mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
 	}
 	return mapping;
@@ -150,4 +232,15 @@ void Track::setOutputChannelMapping(int source, int target)
 int Track::getNumChannels()
 {
 	return currentAudioFileSource->getAudioFormatReader()->numChannels;
+}
+
+double Track::getDuration()
+{
+	return m_duration;
+}
+
+void Track::setLongestDuration(double duration)
+{
+	m_longestDuration = duration;
+	repaint();
 }

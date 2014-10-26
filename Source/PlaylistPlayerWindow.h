@@ -15,6 +15,7 @@
 #include "Player.h"
 #include "MixerComponent.h"
 #include "TracksComponent.h"
+#include "ChannelMapping.h"
 
 //==============================================================================
 /*
@@ -75,7 +76,8 @@ private:
 
     // audio output
     MixerComponent* mixer;
-    int outputChannels;
+	int outputChannels;
+	OptionalScopedPointer<ChannelMappingWindow> channelMappingWindow;
 
     // audio file playback
     TimeSliceThread thread;
