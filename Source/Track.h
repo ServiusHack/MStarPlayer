@@ -25,7 +25,7 @@ class Track	: public Component
             , public Button::Listener
 {
 public:
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback);
 	~Track();
 
 	/** Play or stop the audio playback. */
@@ -51,12 +51,18 @@ public:
 	void changeListenerCallback(ChangeBroadcaster *source);
 
 	void setLongestDuration(double duration);
+	
+	// Track should be muted because other track(s) are in solo mode.
+	void setSoloMute(bool mute);
+
+	bool isSolo() const;
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 
 	void updateIdText();
 	void loadFile();
+	void setMuteState();
 
 	ScopedPointer<Label> idLabel;
 	ScopedPointer<Label> descriptionLabel;
@@ -80,10 +86,12 @@ private:
 	AudioTransportSource transportSource;
 	AudioFormatReaderSource* currentAudioFileSource;
 
+	bool m_soloMute;
 	double m_duration;
 	double m_longestDuration;
 
 	DurationChangedCallback durationChangedCallback;
+	DurationChangedCallback soloChangedCallback;
 };
 
 

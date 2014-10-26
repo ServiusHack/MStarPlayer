@@ -44,6 +44,9 @@ void TracksComponent::resized()
 
 void TracksComponent::addMonoTrack()
 {
+	bool soloMute = std::any_of(tracks.begin(), tracks.end(), [](const Track* track) {
+		return track->isSolo();
+	});
 	Track* track = new Track(tracksMixer, tracks.size() + 1, false, _outputChannels, [&]() {
 		double longestDuration = 0;
 		for (Track* track : tracks) {
@@ -53,6 +56,13 @@ void TracksComponent::addMonoTrack()
 		for (Track* track : tracks) {
 			track->setLongestDuration(longestDuration);
 		}
+	}, soloMute, [&]() {
+		bool soloMute = std::any_of(tracks.begin(), tracks.end(), [](const Track* track) {
+			return track->isSolo();
+		});
+		for (Track* track : tracks) {
+			track->setSoloMute(soloMute);
+		}
 	});
 	addAndMakeVisible(track);
 	tracks.add(track);
@@ -61,6 +71,9 @@ void TracksComponent::addMonoTrack()
 
 void TracksComponent::addStereoTrack()
 {
+	bool soloMute = std::any_of(tracks.begin(), tracks.end(), [](const Track* track) {
+		return track->isSolo();
+	});
 	Track* track = new Track(tracksMixer, tracks.size() + 1, true, _outputChannels, [&]() {
 		double longestDuration = 0;
 		for (Track* track : tracks) {
@@ -69,6 +82,13 @@ void TracksComponent::addStereoTrack()
 
 		for (Track* track : tracks) {
 			track->setLongestDuration(longestDuration);
+		}
+	}, soloMute, [&]() {
+		bool soloMute = std::any_of(tracks.begin(), tracks.end(), [](const Track* track) {
+			return track->isSolo();
+		});
+		for (Track* track : tracks) {
+			track->setSoloMute(soloMute);
 		}
 	});
 	addAndMakeVisible(track);

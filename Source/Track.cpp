@@ -14,20 +14,21 @@
 #include <sstream>
 
 //==============================================================================
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback)
 	: audioThumbnailCache(1)
 	, trackIndex(trackIndex)
 	, stereo(stereo)
 	, tracksMixer(tracksMixer)
 	, thread ("track")
 	, durationChangedCallback(callback)
+	, m_soloMute(soloMute)
+	, soloChangedCallback(soloChangedCallback)
 {
 	formatManager.registerBasicFormats();
 	thread.startThread (3);
 
 	remappingAudioSource = new ChannelRemappingAudioSource(&transportSource, false);
 	remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
-	// TODO: Probably do this for outputChannels times.
 	remappingAudioSource->setOutputChannelMapping(0, 0);
 	remappingAudioSource->setOutputChannelMapping(1, 1);
 
@@ -51,6 +52,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 
 	soloButton = new TextButton("solo");
 	soloButton->setClickingTogglesState(true);
+	soloButton->addListener(this);
 	addAndMakeVisible(soloButton);
 	muteButton = new TextButton("mute");
 	muteButton->setClickingTogglesState(true);
@@ -71,8 +73,22 @@ Track::~Track()
 void Track::buttonClicked(Button *button)
 {
 	if (button == muteButton) {
-		transportSource.setGain(muteButton->getToggleState() ? 0.0 : 1.0);
+		setMuteState();
 	}
+	else if (button == soloButton) {
+		soloChangedCallback();
+	}
+}
+
+void Track::setMuteState()
+{
+	bool mute = muteButton->getToggleState() || (m_soloMute && !soloButton->getToggleState());
+	transportSource.setGain(mute ? 0.0f : 1.0f);
+}
+
+bool Track::isSolo() const
+{
+	return soloButton->getToggleState();
 }
 
 void Track::updateIdText()
@@ -168,6 +184,8 @@ void Track::loadFile()
 								   &thread, // this is the background thread to use for reading-ahead
 								   reader->sampleRate);
 
+		setMuteState();
+
 		m_duration = transportSource.getLengthInSeconds();
 		durationChangedCallback();
 	}
@@ -243,4 +261,10 @@ void Track::setLongestDuration(double duration)
 {
 	m_longestDuration = duration;
 	repaint();
+}
+
+void Track::setSoloMute(bool mute)
+{
+	m_soloMute = mute;
+	setMuteState();
 }
