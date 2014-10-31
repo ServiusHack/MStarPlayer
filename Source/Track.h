@@ -67,9 +67,12 @@ private:
 	ScopedPointer<Label> idLabel;
 	ScopedPointer<Label> descriptionLabel;
 	ScopedPointer<TextButton> editButton;
-	ScopedPointer<TextButton> openButton;
-	ScopedPointer<TextButton> soloButton;
-	ScopedPointer<TextButton> muteButton;
+	ScopedPointer<DrawableButton> openButton;
+	ScopedPointer<Drawable> openImage;
+	ScopedPointer<DrawableButton> soloButton;
+	ScopedPointer<Drawable> soloImage;
+	ScopedPointer<DrawableButton> muteButton;
+	ScopedPointer<Drawable> muteImage;
 	ScopedPointer<AudioThumbnail> audioThumbnail;
 	ScopedPointer<ChannelRemappingAudioSource> remappingAudioSource;
 	AudioThumbnailCache audioThumbnailCache;

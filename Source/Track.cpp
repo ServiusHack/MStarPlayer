@@ -23,6 +23,9 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, durationChangedCallback(callback)
 	, m_soloMute(soloMute)
 	, soloChangedCallback(soloChangedCallback)
+	, openImage(Drawable::createFromImageData(BinaryData::open_svg, BinaryData::open_svgSize))
+	, soloImage(Drawable::createFromImageData(BinaryData::headphones_svg, BinaryData::headphones_svgSize))
+	, muteImage(Drawable::createFromImageData(BinaryData::mute_svg, BinaryData::mute_svgSize))
 {
 	formatManager.registerBasicFormats();
 	thread.startThread (3);
@@ -46,15 +49,19 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	editButton = new TextButton("edit");
 	addAndMakeVisible(editButton);
 
-	openButton = new TextButton("open");
+	openButton = new DrawableButton("open", DrawableButton::ImageFitted);
+	openButton->setImages(openImage);
 	addAndMakeVisible(openButton);
 	openButton->addMouseListener(this, false);
 
-	soloButton = new TextButton("solo");
+	soloButton = new DrawableButton("solo", DrawableButton::ImageFitted);
 	soloButton->setClickingTogglesState(true);
 	soloButton->addListener(this);
+	soloButton->setImages(soloImage);
 	addAndMakeVisible(soloButton);
-	muteButton = new TextButton("mute");
+
+	muteButton = new DrawableButton("mute", DrawableButton::ImageFitted);
+	muteButton->setImages(muteImage);
 	muteButton->setClickingTogglesState(true);
 	muteButton->addListener(this);
 	addAndMakeVisible(muteButton);
