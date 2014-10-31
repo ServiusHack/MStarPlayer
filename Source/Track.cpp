@@ -26,6 +26,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, openImage(Drawable::createFromImageData(BinaryData::open_svg, BinaryData::open_svgSize))
 	, soloImage(Drawable::createFromImageData(BinaryData::headphones_svg, BinaryData::headphones_svgSize))
 	, muteImage(Drawable::createFromImageData(BinaryData::mute_svg, BinaryData::mute_svgSize))
+	, progress(0)
 {
 	formatManager.registerBasicFormats();
 	thread.startThread (3);
@@ -200,10 +201,26 @@ void Track::loadFile()
 
 void Track::paint (Graphics& g)
 {
-	int drawWidth = getWidth();
+	const static int componentWidth = 100 + 40 + 40;
+	int drawWidth = getWidth() - componentWidth;
 	if (m_longestDuration != 0)
 		drawWidth = static_cast<int>(drawWidth * audioThumbnail->getTotalLength() / m_longestDuration);
-	audioThumbnail->drawChannels(g, Rectangle<int>(100 + 40 + 40,0,drawWidth, getHeight()), 0, audioThumbnail->getTotalLength(), 1.0f);
+	audioThumbnail->drawChannels(g, Rectangle<int>(componentWidth, 0, drawWidth, getHeight()), 0, audioThumbnail->getTotalLength(), 1.0f);
+
+	g.setColour(Colour(255, 0, 0));
+	drawWidth = getWidth() - componentWidth;
+	float lineX = componentWidth + static_cast<float>(drawWidth * progress);
+	g.drawLine(lineX, 0.0f, lineX, static_cast<float>(getHeight()));
+}
+
+void Track::timerCallback()
+{
+	double position = transportSource.getCurrentPosition();
+	progress = position / m_longestDuration;
+	repaint();
+
+	if (!transportSource.isPlaying())
+		stopTimer();
 }
 
 void Track::resized()
@@ -220,6 +237,7 @@ void Track::resized()
 
 void Track::play()
 {
+	startTimer(50);
 	transportSource.setPosition (0);
 	transportSource.start();
 }
@@ -227,12 +245,14 @@ void Track::play()
 void Track::pause()
 {
 	transportSource.stop();
+	stopTimer();
 }
 
 void Track::stop()
 {
 	transportSource.stop();
 	transportSource.setPosition (0);
+	stopTimer();
 }
 
 std::vector<int> Track::getMapping()

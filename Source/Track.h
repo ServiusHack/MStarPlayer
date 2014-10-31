@@ -22,7 +22,8 @@ typedef std::function<void()> DurationChangedCallback;
 */
 class Track	: public Component
 			, public ChangeListener
-            , public Button::Listener
+			, public Button::Listener
+			, private Timer
 {
 public:
 	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback);
@@ -57,12 +58,16 @@ public:
 
 	bool isSolo() const;
 
+	void timerCallback();
+
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 
 	void updateIdText();
 	void loadFile();
 	void setMuteState();
+
+	double progress; // the progress of the playback
 
 	ScopedPointer<Label> idLabel;
 	ScopedPointer<Label> descriptionLabel;
