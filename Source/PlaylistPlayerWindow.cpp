@@ -118,7 +118,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	mixer->registerPlayer(this);
 
 
-	setBounds(0, 0, 300, 150);
+	setBounds(0, 0, 600, 300);
 }
 
 PlaylistPlayerWindow::~PlaylistPlayerWindow()
