@@ -263,7 +263,7 @@ void PlaylistPlayerWindow::configureChannels()
 
 		channelMappingWindow.set(new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
 			for (int i = 0; i < tracks->playerCount(); ++i) {
-				if (source - tracks->player(i).getNumChannels() <= 0) {
+				if (source - tracks->player(i).getNumChannels() < 0) {
 					tracks->player(i).setOutputChannelMapping(source, target);
 					break;
 				}
