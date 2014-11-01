@@ -19,8 +19,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
       mixer (mixer_),
       outputChannels(outputChannels_),
       thread ("audio file preview")
-{
-	
+{	
 	// play button
 	playButton = new ImageButton("Play");
 	Image normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
@@ -116,7 +115,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	
 	mixer->registerPlayer(this);
 
-	setSize(250, 180);
+
+	setBounds(0, 0, 300, 150);
 }
 
 PlaylistPlayerWindow::~PlaylistPlayerWindow()
@@ -200,7 +200,7 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
     XmlElement* element = new XmlElement("Player");
     element->setAttribute("type", "playlist");
 
-	Rectangle<int> bounds = getBounds();
+	Rectangle<int> bounds = getParentComponent()->getBounds();
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	boundsXml->setAttribute("x", bounds.getX());
@@ -213,6 +213,13 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 	nameXml->addTextElement(getName());
 	element->addChildElement(nameXml);
 
+	XmlElement* tracksXml = new XmlElement("Tracks");
+	for (int i = 0; i < tracks->playerCount(); ++i) {
+		tracksXml->addChildElement(tracks->player(i).saveToXml());
+	}
+
+	element->addChildElement(tracksXml);
+
 	return element;
 }
 
@@ -224,10 +231,15 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 	String y = boundsXml->getStringAttribute("y", "0");
 	String width = boundsXml->getStringAttribute("width", "150");
 	String height = boundsXml->getStringAttribute("height", "150");
-	setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
+	getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	setName(nameXml->getAllSubText().trim());
+
+	XmlElement* tracksXml = element.getChildByName("Tracks");
+	for (int i = 0; i < tracksXml->getNumChildElements(); ++i) {
+		tracks->addTrackFromXml(*tracksXml->getChildElement(i));
+	}
 }
 
 void PlaylistPlayerWindow::configureChannels()

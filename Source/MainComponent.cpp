@@ -190,7 +190,6 @@ bool MainContentComponent::perform (const InvocationInfo& info)
             int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
 
 			JinglePlayerWindow* window = new JinglePlayerWindow(mixerComponent.get(), outputChannels);
-            window->setBounds(0,0, 300, 150);
             window->setName("Jingle Player");
             multiDocumentPanel->addDocument(window, Colours::white, true);
             projectModified = true;
@@ -204,7 +203,6 @@ bool MainContentComponent::perform (const InvocationInfo& info)
             int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
 
             PlaylistPlayerWindow* window = new PlaylistPlayerWindow(mixerComponent.get(), outputChannels);
-            window->setBounds(0,0, 300, 150);
             window->setName("Playlist Player");
             multiDocumentPanel->addDocument(window, Colours::white, true);
             projectModified = true;
@@ -369,10 +367,10 @@ void MainContentComponent::readProjectFile()
                 audioDeviceManager->getAudioDeviceSetup(deviceSetup);
                 int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
 
-                JinglePlayerWindow* window = new JinglePlayerWindow(mixerComponent.get(), outputChannels);
+				JinglePlayerWindow* window = new JinglePlayerWindow(mixerComponent.get(), outputChannels);
+				multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
-                multiDocumentPanel->addDocument(window, Colours::white, true);
             }
 
             else if (type == "playlist")
@@ -381,10 +379,10 @@ void MainContentComponent::readProjectFile()
                 audioDeviceManager->getAudioDeviceSetup(deviceSetup);
                 int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
 
-                PlaylistPlayerWindow* window = new PlaylistPlayerWindow(mixerComponent.get(), outputChannels);
+				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(mixerComponent.get(), outputChannels);
+				multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
-                multiDocumentPanel->addDocument(window, Colours::white, true);
             }
 
         }

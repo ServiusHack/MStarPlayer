@@ -29,6 +29,7 @@ public:
 
 	void addMonoTrack();
 	void addStereoTrack();
+	void addTrackFromXml(const XmlElement& element);
 
 	void play();
 	void pause();

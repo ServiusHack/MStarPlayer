@@ -96,6 +96,34 @@ void TracksComponent::addStereoTrack()
 	resized();
 }
 
+void TracksComponent::addTrackFromXml(const XmlElement& element)
+{
+	bool soloMute = std::any_of(tracks.begin(), tracks.end(), [](const Track* track) {
+		return track->isSolo();
+	});
+	Track* track = new Track(tracksMixer, tracks.size() + 1, true, _outputChannels, [&]() {
+		double longestDuration = 0;
+		for (Track* track : tracks) {
+			longestDuration = std::max(longestDuration, track->getDuration());
+		}
+
+		for (Track* track : tracks) {
+			track->setLongestDuration(longestDuration);
+		}
+	}, soloMute, [&]() {
+		bool soloMute = std::any_of(tracks.begin(), tracks.end(), [](const Track* track) {
+			return track->isSolo();
+		});
+		for (Track* track : tracks) {
+			track->setSoloMute(soloMute);
+		}
+	});
+	tracks.add(track);
+	track->restoreFromXml(element);
+	addAndMakeVisible(track);
+	resized();
+}
+
 void TracksComponent::play()
 {
 	for (int i = 0; i < tracks.size(); ++i) {

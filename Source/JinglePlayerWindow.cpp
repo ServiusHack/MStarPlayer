@@ -65,6 +65,8 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer_, int outputChannel
 	remappingAudioSource->setOutputChannelMapping(1, 1);
 	mixer->getMixerAudioSource().addInputSource(remappingAudioSource, false);
 	mixer->registerPlayer(this);
+
+	setBounds(0, 0, 300, 150);
 }
 
 JinglePlayerWindow::~JinglePlayerWindow()
@@ -235,7 +237,7 @@ XmlElement* JinglePlayerWindow::saveToXml() const
     XmlElement* element = new XmlElement("Player");
     element->setAttribute("type", "jingle");
 
-	Rectangle<int> bounds = getBounds();
+	Rectangle<int> bounds = getParentComponent()->getBounds();
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	boundsXml->setAttribute("x", bounds.getX());
@@ -252,6 +254,7 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 	{
 		XmlElement* fileXml = new XmlElement("File");
 		fileXml->addTextElement(audioFile.getFullPathName());
+		element->addChildElement(fileXml);
 	}
 
 	XmlElement* channelMappingXml = new XmlElement("ChannelMapping");
@@ -269,7 +272,7 @@ void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
 	String y = boundsXml->getStringAttribute("y", "0");
 	String width = boundsXml->getStringAttribute("width", "150");
 	String height = boundsXml->getStringAttribute("height", "150");
-	setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
+	getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	setName(nameXml->getAllSubText().trim());

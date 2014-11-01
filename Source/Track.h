@@ -60,6 +60,11 @@ public:
 
 	void timerCallback();
 
+	void loadFileIntoTransport();
+
+	XmlElement* saveToXml() const;
+	void restoreFromXml(const XmlElement& element);
+
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 

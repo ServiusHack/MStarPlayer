@@ -26,6 +26,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, openImage(Drawable::createFromImageData(BinaryData::open_svg, BinaryData::open_svgSize))
 	, soloImage(Drawable::createFromImageData(BinaryData::headphones_svg, BinaryData::headphones_svgSize))
 	, muteImage(Drawable::createFromImageData(BinaryData::mute_svg, BinaryData::mute_svgSize))
+	, m_longestDuration(0)
 	, progress(0)
 {
 	formatManager.registerBasicFormats();
@@ -128,75 +129,84 @@ void Track::loadFile()
 	FileChooser myChooser ("Please select the audio file you want to load ...",
 			File::getSpecialLocation (File::userHomeDirectory),
 			formatManager.getWildcardForAllFormats());
-	if (myChooser.browseForFileToOpen())
-	{
-		audioFile = File(myChooser.getResult());
-		
-		AudioFormatReader* reader = formatManager.createReaderFor (audioFile);
+	if (!myChooser.browseForFileToOpen())
+		return;
 
-		if (reader->numChannels > 2) {
-			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-				"AudioPlayerJuce",
-				"The selected file has more than two channels. This is not supported."
-				);
+
+	audioFile = File(myChooser.getResult());
+
+	AudioFormatReader* reader = formatManager.createReaderFor(audioFile);
+
+	if (reader->numChannels > 2) {
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+			"AudioPlayerJuce",
+			"The selected file has more than two channels. This is not supported."
+			);
+		return;
+	}
+
+	if (!stereo && reader->numChannels != 1) {
+		int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+			"AudioPlayerJuce",
+			"You have selected a stereo file for a mono track.",
+			"Convert to stereo track",
+			"Play file in mono",
+			"Abort",
+			this,
+			nullptr
+			);
+		switch (result) {
+		case 1:
+			stereo = true;
+			updateIdText();
+			break;
+		default:
 			return;
 		}
-
-		if (!stereo && reader->numChannels != 1) {
-			int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
-				"AudioPlayerJuce",
-				"You have selected a stereo file for a mono track.",
-				"Convert to stereo track",
-				"Play file in mono",
-				"Abort",
-				this,
-				nullptr
-				);
-			switch (result) {
-			case 1:
-				stereo = true;
-				updateIdText();
-				break;
-			default:
-				return;
-			}
-		}
-
-		if (stereo && reader->numChannels != 2) {
-			int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
-				"AudioPlayerJuce",
-				"You have selected a mono file for a stereo track.",
-				"Convert to mono track",
-				"Play file in stereo",
-				"Abort",
-				this,
-				nullptr
-				);
-			switch (result) {
-			case 1:
-				stereo = false;
-				updateIdText();
-				break;
-			default:
-				return;
-			}
-		}
-
-		audioThumbnail->setSource(new FileInputSource(audioFile));
-		repaint();
-
-		currentAudioFileSource = new AudioFormatReaderSource (reader, true);
-		// ..and plug it into our transport source
-		transportSource.setSource (currentAudioFileSource,
-								   32768, // tells it to buffer this many samples ahead
-								   &thread, // this is the background thread to use for reading-ahead
-								   reader->sampleRate);
-
-		setMuteState();
-
-		m_duration = transportSource.getLengthInSeconds();
-		durationChangedCallback();
 	}
+
+	if (stereo && reader->numChannels != 2) {
+		int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+			"AudioPlayerJuce",
+			"You have selected a mono file for a stereo track.",
+			"Convert to mono track",
+			"Play file in stereo",
+			"Abort",
+			this,
+			nullptr
+			);
+		switch (result) {
+		case 1:
+			stereo = false;
+			updateIdText();
+			break;
+		default:
+			return;
+		}
+	}
+
+	loadFileIntoTransport();
+
+}
+
+void Track::loadFileIntoTransport()
+{
+	AudioFormatReader* reader = formatManager.createReaderFor(audioFile);
+
+	audioThumbnail->setSource(new FileInputSource(audioFile));
+	repaint();
+
+	currentAudioFileSource = new AudioFormatReaderSource (reader, true);
+	// ..and plug it into our transport source
+	transportSource.setSource (currentAudioFileSource,
+								32768, // tells it to buffer this many samples ahead
+								&thread, // this is the background thread to use for reading-ahead
+								reader->sampleRate);
+
+	setMuteState();
+
+	m_duration = transportSource.getLengthInSeconds();
+	durationChangedCallback();
 }
 
 void Track::paint (Graphics& g)
@@ -221,6 +231,38 @@ void Track::timerCallback()
 
 	if (!transportSource.isPlaying())
 		stopTimer();
+}
+
+XmlElement* Track::saveToXml() const
+{
+	XmlElement* element = new XmlElement("Track");
+
+	element->setAttribute("stereo", stereo ? "true" : "false");
+	element->setAttribute("mute", muteButton->getToggleState() ? "true" : "false");
+	element->setAttribute("solo", soloButton->getToggleState() ? "true" : "false");
+
+	if (audioFile != File::nonexistent)
+	{
+		XmlElement* fileXml = new XmlElement("File");
+		fileXml->addTextElement(audioFile.getFullPathName());
+		element->addChildElement(fileXml);
+	}
+
+	return element;
+}
+
+void Track::restoreFromXml(const XmlElement& element)
+{
+	stereo = element.getStringAttribute("stereo", "false") == "true";
+	muteButton->setToggleState(element.getStringAttribute("mute", "false") == "true", sendNotification);
+	soloButton->setToggleState(element.getStringAttribute("solo", "false") == "true", sendNotification);
+
+	XmlElement* fileXml = element.getChildByName("File");
+	if (fileXml != nullptr)
+	{
+		audioFile = File(fileXml->getAllSubText().trim());
+		loadFileIntoTransport();
+	}
 }
 
 void Track::resized()
