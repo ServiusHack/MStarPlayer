@@ -30,6 +30,9 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="vCosBz" name="RenameDialog.cpp" compile="1" resource="0"
+            file="Source/RenameDialog.cpp"/>
+      <FILE id="PItGjI" name="RenameDialog.h" compile="0" resource="0" file="Source/RenameDialog.h"/>
       <FILE id="XPNZmU" name="TracksComponent.cpp" compile="1" resource="0"
             file="Source/TracksComponent.cpp"/>
       <FILE id="CSEcYH" name="TracksComponent.h" compile="0" resource="0"

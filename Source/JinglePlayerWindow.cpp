@@ -10,10 +10,12 @@
 
 #include <list>
 #include <stdint.h>
+#include <memory>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "JinglePlayerWindow.h"
+#include "RenameDialog.h"
 
 //==============================================================================
 JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer_, int outputChannels_)
@@ -114,12 +116,21 @@ void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 	PopupMenu m;
 	m.addItem (1, "load file");
 	m.addItem (2, "configure channels", currentAudioFileSource != nullptr);
+	m.addItem(3, "rename");
 	const int result = m.show();
 
 	if (result == 1)
 		loadFile();
 	else if (result == 2)
 		configureChannels();
+	else if (result == 3)
+	{
+		std::unique_ptr<RenameDialogWindow> dialog(new RenameDialogWindow(getName()));
+		dialog->grabKeyboardFocus();
+		int result = dialog->runModalLoop();
+		if (result == 0)
+			setName(dialog->getPlayerName());
+	}
 }
 
 void JinglePlayerWindow::loadFile()

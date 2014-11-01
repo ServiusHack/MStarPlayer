@@ -10,9 +10,11 @@
 
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PlaylistPlayerWindow.h"
+#include "RenameDialog.h"
 
 //==============================================================================
 PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputChannels_) :
@@ -166,6 +168,7 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 	m.addItem (1, "add stereo track");
 	m.addItem (2, "add mono track");
 	m.addItem (3, "configure channels");
+	m.addItem (4, "rename");
 	const int result = m.show();
 
 	if (result == 1) {
@@ -177,6 +180,13 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 		repaint();
 	} else if (result == 3) {
 		configureChannels();
+	} else if (result == 4)
+	{
+		std::unique_ptr<RenameDialogWindow> dialog(new RenameDialogWindow(getName()));
+		dialog->grabKeyboardFocus();
+		int result = dialog->runModalLoop();
+		if (result == 0)
+			setName(dialog->getPlayerName());
 	}
 }
 
