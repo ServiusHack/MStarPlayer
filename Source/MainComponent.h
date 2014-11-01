@@ -71,7 +71,10 @@ private:
         addJinglePlayer = 0x2006,
         addPlaylistPlayer = 0x2007,
 
-        configureAudio = 0x2008,
+		layoutModeFloating = 0x2008,
+		layoutModeTabs = 0x2009,
+
+        configureAudio = 0x200A,
     };
     
     //==============================================================================

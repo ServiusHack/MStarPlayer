@@ -53,7 +53,7 @@ void MainContentComponent::resized()
 
 StringArray MainContentComponent::getMenuBarNames()
 {
-    const char* const names[] = { "Project", "Player", "Options", nullptr };
+    const char* const names[] = { "Project", "Player", "View", "Options", nullptr };
 
     return StringArray (names);
 }
@@ -76,8 +76,13 @@ PopupMenu MainContentComponent::getMenuForIndex (int menuIndex, const String& /*
     {
         menu.addCommandItem (commandManager, addJinglePlayer);
         menu.addCommandItem (commandManager, addPlaylistPlayer);
-    }
-    else if (menuIndex == 2)
+	}
+	else if (menuIndex == 2)
+	{
+		menu.addCommandItem(commandManager, layoutModeFloating);
+		menu.addCommandItem(commandManager, layoutModeTabs);
+	}
+    else if (menuIndex == 3)
     {
         menu.addCommandItem (commandManager, configureAudio);
     }
@@ -110,6 +115,8 @@ void MainContentComponent::getAllCommands (Array <CommandID>& commands)
                                 projectSaveAs,
                                 addJinglePlayer,
                                 addPlaylistPlayer,
+								layoutModeFloating,
+								layoutModeTabs,
                                 configureAudio,
     };
 
@@ -121,8 +128,9 @@ void MainContentComponent::getAllCommands (Array <CommandID>& commands)
 void MainContentComponent::getCommandInfo (CommandID commandID, ApplicationCommandInfo& result)
 {
     const String projectCategory ("Project");
-    const String playerCategory ("Player");
-    const String optionsCategory ("Player");
+	const String playerCategory("Player");
+	const String viewCategory("View");
+    const String optionsCategory ("Options");
 
     switch (commandID)
     {
@@ -155,6 +163,16 @@ void MainContentComponent::getCommandInfo (CommandID commandID, ApplicationComma
         result.setInfo ("Add Playlist Player", "Add a player for playlists", playerCategory, 0);
         result.addDefaultKeypress ('P', ModifierKeys::commandModifier);
         break;
+
+	case layoutModeFloating:
+		result.setInfo("Windows", "Players are floating windows", viewCategory, 0);
+		result.setTicked(multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::FloatingWindows);
+		break;
+
+	case layoutModeTabs:
+		result.setInfo("Tabs", "Players are tabs", viewCategory, 0);
+		result.setTicked(multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::MaximisedWindowsWithTabs);
+		break;
 
     case configureAudio:
         result.setInfo ("Configure Audio", "Configure the audio device to use", optionsCategory, 0);
@@ -208,6 +226,18 @@ bool MainContentComponent::perform (const InvocationInfo& info)
             projectModified = true;
         }
         break;
+
+	case layoutModeFloating:
+		{
+			multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+		}
+		break;
+
+	case layoutModeTabs:
+		{
+			multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
+		}
+		break;
 
     case configureAudio:
         {
@@ -305,7 +335,32 @@ void MainContentComponent::readProjectFile()
         String error = document.getLastParseError();
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to open project file", error);
         return;
-    }
+	}
+
+	XmlElement* view = root->getChildByName("View");
+	if (view == nullptr)
+	{
+		String error = document.getLastParseError();
+		loadErrors.add("No view settings found, using default.");
+	}
+	else
+	{
+		XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
+		if (layoutModeElement == nullptr)
+		{
+			loadErrors.add("No layout mode settings found, using default.");
+		}
+		else
+		{
+			String layoutMode = layoutModeElement->getAllSubText().trim();
+			if (layoutMode == "windows")
+				multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+			else if (layoutMode == "tabs")
+				multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
+			else
+				loadErrors.add("Unknown view layout, using default.");
+		}
+	}
 
     XmlElement* audio = root->getChildByName("Audio");
 
@@ -393,7 +448,20 @@ void MainContentComponent::readProjectFile()
 
 void MainContentComponent::writeProjectFile()
 {
-    XmlElement* root = new XmlElement("Project");
+	XmlElement* root = new XmlElement("Project");
+
+	XmlElement* view = new XmlElement("View");
+	XmlElement* layoutMode = new XmlElement("LayoutMode");
+	switch (multiDocumentPanel->getLayoutMode()) {
+	case MultiDocumentPanel::FloatingWindows:
+		layoutMode->addTextElement("windows");
+		break;
+	case MultiDocumentPanel::MaximisedWindowsWithTabs:
+		layoutMode->addTextElement("tabs");
+		break;
+	}
+	view->addChildElement(layoutMode);
+	root->addChildElement(view);
     
     XmlElement* audio = new XmlElement("Audio");
     audio->addChildElement(audioDeviceManager->createStateXml());
