@@ -5,6 +5,7 @@
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
+      <FILE id="UUt62b" name="cog.svg" compile="0" resource="1" file="Icons/cog.svg"/>
       <FILE id="wrOjXb" name="headphones.svg" compile="0" resource="1" file="Icons/headphones.svg"/>
       <FILE id="pmHxWC" name="mute.svg" compile="0" resource="1" file="Icons/mute.svg"/>
       <FILE id="MgHM0m" name="open.svg" compile="0" resource="1" file="Icons/open.svg"/>
@@ -30,6 +31,10 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="S1uxar" name="TrackEditDialog.cpp" compile="1" resource="0"
+            file="Source/TrackEditDialog.cpp"/>
+      <FILE id="ejt3rD" name="TrackEditDialog.h" compile="0" resource="0"
+            file="Source/TrackEditDialog.h"/>
       <FILE id="vCosBz" name="RenameDialog.cpp" compile="1" resource="0"
             file="Source/RenameDialog.cpp"/>
       <FILE id="PItGjI" name="RenameDialog.h" compile="0" resource="0" file="Source/RenameDialog.h"/>

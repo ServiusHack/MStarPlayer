@@ -15,6 +15,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "TrackEditDialog.h"
+
 typedef std::function<void()> DurationChangedCallback;
 
 //==============================================================================
@@ -65,6 +67,8 @@ public:
 	XmlElement* saveToXml() const;
 	void restoreFromXml(const XmlElement& element);
 
+	void setName(String name);
+
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 
@@ -76,7 +80,8 @@ private:
 
 	ScopedPointer<Label> idLabel;
 	ScopedPointer<Label> descriptionLabel;
-	ScopedPointer<TextButton> editButton;
+	ScopedPointer<DrawableButton> editButton;
+	ScopedPointer<Drawable> editImage;
 	ScopedPointer<DrawableButton> openButton;
 	ScopedPointer<Drawable> openImage;
 	ScopedPointer<DrawableButton> soloButton;
@@ -87,6 +92,8 @@ private:
 	ScopedPointer<ChannelRemappingAudioSource> remappingAudioSource;
 	AudioThumbnailCache audioThumbnailCache;
 	AudioFormatManager formatManager;
+
+	ScopedPointer<TrackEditDialogWindow> editDialog;
 
 	File audioFile;
 	bool stereo;

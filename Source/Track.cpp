@@ -23,6 +23,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, durationChangedCallback(callback)
 	, m_soloMute(soloMute)
 	, soloChangedCallback(soloChangedCallback)
+	, editImage(Drawable::createFromImageData(BinaryData::cog_svg, BinaryData::cog_svgSize))
 	, openImage(Drawable::createFromImageData(BinaryData::open_svg, BinaryData::open_svgSize))
 	, soloImage(Drawable::createFromImageData(BinaryData::headphones_svg, BinaryData::headphones_svgSize))
 	, muteImage(Drawable::createFromImageData(BinaryData::mute_svg, BinaryData::mute_svgSize))
@@ -45,11 +46,13 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 
 	descriptionLabel = new Label();
 	addAndMakeVisible(descriptionLabel);
-	descriptionLabel->setText("Bezeichnung", sendNotification);
+	descriptionLabel->setText(getName(), sendNotification);
 	descriptionLabel->setJustificationType(Justification::topLeft);
 
-	editButton = new TextButton("edit");
+	editButton = new DrawableButton("edit", DrawableButton::ImageFitted);
+	editButton->setImages(editImage);
 	addAndMakeVisible(editButton);
+	editButton->addListener(this);
 
 	openButton = new DrawableButton("open", DrawableButton::ImageFitted);
 	openButton->setImages(openImage);
@@ -81,6 +84,12 @@ Track::~Track()
 	delete audioThumbnail.release();
 }
 
+void Track::setName(String name)
+{
+	Component::setName(name);
+	descriptionLabel->setText(name, sendNotification);
+}
+
 void Track::buttonClicked(Button *button)
 {
 	if (button == muteButton) {
@@ -88,6 +97,12 @@ void Track::buttonClicked(Button *button)
 	}
 	else if (button == soloButton) {
 		soloChangedCallback();
+	}
+	else if (button == editButton) {
+		TrackSettingsChangedCallback settingsCallback = [&](String name) {
+			setName(name);
+		};
+		editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), settingsCallback));
 	}
 }
 
@@ -243,6 +258,11 @@ XmlElement* Track::saveToXml() const
 	element->setAttribute("mute", muteButton->getToggleState() ? "true" : "false");
 	element->setAttribute("solo", soloButton->getToggleState() ? "true" : "false");
 
+
+	XmlElement* nameXml = new XmlElement("Name");
+	nameXml->addTextElement(getName());
+	element->addChildElement(nameXml);
+
 	if (audioFile != File::nonexistent)
 	{
 		XmlElement* fileXml = new XmlElement("File");
@@ -258,6 +278,12 @@ void Track::restoreFromXml(const XmlElement& element)
 	stereo = element.getStringAttribute("stereo", "false") == "true";
 	muteButton->setToggleState(element.getStringAttribute("mute", "false") == "true", sendNotification);
 	soloButton->setToggleState(element.getStringAttribute("solo", "false") == "true", sendNotification);
+
+	XmlElement* nameXml = element.getChildByName("Name");
+	if (nameXml != nullptr)
+	{
+		setName(nameXml->getAllSubText().trim());
+	}
 
 	XmlElement* fileXml = element.getChildByName("File");
 	if (fileXml != nullptr)
