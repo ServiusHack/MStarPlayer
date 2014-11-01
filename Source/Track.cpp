@@ -77,6 +77,8 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 Track::~Track()
 {
 	tracksMixer.removeInputSource(remappingAudioSource);
+
+	delete audioThumbnail.release();
 }
 
 void Track::buttonClicked(Button *button)
