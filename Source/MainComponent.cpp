@@ -31,7 +31,7 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
     addAndMakeVisible(multiDocumentPanel);
     multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
 
-    setSize (600, 600);
+    setSize (700, 600);
 }
 
 MainContentComponent::~MainContentComponent()
