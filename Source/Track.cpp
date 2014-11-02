@@ -261,6 +261,10 @@ void Track::timerCallback()
 {
 	double position = transportSource.getCurrentPosition();
 	progress = position / m_longestDuration;
+
+	if (positionCallback)
+		positionCallback(position);
+
 	repaint();
 
 	if (!transportSource.isPlaying())
@@ -383,4 +387,9 @@ void Track::setSoloMute(bool mute)
 {
 	m_soloMute = mute;
 	setMuteState();
+}
+
+void Track::setPositionCallback(PositionCallback callback)
+{
+	this->positionCallback = callback;
 }

@@ -15,6 +15,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PlaylistPlayerWindow.h"
 #include "RenameDialog.h"
+#include "JinglePlayerWindow.h"
 
 //==============================================================================
 PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputChannels_) :
@@ -112,7 +113,11 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
     digitalDisplay->setColour (Label::backgroundColourId, Colours::white);
 
 	addAndMakeVisible( tracksViewport = new Viewport());
-	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer, outputChannels), false);
+
+	// tracks
+	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer, outputChannels, [&](double position) {
+		digitalDisplay->setText(JinglePlayerWindow::formatSeconds(position), sendNotification);
+	}), false);
 
 	
 	mixer->registerPlayer(this);
@@ -142,7 +147,7 @@ void PlaylistPlayerWindow::resized()
 	int buttonHeight = buttonWidth;
 	playButton->setBounds(        0 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	pauseButton->setBounds(       1 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	stopButton->setBounds(        2 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight -6);
+	stopButton->setBounds(        2 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	seekBackwardButton->setBounds(3 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	seekForwardButton->setBounds( 4 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	skipBackwardButton->setBounds(5 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);

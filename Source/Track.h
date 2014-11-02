@@ -18,6 +18,7 @@
 #include "TrackEditDialog.h"
 
 typedef std::function<void()> DurationChangedCallback;
+typedef std::function<void(double)> PositionCallback;
 
 //==============================================================================
 /*
@@ -64,6 +65,8 @@ public:
 
 	void loadFileIntoTransport();
 
+	void setPositionCallback(PositionCallback callback = PositionCallback());
+
 	XmlElement* saveToXml() const;
 	void restoreFromXml(const XmlElement& element);
 
@@ -108,6 +111,8 @@ private:
 
 	DurationChangedCallback durationChangedCallback;
 	DurationChangedCallback soloChangedCallback;
+
+	PositionCallback positionCallback;
 };
 
 

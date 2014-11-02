@@ -12,8 +12,8 @@
 #include "TracksComponent.h"
 
 //==============================================================================
-TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels)
-: mixer(mixer), _outputChannels(outputChannels)
+TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback)
+: mixer(mixer), _outputChannels(outputChannels), positionCallback(positionCallback)
 {
 	mixer->getMixerAudioSource().addInputSource(&tracksMixer, false);
 	setBounds(0,0,100,100);
@@ -76,9 +76,17 @@ void TracksComponent::addStereoTrack()
 	});
 	Track* track = new Track(tracksMixer, tracks.size() + 1, true, _outputChannels, [&]() {
 		double longestDuration = 0;
+		Track* longestTrack = nullptr;
 		for (Track* track : tracks) {
-			longestDuration = std::max(longestDuration, track->getDuration());
+			track->setPositionCallback();
+			double duration = track->getDuration();
+			if (duration > longestDuration) {
+				longestDuration = duration;
+				longestTrack = track;
+			}
 		}
+
+		longestTrack->setPositionCallback(positionCallback);
 
 		for (Track* track : tracks) {
 			track->setLongestDuration(longestDuration);

@@ -21,7 +21,7 @@
 class TracksComponent    : public Component
 {
 public:
-    TracksComponent(MixerComponent* mixer, int outputChannels);
+	TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback);
     ~TracksComponent();
 
     void paint (Graphics&);
@@ -48,6 +48,8 @@ private:
 
 	MixerComponent* mixer;
 	MixerAudioSource tracksMixer;
+
+	PositionCallback positionCallback;
 
 	int _outputChannels;
 };

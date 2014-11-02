@@ -29,6 +29,12 @@ class JinglePlayerWindow    : public Player,
                               private Timer
 {
 public:
+
+	// helper methods
+	/** Display seconds in the common mm:ss:zzz format.
+	*/
+	static String formatSeconds(double seconds);
+
     /** Creates a new JinglePlayer.
     
         @param mixer              Mix the jingle audio into this mixer.
@@ -108,11 +114,6 @@ private:
     TimeSliceThread thread;
     AudioTransportSource transportSource;
     ScopedPointer<ChannelRemappingAudioSource> remappingAudioSource;
-
-    // helper methods
-    /** Display seconds in the common mm:ss:zzz format.
-    */
-    String formatSeconds(double seconds);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JinglePlayerWindow)
 };
