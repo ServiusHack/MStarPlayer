@@ -5,6 +5,32 @@
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
+      <GROUP id="{D237656F-512F-DB00-8A88-AF061CED5A4A}" name="oxygen">
+        <FILE id="e5rN3f" name="audio-volume-medium.png" compile="0" resource="1"
+              file="Icons/oxygen/audio-volume-medium.png"/>
+        <FILE id="AfCXL8" name="configure.png" compile="0" resource="1" file="Icons/oxygen/configure.png"/>
+        <FILE id="GxEw3o" name="applications-system.png" compile="0" resource="1"
+              file="Icons/oxygen/applications-system.png"/>
+        <FILE id="PSL3B2" name="audio-headphones.png" compile="0" resource="1"
+              file="Icons/oxygen/audio-headphones.png"/>
+        <FILE id="LOfA33" name="audio-volume-muted.png" compile="0" resource="1"
+              file="Icons/oxygen/audio-volume-muted.png"/>
+        <FILE id="TCGZqS" name="folder-open.png" compile="0" resource="1" file="Icons/oxygen/folder-open.png"/>
+        <FILE id="T6LiLz" name="media-playback-pause.png" compile="0" resource="1"
+              file="Icons/oxygen/media-playback-pause.png"/>
+        <FILE id="l2NpS7" name="media-playback-start.png" compile="0" resource="1"
+              file="Icons/oxygen/media-playback-start.png"/>
+        <FILE id="mfBR0L" name="media-playback-stop.png" compile="0" resource="1"
+              file="Icons/oxygen/media-playback-stop.png"/>
+        <FILE id="uPGPKT" name="media-seek-backward.png" compile="0" resource="1"
+              file="Icons/oxygen/media-seek-backward.png"/>
+        <FILE id="HTvkiy" name="media-seek-forward.png" compile="0" resource="1"
+              file="Icons/oxygen/media-seek-forward.png"/>
+        <FILE id="s8BcFV" name="media-skip-backward.png" compile="0" resource="1"
+              file="Icons/oxygen/media-skip-backward.png"/>
+        <FILE id="PHHxdN" name="media-skip-forward.png" compile="0" resource="1"
+              file="Icons/oxygen/media-skip-forward.png"/>
+      </GROUP>
       <FILE id="UUt62b" name="cog.svg" compile="0" resource="1" file="Icons/cog.svg"/>
       <FILE id="wrOjXb" name="headphones.svg" compile="0" resource="1" file="Icons/headphones.svg"/>
       <FILE id="pmHxWC" name="mute.svg" compile="0" resource="1" file="Icons/mute.svg"/>

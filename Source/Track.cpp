@@ -23,10 +23,6 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, durationChangedCallback(callback)
 	, m_soloMute(soloMute)
 	, soloChangedCallback(soloChangedCallback)
-	, editImage(Drawable::createFromImageData(BinaryData::cog_svg, BinaryData::cog_svgSize))
-	, openImage(Drawable::createFromImageData(BinaryData::open_svg, BinaryData::open_svgSize))
-	, soloImage(Drawable::createFromImageData(BinaryData::headphones_svg, BinaryData::headphones_svgSize))
-	, muteImage(Drawable::createFromImageData(BinaryData::mute_svg, BinaryData::mute_svgSize))
 	, m_longestDuration(0)
 	, progress(0)
 {
@@ -49,24 +45,45 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	descriptionLabel->setText(getName(), sendNotification);
 	descriptionLabel->setJustificationType(Justification::topLeft);
 
-	editButton = new DrawableButton("edit", DrawableButton::ImageFitted);
-	editButton->setImages(editImage);
+	editButton = new ImageButton("edit");
+	Image editImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
+	editButton->setImages(true, true, true,
+		editImage, 0.7f, Colours::transparentBlack,
+		editImage, 1.0f, Colours::transparentBlack,
+		editImage, 1.0f, Colours::pink.withAlpha(0.8f),
+		0.0f);
 	addAndMakeVisible(editButton);
 	editButton->addListener(this);
 
-	openButton = new DrawableButton("open", DrawableButton::ImageFitted);
-	openButton->setImages(openImage);
+	openButton = new ImageButton("open");
+	Image openImage = ImageFileFormat::loadFrom(BinaryData::folderopen_png, BinaryData::folderopen_pngSize);
+	openButton->setImages(true, true, true,
+		openImage, 0.7f, Colours::transparentBlack,
+		openImage, 1.0f, Colours::transparentBlack,
+		openImage, 1.0f, Colours::pink.withAlpha(0.8f),
+		0.0f);
 	addAndMakeVisible(openButton);
 	openButton->addMouseListener(this, false);
 
-	soloButton = new DrawableButton("solo", DrawableButton::ImageFitted);
+	soloButton = new ImageButton("solo");
+	Image soloImage = ImageFileFormat::loadFrom(BinaryData::audioheadphones_png, BinaryData::audioheadphones_pngSize);
 	soloButton->setClickingTogglesState(true);
 	soloButton->addListener(this);
-	soloButton->setImages(soloImage);
+	soloButton->setImages(true, true, true,
+		soloImage, 0.7f, Colours::transparentBlack,
+		soloImage, 1.0f, Colours::transparentBlack,
+		soloImage, 1.0f, Colours::pink.withAlpha(0.8f),
+		0.0f);
 	addAndMakeVisible(soloButton);
 
-	muteButton = new DrawableButton("mute", DrawableButton::ImageFitted);
-	muteButton->setImages(muteImage);
+	muteButton = new ImageButton("mute");
+	Image muteedImage = ImageFileFormat::loadFrom(BinaryData::audiovolumemuted_png, BinaryData::audiovolumemuted_pngSize);
+	Image unmutedImage = ImageFileFormat::loadFrom(BinaryData::audiovolumemedium_png, BinaryData::audiovolumemedium_pngSize);
+	muteButton->setImages(true, true, true,
+		unmutedImage, 0.7f, Colours::transparentBlack,
+		unmutedImage, 1.0f, Colours::transparentBlack,
+		muteedImage, 1.0f, Colours::transparentBlack,
+		0.0f);
 	muteButton->setClickingTogglesState(true);
 	muteButton->addListener(this);
 	addAndMakeVisible(muteButton);
@@ -297,12 +314,14 @@ void Track::resized()
 {
 	idLabel->setBounds(0, 0, 100, 20);
 	descriptionLabel->setBounds(0, 20, 100, getHeight() - 20);
-	
-	editButton->setBounds(100, 0, 40, getHeight() / 2);
-	openButton->setBounds(100, getHeight() / 2, 40, getHeight() / 2);
 
-	soloButton->setBounds(100 + 40, 0, 40, getHeight() / 2);
-	muteButton->setBounds(100 + 40, getHeight() / 2, 40, getHeight() / 2);
+	static const int buttonWidth = 40;
+	
+	editButton->setBounds(100 + 3, 3                  , buttonWidth - 6, getHeight() / 2 - 6);
+	openButton->setBounds(100 + 3, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
+
+	soloButton->setBounds(100 + 3 + buttonWidth, 3                  , buttonWidth - 6, getHeight() / 2 - 6);
+	muteButton->setBounds(100 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
 }
 
 void Track::play()

@@ -48,12 +48,12 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer_, int outputChannel
 
 	// configuration button
 	configureButton = new ImageButton("Configure");
-	Image normalImage = ImageFileFormat::loadFrom (BinaryData::emblemsystem_png, BinaryData::emblemsystem_pngSize);
+	Image normalImage = ImageFileFormat::loadFrom (BinaryData::configure_png, BinaryData::configure_pngSize);
 	configureButton->setImages(true, true, true, 
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
-                                0.5f);
+                                0.0f);
 	addAndMakeVisible(configureButton);
 	configureButton->addMouseListener(this, false);
 	

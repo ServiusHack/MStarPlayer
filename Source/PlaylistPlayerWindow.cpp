@@ -97,12 +97,12 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 
 	// configuration button
 	configureButton = new ImageButton("Configure");
-	normalImage = ImageFileFormat::loadFrom (BinaryData::emblemsystem_png, BinaryData::emblemsystem_pngSize);
+	normalImage = ImageFileFormat::loadFrom (BinaryData::configure_png, BinaryData::configure_pngSize);
 	configureButton->setImages(true, true, true, 
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
-                                0.5f);
+                                0.0f);
 	addAndMakeVisible(configureButton);
 	configureButton->addMouseListener(this, false);
 
@@ -140,15 +140,16 @@ void PlaylistPlayerWindow::resized()
 {
 	int buttonWidth = std::min(getWidth() / 11, 32);
 	int buttonHeight = buttonWidth;
-	playButton->setBounds(0 * buttonWidth, 0, buttonWidth, buttonHeight);
-	pauseButton->setBounds(1 * buttonWidth, 0, buttonWidth, buttonHeight);
-	stopButton->setBounds(2 * buttonWidth, 0, buttonWidth, buttonHeight);
-	seekBackwardButton->setBounds(3 * buttonWidth, 0, buttonWidth, buttonHeight);
-	seekForwardButton->setBounds(4 * buttonWidth, 0, buttonWidth, buttonHeight);
-	skipBackwardButton->setBounds(5 * buttonWidth, 0, buttonWidth, buttonHeight);
-	skipForwardButton->setBounds(6 * buttonWidth, 0, buttonWidth, buttonHeight);
-	configureButton->setBounds(7 * buttonWidth, 0, buttonWidth, buttonHeight);
-	digitalDisplay->setBounds(8 * buttonWidth, 0, 3 * buttonWidth, buttonHeight);
+	playButton->setBounds(        0 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	pauseButton->setBounds(       1 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	stopButton->setBounds(        2 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight -6);
+	seekBackwardButton->setBounds(3 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	seekForwardButton->setBounds( 4 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	skipBackwardButton->setBounds(5 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	skipForwardButton->setBounds( 6 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	configureButton->setBounds(   7 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	digitalDisplay->setBounds(    8 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
+
 	tracksViewport->setBounds(0,buttonHeight, getWidth(), getHeight() - buttonHeight);
 	tracks->setBounds(0,0, tracksViewport->getMaximumVisibleWidth(), tracks->getHeight());
 }
