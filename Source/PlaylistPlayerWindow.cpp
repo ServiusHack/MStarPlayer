@@ -118,6 +118,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputCha
 	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer, outputChannels, [&](double position) {
 		digitalDisplay->setText(JinglePlayerWindow::formatSeconds(position), sendNotification);
 	}), false);
+	tracksViewport->setScrollBarsShown(true, false, false, false);
 
 	
 	mixer->registerPlayer(this);
@@ -138,13 +139,17 @@ void PlaylistPlayerWindow::setGain(float gain)
 
 void PlaylistPlayerWindow::paint (Graphics& g)
 {
+	int buttonWidth = std::min(getWidth() / 11, 32);
+	int buttonHeight = buttonWidth;
 
+	g.drawLine(0, buttonHeight, getWidth(), buttonHeight);
 }
 
 void PlaylistPlayerWindow::resized()
 {
 	int buttonWidth = std::min(getWidth() / 11, 32);
 	int buttonHeight = buttonWidth;
+
 	playButton->setBounds(        0 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	pauseButton->setBounds(       1 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	stopButton->setBounds(        2 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);

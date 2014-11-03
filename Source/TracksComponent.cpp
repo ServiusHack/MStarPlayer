@@ -39,7 +39,7 @@ void TracksComponent::resized()
 		tracks.getUnchecked(i)->setBounds(0,y,getWidth(),height);
 		y += height;
 	}
-	setBounds(getX(), getY(), getWidth(), y + height);
+	setBounds(getX(), getY(), getWidth(), y);
 }
 
 void TracksComponent::addMonoTrack()

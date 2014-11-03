@@ -243,6 +243,9 @@ void Track::loadFileIntoTransport()
 
 void Track::paint (Graphics& g)
 {
+	if (trackIndex > 1)
+		g.drawLine(0, 0, getWidth(), 0);
+
 	const static int componentWidth = 100 + 40 + 40;
 	int drawWidth = getWidth() - componentWidth;
 	if (m_longestDuration != 0)
