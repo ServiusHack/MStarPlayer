@@ -351,7 +351,8 @@ void Track::stop()
 
 std::vector<int> Track::getMapping()
 {
-	std::vector<int> mapping(currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
+	int numChannels = stereo ? 2 : 1;
+	std::vector<int> mapping(numChannels, -1);
 	for (size_t channel = 0; channel < mapping.size(); ++channel) {
 		mapping[channel] = (remappingAudioSource->getRemappedOutputChannel(channel));
 	}
