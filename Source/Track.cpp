@@ -50,7 +50,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	editButton->setImages(true, true, true,
 		editImage, 0.7f, Colours::transparentBlack,
 		editImage, 1.0f, Colours::transparentBlack,
-		editImage, 1.0f, Colours::pink.withAlpha(0.8f),
+		editImage, 1.0f, Colours::transparentBlack,
 		0.0f);
 	addAndMakeVisible(editButton);
 	editButton->addListener(this);
@@ -60,7 +60,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	openButton->setImages(true, true, true,
 		openImage, 0.7f, Colours::transparentBlack,
 		openImage, 1.0f, Colours::transparentBlack,
-		openImage, 1.0f, Colours::pink.withAlpha(0.8f),
+		openImage, 1.0f, Colours::transparentBlack,
 		0.0f);
 	addAndMakeVisible(openButton);
 	openButton->addMouseListener(this, false);
@@ -72,7 +72,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	soloButton->setImages(true, true, true,
 		soloImage, 0.7f, Colours::transparentBlack,
 		soloImage, 1.0f, Colours::transparentBlack,
-		soloImage, 1.0f, Colours::pink.withAlpha(0.8f),
+		soloImage, 1.0f, Colours::red.withAlpha(0.5f),
 		0.0f);
 	addAndMakeVisible(soloButton);
 
