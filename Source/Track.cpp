@@ -180,11 +180,10 @@ void Track::loadFile()
 	}
 
 	if (!stereo && reader->numChannels != 1) {
-		int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+		int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
 			"AudioPlayerJuce",
 			"You have selected a stereo file for a mono track.",
 			"Convert to stereo track",
-			"Play file in mono",
 			"Abort",
 			this,
 			nullptr
@@ -200,11 +199,10 @@ void Track::loadFile()
 	}
 
 	if (stereo && reader->numChannels != 2) {
-		int result = AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+		int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
 			"AudioPlayerJuce",
 			"You have selected a mono file for a stereo track.",
 			"Convert to mono track",
-			"Play file in stereo",
 			"Abort",
 			this,
 			nullptr
