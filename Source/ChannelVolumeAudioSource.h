@@ -1,19 +1,8 @@
-/*
-  ==============================================================================
-
-    ChannelVolumeAudioSource.h
-    Created: 25 Oct 2013 10:31:48pm
-    Author:  Severin Leonhardt
-
-  ==============================================================================
-*/
-
-#ifndef CHANNELVOLUMEAUDIOSOURCE_H_INCLUDED
-#define CHANNELVOLUMEAUDIOSOURCE_H_INCLUDED
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class ChannelVolumeAudioSource  : public AudioSource
+class ChannelVolumeAudioSource : public AudioSource
 {
 public:
     //==============================================================================
@@ -25,7 +14,7 @@ public:
                             when this object is deleted, if false, the caller is
                             responsible for its deletion
     */
-    ChannelVolumeAudioSource (AudioSource* source);
+    ChannelVolumeAudioSource(AudioSource* source);
     
     //==============================================================================	
     /** Resets all volumes.
@@ -43,26 +32,24 @@ public:
                                     source specified when this object was created).
         @param gain                 the gain to multiply the samples with during our getNextAudioBlock() callback
     */
-    void setChannelVolume (int channelIndex, float gain);
+    void setChannelVolume(int channelIndex, float gain);
 
     /** Returns the volume from a channel.
     */
-    float getChannelVolume (int channelIndex) const;
+    float getChannelVolume(int channelIndex) const;
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
-    void releaseResources() override;
-    void getNextAudioBlock (const AudioSourceChannelInfo&) override;
+    virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+	virtual void releaseResources() override;
+	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
 
 private:
     //==============================================================================
-    AudioSource* source;
-    Array<float> volumes;
+    AudioSource* m_source;
+    Array<float> m_volumes;
 
-    CriticalSection lock;
+    CriticalSection m_lock;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelVolumeAudioSource)
 };
-
-#endif  // CHANNELVOLUMEAUDIOSOURCE_H_INCLUDED

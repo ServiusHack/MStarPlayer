@@ -1,97 +1,75 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
 #include "MainComponent.h"
 #include "AudioConfiguration.h"
 
-bool MyMultiDocumentPanel::tryToCloseDocument(Component * /*component*/) {
+bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/) {
     return true;
 }
 
-//==============================================================================
-MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager_) : commandManager(commandManager_)
+MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager)
+	: m_commandManager(commandManager)
+	, m_projectModified(false)
 {
-    projectModified = false;
-
     // audio setup
-    audioDeviceManager = new AudioDeviceManager();
-    audioDeviceManager->initialise(64,64, nullptr, false, String::empty, 0);
+	m_audioDeviceManager = new AudioDeviceManager();
+	m_audioDeviceManager->initialise(64, 64, nullptr, false, String::empty, 0);
     
     // mixer control
-    mixerComponent = new MixerComponent(audioDeviceManager);
-    addAndMakeVisible(mixerComponent);
+	m_mixerComponent = new MixerComponent(m_audioDeviceManager);
+	addAndMakeVisible(m_mixerComponent);
 
     // player MDI area
-    multiDocumentPanel = new MyMultiDocumentPanel();
-    addAndMakeVisible(multiDocumentPanel);
-    multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+	m_multiDocumentPanel = new MyMultiDocumentPanel();
+	addAndMakeVisible(m_multiDocumentPanel);
+	m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
 
-    setSize (700, 600);
+    setSize(700, 600);
 }
 
 MainContentComponent::~MainContentComponent()
 {
-	delete multiDocumentPanel.release();
-	delete mixerComponent.release();
-}
-
-void MainContentComponent::paint (Graphics& g)
-{
-    g.fillAll (Colour (0xffeeddff));
+	delete m_multiDocumentPanel.release();
+	delete m_mixerComponent.release();
 }
 
 void MainContentComponent::resized()
 {
-    mixerComponent->setBounds(0,getHeight()-mixerComponent->getHeight(), getWidth(), mixerComponent->getHeight());
-    multiDocumentPanel->setBounds(0,0, getWidth(), getHeight() - mixerComponent->getHeight() - 10);
+	m_mixerComponent->setBounds(0, getHeight() - m_mixerComponent->getHeight(), getWidth(), m_mixerComponent->getHeight());
+	m_multiDocumentPanel->setBounds(0, 0, getWidth(), getHeight() - m_mixerComponent->getHeight());
 }
 
 StringArray MainContentComponent::getMenuBarNames()
 {
-    const char* const names[] = { "Project", "Player", "View", "Options", nullptr };
-
-    return StringArray (names);
+	static const char* const menuBarNames[] = { "Project", "Player", "View", "Options", nullptr };
+    return StringArray(menuBarNames);
 }
 
-PopupMenu MainContentComponent::getMenuForIndex (int menuIndex, const String& /*menuName*/)
+PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*menuName*/)
 {
     PopupMenu menu;
 
-    if (menuIndex == 0)
-    {
-        menu.addCommandItem (commandManager, projectNew);
-        menu.addCommandItem (commandManager, projectOpen);
-        menu.addCommandItem (commandManager, projectSave);
-        menu.addCommandItem (commandManager, projectSaveAs);
-
+	switch (menuIndex) {
+	case 0:
+		menu.addCommandItem(m_commandManager, projectNew);
+		menu.addCommandItem(m_commandManager, projectOpen);
+		menu.addCommandItem(m_commandManager, projectSave);
+		menu.addCommandItem(m_commandManager, projectSaveAs);
         menu.addSeparator();
-        menu.addCommandItem (commandManager, StandardApplicationCommandIDs::quit);
-    }
-    else if (menuIndex == 1)
-    {
-        menu.addCommandItem (commandManager, addJinglePlayer);
-        menu.addCommandItem (commandManager, addPlaylistPlayer);
-	}
-	else if (menuIndex == 2)
-	{
-		menu.addCommandItem(commandManager, layoutModeFloating);
-		menu.addCommandItem(commandManager, layoutModeTabs);
-	}
-    else if (menuIndex == 3)
-    {
-        menu.addCommandItem (commandManager, configureAudio);
+		menu.addCommandItem(m_commandManager, StandardApplicationCommandIDs::quit);
+		break;
+	case 1:
+		menu.addCommandItem(m_commandManager, addJinglePlayer);
+		menu.addCommandItem(m_commandManager, addPlaylistPlayer);
+		break;
+	case 2:
+		menu.addCommandItem(m_commandManager, layoutModeFloating);
+		menu.addCommandItem(m_commandManager, layoutModeTabs);
+		break;
+	case 3:
+		menu.addCommandItem(m_commandManager, configureAudio);
+		break;
     }
 
     return menu;
-}
-
-void MainContentComponent::menuItemSelected (int /*menuItemID*/, int /*topLevelMenuIndex*/)
-{
 }
 
 //==============================================================================
@@ -106,38 +84,38 @@ ApplicationCommandTarget* MainContentComponent::getNextCommandTarget()
     return findFirstTargetParentComponent();
 }
 
-void MainContentComponent::getAllCommands (Array <CommandID>& commands)
+void MainContentComponent::getAllCommands(Array <CommandID>& commands)
 {
     // this returns the set of all commands that this target can perform..
-    const CommandID ids[] = { projectNew,
-                                projectOpen,
-                                projectSave,
-                                projectSaveAs,
-                                addJinglePlayer,
-                                addPlaylistPlayer,
-								layoutModeFloating,
-								layoutModeTabs,
-                                configureAudio,
+    const CommandID ids[] = {
+		projectNew,
+        projectOpen,
+        projectSave,
+        projectSaveAs,
+        addJinglePlayer,
+        addPlaylistPlayer,
+		layoutModeFloating,
+		layoutModeTabs,
+        configureAudio
     };
 
-    commands.addArray (ids, numElementsInArray (ids));
+    commands.addArray(ids, numElementsInArray (ids));
 }
 
 // This method is used when something needs to find out the details about one of the commands
 // that this object can perform..
-void MainContentComponent::getCommandInfo (CommandID commandID, ApplicationCommandInfo& result)
+void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationCommandInfo& result)
 {
-    const String projectCategory ("Project");
-	const String playerCategory("Player");
-	const String viewCategory("View");
-    const String optionsCategory ("Options");
+    static const String projectCategory ("Project");
+	static const String playerCategory("Player");
+	static const String viewCategory("View");
+	static const String optionsCategory("Options");
 
     switch (commandID)
     {
     case projectNew:
         result.setInfo ("New", "Create a new project", projectCategory, 0);
         result.addDefaultKeypress ('N', ModifierKeys::commandModifier);
-        
         break;
 
     case projectOpen:
@@ -166,19 +144,16 @@ void MainContentComponent::getCommandInfo (CommandID commandID, ApplicationComma
 
 	case layoutModeFloating:
 		result.setInfo("Windows", "Players are floating windows", viewCategory, 0);
-		result.setTicked(multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::FloatingWindows);
+		result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::FloatingWindows);
 		break;
 
 	case layoutModeTabs:
 		result.setInfo("Tabs", "Players are tabs", viewCategory, 0);
-		result.setTicked(multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::MaximisedWindowsWithTabs);
+		result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
 
     case configureAudio:
         result.setInfo ("Configure Audio", "Configure the audio device to use", optionsCategory, 0);
-        break;
-
-    default:
         break;
     };
 }
@@ -200,51 +175,31 @@ bool MainContentComponent::perform (const InvocationInfo& info)
     case projectSaveAs:
         saveAsProject();
         break;
-
     case addJinglePlayer:
         {
-            AudioDeviceManager::AudioDeviceSetup deviceSetup;
-            audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-            int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
-
-			JinglePlayerWindow* window = new JinglePlayerWindow(mixerComponent.get(), outputChannels);
+			JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels());
             window->setName("Jingle Player");
-            multiDocumentPanel->addDocument(window, Colours::white, true);
-            projectModified = true;
+			m_multiDocumentPanel->addDocument(window, Colours::white, true);
+			m_projectModified = true;
         }
         break;
-
     case addPlaylistPlayer:
         {
-            AudioDeviceManager::AudioDeviceSetup deviceSetup;
-            audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-            int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
-
-            PlaylistPlayerWindow* window = new PlaylistPlayerWindow(mixerComponent.get(), outputChannels);
+			PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels());
             window->setName("Playlist Player");
-            multiDocumentPanel->addDocument(window, Colours::white, true);
-            projectModified = true;
+			m_multiDocumentPanel->addDocument(window, Colours::white, true);
+			m_projectModified = true;
         }
         break;
-
 	case layoutModeFloating:
-		{
-			multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
-		}
+		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
 		break;
-
 	case layoutModeTabs:
-		{
-			multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
-		}
+		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
-
     case configureAudio:
-        {
-            new AudioConfigurationWindow(*audioDeviceManager);
-        }
+		new AudioConfigurationWindow(*m_audioDeviceManager);
         break;
-
     default:
         return false;
     };
@@ -257,8 +212,8 @@ void MainContentComponent::newProject() {
     if (!askSaveProject())
         return;
 
-    multiDocumentPanel->closeAllDocuments(true);
-    projectModified = false;
+    m_multiDocumentPanel->closeAllDocuments(true);
+	m_projectModified = false;
 }
 
 void MainContentComponent::openProject() {
@@ -270,7 +225,7 @@ void MainContentComponent::openProject() {
             "*.aupp");
     if (myChooser.browseForFileToOpen())
     {
-        projectFile = File(myChooser.getResult());
+		m_projectFile = File(myChooser.getResult());
         readProjectFile();
     }
 }
@@ -278,7 +233,7 @@ void MainContentComponent::openProject() {
 
 bool MainContentComponent::askSaveProject()
 {
-    if (!projectModified)
+	if (!m_projectModified)
         return true;
 
     switch (AlertWindow::showYesNoCancelBox (AlertWindow::QuestionIcon,
@@ -299,7 +254,7 @@ bool MainContentComponent::askSaveProject()
 
 bool MainContentComponent::saveProject()
 {
-    if (projectFile == File::nonexistent)
+	if (m_projectFile == File::nonexistent)
         return saveAsProject();
 
     writeProjectFile();
@@ -311,22 +266,21 @@ bool MainContentComponent::saveAsProject()
     FileChooser myChooser ("Please select the project file you want to save ...",
             File::getSpecialLocation (File::userHomeDirectory),
             "*.aupp");
-    if (myChooser.browseForFileToSave(true))
-    {
-        projectFile = File(myChooser.getResult());
-        writeProjectFile();
-        return true;
-    }
-    return false;
+	if (!myChooser.browseForFileToSave(true))
+		return false;
+
+    m_projectFile = File(myChooser.getResult());
+    writeProjectFile();
+    return true;
 }
 
 void MainContentComponent::readProjectFile()
 {
-    multiDocumentPanel->closeAllDocuments(false);
+	m_multiDocumentPanel->closeAllDocuments(false);
 
     Array<String> loadErrors;
     
-    XmlDocument document(projectFile);
+	XmlDocument document(m_projectFile);
 
     XmlElement* root = document.getDocumentElement();
 
@@ -339,67 +293,45 @@ void MainContentComponent::readProjectFile()
 
 	XmlElement* view = root->getChildByName("View");
 	if (view == nullptr)
-	{
-		String error = document.getLastParseError();
 		loadErrors.add("No view settings found, using default.");
-	}
-	else
-	{
+	else {
 		XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
 		if (layoutModeElement == nullptr)
-		{
 			loadErrors.add("No layout mode settings found, using default.");
-		}
 		else
 		{
 			String layoutMode = layoutModeElement->getAllSubText().trim();
 			if (layoutMode == "windows")
-				multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+				m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
 			else if (layoutMode == "tabs")
-				multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
+				m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
 			else
 				loadErrors.add("Unknown view layout, using default.");
 		}
 	}
 
     XmlElement* audio = root->getChildByName("Audio");
-
     if (audio == nullptr)
-    {
-        String error = document.getLastParseError();
         loadErrors.add("No audio settings found, using current.");
-    }
     else
     {
         if (audio->getNumChildElements() != 1)
-        {
             loadErrors.add("Invalid number of audio settings found, using current.");
-        }
         else
-        {
-            audioDeviceManager->initialise(64,64, audio->getChildElement(0), false, String::empty, 0);
-        }
+			m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
     }
 
     XmlElement* mixer = root->getChildByName("Mixer");
 
     if (mixer == nullptr)
-    {
-        String error = document.getLastParseError();
         loadErrors.add("No mixer settings found, using current.");
-    }
     else
-    {
-        mixerComponent->restoreFromXml(*mixer);
-    }
+		m_mixerComponent->restoreFromXml(*mixer);
 
     XmlElement* players = root->getChildByName("Players");
 
     if (players == nullptr)
-    {
-        String error = document.getLastParseError();
         loadErrors.add("No players found. None will be loaded.");
-    }
     else {
 
         for (int i = 0; i < players->getNumChildElements(); i++)
@@ -416,26 +348,16 @@ void MainContentComponent::readProjectFile()
                 continue;
             }
 
-            else if (type == "jingle")
-            {
-                AudioDeviceManager::AudioDeviceSetup deviceSetup;
-                audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-                int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
-
-				JinglePlayerWindow* window = new JinglePlayerWindow(mixerComponent.get(), outputChannels);
-				multiDocumentPanel->addDocument(window, Colours::white, true);
+            else if (type == "jingle") {
+				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels());
+				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
             }
 
-            else if (type == "playlist")
-            {
-                AudioDeviceManager::AudioDeviceSetup deviceSetup;
-                audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-                int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
-
-				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(mixerComponent.get(), outputChannels);
-				multiDocumentPanel->addDocument(window, Colours::white, true);
+            else if (type == "playlist") {
+				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels());
+				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
             }
@@ -443,7 +365,7 @@ void MainContentComponent::readProjectFile()
         }
     }
 
-    projectModified = false;
+	m_projectModified = false;
 }
 
 void MainContentComponent::writeProjectFile()
@@ -452,7 +374,7 @@ void MainContentComponent::writeProjectFile()
 
 	XmlElement* view = new XmlElement("View");
 	XmlElement* layoutMode = new XmlElement("LayoutMode");
-	switch (multiDocumentPanel->getLayoutMode()) {
+	switch (m_multiDocumentPanel->getLayoutMode()) {
 	case MultiDocumentPanel::FloatingWindows:
 		layoutMode->addTextElement("windows");
 		break;
@@ -464,35 +386,37 @@ void MainContentComponent::writeProjectFile()
 	root->addChildElement(view);
     
     XmlElement* audio = new XmlElement("Audio");
-    audio->addChildElement(audioDeviceManager->createStateXml());
+	audio->addChildElement(m_audioDeviceManager->createStateXml());
     root->addChildElement(audio);
 
     XmlElement* mixer = new XmlElement("Mixer");
-    mixerComponent->saveToXml(mixer);
+	m_mixerComponent->saveToXml(mixer);
     root->addChildElement(mixer);
 
     XmlElement* players = new XmlElement("Players");
 
-	for (int i = 0; i < multiDocumentPanel->getNumDocuments(); ++i) {
-        players->addChildElement(static_cast<Player*>(multiDocumentPanel->getDocument(i))->saveToXml());
-	}
+	for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
+		players->addChildElement(static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->saveToXml());
 
     root->addChildElement(players);
 
-    if (!root->writeToFile(projectFile, ""))
+	if (!root->writeToFile(m_projectFile, ""))
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project file", "Failed to save project file.");
     else
-        projectModified = false;
+		m_projectModified = false;
 }
 
 void MainContentComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
 {
-    AudioDeviceManager::AudioDeviceSetup deviceSetup;
-    audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-
-    int outputChannels = deviceSetup.outputChannels.countNumberOfSetBits();
 	
-	for (int i = 0; i < multiDocumentPanel->getNumChildComponents(); ++i) {
-        static_cast<Player*>(multiDocumentPanel->getDocument(i))->setOutputChannels(outputChannels);
-    }
+	for (int i = 0; i < m_multiDocumentPanel->getNumChildComponents(); ++i)
+		static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setOutputChannels(getOutputChannels());
+}
+
+int MainContentComponent::getOutputChannels()
+{
+	AudioDeviceManager::AudioDeviceSetup deviceSetup;
+	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
+
+	return deviceSetup.outputChannels.countNumberOfSetBits();
 }

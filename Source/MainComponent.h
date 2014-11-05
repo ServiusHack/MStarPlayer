@@ -1,15 +1,7 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
-#ifndef __MAINCOMPONENT_H_A9CBF06D__
-#define __MAINCOMPONENT_H_A9CBF06D__
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+
 #include "JinglePlayerWindow.h"
 #include "PlaylistPlayerWindow.h"
 #include "MixerComponent.h"
@@ -17,7 +9,6 @@
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
     bool tryToCloseDocument(Component *component);
-
 };
 
 //==============================================================================
@@ -26,40 +17,40 @@ public:
     It hosts the MDI area for all players and a mixer console with sliders
     for each channel at the bottom.
 */
-class MainContentComponent :	public Component,
-                                public MenuBarModel,
-                                public ApplicationCommandTarget,
-                                public ChangeListener
+class MainContentComponent
+	: public Component
+	, public MenuBarModel
+	, public ApplicationCommandTarget
+	, public ChangeListener
 {
 public:
-    //==============================================================================
-    MainContentComponent(ApplicationCommandManager* commandManager);
-    ~MainContentComponent();
+	MainContentComponent(ApplicationCommandManager* commandManager);
+	~MainContentComponent();
 
-    void paint (Graphics&);
-    void resized();
+	void resized();
 
-    // MenuBarModel
-    StringArray getMenuBarNames();
-    PopupMenu getMenuForIndex (int menuIndex, const String& /*menuName*/);
-    void menuItemSelected (int /*menuItemID*/, int /*topLevelMenuIndex*/);
+	// MenuBarModel overrides
+	virtual StringArray getMenuBarNames() override;
+	virtual PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;
+	virtual void menuItemSelected(int /*menuItemID*/, int /*topLevelMenuIndex*/) override {};
 
-    // ApplicationCommandTarget
-    ApplicationCommandTarget* getNextCommandTarget();
-    void getAllCommands (Array <CommandID>& commands);
-    void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result);
-    bool perform (const InvocationInfo& info);
+    // ApplicationCommandTarget overrides
+    virtual ApplicationCommandTarget* getNextCommandTarget() override;
+    virtual void getAllCommands(Array <CommandID>& commands) override;
+    virtual void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
+    virtual bool perform(const InvocationInfo& info) override;
     
-    void changeListenerCallback (ChangeBroadcaster* /*source*/);
+    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-    //==============================================================================
-    ApplicationCommandManager* commandManager;
-    ScopedPointer<MixerComponent> mixerComponent;
-    ScopedPointer<MyMultiDocumentPanel> multiDocumentPanel;
-    ScopedPointer<AudioDeviceManager> audioDeviceManager;
 
-    //==============================================================================
+	int getOutputChannels();
+
+    ApplicationCommandManager* m_commandManager;
+	ScopedPointer<MixerComponent> m_mixerComponent;
+	ScopedPointer<MyMultiDocumentPanel> m_multiDocumentPanel;
+	ScopedPointer<AudioDeviceManager> m_audioDeviceManager;
+
     // Commands for menu
     enum CommandIDs
     {
@@ -77,11 +68,7 @@ private:
         configureAudio = 0x200A,
     };
     
-    //==============================================================================
-    // Project file related fields and methods
-
-    File projectFile;
-    bool projectModified;
+    // Project file related methods and fields
 
     void newProject();
     void openProject();
@@ -90,10 +77,10 @@ private:
     bool saveAsProject();
 
     void readProjectFile();
-    void writeProjectFile();
+	void writeProjectFile();
+
+	File m_projectFile;
+	bool m_projectModified;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
-
-
-#endif  // __MAINCOMPONENT_H_A9CBF06D__

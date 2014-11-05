@@ -1,15 +1,4 @@
-/*
-  ==============================================================================
-
-    MixerComponent.h
-    Created: 14 Sep 2013 1:27:01pm
-    Author:  Severin Leonhardt
-
-  ==============================================================================
-*/
-
-#ifndef MIXERCOMPONENT_H_INCLUDED
-#define MIXERCOMPONENT_H_INCLUDED
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -26,9 +15,10 @@
 	The audio flow looks like this:
 	Players -> MixerAudioSource -> ChannelVolumeAudioSource -> AudioSourcePlayer -> AudioDeviceManager
 */
-class MixerComponent    : public Component,
-						  public SliderListener,
-						  public ChangeListener
+class MixerComponent
+	: public Component
+	, public SliderListener
+	, public ChangeListener
 {
 public:
 	/** Creates a new MixerComponent.
@@ -53,7 +43,6 @@ public:
 	void registerPlayer(Player* player);
 	void unregisterPlayer(Player* player);
 	
-    //==============================================================================
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
@@ -66,9 +55,9 @@ public:
 private:
 
 	// ui
-	Array< Slider* > channelSliders;
-	Array< Slider* > playerSliders;
-	Array< Player* > players;
+	Array< Slider* > m_channelSliders;
+	Array< Slider* > m_playerSliders;
+	Array< Player* > m_players;
 
 	/** Adds a new slider to the component because not enough are being shown. */
 	void addChannelSlider();
@@ -76,13 +65,10 @@ private:
 	void addPlayerSlider();
 	
 	// audio output
-	MixerAudioSource mixerAudioSource;
-	ChannelVolumeAudioSource* channelVolumeAudioSource;
-    AudioSourcePlayer audioSourcePlayer;
-	AudioDeviceManager *audioDeviceManager;
+	MixerAudioSource m_mixerAudioSource;
+	ChannelVolumeAudioSource* m_channelVolumeAudioSource;
+    AudioSourcePlayer m_audioSourcePlayer;
+	AudioDeviceManager *m_audioDeviceManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MixerComponent)
 };
-
-
-#endif  // MIXERCOMPONENT_H_INCLUDED

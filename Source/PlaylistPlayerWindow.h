@@ -1,28 +1,17 @@
-/*
-  ==============================================================================
-
-    PlaylistPlayerWindow.h
-    Created: 29 Oct 2013 8:43:19pm
-    Author:  User
-
-  ==============================================================================
-*/
-
-#ifndef PLAYLISTPLAYERWINDOW_H_INCLUDED
-#define PLAYLISTPLAYERWINDOW_H_INCLUDED
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Player.h"
 #include "MixerComponent.h"
 #include "TracksComponent.h"
 #include "ChannelMapping.h"
+#include "Utils.h"
 
-//==============================================================================
 /*
 */
-class PlaylistPlayerWindow    : public Player,
-                                public Button::Listener,
-                                private Timer
+class PlaylistPlayerWindow
+	: public Player
+    , public Button::Listener
 {
 public:
     /** Creates a new PlaylistPlayer.
@@ -37,18 +26,12 @@ public:
     /** Destructor */
     ~PlaylistPlayerWindow();
 
-    void paint (Graphics&);
+    void paint(Graphics&);
     void resized();
 
-    void mouseDown (const MouseEvent & event);
+    void mouseDown(const MouseEvent & event);
 
     void buttonClicked(Button * /*button*/);
-
-    /** Regularly update the displayed time.
-
-        Called by the Timer from which this class inherits.
-    */
-    void timerCallback();
 
     /** Set the number of output channels.
 
@@ -57,7 +40,6 @@ public:
     */
     void setOutputChannels(int outputChannels) override;
 	
-    //==============================================================================
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
@@ -66,36 +48,32 @@ public:
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml (const XmlElement& element);
+    void restoreFromXml(const XmlElement& element);
 	
 	void setGain(float gain);
 
 	void configureChannels();
 
 private:
-
     // audio output
-    MixerComponent* mixer;
-	int outputChannels;
-	OptionalScopedPointer<ChannelMappingWindow> channelMappingWindow;
+	MixerComponent* m_mixer;
+	int m_outputChannels;
+	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
 
     // audio file playback
-    TimeSliceThread thread;
+	TimeSliceThread m_thread;
 	
-    ScopedPointer<ImageButton>  playButton;
-    ScopedPointer<ImageButton>  pauseButton;
-    ScopedPointer<ImageButton>  stopButton;
-    ScopedPointer<ImageButton>  seekBackwardButton;
-    ScopedPointer<ImageButton>  seekForwardButton;
-    ScopedPointer<ImageButton>  skipBackwardButton;
-    ScopedPointer<ImageButton>  skipForwardButton;
-    ScopedPointer<ImageButton>  configureButton;
-	ScopedPointer<Label>        digitalDisplay;
-	ScopedPointer<TracksComponent> tracks;
-	ScopedPointer<Viewport>     tracksViewport;
+	ScopedPointer<ImageButton> m_playButton;
+	ScopedPointer<ImageButton> m_pauseButton;
+	ScopedPointer<ImageButton> m_stopButton;
+	ScopedPointer<ImageButton> m_seekBackwardButton;
+	ScopedPointer<ImageButton> m_seekForwardButton;
+	ScopedPointer<ImageButton> m_skipBackwardButton;
+	ScopedPointer<ImageButton> m_skipForwardButton;
+	ScopedPointer<ImageButton> m_configureButton;
+	ScopedPointer<Label>       m_digitalDisplay;
+	ScopedPointer<TracksComponent> m_tracks;
+	ScopedPointer<Viewport>    m_tracksViewport;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistPlayerWindow)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };
-
-
-#endif  // PLAYLISTPLAYERWINDOW_H_INCLUDED

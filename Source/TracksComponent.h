@@ -1,35 +1,23 @@
-/*
-  ==============================================================================
-
-    TracksComponent.h
-    Created: 21 Jan 2014 1:15:08am
-    Author:  User
-
-  ==============================================================================
-*/
-
-#ifndef TRACKSCOMPONENT_H_INCLUDED
-#define TRACKSCOMPONENT_H_INCLUDED
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Track.h"
 #include "MixerComponent.h"
 
-//==============================================================================
 /*
 */
-class TracksComponent    : public Component
+class TracksComponent : public Component
 {
 public:
 	TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback);
     ~TracksComponent();
 
-    void paint (Graphics&);
     void resized();
 
 	void addMonoTrack();
 	void addStereoTrack();
-	void addTrackFromXml(const XmlElement& element);
+	void addTrackFromXml(const XmlElement* element);
+	void addTrack(bool stereo, const XmlElement* element = nullptr);
 
 	void play();
 	void pause();
@@ -40,19 +28,15 @@ public:
 
 	void setOutputChannels(int outputChannels);
 
-
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TracksComponent)
+	OwnedArray<Track> m_tracks;
 
-	OwnedArray<Track> tracks;
+	MixerComponent* m_mixer;
+	MixerAudioSource m_tracksMixer;
 
-	MixerComponent* mixer;
-	MixerAudioSource tracksMixer;
+	PositionCallback m_positionCallback;
 
-	PositionCallback positionCallback;
+	int m_outputChannels;
 
-	int _outputChannels;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TracksComponent)
 };
-
-
-#endif  // TRACKSCOMPONENT_H_INCLUDED

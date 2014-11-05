@@ -1,15 +1,4 @@
-/*
-  ==============================================================================
-
-	Track.h
-	Created: 21 Jan 2014 1:00:48am
-	Author:  User
-
-  ==============================================================================
-*/
-
-#ifndef TRACK_H_INCLUDED
-#define TRACK_H_INCLUDED
+#pragma once
 
 #include <functional>
 
@@ -20,13 +9,13 @@
 typedef std::function<void()> DurationChangedCallback;
 typedef std::function<void(double)> PositionCallback;
 
-//==============================================================================
 /*
 */
-class Track	: public Component
-			, public ChangeListener
-			, public Button::Listener
-			, private Timer
+class Track
+	: public Component
+	, public ChangeListener
+	, public Button::Listener
+	, private Timer
 {
 public:
 	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback);
@@ -73,47 +62,44 @@ public:
 	void setName(String name);
 
 private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
-
 	void updateIdText();
 	void loadFile();
 	void setMuteState();
 
-	double progress; // the progress of the playback
+	double m_progress; // the progress of the playback
 
-	ScopedPointer<Label> idLabel;
-	ScopedPointer<Label> descriptionLabel;
-	ScopedPointer<ImageButton> editButton;
-	ScopedPointer<ImageButton> openButton;
-	ScopedPointer<ImageButton> soloButton;
-	ScopedPointer<ImageButton> muteButton;
-	ScopedPointer<AudioThumbnail> audioThumbnail;
-	ScopedPointer<ChannelRemappingAudioSource> remappingAudioSource;
-	AudioThumbnailCache audioThumbnailCache;
-	AudioFormatManager formatManager;
+	ScopedPointer<Label> m_idLabel;
+	ScopedPointer<Label> m_descriptionLabel;
+	ScopedPointer<ImageButton> m_editButton;
+	ScopedPointer<ImageButton> m_openButton;
+	ScopedPointer<ImageButton> m_soloButton;
+	ScopedPointer<ImageButton> m_muteButton;
+	ScopedPointer<AudioThumbnail> m_audioThumbnail;
+	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
+	AudioThumbnailCache m_audioThumbnailCache;
+	AudioFormatManager m_formatManager;
 
-	ScopedPointer<TrackEditDialogWindow> editDialog;
+	ScopedPointer<TrackEditDialogWindow> m_editDialog;
 
-	File audioFile;
-	bool stereo;
+	File m_audioFile;
+	bool m_stereo;
 
-	int trackIndex;
+	int m_trackIndex;
 
 	//AudioFormatManager formatManager;
-	MixerAudioSource &tracksMixer;
-	TimeSliceThread thread;
-	AudioTransportSource transportSource;
-	AudioFormatReaderSource* currentAudioFileSource;
+	MixerAudioSource &m_tracksMixer;
+	TimeSliceThread m_thread;
+	AudioTransportSource m_transportSource;
+	AudioFormatReaderSource* m_currentAudioFileSource;
 
 	bool m_soloMute;
 	double m_duration;
 	double m_longestDuration;
 
-	DurationChangedCallback durationChangedCallback;
-	DurationChangedCallback soloChangedCallback;
+	DurationChangedCallback m_durationChangedCallback;
+	DurationChangedCallback m_soloChangedCallback;
 
-	PositionCallback positionCallback;
+	PositionCallback m_positionCallback;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 };
-
-
-#endif  // TRACK_H_INCLUDED

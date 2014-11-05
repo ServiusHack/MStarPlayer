@@ -57,6 +57,8 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="fhQ0yw" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
+      <FILE id="dTMQkM" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
       <FILE id="S1uxar" name="TrackEditDialog.cpp" compile="1" resource="0"
             file="Source/TrackEditDialog.cpp"/>
       <FILE id="ejt3rD" name="TrackEditDialog.h" compile="0" resource="0"
@@ -71,10 +73,6 @@
       <FILE id="MbiCPb" name="Track.cpp" compile="1" resource="0" file="Source/Track.cpp"/>
       <FILE id="JMGgdW" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
       <FILE id="OBFTZF" name="Player.h" compile="0" resource="0" file="Source/Player.h"/>
-      <FILE id="jYRLE9" name="PlayerChannelComponent.cpp" compile="1" resource="0"
-            file="Source/PlayerChannelComponent.cpp"/>
-      <FILE id="pkgf42" name="PlayerChannelComponent.h" compile="0" resource="0"
-            file="Source/PlayerChannelComponent.h"/>
       <FILE id="LNf3Xd" name="PlaylistPlayerWindow.h" compile="0" resource="0"
             file="Source/PlaylistPlayerWindow.h"/>
       <FILE id="qxV0Yk" name="PlaylistPlayerWindow.cpp" compile="1" resource="0"

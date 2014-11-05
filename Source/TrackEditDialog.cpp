@@ -1,24 +1,13 @@
-/*
-==============================================================================
-
-TrackEditDialog.cpp
-Created: 13 Sep 2013 2:37:51pm
-Author:  Severin Leonhardt
-
-==============================================================================
-*/
-
 #include "TrackEditDialog.h"
 
 
 TrackEditDialogWindow::TrackEditDialogWindow(String name, TrackSettingsChangedCallback settingsChangedCallback)
-: DialogWindow("TrackEdit player", Colours::lightgrey, true, true)
+	: DialogWindow("TrackEdit player", Colours::lightgrey, true, true)
 {
 	TrackEditDialogComponent* component = new TrackEditDialogComponent(name, settingsChangedCallback, this);
 	setContentOwned(component, true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
-	//component->textEditor->take
 	setResizable(false, false);
 }
 
@@ -37,43 +26,43 @@ bool TrackEditDialogWindow::keyPressed(const KeyPress &key)
 	return false;
 }
 
-void TrackEditDialogWindow::focusGained(FocusChangeType cause)
+void TrackEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 {
-	static_cast<TrackEditDialogComponent*>(getContentComponent())->nameEditor->grabKeyboardFocus();
+	static_cast<TrackEditDialogComponent*>(getContentComponent())->m_nameEditor->grabKeyboardFocus();
 }
 
 TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsChangedCallback settingsChangedCallback, TrackEditDialogWindow* parent)
-	: parent(parent)
-	, settingsChangedCallback(settingsChangedCallback)
+	: m_parent(parent)
+	, m_settingsChangedCallback(settingsChangedCallback)
 {
-    addAndMakeVisible (nameLabel = new Label ("name label",
+	addAndMakeVisible(m_nameLabel = new Label("name label",
                                           TRANS("Name of the track:")));
-	nameLabel->setFont(Font(15.00f, Font::plain));
-	nameLabel->setJustificationType(Justification::centredLeft);
-	nameLabel->setEditable(false, false, false);
-	nameLabel->setColour(TextEditor::textColourId, Colours::black);
-	nameLabel->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+	m_nameLabel->setFont(Font(15.00f, Font::plain));
+	m_nameLabel->setJustificationType(Justification::centredLeft);
+	m_nameLabel->setEditable(false, false, false);
+	m_nameLabel->setColour(TextEditor::textColourId, Colours::black);
+	m_nameLabel->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
 
-    addAndMakeVisible (nameEditor = new TextEditor ("name editor"));
-	nameEditor->setMultiLine(false);
-	nameEditor->setReturnKeyStartsNewLine(false);
-	nameEditor->setReadOnly(false);
-	nameEditor->setScrollbarsShown(true);
-	nameEditor->setCaretVisible(true);
-	nameEditor->setPopupMenuEnabled(true);
-	nameEditor->setEscapeAndReturnKeysConsumed(false);
-	nameEditor->setText(name);
-	nameEditor->selectAll();
+	addAndMakeVisible(m_nameEditor = new TextEditor("name editor"));
+	m_nameEditor->setMultiLine(false);
+	m_nameEditor->setReturnKeyStartsNewLine(false);
+	m_nameEditor->setReadOnly(false);
+	m_nameEditor->setScrollbarsShown(true);
+	m_nameEditor->setCaretVisible(true);
+	m_nameEditor->setPopupMenuEnabled(true);
+	m_nameEditor->setEscapeAndReturnKeysConsumed(false);
+	m_nameEditor->setText(name);
+	m_nameEditor->selectAll();
 
-    addAndMakeVisible (saveButton = new TextButton ("save"));
-	saveButton->setButtonText(TRANS("Save"));
-	saveButton->addListener(this);
-	saveButton->setWantsKeyboardFocus(false);
+	addAndMakeVisible(m_saveButton = new TextButton("save"));
+	m_saveButton->setButtonText(TRANS("Save"));
+	m_saveButton->addListener(this);
+	m_saveButton->setWantsKeyboardFocus(false);
 
-	addAndMakeVisible(abortButton = new TextButton("abort"));
-	abortButton->setButtonText(TRANS("Abort"));
-	abortButton->addListener(this);
-	saveButton->setWantsKeyboardFocus(false);
+	addAndMakeVisible(m_abortButton = new TextButton("abort"));
+	m_abortButton->setButtonText(TRANS("Abort"));
+	m_abortButton->addListener(this);
+	m_abortButton->setWantsKeyboardFocus(false);
 
 	setWantsKeyboardFocus(false);
 
@@ -82,34 +71,29 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsCha
 
 TrackEditDialogComponent::~TrackEditDialogComponent()
 {
-	nameLabel = nullptr;
-	nameEditor = nullptr;
-	saveButton = nullptr;
-	abortButton = nullptr;
-}
-
-void TrackEditDialogComponent::paint(Graphics& g)
-{
-    g.fillAll (Colours::white);
+	m_nameLabel = nullptr;
+	m_nameEditor = nullptr;
+	m_saveButton = nullptr;
+	m_abortButton = nullptr;
 }
 
 void TrackEditDialogComponent::resized()
 {
-	nameLabel->setBounds(0, 0, 100, 24);
-	nameEditor->setBounds(110, 0, 50, 24);
-	saveButton->setBounds(8, 56, 80, 24);
-	abortButton->setBounds(112, 56, 80, 24);
+	m_nameLabel->setBounds(0, 0, 100, 24);
+	m_nameEditor->setBounds(110, 0, 50, 24);
+	m_saveButton->setBounds(8, 56, 80, 24);
+	m_abortButton->setBounds(112, 56, 80, 24);
 }
 
 void TrackEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 {
-	if (buttonThatWasClicked == saveButton)
+	if (buttonThatWasClicked == m_saveButton)
 	{
-		settingsChangedCallback(nameEditor->getText());
-		parent->setVisible(false);
+		m_settingsChangedCallback(m_nameEditor->getText());
+		m_parent->setVisible(false);
     }
-	else if (buttonThatWasClicked == abortButton)
+	else if (buttonThatWasClicked == m_abortButton)
     {
-		parent->setVisible(false);
+		m_parent->setVisible(false);
     }
 }

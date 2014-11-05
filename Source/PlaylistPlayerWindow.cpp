@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    PlaylistPlayerWindow.cpp
-    Created: 29 Oct 2013 8:43:19pm
-    Author:  User
-
-  ==============================================================================
-*/
-
 #include <vector>
 #include <algorithm>
 #include <memory>
@@ -17,124 +7,121 @@
 #include "RenameDialog.h"
 #include "JinglePlayerWindow.h"
 
-//==============================================================================
-PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer_, int outputChannels_) :
-      mixer (mixer_),
-      outputChannels(outputChannels_),
-      thread ("audio file preview")
+PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels)
+	: m_mixer(mixer)
+	, m_outputChannels(outputChannels)
+	, m_thread("audio file preview")
 {	
 	// play button
-	playButton = new ImageButton("Play");
+	m_playButton = new ImageButton("Play");
 	Image normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
-	playButton->addListener(this);
-	playButton->setImages(true, true, true, 
+	m_playButton->addListener(this);
+	m_playButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(playButton);
+	addAndMakeVisible(m_playButton);
 	
 	// pause button
-	pauseButton = new ImageButton("Pause");
-	pauseButton->addListener(this);
+	m_pauseButton = new ImageButton("Pause");
+	m_pauseButton->addListener(this);
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
-	pauseButton->setImages(true, true, true, 
+	m_pauseButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(pauseButton);
+	addAndMakeVisible(m_pauseButton);
 	
 	// stop button
-	stopButton = new ImageButton("Stop");
-	stopButton->addListener(this);
+	m_stopButton = new ImageButton("Stop");
+	m_stopButton->addListener(this);
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
-	stopButton->setImages(true, true, true, 
+	m_stopButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(stopButton);
+	addAndMakeVisible(m_stopButton);
 	
 	// seek backward button
-	seekBackwardButton = new ImageButton("Seek Backward");
+	m_seekBackwardButton = new ImageButton("Seek Backward");
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaseekbackward_png, BinaryData::mediaseekbackward_pngSize);
-	seekBackwardButton->setImages(true, true, true, 
+	m_seekBackwardButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(seekBackwardButton);
+	addAndMakeVisible(m_seekBackwardButton);
 	
 	// seek forward button
-	seekForwardButton = new ImageButton("Seek Forward");
+	m_seekForwardButton = new ImageButton("Seek Forward");
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaseekforward_png, BinaryData::mediaseekforward_pngSize);
-	seekForwardButton->setImages(true, true, true, 
+	m_seekForwardButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(seekForwardButton);
+	addAndMakeVisible(m_seekForwardButton);
 	
 	// skip backward button
-	skipBackwardButton = new ImageButton("Skip Backward");
+	m_skipBackwardButton = new ImageButton("Skip Backward");
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
-	skipBackwardButton->setImages(true, true, true, 
+	m_skipBackwardButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(skipBackwardButton);
+	addAndMakeVisible(m_skipBackwardButton);
 	
 	// skip forward button
-	skipForwardButton = new ImageButton("Skip Forward");
+	m_skipForwardButton = new ImageButton("Skip Forward");
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
-	skipForwardButton->setImages(true, true, true, 
+	m_skipForwardButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(skipForwardButton);
+	addAndMakeVisible(m_skipForwardButton);
 
 	// configuration button
-	configureButton = new ImageButton("Configure");
+	m_configureButton = new ImageButton("Configure");
 	normalImage = ImageFileFormat::loadFrom (BinaryData::configure_png, BinaryData::configure_pngSize);
-	configureButton->setImages(true, true, true, 
+	m_configureButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::transparentBlack,
                                 normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
                                 0.0f);
-	addAndMakeVisible(configureButton);
-	configureButton->addMouseListener(this, false);
+	addAndMakeVisible(m_configureButton);
+	m_configureButton->addMouseListener(this, false);
 
-	addAndMakeVisible (digitalDisplay = new Label (String::empty, "00:00:00"));
-    digitalDisplay->setFont (Font (Font::getDefaultMonospacedFontName (), 14, Font::plain));
-    digitalDisplay->setColour (Label::textColourId, Colours::red);
-    digitalDisplay->setColour (Label::backgroundColourId, Colours::white);
-
-	addAndMakeVisible( tracksViewport = new Viewport());
+	// playback time display
+	addAndMakeVisible(m_digitalDisplay = new Label(String::empty, "00:00:00"));
+	m_digitalDisplay->setFont(Font(Font::getDefaultMonospacedFontName(), 14, Font::plain));
+	m_digitalDisplay->setColour(Label::textColourId, Colours::red);
+	m_digitalDisplay->setColour(Label::backgroundColourId, Colours::white);
 
 	// tracks
-	tracksViewport->setViewedComponent(tracks = new TracksComponent(mixer, outputChannels, [&](double position) {
-		digitalDisplay->setText(JinglePlayerWindow::formatSeconds(position), sendNotification);
+	addAndMakeVisible(m_tracksViewport = new Viewport());
+	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannels, [&](double position) {
+		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
 	}), false);
-	tracksViewport->setScrollBarsShown(true, false, false, false);
+	m_tracksViewport->setScrollBarsShown(true, false, false, false);
 
-	
 	mixer->registerPlayer(this);
-
 
 	setBounds(0, 0, 600, 300);
 }
 
 PlaylistPlayerWindow::~PlaylistPlayerWindow()
 {
-	mixer->unregisterPlayer(this);
+	m_mixer->unregisterPlayer(this);
 }
 
 void PlaylistPlayerWindow::setGain(float gain)
 {
-
+	//TODO: Implement
 }
 
 void PlaylistPlayerWindow::paint (Graphics& g)
@@ -142,7 +129,7 @@ void PlaylistPlayerWindow::paint (Graphics& g)
 	int buttonWidth = std::min(getWidth() / 11, 32);
 	int buttonHeight = buttonWidth;
 
-	g.drawLine(0, buttonHeight, getWidth(), buttonHeight);
+	g.drawLine(0.0f, static_cast<float>(buttonHeight), static_cast<float>(getWidth()), static_cast<float>(buttonHeight));
 }
 
 void PlaylistPlayerWindow::resized()
@@ -150,29 +137,33 @@ void PlaylistPlayerWindow::resized()
 	int buttonWidth = std::min(getWidth() / 11, 32);
 	int buttonHeight = buttonWidth;
 
-	playButton->setBounds(        0 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	pauseButton->setBounds(       1 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	stopButton->setBounds(        2 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	seekBackwardButton->setBounds(3 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	seekForwardButton->setBounds( 4 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	skipBackwardButton->setBounds(5 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	skipForwardButton->setBounds( 6 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	configureButton->setBounds(   7 * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
-	digitalDisplay->setBounds(    8 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
+#define PLACE_BUTTON(IDX,BTN) BTN->setBounds(IDX * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
+	PLACE_BUTTON(0, m_playButton);
+	PLACE_BUTTON(1, m_pauseButton);
+	PLACE_BUTTON(0, m_playButton);
+	PLACE_BUTTON(1, m_pauseButton);
+	PLACE_BUTTON(2, m_stopButton);
+	PLACE_BUTTON(3, m_seekBackwardButton);
+	PLACE_BUTTON(4, m_seekForwardButton);
+	PLACE_BUTTON(5, m_skipBackwardButton);
+	PLACE_BUTTON(6, m_skipForwardButton);
+	PLACE_BUTTON(7, m_configureButton);
+#undef PLACE_BUTTON
+	m_digitalDisplay->setBounds(8 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
 
-	tracksViewport->setBounds(0,buttonHeight, getWidth(), getHeight() - buttonHeight);
-	tracks->setBounds(0,0, tracksViewport->getMaximumVisibleWidth(), tracks->getHeight());
+	m_tracksViewport->setBounds(0, buttonHeight, getWidth(), getHeight() - buttonHeight);
+	m_tracks->setBounds(0, 0, m_tracksViewport->getMaximumVisibleWidth(), m_tracks->getHeight());
 }
 
-void PlaylistPlayerWindow::setOutputChannels(int outputChannels_)
+void PlaylistPlayerWindow::setOutputChannels(int outputChannels)
 {
-	outputChannels = outputChannels_;
-	tracks->setOutputChannels(outputChannels);
+	m_outputChannels = outputChannels;
+	m_tracks->setOutputChannels(m_outputChannels);
 }
 
 void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 {
-	if (event.eventComponent != configureButton)
+	if (event.eventComponent != m_configureButton)
 		return;
 
 	PopupMenu m;
@@ -182,38 +173,38 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 	m.addItem (4, "rename");
 	const int result = m.show();
 
-	if (result == 1) {
-		tracks->addStereoTrack();
+	switch (result) {
+	case 1:
+		m_tracks->addStereoTrack();
 		repaint();
 		parentSizeChanged();
-	} else if (result == 2) {
-		tracks->addMonoTrack();
+		break;
+	case 2:
+		m_tracks->addMonoTrack();
 		repaint();
-	} else if (result == 3) {
+		break;
+	case 3:
 		configureChannels();
-	} else if (result == 4)
-	{
-		std::unique_ptr<RenameDialogWindow> dialog(new RenameDialogWindow(getName()));
-		dialog->grabKeyboardFocus();
-		int result = dialog->runModalLoop();
-		if (result == 0)
-			setName(dialog->getPlayerName());
+		break;
+	case 4:
+		{
+			std::unique_ptr<RenameDialogWindow> dialog(new RenameDialogWindow(getName()));
+			dialog->grabKeyboardFocus();
+			int result = dialog->runModalLoop();
+			if (result == 0)
+				setName(dialog->getPlayerName());
+		}
 	}
 }
 
 void PlaylistPlayerWindow::buttonClicked(Button * button)
 {
-	if (button == playButton) {
-		tracks->play();
-	} else if (button == pauseButton) {
-		tracks->pause();
-	} else if (button == stopButton) {
-		tracks->stop();
-	}
-}
-
-void PlaylistPlayerWindow::timerCallback()
-{
+	if (button == m_playButton)
+		m_tracks->play();
+	else if (button == m_pauseButton)
+		m_tracks->pause();
+	else if (button == m_stopButton)
+		m_tracks->stop();
 }
 
 XmlElement* PlaylistPlayerWindow::saveToXml() const
@@ -235,9 +226,8 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 	element->addChildElement(nameXml);
 
 	XmlElement* tracksXml = new XmlElement("Tracks");
-	for (int i = 0; i < tracks->playerCount(); ++i) {
-		tracksXml->addChildElement(tracks->player(i).saveToXml());
-	}
+	for (int i = 0; i < m_tracks->playerCount(); ++i)
+		tracksXml->addChildElement(m_tracks->player(i).saveToXml());
 
 	element->addChildElement(tracksXml);
 
@@ -258,33 +248,32 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 	setName(nameXml->getAllSubText().trim());
 
 	XmlElement* tracksXml = element.getChildByName("Tracks");
-	for (int i = 0; i < tracksXml->getNumChildElements(); ++i) {
-		tracks->addTrackFromXml(*tracksXml->getChildElement(i));
-	}
+	for (int i = 0; i < tracksXml->getNumChildElements(); ++i)
+		m_tracks->addTrackFromXml(tracksXml->getChildElement(i));
 }
 
 void PlaylistPlayerWindow::configureChannels()
 {
-	if (channelMappingWindow.get() == nullptr) {
+	if (m_channelMappingWindow.get() == nullptr) {
 		std::vector<int> mapping;
-		for (int i = 0; i < tracks->playerCount(); ++i) {
-			std::vector<int> playerMapping = tracks->player(i).getMapping();
+		for (int i = 0; i < m_tracks->playerCount(); ++i) {
+			std::vector<int> playerMapping = m_tracks->player(i).getMapping();
 			mapping.insert(mapping.end(), playerMapping.begin(), playerMapping.end());
 		}
 
-		channelMappingWindow.set(new ChannelMappingWindow(outputChannels, mapping, [&](int source, int target) {
-			for (int i = 0; i < tracks->playerCount(); ++i) {
-				if (source - tracks->player(i).getNumChannels() < 0) {
-					tracks->player(i).setOutputChannelMapping(source, target);
+		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannels, mapping, [&](int source, int target) {
+			for (int i = 0; i < m_tracks->playerCount(); ++i) {
+				if (source - m_tracks->player(i).getNumChannels() < 0) {
+					m_tracks->player(i).setOutputChannelMapping(source, target);
 					break;
 				}
-				source -= tracks->player(i).getNumChannels();
+				source -= m_tracks->player(i).getNumChannels();
 			}
 		}, [&]() {
 			// clear is not working
-			delete channelMappingWindow.release();
+			delete m_channelMappingWindow.release();
 		}), true);
 	}
-	channelMappingWindow->addToDesktop();
-	channelMappingWindow->toFront(true);
+	m_channelMappingWindow->addToDesktop();
+	m_channelMappingWindow->toFront(true);
 }

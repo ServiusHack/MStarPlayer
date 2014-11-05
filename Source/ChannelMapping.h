@@ -1,15 +1,4 @@
-/*
-  ==============================================================================
-
-    ChannelMapping.h
-    Created: 25 Oct 2013 8:00:09pm
-    Author:  Severin Leonhardt
-
-  ==============================================================================
-*/
-
-#ifndef CHANNELMAPPING_H_INCLUDED
-#define CHANNELMAPPING_H_INCLUDED
+#pragma once
 
 #include <vector>
 #include <functional>
@@ -31,8 +20,7 @@ typedef std::function<void()> CloseCallback;
     this component, where they begin with 1. This is because 0 is a magic value
     for the combo box component.
 */
-class ChannelMapping    : public Component,
-                          public TableListBoxModel
+class ChannelMapping : public TableListBoxModel
 {
 public:
     /** A component to view and edit the channel mapping.
@@ -48,13 +36,11 @@ public:
     */
 	ChannelMapping(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback);
 
-    void resized();
-
-    // TableListBoxModel overwrites
-    int getNumRows();
-    void paintRowBackground (Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected);
-    void paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/);
-    Component* refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate);
+    // TableListBoxModel overrides
+	virtual int getNumRows() override;
+    virtual void paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
+    virtual void paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+	virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
     /** Get the output channel for a table row.
 
@@ -78,10 +64,7 @@ public:
     void setChannelMapping(int row, int outputChannel);
 
 private:
-    TableListBox table;     // the table component itself
-    Font font;
-    
-    int outputChannels;
+    int m_outputChannels;
 	std::vector<int> m_mapping;
 	const ChangeMappingCallback m_callback;
 
@@ -92,7 +75,7 @@ private:
 /**
     Wrapper window to show the ChannelMapping component.
 */
-class ChannelMappingWindow    : public DialogWindow
+class ChannelMappingWindow : public DialogWindow
 {
 public:
     /** Creates a window to view and edit the channel mapping.
@@ -105,19 +88,17 @@ public:
 
     /** Delete (and thus close) the window when requested by the user.
     */
-    void closeButtonPressed();
+    virtual void closeButtonPressed() override;
 
 	void setMapping(std::vector<int> mapping);
 
 private:
-	int outputChannels;
-	const ChangeMappingCallback changeCallback;
-    ScopedPointer<ChannelMapping> component;
-	const CloseCallback closeCallback;
+	int m_outputChannels;
+	const ChangeMappingCallback m_changeCallback;
+	const CloseCallback m_closeCallback;
+
+	ScopedPointer<TableListBox> m_tableListBox;
+	ScopedPointer<ChannelMapping> m_channelMapping;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMappingWindow)
 };
-
-
-
-#endif  // CHANNELMAPPING_H_INCLUDED

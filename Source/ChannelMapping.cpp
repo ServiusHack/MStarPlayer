@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    ChannelMapping.cpp
-    Created: 25 Oct 2013 8:00:09pm
-    Author:  Severin Leonhardt
-
-  ==============================================================================
-*/
-
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include <algorithm>
@@ -19,70 +9,56 @@
 //==============================================================================
 // This is a custom component containing a combo box, which we're going to put inside
 // our table's "output channel" column.
-class OutputChannelColumnCustomComponent    : public Component,
-                                        public ComboBoxListener
+class OutputChannelColumnCustomComponent
+	: public Component
+	, public ComboBoxListener
 {
 public:
-    OutputChannelColumnCustomComponent (ChannelMapping& owner_, int outputChannels)
-        : owner (owner_)
+    OutputChannelColumnCustomComponent(ChannelMapping& owner, int outputChannels)
+		: m_owner(owner)
     {
-        comboBox.setEditableText(true);
+		m_comboBox.setEditableText(true);
 
         // just put a combo box inside this component
-        addAndMakeVisible (&comboBox);
+		addAndMakeVisible(&m_comboBox);
 
         for (int i = 1; i <= outputChannels; i++)
-            comboBox.addItem (String(i), i);
+			m_comboBox.addItem(String(i), i);
 
         // when the combo is changed, we'll get a callback.
-        comboBox.addListener (this);
-        comboBox.setWantsKeyboardFocus (false);
+		m_comboBox.addListener(this);
+		m_comboBox.setWantsKeyboardFocus(false);
     }
 
-    void resized()
+    virtual void resized() override
     {
-        comboBox.setBoundsInset (BorderSize<int> (2));
+		m_comboBox.setBoundsInset(BorderSize<int>(2));
     }
 
-    // Our demo code will call this when we may need to update our contents
-    void setRowAndColumn (const int newRow, const int newColumn)
+    void setRowAndColumn(const int newRow, const int newColumn, int outputChannel)
     {
-        row = newRow;
-        columnId = newColumn;
-        comboBox.setSelectedId (owner.getOutputChannel (row), dontSendNotification);
+		m_row = newRow;
+		m_columnId = newColumn;
+		m_comboBox.setSelectedId(outputChannel, dontSendNotification);
     }
 
-    void comboBoxChanged (ComboBox* /*comboBoxThatHasChanged*/)
+    virtual void comboBoxChanged(ComboBox* /*comboBoxThatHasChanged*/) override
     {
-        owner.setChannelMapping (row, comboBox.getSelectedId());
+		m_owner.setChannelMapping(m_row, m_comboBox.getSelectedId());
     }
 
 private:
-    ChannelMapping& owner;
-    ComboBox comboBox;
-    int row, columnId;
+    ChannelMapping& m_owner;
+	ComboBox m_comboBox;
+	int m_row, m_columnId;
 };
 
 //==============================================================================
-ChannelMapping::ChannelMapping(int outputChannels_, std::vector<int> mapping, const ChangeMappingCallback callback) :
-outputChannels(outputChannels_), m_mapping(mapping), font(14.0f), m_callback(callback)
+ChannelMapping::ChannelMapping(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback)
+	: m_outputChannels(outputChannels)
+	, m_mapping(mapping)
+	, m_callback(callback)
 {
-        addAndMakeVisible (&table);
-        table.setModel (this);
-
-        // give the table component a border
-        table.setColour (ListBox::outlineColourId, Colours::grey);
-        table.setOutlineThickness (1);
-
-        // set the table header columns
-        table.getHeader().addColumn ("Player Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
-        table.getHeader().addColumn ("Output Channel", 2, 100, 50, 400, TableHeaderComponent::defaultFlags);
-        
-}
-
-void ChannelMapping::resized()
-{
-        table.setBoundsInset (BorderSize<int> (8));
 }
 
 int ChannelMapping::getNumRows()
@@ -90,10 +66,8 @@ int ChannelMapping::getNumRows()
     return m_mapping.size();
 }
 
-void ChannelMapping::paintRowBackground (Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+void ChannelMapping::paintRowBackground (Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
-    if (rowIsSelected)
-        g.fillAll (Colours::lightblue);
 }
 
 void ChannelMapping::paintCell (Graphics& g,
@@ -102,36 +76,33 @@ void ChannelMapping::paintCell (Graphics& g,
                 int width, int height,
                 bool /*rowIsSelected*/)
 {
-    g.setColour (Colours::black);
-    g.setFont (font);
+    g.setColour(Colours::black);
 
     if (columnId == 1) {
         const String text = String(rowNumber + 1);
-        g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
+        g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
     }
 
-    g.setColour (Colours::black.withAlpha (0.2f));
-    g.fillRect (width - 1, 0, 1, height);
+    g.setColour(Colours::black.withAlpha (0.2f));
+    g.fillRect(width - 1, 0, 1, height);
 }
 
 Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
-    if (columnId == 2) // If it's the output channel column, we'll return our custom component..
-    {
-        OutputChannelColumnCustomComponent* comboBox = (OutputChannelColumnCustomComponent*) existingComponentToUpdate;
+    if (columnId == 2) {
+		// If it's the output channel column, we'll return our custom component..
+
+        OutputChannelColumnCustomComponent* comboBox = static_cast<OutputChannelColumnCustomComponent*>(existingComponentToUpdate);
 
         // If an existing component is being passed-in for updating, we'll re-use it, but
         // if not, we'll have to create one.
-        if (comboBox == 0) {
-            comboBox = new OutputChannelColumnCustomComponent (*this, outputChannels);
-        }
+        if (comboBox == nullptr)
+            comboBox = new OutputChannelColumnCustomComponent(*this, m_outputChannels);
 
-        comboBox->setRowAndColumn (rowNumber, columnId);
+		comboBox->setRowAndColumn(rowNumber, columnId, getOutputChannel(rowNumber));
 
         return comboBox;
-    }
-    else
-    {
+    } else {
         // for any other column, just return 0, as we'll be painting these columns directly.
 
         jassert (existingComponentToUpdate == 0);
@@ -151,32 +122,39 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 
 
 //==============================================================================
-ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback) : DialogWindow("Configure Channels",
-                                        Colours::lightgrey,
-                                        true,
-                                        false)
-										, outputChannels(outputChannels)
-										, changeCallback(callback)
-										, closeCallback(closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback)
+	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
+	, m_outputChannels(outputChannels)
+	, m_changeCallback(callback)
+	, m_closeCallback(closeCallback)
+	, m_tableListBox(new TableListBox())
+	, m_channelMapping(new ChannelMapping(m_outputChannels, mapping, m_changeCallback))
 {
-	component = new ChannelMapping(outputChannels, mapping, callback);
-    component->setSize(400,400);
-    
-    setContentOwned (component, true);
-    centreWithSize (getWidth(), getHeight());
-    setVisible (true);
+	m_tableListBox->setModel(m_channelMapping);
+
+	// m_tableListBox the table component a border
+	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
+	m_tableListBox->setOutlineThickness(1);
+
+	// set the table header columns
+	m_tableListBox->getHeader().addColumn("Player Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn("Output Channel", 2, 100, 50, 400, TableHeaderComponent::defaultFlags);
+
+	setBoundsInset(BorderSize<int>(8));
+
+	setContentOwned(m_tableListBox, false);
+    centreWithSize(400, 400);
+    setVisible(true);
     setResizable(true, true);
 }
 
 void ChannelMappingWindow::closeButtonPressed()
 {
-	closeCallback();
+	m_closeCallback();
 }
 
 void ChannelMappingWindow::setMapping(std::vector<int> mapping)
 {
-	component = new ChannelMapping(outputChannels, mapping, changeCallback);
-	component->setSize(400, 400);
-
-	setContentOwned(component, true);
+	m_channelMapping = new ChannelMapping(m_outputChannels, mapping, m_changeCallback);
+	m_tableListBox->setModel(m_channelMapping);
 }
