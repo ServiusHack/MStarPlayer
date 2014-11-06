@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain)
 	: m_audioThumbnailCache(1)
 	, m_trackIndex(trackIndex)
 	, m_stereo(stereo)
@@ -24,9 +24,13 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_soloChangedCallback(soloChangedCallback)
 	, m_longestDuration(0)
 	, m_progress(0)
+	, m_playerGain(gain)
+	, m_trackGain(1.0f)
 {
 	m_formatManager.registerBasicFormats();
 	m_thread.startThread(3);
+
+	m_transportSource.setGain(gain);
 
 	m_remappingAudioSource = new ChannelRemappingAudioSource(&m_transportSource, false);
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
@@ -106,26 +110,42 @@ void Track::setName(String name)
 	m_descriptionLabel->setText(name, sendNotification);
 }
 
+void Track::setPlayerGain(float gain)
+{
+	m_playerGain = gain;
+	updateGain();
+}
+
+void Track::setTrackGain(float gain)
+{
+	m_trackGain = gain;
+	updateGain();
+}
+
 void Track::buttonClicked(Button *button)
 {
 	if (button == m_muteButton) {
-		setMuteState();
+		updateGain();
 	}
 	else if (button == m_soloButton) {
 		m_soloChangedCallback();
 	}
 	else if (button == m_editButton) {
-		TrackSettingsChangedCallback settingsCallback = [&](String name) {
+		TrackSettingsChangedCallback settingsCallback = [this](String name) {
 			setName(name);
 		};
-		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), settingsCallback));
+
+		VolumeChangedCallback volumeChangedCallback = [this](float gain) {
+			setTrackGain(gain);
+		};
+		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), settingsCallback, volumeChangedCallback));
 	}
 }
 
-void Track::setMuteState()
+void Track::updateGain()
 {
 	bool mute = m_muteButton->getToggleState() || (m_soloMute && !m_soloButton->getToggleState());
-	m_transportSource.setGain(mute ? 0.0f : 1.0f);
+	m_transportSource.setGain(mute ? 0.0f : (m_playerGain * m_trackGain));
 }
 
 bool Track::isSolo() const
@@ -234,7 +254,7 @@ void Track::loadFileIntoTransport()
 								&m_thread, // this is the background thread to use for reading-ahead
 								reader->sampleRate);
 
-	setMuteState();
+	updateGain();
 
 	m_duration = m_transportSource.getLengthInSeconds();
 	m_durationChangedCallback();
@@ -383,7 +403,7 @@ void Track::setLongestDuration(double duration)
 void Track::setSoloMute(bool mute)
 {
 	m_soloMute = mute;
-	setMuteState();
+	updateGain();
 }
 
 void Track::setPositionCallback(PositionCallback callback)

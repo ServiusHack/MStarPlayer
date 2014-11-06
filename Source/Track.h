@@ -18,7 +18,7 @@ class Track
 	, private Timer
 {
 public:
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain);
 	~Track();
 
 	/** Play or stop the audio playback. */
@@ -61,10 +61,14 @@ public:
 
 	void setName(String name);
 
+	void setPlayerGain(float gain);
+
+	void setTrackGain(float gain);
+
 private:
 	void updateIdText();
 	void loadFile();
-	void setMuteState();
+	void updateGain();
 
 	double m_progress; // the progress of the playback
 
@@ -95,6 +99,8 @@ private:
 	bool m_soloMute;
 	double m_duration;
 	double m_longestDuration;
+	float m_playerGain;
+	float m_trackGain;
 
 	DurationChangedCallback m_durationChangedCallback;
 	DurationChangedCallback m_soloChangedCallback;

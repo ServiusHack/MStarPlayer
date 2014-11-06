@@ -1,10 +1,10 @@
 #include "TrackEditDialog.h"
 
 
-TrackEditDialogWindow::TrackEditDialogWindow(String name, TrackSettingsChangedCallback settingsChangedCallback)
+TrackEditDialogWindow::TrackEditDialogWindow(String name, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
 	: DialogWindow("TrackEdit player", Colours::lightgrey, true, true)
 {
-	TrackEditDialogComponent* component = new TrackEditDialogComponent(name, settingsChangedCallback, this);
+	TrackEditDialogComponent* component = new TrackEditDialogComponent(name, settingsChangedCallback, volumeChangedCallback, this);
 	setContentOwned(component, true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
@@ -31,9 +31,10 @@ void TrackEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 	static_cast<TrackEditDialogComponent*>(getContentComponent())->m_nameEditor->grabKeyboardFocus();
 }
 
-TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsChangedCallback settingsChangedCallback, TrackEditDialogWindow* parent)
+TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent)
 	: m_parent(parent)
 	, m_settingsChangedCallback(settingsChangedCallback)
+	, m_volumeChangedCallback(volumeChangedCallback)
 {
 	addAndMakeVisible(m_nameLabel = new Label("name label",
                                           TRANS("Name of the track:")));
@@ -54,6 +55,13 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsCha
 	m_nameEditor->setText(name);
 	m_nameEditor->selectAll();
 
+	addAndMakeVisible(m_volumeSlider = new Slider("volume slider"));
+	m_volumeSlider->setRange(0, 2, 0.1);
+	m_volumeSlider->setValue(1.0);
+	m_volumeSlider->setSliderStyle(Slider::LinearVertical);
+	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	m_volumeSlider->addListener(this);
+
 	addAndMakeVisible(m_saveButton = new TextButton("save"));
 	m_saveButton->setButtonText(TRANS("Save"));
 	m_saveButton->addListener(this);
@@ -66,7 +74,7 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsCha
 
 	setWantsKeyboardFocus(false);
 
-    setSize (200, 100);
+    setSize(250, 200);
 }
 
 TrackEditDialogComponent::~TrackEditDialogComponent()
@@ -79,10 +87,12 @@ TrackEditDialogComponent::~TrackEditDialogComponent()
 
 void TrackEditDialogComponent::resized()
 {
-	m_nameLabel->setBounds(0, 0, 100, 24);
-	m_nameEditor->setBounds(110, 0, 50, 24);
-	m_saveButton->setBounds(8, 56, 80, 24);
-	m_abortButton->setBounds(112, 56, 80, 24);
+	m_volumeSlider->setBounds(10, 10, 16, getHeight() - 40);
+
+	m_nameLabel->setBounds(30, 10, 100, 24);
+	m_nameEditor->setBounds(140, 10, 70, 24);
+	m_saveButton->setBounds(8, getHeight() - 30, 80, 24);
+	m_abortButton->setBounds(112, getHeight() - 30, 80, 24);
 }
 
 void TrackEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
@@ -96,4 +106,9 @@ void TrackEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
     {
 		m_parent->setVisible(false);
     }
+}
+
+void TrackEditDialogComponent::sliderValueChanged(Slider */*slider*/)
+{
+	m_volumeChangedCallback(m_volumeSlider->getValue());
 }

@@ -121,7 +121,7 @@ PlaylistPlayerWindow::~PlaylistPlayerWindow()
 
 void PlaylistPlayerWindow::setGain(float gain)
 {
-	//TODO: Implement
+	m_tracks->setGain(gain);
 }
 
 void PlaylistPlayerWindow::paint (Graphics& g)

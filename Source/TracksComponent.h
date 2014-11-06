@@ -28,8 +28,11 @@ public:
 
 	void setOutputChannels(int outputChannels);
 
+	void setGain(float gain);
+
 private:
 	OwnedArray<Track> m_tracks;
+	float m_gain;
 
 	MixerComponent* m_mixer;
 	MixerAudioSource m_tracksMixer;
