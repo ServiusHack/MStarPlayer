@@ -36,7 +36,7 @@ MixerComponent::~MixerComponent()
 }
 
 void MixerComponent::registerPlayer(Player* player) {
-	addPlayerSlider();
+	addPlayerSlider(player->getGain());
 	m_players.add(player);
 	resized();
 }
@@ -74,12 +74,12 @@ void MixerComponent::resized()
 
 }
 
-void MixerComponent::addPlayerSlider()
+void MixerComponent::addPlayerSlider(float gain)
 {
     Slider* slider = new Slider();
     addAndMakeVisible (slider);
     slider->setRange (0, 2, 0.1);
-    slider->setValue(1.0);
+    slider->setValue(gain);
     slider->setSliderStyle (Slider::LinearVertical);
     slider->setTextBoxStyle (Slider::NoTextBox, true,0,0);
     slider->addListener (this);

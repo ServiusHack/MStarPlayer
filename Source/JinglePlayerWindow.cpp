@@ -12,7 +12,7 @@ namespace {
 	const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels)
+JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_thread("audio file preview")
@@ -61,6 +61,8 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels
 	m_remappingAudioSource->setOutputChannelMapping(0, 0);
 	m_remappingAudioSource->setOutputChannelMapping(1, 1);
 	mixer->getMixerAudioSource().addInputSource(m_remappingAudioSource, false);
+	
+	setGain(gain);
 	mixer->registerPlayer(this);
 
 	setBounds(0, 0, 300, 150);
@@ -76,6 +78,11 @@ JinglePlayerWindow::~JinglePlayerWindow()
 void JinglePlayerWindow::setGain(float gain)
 {
 	m_transportSource.setGain(gain);
+}
+
+float JinglePlayerWindow::getGain()
+{
+	return m_transportSource.getGain();
 }
 
 void JinglePlayerWindow::setOutputChannels(int outputChannels)
@@ -229,6 +236,7 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 {
     XmlElement* element = new XmlElement("Player");
     element->setAttribute("type", "jingle");
+	element->setAttribute("gain", m_transportSource.getGain());
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	Rectangle<int> bounds = getParentComponent()->getBounds();

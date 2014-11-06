@@ -298,6 +298,7 @@ XmlElement* Track::saveToXml() const
 	element->setAttribute("stereo", m_stereo ? "true" : "false");
 	element->setAttribute("mute", m_muteButton->getToggleState() ? "true" : "false");
 	element->setAttribute("solo", m_soloButton->getToggleState() ? "true" : "false");
+	element->setAttribute("gain", m_trackGain);
 
 
 	XmlElement* nameXml = new XmlElement("Name");
@@ -318,6 +319,8 @@ void Track::restoreFromXml(const XmlElement& element)
 	m_stereo = element.getStringAttribute("stereo", "false") == "true";
 	m_muteButton->setToggleState(element.getStringAttribute("mute", "false") == "true", sendNotification);
 	m_soloButton->setToggleState(element.getStringAttribute("solo", "false") == "true", sendNotification);
+	m_trackGain = static_cast<float>(element.getDoubleAttribute("gain", 1.0));
+	updateGain();
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	if (nameXml != nullptr)

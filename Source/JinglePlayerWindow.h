@@ -27,7 +27,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    JinglePlayerWindow(MixerComponent* mixer, int outputChannels);
+	JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f);
 
     /** Destructor */
     ~JinglePlayerWindow();
@@ -65,6 +65,8 @@ public:
     void restoreFromXml (const XmlElement& element);
 
 	void setGain(float gain);
+
+	float getGain();
 
 private:
 

@@ -7,7 +7,7 @@
 #include "RenameDialog.h"
 #include "JinglePlayerWindow.h"
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels)
+PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_thread("audio file preview")
@@ -109,6 +109,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChan
 	}), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
 
+	setGain(gain);
 	mixer->registerPlayer(this);
 
 	setBounds(0, 0, 600, 300);
@@ -122,6 +123,11 @@ PlaylistPlayerWindow::~PlaylistPlayerWindow()
 void PlaylistPlayerWindow::setGain(float gain)
 {
 	m_tracks->setGain(gain);
+}
+
+float PlaylistPlayerWindow::getGain()
+{
+	return m_tracks->getGain();
 }
 
 void PlaylistPlayerWindow::paint (Graphics& g)
@@ -210,7 +216,8 @@ void PlaylistPlayerWindow::buttonClicked(Button * button)
 XmlElement* PlaylistPlayerWindow::saveToXml() const
 {
     XmlElement* element = new XmlElement("Player");
-    element->setAttribute("type", "playlist");
+	element->setAttribute("type", "playlist");
+	element->setAttribute("gain", m_tracks->getGain());
 
 	Rectangle<int> bounds = getParentComponent()->getBounds();
 

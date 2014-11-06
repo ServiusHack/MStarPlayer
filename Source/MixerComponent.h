@@ -62,7 +62,7 @@ private:
 	/** Adds a new slider to the component because not enough are being shown. */
 	void addChannelSlider();
 
-	void addPlayerSlider();
+	void addPlayerSlider(float gain);
 	
 	// audio output
 	MixerAudioSource m_mixerAudioSource;

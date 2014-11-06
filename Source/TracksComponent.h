@@ -29,6 +29,7 @@ public:
 	void setOutputChannels(int outputChannels);
 
 	void setGain(float gain);
+	float getGain();
 
 private:
 	OwnedArray<Track> m_tracks;

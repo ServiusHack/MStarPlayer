@@ -21,7 +21,7 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels);
+	PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f);
 
     /** Destructor */
     ~PlaylistPlayerWindow();
@@ -51,6 +51,8 @@ public:
     void restoreFromXml(const XmlElement& element);
 	
 	void setGain(float gain);
+
+	float getGain();
 
 	void configureChannels();
 

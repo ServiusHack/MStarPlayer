@@ -6,6 +6,8 @@ class Player : public Component {
 
 public:
 	virtual void setGain(float gain) = 0;
+
+	virtual float getGain() = 0;
 	
 	virtual XmlElement* saveToXml() const = 0;
 

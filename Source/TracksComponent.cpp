@@ -136,3 +136,8 @@ void TracksComponent::setGain(float gain)
 	for (int i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->setPlayerGain(gain);
 }
+
+float TracksComponent::getGain()
+{
+	return m_gain;
+}

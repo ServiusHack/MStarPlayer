@@ -349,14 +349,16 @@ void MainContentComponent::readProjectFile()
             }
 
             else if (type == "jingle") {
-				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels());
+				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
+				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
             }
 
-            else if (type == "playlist") {
-				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels());
+			else if (type == "playlist") {
+				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
+				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
