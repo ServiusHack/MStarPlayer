@@ -147,7 +147,7 @@ void Track::buttonClicked(Button *button)
 		VolumeChangedCallback volumeChangedCallback = [this](float gain) {
 			setTrackGain(gain);
 		};
-		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), settingsCallback, volumeChangedCallback));
+		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), m_trackGain, settingsCallback, volumeChangedCallback));
 	}
 }
 
@@ -333,8 +333,7 @@ void Track::restoreFromXml(const XmlElement& element)
 	m_stereo = element.getStringAttribute("stereo", "false") == "true";
 	m_muteButton->setToggleState(element.getStringAttribute("mute", "false") == "true", sendNotification);
 	m_soloButton->setToggleState(element.getStringAttribute("solo", "false") == "true", sendNotification);
-	m_trackGain = static_cast<float>(element.getDoubleAttribute("gain", 1.0));
-	updateGain();
+	setTrackGain(static_cast<float>(element.getDoubleAttribute("gain", 1.0)));
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	if (nameXml != nullptr)

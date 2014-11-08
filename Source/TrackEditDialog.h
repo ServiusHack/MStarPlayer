@@ -10,7 +10,7 @@ typedef std::function<void(float)> VolumeChangedCallback;
 class TrackEditDialogWindow : public DialogWindow
 {
 public:
-	TrackEditDialogWindow(String name, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback);
+	TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback);
 
 	void closeButtonPressed();
 
@@ -32,7 +32,7 @@ class TrackEditDialogComponent
 	friend class TrackEditDialogWindow;
 
 public:
-	TrackEditDialogComponent(String name, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
+	TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
 	~TrackEditDialogComponent();
 
     void resized();

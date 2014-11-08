@@ -1,10 +1,10 @@
 #include "TrackEditDialog.h"
 
 
-TrackEditDialogWindow::TrackEditDialogWindow(String name, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
+TrackEditDialogWindow::TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
 	: DialogWindow("Edit track", Colours::lightgrey, true, true)
 {
-	TrackEditDialogComponent* component = new TrackEditDialogComponent(name, settingsChangedCallback, volumeChangedCallback, this);
+	TrackEditDialogComponent* component = new TrackEditDialogComponent(name, trackGain, settingsChangedCallback, volumeChangedCallback, this);
 	setContentOwned(component, true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
@@ -31,7 +31,7 @@ void TrackEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 	static_cast<TrackEditDialogComponent*>(getContentComponent())->m_nameEditor->grabKeyboardFocus();
 }
 
-TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent)
+TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent)
 	: m_parent(parent)
 	, m_settingsChangedCallback(settingsChangedCallback)
 	, m_volumeChangedCallback(volumeChangedCallback)
@@ -58,7 +58,7 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsCha
 
 	addAndMakeVisible(m_volumeSlider = new Slider("volume slider"));
 	m_volumeSlider->setRange(0, 2, 0.1);
-	m_volumeSlider->setValue(1.0);
+	m_volumeSlider->setValue(trackGain);
 	m_volumeSlider->setSliderStyle(Slider::LinearVertical);
 	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	m_volumeSlider->addListener(this);
