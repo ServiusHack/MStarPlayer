@@ -71,6 +71,29 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMapping)
 };
 
+class ChannelMappingComponent
+	: public Component
+	, public ButtonListener
+{
+public:
+	ChannelMappingComponent(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback);
+
+	void resized();
+	void buttonClicked(Button* buttonThatWasClicked);
+
+	void setMapping(std::vector<int> mapping);
+
+private:
+	int m_outputChannels;
+	const ChangeMappingCallback m_changeCallback;
+	const CloseCallback m_closeCallback;
+	ScopedPointer<TableListBox> m_tableListBox;
+	ScopedPointer<ChannelMapping> m_channelMapping;
+	ScopedPointer<TextButton> m_closeButton;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
+};
+
 //==============================================================================
 /**
     Wrapper window to show the ChannelMapping component.
@@ -93,12 +116,9 @@ public:
 	void setMapping(std::vector<int> mapping);
 
 private:
-	int m_outputChannels;
-	const ChangeMappingCallback m_changeCallback;
 	const CloseCallback m_closeCallback;
 
-	ScopedPointer<TableListBox> m_tableListBox;
-	ScopedPointer<ChannelMapping> m_channelMapping;
+	ChannelMappingComponent* m_component;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMappingWindow)
 };

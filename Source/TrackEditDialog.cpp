@@ -54,6 +54,7 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsCha
 	m_nameEditor->setEscapeAndReturnKeysConsumed(false);
 	m_nameEditor->setText(name);
 	m_nameEditor->selectAll();
+	m_nameEditor->addListener(this);
 
 	addAndMakeVisible(m_volumeSlider = new Slider("volume slider"));
 	m_volumeSlider->setRange(0, 2, 0.1);
@@ -62,15 +63,10 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, TrackSettingsCha
 	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	m_volumeSlider->addListener(this);
 
-	addAndMakeVisible(m_saveButton = new TextButton("save"));
-	m_saveButton->setButtonText(TRANS("Save"));
-	m_saveButton->addListener(this);
-	m_saveButton->setWantsKeyboardFocus(false);
-
-	addAndMakeVisible(m_abortButton = new TextButton("abort"));
-	m_abortButton->setButtonText(TRANS("Abort"));
-	m_abortButton->addListener(this);
-	m_abortButton->setWantsKeyboardFocus(false);
+	addAndMakeVisible(m_closeButton = new TextButton("close"));
+	m_closeButton->setButtonText(TRANS("Close"));
+	m_closeButton->addListener(this);
+	m_closeButton->setWantsKeyboardFocus(false);
 
 	setWantsKeyboardFocus(false);
 
@@ -81,34 +77,39 @@ TrackEditDialogComponent::~TrackEditDialogComponent()
 {
 	m_nameLabel = nullptr;
 	m_nameEditor = nullptr;
-	m_saveButton = nullptr;
-	m_abortButton = nullptr;
+	m_closeButton = nullptr;
 }
 
 void TrackEditDialogComponent::resized()
 {
-	m_volumeSlider->setBounds(10, 10, 16, getHeight() - 40);
+	const static int buttonWidth = 80;
+	const static int buttonHeight = 24;
+	const static int padding = 10;
+
+	m_volumeSlider->setBounds(padding, padding, 16, getHeight() - buttonHeight - 3 * padding);
 
 	m_nameLabel->setBounds(30, 10, 100, 24);
 	m_nameEditor->setBounds(140, 10, 70, 24);
-	m_saveButton->setBounds(8, getHeight() - 30, 80, 24);
-	m_abortButton->setBounds(112, getHeight() - 30, 80, 24);
+
+	m_closeButton->setBounds(
+		(getWidth() - buttonWidth) / 2,
+		getHeight() - buttonHeight - padding,
+		buttonWidth,
+		buttonHeight
+		);
 }
 
-void TrackEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
+void TrackEditDialogComponent::buttonClicked(Button* /*buttonThatWasClicked*/)
 {
-	if (buttonThatWasClicked == m_saveButton)
-	{
-		m_settingsChangedCallback(m_nameEditor->getText());
-		m_parent->setVisible(false);
-    }
-	else if (buttonThatWasClicked == m_abortButton)
-    {
-		m_parent->setVisible(false);
-    }
+	m_parent->setVisible(false);
 }
 
-void TrackEditDialogComponent::sliderValueChanged(Slider */*slider*/)
+void TrackEditDialogComponent::sliderValueChanged(Slider* /*slider*/)
 {
 	m_volumeChangedCallback(m_volumeSlider->getValue());
+}
+
+void TrackEditDialogComponent::textEditorTextChanged(TextEditor &)
+{
+	m_settingsChangedCallback(m_nameEditor->getText());
 }

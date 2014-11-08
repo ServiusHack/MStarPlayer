@@ -27,6 +27,7 @@ class TrackEditDialogComponent
 	: public Component
     , public ButtonListener
 	, public juce::Slider::Listener
+	, public juce::TextEditor::Listener
 {
 	friend class TrackEditDialogWindow;
 
@@ -38,11 +39,12 @@ public:
     void buttonClicked (Button* buttonThatWasClicked);
 	virtual void sliderValueChanged(Slider *slider) override;
 
+	virtual void textEditorTextChanged(TextEditor &) override;
+
 private:
 	ScopedPointer<Label> m_nameLabel;
 	ScopedPointer<TextEditor> m_nameEditor;
-	ScopedPointer<TextButton> m_saveButton;
-	ScopedPointer<TextButton> m_abortButton;
+	ScopedPointer<TextButton> m_closeButton;
 	ScopedPointer<Slider> m_volumeSlider;
 
 	TrackSettingsChangedCallback m_settingsChangedCallback;

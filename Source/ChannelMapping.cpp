@@ -122,28 +122,13 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 
 
 //==============================================================================
-ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
 	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
-	, m_outputChannels(outputChannels)
-	, m_changeCallback(callback)
 	, m_closeCallback(closeCallback)
-	, m_tableListBox(new TableListBox())
-	, m_channelMapping(new ChannelMapping(m_outputChannels, mapping, m_changeCallback))
 {
-	m_tableListBox->setModel(m_channelMapping);
-
-	// m_tableListBox the table component a border
-	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
-	m_tableListBox->setOutlineThickness(1);
-
-	// set the table header columns
-	m_tableListBox->getHeader().addColumn("Player Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
-	m_tableListBox->getHeader().addColumn("Output Channel", 2, 100, 50, 400, TableHeaderComponent::defaultFlags);
-
-	setBoundsInset(BorderSize<int>(8));
-
-	setContentOwned(m_tableListBox, false);
-    centreWithSize(400, 400);
+	m_component = new ChannelMappingComponent(outputChannels, mapping, changeCallback, closeCallback);
+	setContentOwned(m_component, true);
+	centreWithSize(getWidth(), getHeight());
     setVisible(true);
     setResizable(true, true);
 }
@@ -155,6 +140,57 @@ void ChannelMappingWindow::closeButtonPressed()
 
 void ChannelMappingWindow::setMapping(std::vector<int> mapping)
 {
+	m_component->setMapping(mapping);
+}
+
+ChannelMappingComponent::ChannelMappingComponent(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+	: m_outputChannels(outputChannels)
+	, m_changeCallback(changeCallback)
+	, m_closeCallback(closeCallback)
+	, m_tableListBox(new TableListBox())
+	, m_channelMapping(new ChannelMapping(m_outputChannels, mapping, m_changeCallback))
+{
+	addAndMakeVisible(m_tableListBox);
+
+	m_tableListBox->setModel(m_channelMapping);
+
+	// m_tableListBox the table component a border
+	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
+	m_tableListBox->setOutlineThickness(1);
+
+	// set the table header columns
+	m_tableListBox->getHeader().addColumn("Player Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn("Output Channel", 2, 100, 50, 400, TableHeaderComponent::defaultFlags);
+
+	addAndMakeVisible(m_closeButton = new TextButton("close"));
+	m_closeButton->setButtonText(TRANS("Close"));
+	m_closeButton->addListener(this);
+	m_closeButton->setWantsKeyboardFocus(false);
+
+	setSize(400, 400);
+}
+
+void ChannelMappingComponent::setMapping(std::vector<int> mapping)
+{
 	m_channelMapping = new ChannelMapping(m_outputChannels, mapping, m_changeCallback);
 	m_tableListBox->setModel(m_channelMapping);
+}
+
+void ChannelMappingComponent::buttonClicked(Button* /*buttonThatWasClicked*/)
+{
+	m_closeCallback();
+}
+
+void ChannelMappingComponent::resized()
+{
+	const static int buttonWidth = 80;
+	const static int buttonHeight = 24;
+	const static int padding = 10;
+	m_tableListBox->setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
+	m_closeButton->setBounds(
+		(getWidth() - buttonWidth) / 2,
+		getHeight() - buttonHeight - padding,
+		buttonWidth,
+		buttonHeight
+		);
 }
