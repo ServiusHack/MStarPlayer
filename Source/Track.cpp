@@ -48,6 +48,14 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	m_descriptionLabel->setText(getName(), sendNotification);
 	m_descriptionLabel->setJustificationType(Justification::topLeft);
 
+	m_volumeSlider = new Slider("volume");
+	addAndMakeVisible(m_volumeSlider);
+	m_volumeSlider->setRange(0, 2, 0.1);
+	m_volumeSlider->setValue(1.0);
+	m_volumeSlider->setSliderStyle(Slider::LinearVertical);
+	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	m_volumeSlider->addListener(this);
+
 	m_editButton = new ImageButton("edit");
 	Image editImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
 	m_editButton->setImages(true, true, true,
@@ -119,6 +127,7 @@ void Track::setPlayerGain(float gain)
 void Track::setTrackGain(float gain)
 {
 	m_trackGain = gain;
+	m_volumeSlider->setValue(gain);
 	updateGain();
 }
 
@@ -140,6 +149,11 @@ void Track::buttonClicked(Button *button)
 		};
 		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), settingsCallback, volumeChangedCallback));
 	}
+}
+
+void Track::sliderValueChanged(Slider* /*slider*/)
+{
+	setTrackGain(m_volumeSlider->getValue());
 }
 
 void Track::updateGain()
@@ -265,7 +279,7 @@ void Track::paint (Graphics& g)
 	if (m_trackIndex > 1)
 		g.drawLine(0.0f, 0.0f, static_cast<float>(getWidth()), 0.0f);
 
-	const static int componentWidth = 100 + 40 + 40;
+	const static int componentWidth = 100 + 40 + 40 + 20;
 	int drawWidth = getWidth() - componentWidth;
 	if (m_longestDuration != 0)
 		drawWidth = static_cast<int>(drawWidth * m_audioThumbnail->getTotalLength() / m_longestDuration);
@@ -339,12 +353,14 @@ void Track::resized()
 	m_descriptionLabel->setBounds(0, 20, 100, getHeight() - 20);
 
 	static const int buttonWidth = 40;
-	
-	m_editButton->setBounds(100 + 3, 3, buttonWidth - 6, getHeight() / 2 - 6);
-	m_openButton->setBounds(100 + 3, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
 
-	m_soloButton->setBounds(100 + 3 + buttonWidth, 3, buttonWidth - 6, getHeight() / 2 - 6);
-	m_muteButton->setBounds(100 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
+	m_volumeSlider->setBounds(100 + 3, 3, 20, getHeight() - 6);
+	
+	m_editButton->setBounds(100 + 20 + 3, 3, buttonWidth - 6, getHeight() / 2 - 6);
+	m_openButton->setBounds(100 + 20 + 3, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
+
+	m_soloButton->setBounds(100 + 20 + 3 + buttonWidth, 3, buttonWidth - 6, getHeight() / 2 - 6);
+	m_muteButton->setBounds(100 + 20 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
 }
 
 void Track::play()

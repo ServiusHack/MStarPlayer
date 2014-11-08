@@ -15,6 +15,7 @@ class Track
 	: public Component
 	, public ChangeListener
 	, public Button::Listener
+	, public juce::Slider::Listener
 	, private Timer
 {
 public:
@@ -26,6 +27,8 @@ public:
 
 	void paint (Graphics&);
 	void resized();
+
+	virtual void sliderValueChanged(Slider *slider) override;
 
 	void mouseDown (const MouseEvent & event);
 
@@ -78,6 +81,7 @@ private:
 	ScopedPointer<ImageButton> m_openButton;
 	ScopedPointer<ImageButton> m_soloButton;
 	ScopedPointer<ImageButton> m_muteButton;
+	ScopedPointer<Slider> m_volumeSlider;
 	ScopedPointer<AudioThumbnail> m_audioThumbnail;
 	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
 	AudioThumbnailCache m_audioThumbnailCache;
