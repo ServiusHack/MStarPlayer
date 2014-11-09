@@ -10,9 +10,10 @@ public:
 
 	typedef std::function<void(Colour)> ColourChangedCallback;
 	typedef std::function<void(String)> StringChangedCallback;
+	typedef std::function<void(juce::File)> ImageChangedCallback;
 	typedef std::function<void()> CloseCallback;
 
-	RenameDialogWindow(String playerName, Colour color, StringChangedCallback stringCallback, ColourChangedCallback colourCallback, CloseCallback closeCallback);
+	RenameDialogWindow(String playerName, Colour color, String imagePath, StringChangedCallback stringCallback, ColourChangedCallback colourCallback, CloseCallback closeCallback, ImageChangedCallback imageCallback = ImageChangedCallback());
 
 	void closeButtonPressed();
 
@@ -37,7 +38,7 @@ class RenameDialogComponent
 	friend class RenameDialogWindow;
 
 public:
-	RenameDialogComponent(String playerName, Colour color, RenameDialogWindow* parent, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback);
+	RenameDialogComponent(String playerName, Colour color, String imagePath, RenameDialogWindow* parent, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback, RenameDialogWindow::ImageChangedCallback imageCallback);
 	~RenameDialogComponent();
 
     void resized();
@@ -52,12 +53,16 @@ private:
 	ScopedPointer<TextButton> m_closeButton;
 
 	ScopedPointer<TextButton> m_colorButton;
+	OptionalScopedPointer<TextButton> m_imageSelectorButton;
+	OptionalScopedPointer<TextButton> m_imageResetButton;
 
 	RenameDialogWindow* m_parent;
 	Colour m_color;
+	File m_imageFile;
 
 	RenameDialogWindow::ColourChangedCallback m_colorCallback;
 	RenameDialogWindow::StringChangedCallback m_stringCallback;
+	RenameDialogWindow::ImageChangedCallback m_imageCallback;
 
 	RenameDialogWindow::CloseCallback m_closeCallback;
 

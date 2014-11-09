@@ -214,7 +214,7 @@ void JinglePlayerWindow::configureChannels()
 void JinglePlayerWindow::rename()
 {
 	if (m_renameDialog.get() == nullptr) {
-		m_renameDialog.set(new RenameDialogWindow(getName(), m_color, [this](String name) {
+		m_renameDialog.set(new RenameDialogWindow(getName(), m_color, m_userImagePath, [this](String name) {
 			setName(name);
 		}, [this](Colour color) {
 			m_color = color;
@@ -222,6 +222,19 @@ void JinglePlayerWindow::rename()
 		}, [&]() {
 			// clear is not working
 			delete m_renameDialog.release();
+		}, [this](juce::File file) {
+			if (file == File::nonexistent)
+			{
+				m_userImagePath = "";
+				delete m_userImage.release();
+				m_playButton->setImages(m_transportSource.isPlaying() ? m_stopImage : m_playImage);
+			}
+			else
+			{
+				m_userImagePath = file.getFullPathName();
+				m_userImage.set(Drawable::createFromImageFile(file), true);
+				m_playButton->setImages(m_userImage.get());
+			}
 		}), true);
 	}
 	m_renameDialog->addToDesktop();
@@ -231,13 +244,13 @@ void JinglePlayerWindow::rename()
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)
 {
 	if (m_transportSource.isPlaying()) {
-		m_playButton->setImages(m_playImage);
+		m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
 		m_transportSource.stop();
 		m_transportSource.setPosition(0);
 		stopTimer();
 	}
 	else {
-		m_playButton->setImages(m_stopImage);
+		m_playButton->setImages(m_userImage ? m_userImage.get() : m_stopImage);
 		m_transportSource.setPosition(0);
 		m_transportSource.start();
 		startTimer(50);
@@ -251,7 +264,7 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 	// unload the previous file source and delete it..
 	m_transportSource.setSource(nullptr);
 	m_currentAudioFileSource = nullptr;
-	m_playButton->setImages(m_playImage);
+	m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
 
 	AudioFormatReader* reader = m_formatManager.createReaderFor(m_audioFile);
 
@@ -288,7 +301,7 @@ void JinglePlayerWindow::timerCallback()
 	double totalLength = m_transportSource.getLengthInSeconds();
 	
 	if (position > totalLength) {
-		m_playButton->setImages(m_playImage);
+		m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
 		position = 0;
 		m_progress = 0.0;
 	} else {
@@ -308,6 +321,8 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
 	element->setAttribute("color", m_color.toString());
+	if (m_userImage)
+		element->setAttribute("image", m_userImagePath);
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	Rectangle<int> bounds = getParentComponent()->getBounds();
@@ -337,6 +352,12 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
 {
 	m_color = Colour::fromString(element.getStringAttribute("color", "0xffffffff"));
+	if (element.hasAttribute("image")) {
+		m_userImagePath = element.getStringAttribute("image");
+		m_userImage.set(Drawable::createFromImageFile(File(m_userImagePath)), true);
+		m_playButton->setImages(m_userImage.get());
+	}
+
 	repaint();
 
 	XmlElement* boundsXml = element.getChildByName("Bounds");

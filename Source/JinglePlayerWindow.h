@@ -102,6 +102,8 @@ private:
 	ScopedPointer<ImageButton>  m_configureButton;
 	ScopedPointer<Drawable> m_playImage;
 	ScopedPointer<Drawable> m_stopImage;
+	OptionalScopedPointer<Drawable> m_userImage;
+	String m_userImagePath;
     
     // configuration menu actions
     void loadFile();

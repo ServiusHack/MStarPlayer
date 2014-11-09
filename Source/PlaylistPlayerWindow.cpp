@@ -250,7 +250,7 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 	case 4:
 		{
 			if (m_renameDialog.get() == nullptr) {
-				m_renameDialog.set(new RenameDialogWindow(getName(), m_color, [this](String name) {
+				m_renameDialog.set(new RenameDialogWindow(getName(), m_color, "", [this](String name) {
 					setName(name);
 				}, [this](Colour color) {
 					m_color = color;
