@@ -218,6 +218,7 @@ void JinglePlayerWindow::rename()
 			setName(name);
 		}, [this](Colour color) {
 			m_color = color;
+			m_mixer->updatePlayerColor(this, m_color);
 			repaint();
 		}, [&]() {
 			// clear is not working
@@ -357,6 +358,8 @@ void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
 		m_userImage.set(Drawable::createFromImageFile(File(m_userImagePath)), true);
 		m_playButton->setImages(m_userImage.get());
 	}
+
+	m_mixer->updatePlayerColor(this, m_color);
 
 	repaint();
 

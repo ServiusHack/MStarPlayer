@@ -70,6 +70,7 @@ MixerFader::MixerFader(bool panEnabled, float gain, bool solo, bool mute, Volume
 
 void MixerFader::paint(Graphics& g)
 {
+	g.fillAll(m_color);
 	/*g.setColour(Colour(0xff000000));
 	Rectangle<int> b = getLocalBounds();
 	//b.reduce(1,1);
@@ -152,4 +153,10 @@ void MixerFader::setMute(bool mute)
 void MixerFader::setSolo(bool solo)
 {
 	m_soloButton->setToggleState(solo, sendNotification);
+}
+
+void MixerFader::setColor(Colour color)
+{
+	m_color = color;
+	repaint();
 }

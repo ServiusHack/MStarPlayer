@@ -43,6 +43,8 @@ public:
 
 	void registerPlayer(Player* player);
 	void unregisterPlayer(Player* player);
+
+	void updatePlayerColor(Player* player, Colour color);
 	
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml

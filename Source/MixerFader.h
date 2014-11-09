@@ -30,6 +30,8 @@ public:
 	void setMute(bool mute);
 	void setSolo(bool solo);
 
+	void setColor(Colour color);
+
 private:
 	ScopedPointer<Label> m_label;
 	ScopedPointer<TextButton> m_soloButton;
@@ -41,4 +43,6 @@ private:
 	PanChangedCallback m_panCallback;
 	SoloChangedCallback m_soloCallback;
 	MuteChangedCallback m_muteCallback;
+
+	Colour m_color;
 };

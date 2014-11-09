@@ -254,6 +254,7 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 					setName(name);
 				}, [this](Colour color) {
 					m_color = color;
+					m_mixer->updatePlayerColor(this, m_color);
 					repaint();
 				}, [&]() {
 					// clear is not working
@@ -310,6 +311,7 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 {
 	m_color = Colour::fromString(element.getStringAttribute("color", "0xffffffff"));
+	m_mixer->updatePlayerColor(this, m_color);
 	repaint();
 
 	XmlElement* boundsXml = element.getChildByName("Bounds");

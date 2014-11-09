@@ -49,6 +49,12 @@ void MixerComponent::unregisterPlayer(Player* player) {
 	resized();
 }
 
+void MixerComponent::updatePlayerColor(Player* player, Colour color)
+{
+	int index = m_players.indexOf(player);
+	m_playerSliders.getUnchecked(index)->setColor(color);
+}
+
 void MixerComponent::paint (Graphics& g)
 {
     g.fillAll (Colour (0xffeeddff));
@@ -62,14 +68,14 @@ void MixerComponent::resized()
 
 	for (int i = 0; i < m_playerSliders.size(); i++) {
 		m_playerSliders.getUnchecked(i)->setBounds(x, 0, sliderWidth, sliderHeight);
-		x += sliderWidth + 10;
+		x += sliderWidth;
 	}
 
 	x += 10;
 
 	for (int i = 0; i < m_channelSliders.size(); i++) {
 		m_channelSliders.getUnchecked(i)->setBounds(x, 0, sliderWidth, sliderHeight);
-        x += sliderWidth + 10;
+        x += sliderWidth;
     }
 
 }
