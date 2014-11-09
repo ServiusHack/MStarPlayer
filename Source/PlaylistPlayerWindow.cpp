@@ -4,7 +4,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PlaylistPlayerWindow.h"
-#include "RenameDialog.h"
 #include "JinglePlayerWindow.h"
 
 PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain, bool solo, bool mute)
@@ -15,6 +14,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChan
 	, m_solo(solo)
 	, m_soloMute(false)
 	, m_mute(mute)
+	, m_color(0xffffffff)
 {	
 	// play button
 	m_playButton = new ImageButton("Play");
@@ -188,6 +188,8 @@ void PlaylistPlayerWindow::paint (Graphics& g)
 	int buttonWidth = std::min(getWidth() / 11, 32);
 	int buttonHeight = buttonWidth;
 
+	g.fillAll(m_color);
+
 	g.drawLine(0.0f, static_cast<float>(buttonHeight), static_cast<float>(getWidth()), static_cast<float>(buttonHeight));
 }
 
@@ -247,11 +249,19 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 		break;
 	case 4:
 		{
-			std::unique_ptr<RenameDialogWindow> dialog(new RenameDialogWindow(getName()));
-			dialog->grabKeyboardFocus();
-			int result = dialog->runModalLoop();
-			if (result == 0)
-				setName(dialog->getPlayerName());
+			if (m_renameDialog.get() == nullptr) {
+				m_renameDialog.set(new RenameDialogWindow(getName(), m_color, [this](String name) {
+					setName(name);
+				}, [this](Colour color) {
+					m_color = color;
+					repaint();
+				}, [&]() {
+					// clear is not working
+					delete m_renameDialog.release();
+				}), true);
+			}
+			m_renameDialog->addToDesktop();
+			m_renameDialog->toFront(true);
 		}
 	}
 }
@@ -273,6 +283,7 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 	element->setAttribute("gain", m_tracks->getGain());
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
+	element->setAttribute("color", m_color.toString());
 
 	Rectangle<int> bounds = getParentComponent()->getBounds();
 
@@ -298,6 +309,9 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 
 void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 {
+	m_color = Colour::fromString(element.getStringAttribute("color", "0xffffffff"));
+	repaint();
+
 	XmlElement* boundsXml = element.getChildByName("Bounds");
 
 	String x = boundsXml->getStringAttribute("x", "0");

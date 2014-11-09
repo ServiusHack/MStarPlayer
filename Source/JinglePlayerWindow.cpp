@@ -5,7 +5,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "JinglePlayerWindow.h"
-#include "RenameDialog.h"
 
 namespace {
 	const int ProgressBarHeight = 20;
@@ -23,6 +22,7 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels
 	, m_solo(solo)
 	, m_soloMute(false) // might be updated later
 	, m_mute(mute)
+	, m_color(0xffffffff)
 {
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
@@ -153,6 +153,11 @@ void JinglePlayerWindow::resized()
 	m_playButton->setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
 }
 
+void JinglePlayerWindow::paint(Graphics& g)
+{
+	g.fillAll(m_color);
+}
+
 void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 {
 	if (event.eventComponent != m_configureButton)
@@ -208,10 +213,19 @@ void JinglePlayerWindow::configureChannels()
 
 void JinglePlayerWindow::rename()
 {
-	std::unique_ptr<RenameDialogWindow> dialog(new RenameDialogWindow(getName()));
-	dialog->grabKeyboardFocus();
-	if (dialog->runModalLoop() == 0)
-		setName(dialog->getPlayerName());
+	if (m_renameDialog.get() == nullptr) {
+		m_renameDialog.set(new RenameDialogWindow(getName(), m_color, [this](String name) {
+			setName(name);
+		}, [this](Colour color) {
+			m_color = color;
+			repaint();
+		}, [&]() {
+			// clear is not working
+			delete m_renameDialog.release();
+		}), true);
+	}
+	m_renameDialog->addToDesktop();
+	m_renameDialog->toFront(true);
 }
 
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)
@@ -293,6 +307,7 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 	element->setAttribute("gain", m_transportSource.getGain());
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
+	element->setAttribute("color", m_color.toString());
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	Rectangle<int> bounds = getParentComponent()->getBounds();
@@ -321,6 +336,9 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 
 void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
 {
+	m_color = Colour::fromString(element.getStringAttribute("color", "0xffffffff"));
+	repaint();
+
 	XmlElement* boundsXml = element.getChildByName("Bounds");
 
 	String x = boundsXml->getStringAttribute("x", "0");

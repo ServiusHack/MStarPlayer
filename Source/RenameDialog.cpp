@@ -1,17 +1,19 @@
 #include "RenameDialog.h"
 
-RenameDialogWindow::RenameDialogWindow(String playerName)
-	: DialogWindow("Rename player", Colours::lightgrey, true, true)
+RenameDialogWindow::RenameDialogWindow(String playerName, Colour color, StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, CloseCallback closeCallback)
+	: DialogWindow("Rename player", Colours::lightgrey, true, false)
+	, m_closeCallback(closeCallback)
 {
-	RenameDialogComponent* component = new RenameDialogComponent(playerName, this);
+	RenameDialogComponent* component = new RenameDialogComponent(playerName, color, this, stringCallback, colourCallback, closeCallback);
 	setContentOwned(component, true);
 	centreWithSize(getWidth(), getHeight());
+	setVisible(true);
 	setResizable(false, false);
 }
 
 void RenameDialogWindow::closeButtonPressed()
 {
-	exitModalState(1);
+	m_closeCallback();
 }
 
 String RenameDialogWindow::getPlayerName()
@@ -34,8 +36,12 @@ void RenameDialogWindow::focusGained(FocusChangeType /*cause*/)
 	static_cast<RenameDialogComponent*>(getContentComponent())->m_textEditor->grabKeyboardFocus();
 }
 
-RenameDialogComponent::RenameDialogComponent(String playerName, RenameDialogWindow* parent)
-: m_parent(parent)
+RenameDialogComponent::RenameDialogComponent(String playerName, Colour color, RenameDialogWindow* parent, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback)
+	: m_parent(parent)
+	, m_color(color)
+	, m_colorCallback(colourCallback)
+	, m_stringCallback(stringCallback)
+	, m_closeCallback(closeCallback)
 {
 	addAndMakeVisible(m_label = new Label("new label",
                                           TRANS("Name of the player:")));
@@ -55,42 +61,75 @@ RenameDialogComponent::RenameDialogComponent(String playerName, RenameDialogWind
 	m_textEditor->setEscapeAndReturnKeysConsumed(false);
 	m_textEditor->setText(playerName);
 	m_textEditor->selectAll();
+	m_textEditor->addListener(this);
 
-	addAndMakeVisible(m_saveButton = new TextButton("save"));
-	m_saveButton->setButtonText(TRANS("Save"));
-	m_saveButton->addListener(this);
-	m_saveButton->setWantsKeyboardFocus(false);
+	addAndMakeVisible(m_colorButton = new TextButton("color"));
+	m_colorButton->setButtonText(TRANS("Choose color"));
+	m_colorButton->addListener(this);
+	m_colorButton->setWantsKeyboardFocus(false);
 
-	addAndMakeVisible(m_abortButton = new TextButton("abort"));
-	m_abortButton->setButtonText(TRANS("Abort"));
-	m_abortButton->addListener(this);
-	m_abortButton->setWantsKeyboardFocus(false);
+	addAndMakeVisible(m_closeButton = new TextButton("close"));
+	m_closeButton->setButtonText(TRANS("Close"));
+	m_closeButton->addListener(this);
+	m_closeButton->setWantsKeyboardFocus(false);
 
 	setWantsKeyboardFocus(false);
 
-    setSize(200, 100);
+    setSize(200, 200);
 }
 
 RenameDialogComponent::~RenameDialogComponent()
 {
 	m_label = nullptr;
 	m_textEditor = nullptr;
-	m_saveButton = nullptr;
-	m_abortButton = nullptr;
+	m_closeButton = nullptr;
 }
 
 void RenameDialogComponent::resized()
 {
-	m_label->setBounds(0, 0, 192, 24);
-	m_textEditor->setBounds(8, 24, 184, 24);
-	m_saveButton->setBounds(8, 56, 80, 24);
-	m_abortButton->setBounds(112, 56, 80, 24);
+	static const int rowHeight = 24;
+	static const int padding = 10;
+	const static int buttonWidth = 80;
+	const static int buttonHeight = 24;
+
+	m_label->setBounds(padding, padding, getWidth(), rowHeight);
+	m_textEditor->setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
+
+	m_colorButton->setBounds(padding, 2 * (padding + rowHeight), getWidth() - 2 * padding, rowHeight);
+
+	m_closeButton->setBounds(
+		(getWidth() - buttonWidth) / 2,
+		getHeight() - 2 * (buttonHeight - padding),
+		buttonWidth,
+		buttonHeight
+		);
 }
 
 void RenameDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 {
-	if (buttonThatWasClicked == m_saveButton)
-		m_parent->exitModalState(0);
-	else if (buttonThatWasClicked == m_abortButton)
-		m_parent->exitModalState(1);
+	if (buttonThatWasClicked == m_closeButton)
+		m_closeCallback();
+	else if (buttonThatWasClicked == m_colorButton)
+	{
+		ColourSelector* selector =new ColourSelector(ColourSelector::showColourspace);
+		selector->setName("color chooser");
+		selector->setCurrentColour(m_color);
+		selector->setColour(ColourSelector::backgroundColourId, Colours::transparentBlack);
+		selector->setSize(300, 400);
+		selector->addChangeListener(this);
+
+		CallOutBox::launchAsynchronously(selector, m_colorButton->getScreenBounds(), nullptr);
+	}
+}
+
+void RenameDialogComponent::changeListenerCallback(ChangeBroadcaster *source)
+{
+	ColourSelector* selector = static_cast<ColourSelector*>(source);
+	m_color = selector->getCurrentColour();
+	m_colorCallback(m_color);
+}
+
+void RenameDialogComponent::textEditorTextChanged(TextEditor &)
+{
+	m_stringCallback(m_textEditor->getText());
 }

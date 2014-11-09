@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "ChannelMapping.h"
 #include "Utils.h"
+#include "RenameDialog.h"
 
 //==============================================================================
 /** A jingle player shown within the application.
@@ -33,6 +34,7 @@ public:
     ~JinglePlayerWindow();
 
     virtual void resized() override;
+	virtual void paint(Graphics& g) override;
 
     /** Show the configuration menu. */
     virtual void mouseDown (const MouseEvent & event) override;
@@ -122,10 +124,14 @@ private:
 	AudioTransportSource m_transportSource;
 	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
 
+	OptionalScopedPointer<RenameDialogWindow> m_renameDialog;
+
 	float m_gain;
 	bool m_soloMute;
 	bool m_solo;
 	bool m_mute;
+
+	Colour m_color;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JinglePlayerWindow)
 };

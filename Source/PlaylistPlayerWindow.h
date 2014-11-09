@@ -6,6 +6,7 @@
 #include "TracksComponent.h"
 #include "ChannelMapping.h"
 #include "Utils.h"
+#include "RenameDialog.h"
 
 /*
 */
@@ -99,6 +100,9 @@ private:
 	bool m_soloMute;
 	bool m_solo;
 	bool m_mute;
+
+	Colour m_color;
+	OptionalScopedPointer<RenameDialogWindow> m_renameDialog;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };

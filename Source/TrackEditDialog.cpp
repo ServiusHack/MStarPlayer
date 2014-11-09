@@ -88,12 +88,12 @@ void TrackEditDialogComponent::resized()
 
 	m_volumeSlider->setBounds(padding, padding, 16, getHeight() - buttonHeight - 3 * padding);
 
-	m_nameLabel->setBounds(30, 10, 100, 24);
-	m_nameEditor->setBounds(140, 10, 70, 24);
+	m_nameLabel->setBounds(30, padding, 100, 24);
+	m_nameEditor->setBounds(140, padding, 70, 24);
 
 	m_closeButton->setBounds(
 		(getWidth() - buttonWidth) / 2,
-		getHeight() - buttonHeight - padding,
+		getHeight() - 2*(buttonHeight - padding),
 		buttonWidth,
 		buttonHeight
 		);
