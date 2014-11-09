@@ -7,7 +7,7 @@
 #include "JinglePlayerWindow.h"
 
 namespace {
-	const int ProgressBarHeight = 20;
+	const int ProgressBarHeight = 26;
 	const int TotalDurationTextWidth = 70;
 }
 
