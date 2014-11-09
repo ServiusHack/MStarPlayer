@@ -133,6 +133,8 @@ private:
 	bool m_solo;
 	bool m_mute;
 
+	bool m_showRemainingTime;
+
 	Colour m_color;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JinglePlayerWindow)

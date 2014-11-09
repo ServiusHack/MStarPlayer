@@ -23,11 +23,13 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels
 	, m_soloMute(false) // might be updated later
 	, m_mute(mute)
 	, m_color(0xffffffff)
+	, m_showRemainingTime(false)
 {
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
 	m_progressBar->setPercentageDisplay(false);
 	m_progressBar->setTextToDisplay("00:00:000");
+	m_progressBar->addMouseListener(this, false);
 	addAndMakeVisible(m_progressBar);
 
 	// total duration text
@@ -160,27 +162,32 @@ void JinglePlayerWindow::paint(Graphics& g)
 
 void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 {
-	if (event.eventComponent != m_configureButton)
-		return;
+	if (event.eventComponent == m_progressBar)
+	{
+		m_showRemainingTime = !m_showRemainingTime;
+		timerCallback();
+	}
+	if (event.eventComponent == m_configureButton)
+	{
+		PopupMenu m;
+		m.addItem (1, "load file");
+		m.addItem(2, "configure channels", m_currentAudioFileSource != nullptr);
+		m.addItem(3, "rename");
+		const int result = m.show();
 
-	PopupMenu m;
-	m.addItem (1, "load file");
-	m.addItem(2, "configure channels", m_currentAudioFileSource != nullptr);
-	m.addItem(3, "rename");
-	const int result = m.show();
+		switch (result) {
+		case 1:
+			loadFile();
+			break;
 
-	switch (result) {
-	case 1:
-		loadFile();
-		break;
+		case 2:
+			configureChannels();
+			break;
 
-	case 2:
-		configureChannels();
-		break;
-
-	case 3:
-		rename();
-		break;
+		case 3:
+			rename();
+			break;
+		}
 	}
 }
 
@@ -283,6 +290,8 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 
 		if (m_channelMappingWindow.get() != nullptr)
 			m_channelMappingWindow->setMapping(createMapping());
+
+		timerCallback();
 	}
 }
 
@@ -298,6 +307,9 @@ const std::vector<int> JinglePlayerWindow::createMapping()
 
 void JinglePlayerWindow::timerCallback()
 {
+	if (!m_currentAudioFileSource)
+		return;
+
 	double position    = m_transportSource.getCurrentPosition();
 	double totalLength = m_transportSource.getLengthInSeconds();
 	
@@ -309,7 +321,7 @@ void JinglePlayerWindow::timerCallback()
 		m_progress = position / totalLength;
 	}
 	
-	m_progressBar->setTextToDisplay(Utils::formatSeconds(position));
+	m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? (totalLength - position) : position));
 	m_totalDurationText->setText(Utils::formatSeconds(totalLength), sendNotification);
 }
 
@@ -324,6 +336,7 @@ XmlElement* JinglePlayerWindow::saveToXml() const
 	element->setAttribute("color", m_color.toString());
 	if (m_userImage)
 		element->setAttribute("image", m_userImagePath);
+	element->setAttribute("showRemainingTime", m_showRemainingTime);
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	Rectangle<int> bounds = getParentComponent()->getBounds();
@@ -358,6 +371,8 @@ void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
 		m_userImage.set(Drawable::createFromImageFile(File(m_userImagePath)), true);
 		m_playButton->setImages(m_userImage.get());
 	}
+
+	m_showRemainingTime = element.getBoolAttribute("showRemainingTime", false);
 
 	m_mixer->updatePlayerColor(this, m_color);
 
