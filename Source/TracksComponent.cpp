@@ -16,6 +16,7 @@ TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, Posi
 	, m_outputChannels(outputChannels)
 	, m_positionCallback(positionCallback)
 	, m_gain(1.0f)
+	, m_mute(false)
 {
 	mixer->getMixerAudioSource().addInputSource(&m_tracksMixer, false);
 	setBounds(0,0,100,100);
@@ -87,7 +88,7 @@ void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 			track->setLongestDuration(longestDuration);
 	};
 
-	Track* track = new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain);
+	Track* track = new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute);
 	m_tracks.add(track);
 	if (element != nullptr)
 		track->restoreFromXml(*element);
@@ -140,4 +141,16 @@ void TracksComponent::setGain(float gain)
 float TracksComponent::getGain()
 {
 	return m_gain;
+}
+
+void TracksComponent::setMute(bool mute)
+{
+	m_mute = mute;
+	for (int i = 0; i < m_tracks.size(); ++i)
+		m_tracks[i]->setPlayerMute(mute);
+}
+
+bool TracksComponent::getMute()
+{
+	return m_mute;
 }

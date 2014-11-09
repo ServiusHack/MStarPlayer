@@ -5,7 +5,6 @@
 class ChannelVolumeAudioSource : public AudioSource
 {
 public:
-    //==============================================================================
     /** Creates a volume changing source that will pass on audio from the given input.
 
         @param source       the input source to use. Make sure that this doesn't
@@ -16,7 +15,6 @@ public:
     */
     ChannelVolumeAudioSource(AudioSource* source);
     
-    //==============================================================================	
     /** Resets all volumes.
 
         After this all channels will have their default volume.
@@ -36,18 +34,36 @@ public:
 
     /** Returns the volume from a channel.
     */
-    float getChannelVolume(int channelIndex) const;
+	float getChannelVolume(int channelIndex) const;
 
-    //==============================================================================
+	void setChannelSolo(int channelIndex, bool solo);
+
+	bool getChannelSolo(int channelIndex);
+
+	void setChannelMute(int channelIndex, bool mute);
+
+	bool getChannelMute(int channelIndex);
+
+	void updateGain(int channelIndex);
+
+	int channelCount();
+
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	virtual void releaseResources() override;
 	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
 
 private:
-    //==============================================================================
-    AudioSource* m_source;
-    Array<float> m_volumes;
+	void expandListsTo(int channelIndex);
+
+
+	AudioSource* m_source;
+	Array<float> m_appliedGains;
+    Array<float> m_setVolumes;
+	Array<bool> m_setMutes;
+	Array<bool> m_setSolos;
+
+	bool m_anySolo;
 
     CriticalSection m_lock;
 

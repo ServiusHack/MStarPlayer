@@ -36,7 +36,7 @@ MixerComponent::~MixerComponent()
 }
 
 void MixerComponent::registerPlayer(Player* player) {
-	addPlayerSlider(player->getGain());
+	addPlayerSlider(player);
 	m_players.add(player);
 	resized();
 }
@@ -57,7 +57,7 @@ void MixerComponent::paint (Graphics& g)
 void MixerComponent::resized()
 {
     int x = 0;
-    int sliderWidth = 16;
+    int sliderWidth = 70;
     int sliderHeight = getHeight();
 
 	for (int i = 0; i < m_playerSliders.size(); i++) {
@@ -65,7 +65,7 @@ void MixerComponent::resized()
 		x += sliderWidth + 10;
 	}
 
-	x += sliderWidth;
+	x += 10;
 
 	for (int i = 0; i < m_channelSliders.size(); i++) {
 		m_channelSliders.getUnchecked(i)->setBounds(x, 0, sliderWidth, sliderHeight);
@@ -74,15 +74,28 @@ void MixerComponent::resized()
 
 }
 
-void MixerComponent::addPlayerSlider(float gain)
+void MixerComponent::addPlayerSlider(Player* player)
 {
-    Slider* slider = new Slider();
+	MixerFader::VolumeChangedCallback volumeCallback = [player](float gain) {
+		player->setGain(gain);
+	};
+	MixerFader::PanChangedCallback panCallback = [player](float pan) {
+		player->setPan(pan);
+	};
+	MixerFader::SoloChangedCallback soloCallback = [this, player](bool solo) {
+		player->setSolo(solo);
+
+		bool anySolo = std::any_of(m_players.begin(), m_players.end(), [](Player* p) { return p->getSolo(); });
+		
+		for (int i = 0; i < m_players.size(); ++i) {
+			m_players.getUnchecked(i)->setSoloMute(anySolo);
+		}
+	};
+	MixerFader::MuteChangedCallback muteCallback = [player](bool mute) {
+		player->setMute(mute);
+	};
+	MixerFader* slider = new MixerFader(false, player->getGain(), player->getSolo(), player->getMute(), volumeCallback, panCallback, soloCallback, muteCallback);
     addAndMakeVisible (slider);
-    slider->setRange (0, 2, 0.1);
-    slider->setValue(gain);
-    slider->setSliderStyle (Slider::LinearVertical);
-    slider->setTextBoxStyle (Slider::NoTextBox, true,0,0);
-    slider->addListener (this);
 
 	m_playerSliders.add(slider);
 
@@ -90,13 +103,22 @@ void MixerComponent::addPlayerSlider(float gain)
 
 void MixerComponent::addChannelSlider()
 {
-    Slider* slider = new Slider();
+	int channelNumber = m_channelSliders.size();
+
+	MixerFader::VolumeChangedCallback volumeCallback = [this, channelNumber](float gain) {
+		m_channelVolumeAudioSource->setChannelVolume(channelNumber, gain);
+	};
+	MixerFader::PanChangedCallback panCallback = [this, channelNumber](float pan) {
+	};
+	MixerFader::SoloChangedCallback soloCallback = [this, channelNumber](bool solo) {
+		m_channelVolumeAudioSource->setChannelSolo(channelNumber, solo);
+	};
+	MixerFader::MuteChangedCallback muteCallback = [this, channelNumber](bool mute) {
+		m_channelVolumeAudioSource->setChannelMute(channelNumber, mute);
+	};
+
+	MixerFader* slider = new MixerFader(false, 1.0f, false, false, volumeCallback, panCallback, soloCallback, muteCallback);
     addAndMakeVisible (slider);
-    slider->setRange (0, 2, 0.1);
-    slider->setValue(1.0);
-    slider->setSliderStyle (Slider::LinearVertical);
-    slider->setTextBoxStyle (Slider::NoTextBox, true,0,0);
-    slider->addListener (this);
 
 	m_channelSliders.add(slider);
 }
@@ -123,14 +145,14 @@ void MixerComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
 
 void MixerComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 {
-	int channel = m_channelSliders.indexOf(sliderThatWasMoved);
+	/*int channel = m_channelSliders.indexOf(sliderThatWasMoved);
 
 	if (channel > -1)
 		m_channelVolumeAudioSource->setChannelVolume(channel, static_cast<float>(sliderThatWasMoved->getValue()));
 	else {
 		int playerIndex = m_playerSliders.indexOf(sliderThatWasMoved);
 		m_players.getUnchecked(playerIndex)->setGain(static_cast<float>(sliderThatWasMoved->getValue()));
-	}
+	}*/
 }
 
 MixerAudioSource& MixerComponent::getMixerAudioSource()
@@ -140,9 +162,11 @@ MixerAudioSource& MixerComponent::getMixerAudioSource()
 
 void MixerComponent::saveToXml(XmlElement* element) const
 {
-	for (int i = 0; i < m_channelSliders.size(); i++) {
+	for (int i = 0; i < m_channelVolumeAudioSource->channelCount(); i++) {
 		XmlElement* sliderXml = new XmlElement("ChannelSlider");
-		sliderXml->addTextElement(String(m_channelSliders.getUnchecked(i)->getValue()));
+		sliderXml->setAttribute("solo", m_channelVolumeAudioSource->getChannelSolo(i) ? "true" : "false");
+		sliderXml->setAttribute("mute", m_channelVolumeAudioSource->getChannelMute(i) ? "true" : "false");
+		sliderXml->addTextElement(String(m_channelVolumeAudioSource->getChannelVolume(i)));
 		element->addChildElement(sliderXml);
 	}
 }
@@ -152,5 +176,7 @@ void MixerComponent::restoreFromXml (const XmlElement& element)
 	for (int i = 0; i < m_channelSliders.size(); i++) {
 		String value = element.getChildElement(i)->getAllSubText().trim();
 		m_channelSliders.getUnchecked(i)->setValue(value.getDoubleValue());
+		m_channelSliders.getUnchecked(i)->setSolo(element.getChildElement(i)->getBoolAttribute("solo"));
+		m_channelSliders.getUnchecked(i)->setMute(element.getChildElement(i)->getBoolAttribute("mute"));
 	}
 }

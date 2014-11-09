@@ -350,7 +350,9 @@ void MainContentComponent::readProjectFile()
 
             else if (type == "jingle") {
 				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
-				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain);
+				const bool solo = player->getBoolAttribute("solo");
+				const bool mute = player->getBoolAttribute("mute");
+				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain, solo, mute);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
@@ -358,13 +360,25 @@ void MainContentComponent::readProjectFile()
 
 			else if (type == "playlist") {
 				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
-				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain);
+				const bool solo = player->getBoolAttribute("solo");
+				const bool mute = player->getBoolAttribute("mute");
+				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain, solo, mute);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
             }
 
-        }
+		}
+
+		// update soloMute for all players
+		bool anySolo = false;
+		for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
+			anySolo = static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->getSolo();
+			if (anySolo)
+				break;
+		}
+		for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
+			static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setSoloMute(anySolo);
     }
 
 	m_projectModified = false;

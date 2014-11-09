@@ -27,7 +27,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f);
+	JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f, bool solo = false, bool mute = false);
 
     /** Destructor */
     ~JinglePlayerWindow();
@@ -68,6 +68,24 @@ public:
 
 	float getGain();
 
+	void setPan(float pan);
+
+	float getPan();
+
+	void setSoloMute(bool soloMute);
+
+	bool getSoloMute();
+
+	void setSolo(bool solo);
+
+	bool getSolo();
+
+	void setMute(bool mute);
+
+	bool getMute();
+
+	void updateGain();
+
 private:
 
 	const std::vector<int> createMapping();
@@ -103,6 +121,11 @@ private:
 	TimeSliceThread m_thread;
 	AudioTransportSource m_transportSource;
 	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
+
+	float m_gain;
+	bool m_soloMute;
+	bool m_solo;
+	bool m_mute;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JinglePlayerWindow)
 };

@@ -31,9 +31,13 @@ public:
 	void setGain(float gain);
 	float getGain();
 
+	void setMute(bool mute);
+	bool getMute();
+
 private:
 	OwnedArray<Track> m_tracks;
 	float m_gain;
+	bool m_mute;
 
 	MixerComponent* m_mixer;
 	MixerAudioSource m_tracksMixer;

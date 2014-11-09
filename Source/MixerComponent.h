@@ -4,6 +4,7 @@
 
 #include "ChannelVolumeAudioSource.h"
 #include "Player.h"
+#include "MixerFader.h"
 
 //==============================================================================
 /** Shows sliders for output channels to change the individual volumes of them.
@@ -55,14 +56,14 @@ public:
 private:
 
 	// ui
-	Array< Slider* > m_channelSliders;
-	Array< Slider* > m_playerSliders;
+	Array< MixerFader* > m_channelSliders;
+	Array< MixerFader* > m_playerSliders;
 	Array< Player* > m_players;
 
 	/** Adds a new slider to the component because not enough are being shown. */
 	void addChannelSlider();
 
-	void addPlayerSlider(float gain);
+	void addPlayerSlider(Player* player);
 	
 	// audio output
 	MixerAudioSource m_mixerAudioSource;

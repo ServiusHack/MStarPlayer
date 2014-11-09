@@ -7,10 +7,14 @@
 #include "RenameDialog.h"
 #include "JinglePlayerWindow.h"
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain)
+PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_thread("audio file preview")
+	, m_gain(1.0f)
+	, m_solo(solo)
+	, m_soloMute(false)
+	, m_mute(mute)
 {	
 	// play button
 	m_playButton = new ImageButton("Play");
@@ -130,6 +134,55 @@ float PlaylistPlayerWindow::getGain()
 	return m_tracks->getGain();
 }
 
+void PlaylistPlayerWindow::setPan(float pan)
+{
+
+}
+
+float PlaylistPlayerWindow::getPan()
+{
+	return 1.0f;
+}
+
+void PlaylistPlayerWindow::setSoloMute(bool soloMute)
+{
+	m_soloMute = soloMute;
+	updateGain();
+}
+
+bool PlaylistPlayerWindow::getSoloMute()
+{
+	return m_soloMute;
+}
+
+void PlaylistPlayerWindow::setSolo(bool solo)
+{
+	m_solo = solo;
+	updateGain();
+}
+
+bool PlaylistPlayerWindow::getSolo()
+{
+	return m_solo;
+}
+
+void PlaylistPlayerWindow::setMute(bool mute)
+{
+	m_mute = mute;
+	updateGain();
+}
+
+bool PlaylistPlayerWindow::getMute()
+{
+	return m_mute;
+}
+
+void PlaylistPlayerWindow::updateGain()
+{
+	bool mute = m_mute || (m_soloMute && !m_solo);
+	m_tracks->setMute(mute);
+}
+
 void PlaylistPlayerWindow::paint (Graphics& g)
 {
 	int buttonWidth = std::min(getWidth() / 11, 32);
@@ -218,6 +271,8 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
     XmlElement* element = new XmlElement("Player");
 	element->setAttribute("type", "playlist");
 	element->setAttribute("gain", m_tracks->getGain());
+	element->setAttribute("mute", m_mute);
+	element->setAttribute("solo", m_solo);
 
 	Rectangle<int> bounds = getParentComponent()->getBounds();
 

@@ -12,13 +12,17 @@ namespace {
 	const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain)
+JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_thread("audio file preview")
 	, m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
 	, m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
 	, m_progress(0.0)
+	, m_gain(1.0f)
+	, m_solo(solo)
+	, m_soloMute(false) // might be updated later
+	, m_mute(mute)
 {
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
@@ -77,12 +81,62 @@ JinglePlayerWindow::~JinglePlayerWindow()
 
 void JinglePlayerWindow::setGain(float gain)
 {
-	m_transportSource.setGain(gain);
+	m_gain = gain;
+	updateGain();
 }
 
 float JinglePlayerWindow::getGain()
 {
-	return m_transportSource.getGain();
+	return m_gain;
+}
+
+void JinglePlayerWindow::setPan(float pan)
+{
+
+}
+
+float JinglePlayerWindow::getPan()
+{
+	return 1.0f;
+}
+
+void JinglePlayerWindow::setSoloMute(bool soloMute)
+{
+	m_soloMute = soloMute;
+	updateGain();
+}
+
+bool JinglePlayerWindow::getSoloMute()
+{
+	return m_soloMute;
+}
+
+void JinglePlayerWindow::setSolo(bool solo)
+{
+	m_solo = solo;
+	updateGain();
+}
+
+bool JinglePlayerWindow::getSolo()
+{
+	return m_solo;
+}
+
+void JinglePlayerWindow::setMute(bool mute)
+{
+	m_mute = mute;
+	updateGain();
+}
+
+bool JinglePlayerWindow::getMute()
+{
+	return m_mute;
+}
+
+void JinglePlayerWindow::updateGain()
+{
+	bool mute = m_mute || (m_soloMute && !m_solo);
+	m_transportSource.setGain(mute ? 0.0f : m_gain);
 }
 
 void JinglePlayerWindow::setOutputChannels(int outputChannels)
@@ -237,6 +291,8 @@ XmlElement* JinglePlayerWindow::saveToXml() const
     XmlElement* element = new XmlElement("Player");
     element->setAttribute("type", "jingle");
 	element->setAttribute("gain", m_transportSource.getGain());
+	element->setAttribute("mute", m_mute);
+	element->setAttribute("solo", m_solo);
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
 	Rectangle<int> bounds = getParentComponent()->getBounds();

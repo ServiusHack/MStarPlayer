@@ -21,7 +21,7 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f);
+	PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f, bool solo = false, bool mute = false);
 
     /** Destructor */
     ~PlaylistPlayerWindow();
@@ -54,6 +54,24 @@ public:
 
 	float getGain();
 
+	void setPan(float pan);
+
+	float getPan();
+
+	void setSoloMute(bool soloMute);
+
+	bool getSoloMute();
+
+	void setSolo(bool solo);
+
+	bool getSolo();
+
+	void setMute(bool mute);
+
+	bool getMute();
+
+	void updateGain();
+
 	void configureChannels();
 
 private:
@@ -76,6 +94,11 @@ private:
 	ScopedPointer<Label>       m_digitalDisplay;
 	ScopedPointer<TracksComponent> m_tracks;
 	ScopedPointer<Viewport>    m_tracksViewport;
+
+	float m_gain;
+	bool m_soloMute;
+	bool m_solo;
+	bool m_mute;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };

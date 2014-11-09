@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute)
 	: m_audioThumbnailCache(1)
 	, m_trackIndex(trackIndex)
 	, m_stereo(stereo)
@@ -26,6 +26,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_progress(0)
 	, m_playerGain(gain)
 	, m_trackGain(1.0f)
+	, m_playerMute(mute)
 {
 	m_formatManager.registerBasicFormats();
 	m_thread.startThread(3);
@@ -131,6 +132,12 @@ void Track::setTrackGain(float gain)
 	updateGain();
 }
 
+void Track::setPlayerMute(bool mute)
+{
+	m_playerMute = mute;
+	updateGain();
+}
+
 void Track::buttonClicked(Button *button)
 {
 	if (button == m_muteButton) {
@@ -158,7 +165,7 @@ void Track::sliderValueChanged(Slider* /*slider*/)
 
 void Track::updateGain()
 {
-	bool mute = m_muteButton->getToggleState() || (m_soloMute && !m_soloButton->getToggleState());
+	bool mute = m_playerMute || m_muteButton->getToggleState() || (m_soloMute && !m_soloButton->getToggleState());
 	m_transportSource.setGain(mute ? 0.0f : (m_playerGain * m_trackGain));
 }
 
