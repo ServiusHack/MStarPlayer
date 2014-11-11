@@ -34,6 +34,9 @@ public:
 
 	void removeListener(OutputChannelNamesListener* listener);
 
+	XmlElement* saveToXml();
+	void restoreFromXml(XmlElement &element);
+
 private:
 	AudioIODevice* m_audioDevice;
 	StringArray m_deviceOutputChannelNames;

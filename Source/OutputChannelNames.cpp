@@ -93,3 +93,29 @@ void OutputChannelNames::removeListener(OutputChannelNamesListener* listener)
 {
 	m_listeners.remove(listener);
 }
+
+XmlElement* OutputChannelNames::saveToXml()
+{
+	XmlElement* element = new XmlElement("ChannelNames");
+
+	for (int i = 0; i < m_internalOutputChannelNames.size(); ++i)
+	{
+		XmlElement* channelElement = new XmlElement("Name");
+		channelElement->addTextElement(m_internalOutputChannelNames[i]);
+		element->addChildElement(channelElement);
+	}
+
+	return element;
+}
+
+void OutputChannelNames::restoreFromXml(XmlElement &element)
+{
+	for (int i = 0; i < element.getNumChildElements(); ++i)
+	{
+		String channelName = element.getChildElement(i)->getAllSubText();
+		m_internalOutputChannelNames.set(i, channelName);
+	}
+
+	for (OutputChannelNamesListener* listener : m_listeners)
+		listener->outputChannelNamesReset();
+}

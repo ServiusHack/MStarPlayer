@@ -324,6 +324,14 @@ void MainContentComponent::readProjectFile()
 			m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
     }
 
+	XmlElement* channelNames = root->getChildByName("ChannelNames");
+	if (channelNames == nullptr)
+		loadErrors.add("No channel names found, using device defaults.");
+	else
+	{
+		m_outputChannelNames->restoreFromXml(*channelNames);
+	}
+
     XmlElement* mixer = root->getChildByName("Mixer");
 
     if (mixer == nullptr)
@@ -406,7 +414,9 @@ void MainContentComponent::writeProjectFile()
     
     XmlElement* audio = new XmlElement("Audio");
 	audio->addChildElement(m_audioDeviceManager->createStateXml());
-    root->addChildElement(audio);
+	root->addChildElement(audio);
+
+	root->addChildElement(m_outputChannelNames->saveToXml());
 
     XmlElement* mixer = new XmlElement("Mixer");
 	m_mixerComponent->saveToXml(mixer);
