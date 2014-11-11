@@ -5,6 +5,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "OutputChannelNames.h"
 
 typedef std::function<void(int, int)> ChangeMappingCallback;
 typedef std::function<void()> CloseCallback;
@@ -34,7 +35,7 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-	ChannelMapping(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback);
+	ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback callback);
 
     // TableListBoxModel overrides
 	virtual int getNumRows() override;
@@ -64,7 +65,7 @@ public:
     void setChannelMapping(int row, int outputChannel);
 
 private:
-    int m_outputChannels;
+    OutputChannelNames* m_outputChannelNames;
 	std::vector<int> m_mapping;
 	const ChangeMappingCallback m_callback;
 
@@ -76,7 +77,7 @@ class ChannelMappingComponent
 	, public ButtonListener
 {
 public:
-	ChannelMappingComponent(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback);
+	ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback);
 
 	void resized();
 	void buttonClicked(Button* buttonThatWasClicked);
@@ -84,7 +85,7 @@ public:
 	void setMapping(std::vector<int> mapping);
 
 private:
-	int m_outputChannels;
+	OutputChannelNames* m_outputChannelNames;
 	const ChangeMappingCallback m_changeCallback;
 	const CloseCallback m_closeCallback;
 	ScopedPointer<TableListBox> m_tableListBox;
@@ -107,7 +108,7 @@ public:
 
         @see ChannelMapping
     */
-	ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback);
+	ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback);
 
     /** Delete (and thus close) the window when requested by the user.
     */

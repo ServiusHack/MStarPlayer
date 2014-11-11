@@ -22,7 +22,7 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f, bool solo = false, bool mute = false);
+	PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain = 1.0f, bool solo = false, bool mute = false);
 
     /** Destructor */
     ~PlaylistPlayerWindow();
@@ -78,7 +78,7 @@ public:
 private:
     // audio output
 	MixerComponent* m_mixer;
-	int m_outputChannels;
+	OutputChannelNames* m_outputChannelNames;
 	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
 
     // audio file playback

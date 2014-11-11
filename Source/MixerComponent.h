@@ -5,6 +5,7 @@
 #include "ChannelVolumeAudioSource.h"
 #include "Player.h"
 #include "MixerFader.h"
+#include "OutputChannelNames.h"
 
 //==============================================================================
 /** Shows sliders for output channels to change the individual volumes of them.
@@ -20,13 +21,14 @@ class MixerComponent
 	: public Component
 	, public SliderListener
 	, public ChangeListener
+	, public OutputChannelNamesListener
 {
 public:
 	/** Creates a new MixerComponent.
 
         @param audioDeviceManager The AudioDeviceManager used throughout the application.
     */
-    MixerComponent(AudioDeviceManager *audioDeviceManager);
+    MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames);
     ~MixerComponent();
 
 	/** Act accordingly to changes in the AudioDeviceManager. */
@@ -54,7 +56,10 @@ public:
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml (const XmlElement& element);
+    void restoreFromXml(const XmlElement& element);
+
+	virtual void outputChannelNamesReset() override;
+	virtual void outputChannelNameChanged(int activeChannelIndex, String text) override;
 private:
 
 	// ui
@@ -72,6 +77,7 @@ private:
 	ChannelVolumeAudioSource* m_channelVolumeAudioSource;
     AudioSourcePlayer m_audioSourcePlayer;
 	AudioDeviceManager *m_audioDeviceManager;
+	OutputChannelNames *m_outputChannelNames;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MixerComponent)
 };

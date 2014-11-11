@@ -5,6 +5,7 @@
 #include "JinglePlayerWindow.h"
 #include "PlaylistPlayerWindow.h"
 #include "MixerComponent.h"
+#include "OutputChannelNames.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
@@ -50,6 +51,7 @@ private:
 	ScopedPointer<MixerComponent> m_mixerComponent;
 	ScopedPointer<MyMultiDocumentPanel> m_multiDocumentPanel;
 	ScopedPointer<AudioDeviceManager> m_audioDeviceManager;
+	ScopedPointer<OutputChannelNames> m_outputChannelNames;
 
     // Commands for menu
     enum CommandIDs

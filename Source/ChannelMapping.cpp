@@ -13,17 +13,13 @@ class OutputChannelColumnCustomComponent
 	: public Component
 	, public ComboBoxListener
 {
+	friend class ChannelMapping;
 public:
-    OutputChannelColumnCustomComponent(ChannelMapping& owner, int outputChannels)
+    OutputChannelColumnCustomComponent(ChannelMapping& owner)
 		: m_owner(owner)
     {
-		m_comboBox.setEditableText(true);
-
         // just put a combo box inside this component
 		addAndMakeVisible(&m_comboBox);
-
-        for (int i = 1; i <= outputChannels; i++)
-			m_comboBox.addItem(String(i), i);
 
         // when the combo is changed, we'll get a callback.
 		m_comboBox.addListener(this);
@@ -35,10 +31,9 @@ public:
 		m_comboBox.setBoundsInset(BorderSize<int>(2));
     }
 
-    void setRowAndColumn(const int newRow, const int newColumn, int outputChannel)
+    void setRowAndValue(const int newRow, int outputChannel)
     {
 		m_row = newRow;
-		m_columnId = newColumn;
 		m_comboBox.setSelectedId(outputChannel, dontSendNotification);
     }
 
@@ -50,12 +45,12 @@ public:
 private:
     ChannelMapping& m_owner;
 	ComboBox m_comboBox;
-	int m_row, m_columnId;
+	int m_row;
 };
 
 //==============================================================================
-ChannelMapping::ChannelMapping(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback callback)
-	: m_outputChannels(outputChannels)
+ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback callback)
+	: m_outputChannelNames(outputChannelNames)
 	, m_mapping(mapping)
 	, m_callback(callback)
 {
@@ -97,9 +92,13 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
         // If an existing component is being passed-in for updating, we'll re-use it, but
         // if not, we'll have to create one.
         if (comboBox == nullptr)
-            comboBox = new OutputChannelColumnCustomComponent(*this, m_outputChannels);
+            comboBox = new OutputChannelColumnCustomComponent(*this);
 
-		comboBox->setRowAndColumn(rowNumber, columnId, getOutputChannel(rowNumber));
+		comboBox->m_comboBox.clear();
+		for (int i = 0; i < m_outputChannelNames->getNumberOfChannels(); ++i)
+			comboBox->m_comboBox.addItem(m_outputChannelNames->getInternalOutputChannelName(i), i+1);
+
+		comboBox->setRowAndValue(rowNumber, getOutputChannel(rowNumber));
 
         return comboBox;
     } else {
@@ -122,11 +121,11 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 
 
 //==============================================================================
-ChannelMappingWindow::ChannelMappingWindow(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
 	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
-	m_component = new ChannelMappingComponent(outputChannels, mapping, changeCallback, closeCallback);
+	m_component = new ChannelMappingComponent(outputChannelNames, mapping, changeCallback, closeCallback);
 	setContentOwned(m_component, true);
 	centreWithSize(getWidth(), getHeight());
     setVisible(true);
@@ -143,12 +142,12 @@ void ChannelMappingWindow::setMapping(std::vector<int> mapping)
 	m_component->setMapping(mapping);
 }
 
-ChannelMappingComponent::ChannelMappingComponent(int outputChannels, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
-	: m_outputChannels(outputChannels)
+ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+	: m_outputChannelNames(outputChannelNames)
 	, m_changeCallback(changeCallback)
 	, m_closeCallback(closeCallback)
 	, m_tableListBox(new TableListBox())
-	, m_channelMapping(new ChannelMapping(m_outputChannels, mapping, m_changeCallback))
+	, m_channelMapping(new ChannelMapping(m_outputChannelNames, mapping, m_changeCallback))
 {
 	addAndMakeVisible(m_tableListBox);
 
@@ -172,7 +171,7 @@ ChannelMappingComponent::ChannelMappingComponent(int outputChannels, std::vector
 
 void ChannelMappingComponent::setMapping(std::vector<int> mapping)
 {
-	m_channelMapping = new ChannelMapping(m_outputChannels, mapping, m_changeCallback);
+	m_channelMapping = new ChannelMapping(m_outputChannelNames, mapping, m_changeCallback);
 	m_tableListBox->setModel(m_channelMapping);
 }
 

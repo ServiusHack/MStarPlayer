@@ -6,9 +6,9 @@
 #include "PlaylistPlayerWindow.h"
 #include "JinglePlayerWindow.h"
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChannels, float gain, bool solo, bool mute)
+PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
-	, m_outputChannels(outputChannels)
+	, m_outputChannelNames(outputChannelNames)
 	, m_thread("audio file preview")
 	, m_gain(1.0f)
 	, m_solo(solo)
@@ -108,7 +108,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, int outputChan
 
 	// tracks
 	addAndMakeVisible(m_tracksViewport = new Viewport());
-	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannels, [&](double position) {
+	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannelNames->getNumberOfChannels(), [&](double position) {
 		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
 	}), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
@@ -218,8 +218,7 @@ void PlaylistPlayerWindow::resized()
 
 void PlaylistPlayerWindow::setOutputChannels(int outputChannels)
 {
-	m_outputChannels = outputChannels;
-	m_tracks->setOutputChannels(m_outputChannels);
+	m_tracks->setOutputChannels(outputChannels);
 }
 
 void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
@@ -339,7 +338,7 @@ void PlaylistPlayerWindow::configureChannels()
 			mapping.insert(mapping.end(), playerMapping.begin(), playerMapping.end());
 		}
 
-		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannels, mapping, [&](int source, int target) {
+		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, mapping, [&](int source, int target) {
 			for (int i = 0; i < m_tracks->playerCount(); ++i) {
 				if (source - m_tracks->player(i).getNumChannels() < 0) {
 					m_tracks->player(i).setOutputChannelMapping(source, target);

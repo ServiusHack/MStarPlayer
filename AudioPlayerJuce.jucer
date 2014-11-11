@@ -57,6 +57,10 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="EU77EN" name="OutputChannelNames.cpp" compile="1" resource="0"
+            file="Source/OutputChannelNames.cpp"/>
+      <FILE id="o8Orct" name="OutputChannelNames.h" compile="0" resource="0"
+            file="Source/OutputChannelNames.h"/>
       <FILE id="kjfyat" name="MixerFader.cpp" compile="1" resource="0" file="Source/MixerFader.cpp"/>
       <FILE id="JjKQNL" name="MixerFader.h" compile="0" resource="0" file="Source/MixerFader.h"/>
       <FILE id="fhQ0yw" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>

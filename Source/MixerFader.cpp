@@ -21,7 +21,7 @@ MixerFader::MixerFader(bool panEnabled, float gain, bool solo, bool mute, Volume
 	, m_soloCallback(soloCallback)
 	, m_muteCallback(muteCallback)
 {
-	//addAndMakeVisible(m_label);
+	addAndMakeVisible(m_label);
 	m_label->setFont(Font(10.00f, Font::plain));
 	m_label->setJustificationType(Justification::centredLeft);
 	m_label->setEditable(false, false, false);
@@ -159,4 +159,9 @@ void MixerFader::setColor(Colour color)
 {
 	m_color = color;
 	repaint();
+}
+
+void MixerFader::setLabel(String text)
+{
+	m_label->setText(text, sendNotification);
 }

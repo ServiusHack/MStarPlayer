@@ -11,9 +11,9 @@ namespace {
 	const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain, bool solo, bool mute)
+JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
-	, m_outputChannels(outputChannels)
+	, m_outputChannelNames(outputChannelNames)
 	, m_thread("audio file preview")
 	, m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
 	, m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
@@ -62,7 +62,7 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, int outputChannels
 	m_thread.startThread(3);
 
 	m_remappingAudioSource = new ChannelRemappingAudioSource(&m_transportSource, false);
-	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
+	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannelNames->getNumberOfChannels());
 	// TODO: Probably do this for outputChannels times.
 	m_remappingAudioSource->setOutputChannelMapping(0, 0);
 	m_remappingAudioSource->setOutputChannelMapping(1, 1);
@@ -143,7 +143,6 @@ void JinglePlayerWindow::updateGain()
 
 void JinglePlayerWindow::setOutputChannels(int outputChannels)
 {
-	m_outputChannels = outputChannels;
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
 }
 
@@ -207,7 +206,7 @@ void JinglePlayerWindow::loadFile()
 void JinglePlayerWindow::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
-		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannels, createMapping(), [&](int source, int target) {
+		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, createMapping(), [&](int source, int target) {
 			m_remappingAudioSource->setOutputChannelMapping(source, target);
 		}, [&]() {
 			// clear is not working

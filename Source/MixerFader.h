@@ -32,6 +32,8 @@ public:
 
 	void setColor(Colour color);
 
+	void setLabel(String text);
+
 private:
 	ScopedPointer<Label> m_label;
 	ScopedPointer<TextButton> m_soloButton;

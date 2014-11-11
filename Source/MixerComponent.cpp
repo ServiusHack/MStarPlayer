@@ -2,17 +2,21 @@
 
 #include "MixerComponent.h"
 
-MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager) :
-  m_audioDeviceManager(audioDeviceManager)
+MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames)
+	: m_audioDeviceManager(audioDeviceManager)
+	, m_outputChannelNames(outputChannelNames)
 {
     // Get notified when the AudioDeviceManager changes.
 	m_audioDeviceManager->addChangeListener(this);
+
+	m_outputChannelNames->addListener(this);
     
     // Add enough sliders for all output channels.
     AudioDeviceManager::AudioDeviceSetup deviceSetup;
 	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-    for (BigInteger i = 0; i < deviceSetup.outputChannels.countNumberOfSetBits(); i++) {
+    for (int i = 0; i < deviceSetup.outputChannels.countNumberOfSetBits(); i++) {
         addChannelSlider();
+		m_channelSliders.getUnchecked(i)->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
     }
 
     // setup audio playback
@@ -185,4 +189,15 @@ void MixerComponent::restoreFromXml (const XmlElement& element)
 		m_channelSliders.getUnchecked(i)->setSolo(element.getChildElement(i)->getBoolAttribute("solo"));
 		m_channelSliders.getUnchecked(i)->setMute(element.getChildElement(i)->getBoolAttribute("mute"));
 	}
+}
+void MixerComponent::outputChannelNamesReset()
+{
+	for (int i = 0; i < m_channelSliders.size(); i++) {
+		m_channelSliders.getUnchecked(i)->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
+	}
+}
+
+void MixerComponent::outputChannelNameChanged(int activeChannelIndex, String text)
+{
+	m_channelSliders.getUnchecked(activeChannelIndex)->setLabel(text);
 }

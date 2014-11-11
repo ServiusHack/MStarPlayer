@@ -6,6 +6,7 @@
 #include "ChannelMapping.h"
 #include "Utils.h"
 #include "RenameDialog.h"
+#include "OutputChannelNames.h"
 
 //==============================================================================
 /** A jingle player shown within the application.
@@ -28,7 +29,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	JinglePlayerWindow(MixerComponent* mixer, int outputChannels, float gain = 1.0f, bool solo = false, bool mute = false);
+	JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain = 1.0f, bool solo = false, bool mute = false);
 
     /** Destructor */
     ~JinglePlayerWindow();
@@ -112,7 +113,7 @@ private:
     
     // audio output
 	MixerComponent* m_mixer;
-	int m_outputChannels;
+	OutputChannelNames* m_outputChannelNames;
 	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
 
     // audio file loading

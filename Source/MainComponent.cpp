@@ -12,9 +12,12 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
     // audio setup
 	m_audioDeviceManager = new AudioDeviceManager();
 	m_audioDeviceManager->initialise(64, 64, nullptr, false, String::empty, 0);
+
+	// output channel names
+	m_outputChannelNames = new OutputChannelNames(*m_audioDeviceManager);
     
     // mixer control
-	m_mixerComponent = new MixerComponent(m_audioDeviceManager);
+	m_mixerComponent = new MixerComponent(m_audioDeviceManager, m_outputChannelNames);
 	addAndMakeVisible(m_mixerComponent);
 
     // player MDI area
@@ -177,7 +180,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addJinglePlayer:
         {
-			JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels());
+			JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), m_outputChannelNames);
             window->setName("Jingle Player");
 			m_multiDocumentPanel->addDocument(window, Colours::white, true);
 			m_projectModified = true;
@@ -185,7 +188,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addPlaylistPlayer:
         {
-			PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels());
+			PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), m_outputChannelNames);
             window->setName("Playlist Player");
 			m_multiDocumentPanel->addDocument(window, Colours::white, true);
 			m_projectModified = true;
@@ -198,7 +201,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
 		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
     case configureAudio:
-		new AudioConfigurationWindow(*m_audioDeviceManager);
+		new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames);
         break;
     default:
         return false;
@@ -352,7 +355,7 @@ void MainContentComponent::readProjectFile()
 				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
 				const bool solo = player->getBoolAttribute("solo");
 				const bool mute = player->getBoolAttribute("mute");
-				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain, solo, mute);
+				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), m_outputChannelNames, gain, solo, mute);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
@@ -362,7 +365,7 @@ void MainContentComponent::readProjectFile()
 				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
 				const bool solo = player->getBoolAttribute("solo");
 				const bool mute = player->getBoolAttribute("mute");
-				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), getOutputChannels(), gain, solo, mute);
+				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), m_outputChannelNames, gain, solo, mute);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
                 window->restoreFromXml(*player);
 
