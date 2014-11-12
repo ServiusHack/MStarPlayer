@@ -5,6 +5,7 @@
 MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames)
 	: m_audioDeviceManager(audioDeviceManager)
 	, m_outputChannelNames(outputChannelNames)
+	, m_separatorPosition(0)
 {
     // Get notified when the AudioDeviceManager changes.
 	m_audioDeviceManager->addChangeListener(this);
@@ -62,6 +63,9 @@ void MixerComponent::updatePlayerColor(Player* player, Colour color)
 void MixerComponent::paint (Graphics& g)
 {
     g.fillAll (Colour (0xffeeddff));
+
+	if (m_playerSliders.size() > 0)
+		g.drawLine(m_separatorPosition, 0, m_separatorPosition, getHeight(), 1);
 }
 
 void MixerComponent::resized()
@@ -75,6 +79,7 @@ void MixerComponent::resized()
 		x += sliderWidth;
 	}
 
+	m_separatorPosition = x + 5;
 	x += 10;
 
 	for (int i = 0; i < m_channelSliders.size(); i++) {

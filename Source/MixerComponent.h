@@ -79,5 +79,7 @@ private:
 	AudioDeviceManager *m_audioDeviceManager;
 	OutputChannelNames *m_outputChannelNames;
 
+	int m_separatorPosition;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MixerComponent)
 };
