@@ -24,6 +24,8 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
 	, m_mute(mute)
 	, m_color(0xffffffff)
 	, m_showRemainingTime(false)
+	, m_blink(false)
+	, m_paintColor(m_color)
 {
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
@@ -156,7 +158,7 @@ void JinglePlayerWindow::resized()
 
 void JinglePlayerWindow::paint(Graphics& g)
 {
-	g.fillAll(m_color);
+	g.fillAll(m_paintColor);
 }
 
 void JinglePlayerWindow::mouseDown (const MouseEvent & event)
@@ -225,6 +227,7 @@ void JinglePlayerWindow::rename()
 		}, [this](Colour color) {
 			m_color = color;
 			m_mixer->updatePlayerColor(this, m_color);
+			updatePointColor();
 			repaint();
 		}, [&]() {
 			// clear is not working
@@ -324,11 +327,31 @@ void JinglePlayerWindow::timerCallback()
 	} else {
 		m_progress = position / totalLength;
 	}
+
+	double remainingTime = totalLength - position;
 	
-	m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? (totalLength - position) : position));
+	m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
 	m_totalDurationText->setText(Utils::formatSeconds(totalLength), sendNotification);
+
+	if (remainingTime < 10) {
+		double decimal = remainingTime - static_cast<long>(remainingTime);
+		bool blink = decimal >= 0.5;
+		if (blink != m_blink) {
+			m_blink = blink;
+			updatePointColor();
+			repaint();
+		}
+	}
 }
 
+void JinglePlayerWindow::updatePointColor()
+{
+	if (m_blink) {
+		m_paintColor = m_color.contrasting(0.5f);
+	}
+	else
+		m_paintColor = m_color;
+}
 
 XmlElement* JinglePlayerWindow::saveToXml() const
 {

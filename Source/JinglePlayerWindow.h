@@ -137,6 +137,9 @@ private:
 	bool m_showRemainingTime;
 
 	Colour m_color;
+	bool m_blink;
+	Colour m_paintColor;
+	void updatePointColor();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JinglePlayerWindow)
 };
