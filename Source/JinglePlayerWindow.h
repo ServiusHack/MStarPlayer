@@ -91,7 +91,7 @@ public:
 
 private:
 
-	const std::vector<int> createMapping();
+	const std::vector<std::pair<char, int>> createMapping();
 
     // ui values
     double m_progress; // the progress of the playback

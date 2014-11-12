@@ -49,7 +49,7 @@ private:
 };
 
 //==============================================================================
-ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback callback)
+ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback callback)
 	: m_outputChannelNames(outputChannelNames)
 	, m_mapping(mapping)
 	, m_callback(callback)
@@ -74,7 +74,18 @@ void ChannelMapping::paintCell (Graphics& g,
     g.setColour(Colours::black);
 
     if (columnId == 1) {
-        const String text = String(rowNumber + 1);
+		String text = String(rowNumber + 1);
+		switch (m_mapping[rowNumber].first) {
+		case 'm':
+			text += " (mono)";
+			break;
+		case 'l':
+			text += " (left)";
+			break;
+		case 'r':
+			text += " (right)";
+			break;
+		}
         g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
     }
 
@@ -111,7 +122,7 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 
 int ChannelMapping::getOutputChannel(int row)
 {
-    return m_mapping[row] + 1;
+    return m_mapping[row].second + 1;
 }
 
 void ChannelMapping::setChannelMapping(int row, int outputChannel)
@@ -121,7 +132,7 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 
 
 //==============================================================================
-ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
 	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
@@ -137,12 +148,12 @@ void ChannelMappingWindow::closeButtonPressed()
 	m_closeCallback();
 }
 
-void ChannelMappingWindow::setMapping(std::vector<int> mapping)
+void ChannelMappingWindow::setMapping(std::vector<std::pair<char,int>> mapping)
 {
 	m_component->setMapping(mapping);
 }
 
-ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
 	: m_outputChannelNames(outputChannelNames)
 	, m_changeCallback(changeCallback)
 	, m_closeCallback(closeCallback)
@@ -169,7 +180,7 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChann
 	setSize(400, 400);
 }
 
-void ChannelMappingComponent::setMapping(std::vector<int> mapping)
+void ChannelMappingComponent::setMapping(std::vector<std::pair<char, int>> mapping)
 {
 	m_channelMapping = new ChannelMapping(m_outputChannelNames, mapping, m_changeCallback);
 	m_tableListBox->setModel(m_channelMapping);

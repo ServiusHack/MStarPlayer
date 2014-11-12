@@ -35,7 +35,7 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-	ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback callback);
+	ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback callback);
 
     // TableListBoxModel overrides
 	virtual int getNumRows() override;
@@ -66,7 +66,7 @@ public:
 
 private:
     OutputChannelNames* m_outputChannelNames;
-	std::vector<int> m_mapping;
+	std::vector<std::pair<char, int>> m_mapping;
 	const ChangeMappingCallback m_callback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelMapping)
@@ -77,12 +77,12 @@ class ChannelMappingComponent
 	, public ButtonListener
 {
 public:
-	ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback);
+	ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback);
 
 	void resized();
 	void buttonClicked(Button* buttonThatWasClicked);
 
-	void setMapping(std::vector<int> mapping);
+	void setMapping(std::vector<std::pair<char,int>> mapping);
 
 private:
 	OutputChannelNames* m_outputChannelNames;
@@ -108,13 +108,13 @@ public:
 
         @see ChannelMapping
     */
-	ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<int> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback);
+	ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char,int>> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback);
 
     /** Delete (and thus close) the window when requested by the user.
     */
     virtual void closeButtonPressed() override;
 
-	void setMapping(std::vector<int> mapping);
+	void setMapping(std::vector<std::pair<char, int>> mapping);
 
 private:
 	const CloseCallback m_closeCallback;

@@ -294,12 +294,17 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 	}
 }
 
-const std::vector<int> JinglePlayerWindow::createMapping()
+const std::vector<std::pair<char,int>> JinglePlayerWindow::createMapping()
 {
-	std::vector<int> mapping(m_currentAudioFileSource->getAudioFormatReader()->numChannels, -1);
+	std::vector<std::pair<char, int>> mapping(m_currentAudioFileSource->getAudioFormatReader()->numChannels, std::pair<char, int>(0,-1));
 
 	for (size_t channel = 0; channel < mapping.size(); ++channel)
-		mapping[channel] = (m_remappingAudioSource->getRemappedOutputChannel(channel));
+	{
+		char side = 'm';
+		if (mapping.size() == 2)
+			side = channel ? 'r' : 'l';
+		mapping[channel] = std::pair<char, int>(side, (m_remappingAudioSource->getRemappedOutputChannel(channel)));
+	}
 
 	return mapping;
 }

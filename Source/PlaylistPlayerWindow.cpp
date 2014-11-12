@@ -332,10 +332,15 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 void PlaylistPlayerWindow::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
-		std::vector<int> mapping;
+		std::vector<std::pair<char, int>> mapping;
 		for (int i = 0; i < m_tracks->playerCount(); ++i) {
 			std::vector<int> playerMapping = m_tracks->player(i).getMapping();
-			mapping.insert(mapping.end(), playerMapping.begin(), playerMapping.end());
+			for (int j = 0; j < playerMapping.size(); ++j) {
+				if (playerMapping.size() == 1)
+					mapping.push_back(std::pair<char, int>('m', playerMapping[j]));
+				else if (playerMapping.size() == 2)
+					mapping.push_back(std::pair<char, int>(j ? 'r' : 'l', playerMapping[j]));
+			}
 		}
 
 		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, mapping, [&](int source, int target) {
