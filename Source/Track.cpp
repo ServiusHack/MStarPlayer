@@ -100,6 +100,10 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	m_muteButton->addListener(this);
 	addAndMakeVisible(m_muteButton);
 
+	m_fileNameLabel = new Label("filename label");
+	m_fileNameLabel->setColour(Label::backgroundColourId, Colour(0xccffffff));
+	addAndMakeVisible(m_fileNameLabel);
+
 	//formatManager.registerBasicFormats();
 
 	m_audioThumbnail = new AudioThumbnail(1000, m_formatManager, m_audioThumbnailCache);
@@ -265,6 +269,10 @@ void Track::loadFileIntoTransport()
 {
 	AudioFormatReader* reader = m_formatManager.createReaderFor(m_audioFile);
 
+	m_fileNameLabel->setText(m_audioFile.getFileName(), sendNotification);
+	int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
+	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
+
 	m_audioThumbnail->setSource(new FileInputSource(m_audioFile));
 	repaint();
 
@@ -367,6 +375,9 @@ void Track::resized()
 
 	m_soloButton->setBounds(100 + 20 + 3 + buttonWidth, 3, buttonWidth - 6, getHeight() / 2 - 6);
 	m_muteButton->setBounds(100 + 20 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
+
+	int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
+	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 }
 
 void Track::play()

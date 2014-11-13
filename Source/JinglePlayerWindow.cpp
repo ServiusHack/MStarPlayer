@@ -58,6 +58,12 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
                                 0.0f);
 	addAndMakeVisible(m_configureButton);
 	m_configureButton->addMouseListener(this, false);
+
+	// filename label
+	m_fileNameLabel = new Label("filename label");
+	m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
+	m_fileNameLabel->setJustificationType(Justification::centred);
+	addAndMakeVisible(m_fileNameLabel);
 	
 	// audio setup
 	m_formatManager.registerBasicFormats();
@@ -154,6 +160,7 @@ void JinglePlayerWindow::resized()
 	m_progressBar->setBounds(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight);
 	m_totalDurationText->setBounds(getWidth() - TotalDurationTextWidth, getHeight() - ProgressBarHeight, TotalDurationTextWidth, ProgressBarHeight);
 	m_playButton->setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
+	m_fileNameLabel->setBounds(0, getHeight() - ProgressBarHeight - ProgressBarHeight, getWidth(), ProgressBarHeight);
 }
 
 void JinglePlayerWindow::paint(Graphics& g)
@@ -276,6 +283,8 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 	m_currentAudioFileSource = nullptr;
 	m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
 
+	m_fileNameLabel->setText(m_audioFile.getFileName(), sendNotification);
+
 	AudioFormatReader* reader = m_formatManager.createReaderFor(m_audioFile);
 
 	m_playButton->setEnabled(reader != nullptr);
@@ -346,11 +355,12 @@ void JinglePlayerWindow::timerCallback()
 
 void JinglePlayerWindow::updatePointColor()
 {
-	if (m_blink) {
+	if (m_blink)
 		m_paintColor = m_color.contrasting(0.5f);
-	}
 	else
 		m_paintColor = m_color;
+
+	m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
 }
 
 XmlElement* JinglePlayerWindow::saveToXml() const

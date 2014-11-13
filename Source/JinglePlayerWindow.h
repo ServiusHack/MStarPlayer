@@ -104,6 +104,7 @@ private:
 	ScopedPointer<Drawable> m_playImage;
 	ScopedPointer<Drawable> m_stopImage;
 	OptionalScopedPointer<Drawable> m_userImage;
+	ScopedPointer<Label> m_fileNameLabel;
 	String m_userImagePath;
     
     // configuration menu actions

@@ -86,6 +86,7 @@ private:
 	ScopedPointer<Slider> m_volumeSlider;
 	ScopedPointer<AudioThumbnail> m_audioThumbnail;
 	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
+	ScopedPointer<Label> m_fileNameLabel;
 	AudioThumbnailCache m_audioThumbnailCache;
 	AudioFormatManager m_formatManager;
 
