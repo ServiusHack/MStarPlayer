@@ -11,10 +11,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 
-TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback)
+TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback, ChannelCountChangedCallback channelCountChanged)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_positionCallback(positionCallback)
+	, m_channelCountChanged(channelCountChanged)
 	, m_gain(1.0f)
 	, m_mute(false)
 {
@@ -59,12 +60,12 @@ void TracksComponent::addTrackFromXml(const XmlElement* element)
 void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 {
 	bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const Track* track) {
-		return track->isSolo();
+		return track->getSolo();
 	});
 
 	auto updateSoloMute = [&]() {
 		bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const Track* track) {
-			return track->isSolo();
+			return track->getSolo();
 		});
 		for (Track* track : m_tracks)
 			track->setSoloMute(soloMute);
@@ -88,12 +89,18 @@ void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 			track->setLongestDuration(longestDuration);
 	};
 
-	Track* track = new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute);
+	ChannelCountChangedCallback channelCountChanged = [&]() {
+		m_channelCountChanged();
+	};
+
+	Track* track = new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged);
 	m_tracks.add(track);
 	if (element != nullptr)
 		track->restoreFromXml(*element);
 	addAndMakeVisible(track);
 	resized();
+
+	m_channelCountChanged();
 }
 
 void TracksComponent::play()

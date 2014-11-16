@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback)
 	: m_audioThumbnailCache(1)
 	, m_trackIndex(trackIndex)
 	, m_stereo(stereo)
@@ -27,6 +27,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_playerGain(gain)
 	, m_trackGain(1.0f)
 	, m_playerMute(mute)
+	, m_channelCountChangedCallback(channelCountChangedCallback)
 {
 	m_formatManager.registerBasicFormats();
 	m_thread.startThread(3);
@@ -129,11 +130,13 @@ void Track::setPlayerGain(float gain)
 	updateGain();
 }
 
-void Track::setTrackGain(float gain)
+void Track::setGain(float gain)
 {
 	m_trackGain = gain;
 	m_volumeSlider->setValue(gain);
 	updateGain();
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->gainChanged(gain);
 }
 
 void Track::setPlayerMute(bool mute)
@@ -142,13 +145,38 @@ void Track::setPlayerMute(bool mute)
 	updateGain();
 }
 
+void Track::setMute(bool mute)
+{
+	m_muteButton->setToggleState(mute, sendNotification);
+	updateGain();
+}
+
+float Track::getGain() const
+{
+	return m_trackGain;
+}
+
+bool Track::getMute() const
+{
+	return m_muteButton->getToggleState();
+}
+
+void Track::setSolo(bool solo)
+{
+	m_soloButton->setToggleState(solo, sendNotification);
+}
+
 void Track::buttonClicked(Button *button)
 {
 	if (button == m_muteButton) {
 		updateGain();
+		for (MixerControlableChangeListener *listener : m_listeners)
+			listener->muteChanged(m_muteButton->getToggleState());
 	}
 	else if (button == m_soloButton) {
 		m_soloChangedCallback();
+		for (MixerControlableChangeListener *listener : m_listeners)
+			listener->soloChanged(m_soloButton->getToggleState());
 	}
 	else if (button == m_editButton) {
 		TrackSettingsChangedCallback settingsCallback = [this](String name) {
@@ -156,7 +184,7 @@ void Track::buttonClicked(Button *button)
 		};
 
 		VolumeChangedCallback volumeChangedCallback = [this](float gain) {
-			setTrackGain(gain);
+			setGain(gain);
 		};
 		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(getName(), m_trackGain, settingsCallback, volumeChangedCallback));
 	}
@@ -164,7 +192,7 @@ void Track::buttonClicked(Button *button)
 
 void Track::sliderValueChanged(Slider* /*slider*/)
 {
-	setTrackGain(m_volumeSlider->getValue());
+	setGain(m_volumeSlider->getValue());
 }
 
 void Track::updateGain()
@@ -173,7 +201,7 @@ void Track::updateGain()
 	m_transportSource.setGain(mute ? 0.0f : (m_playerGain * m_trackGain));
 }
 
-bool Track::isSolo() const
+bool Track::getSolo() const
 {
 	return m_soloButton->getToggleState();
 }
@@ -235,6 +263,7 @@ void Track::loadFile()
 		switch (result) {
 		case 1:
 			m_stereo = true;
+			m_channelCountChangedCallback();
 			updateIdText();
 			break;
 		default:
@@ -254,6 +283,7 @@ void Track::loadFile()
 		switch (result) {
 		case 1:
 			m_stereo = false;
+			m_channelCountChangedCallback();
 			updateIdText();
 			break;
 		default:
@@ -348,7 +378,7 @@ void Track::restoreFromXml(const XmlElement& element)
 	m_stereo = element.getStringAttribute("stereo", "false") == "true";
 	m_muteButton->setToggleState(element.getStringAttribute("mute", "false") == "true", sendNotification);
 	m_soloButton->setToggleState(element.getStringAttribute("solo", "false") == "true", sendNotification);
-	setTrackGain(static_cast<float>(element.getDoubleAttribute("gain", 1.0)));
+	setGain(static_cast<float>(element.getDoubleAttribute("gain", 1.0)));
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	if (nameXml != nullptr)
@@ -440,6 +470,11 @@ void Track::setSoloMute(bool mute)
 {
 	m_soloMute = mute;
 	updateGain();
+}
+
+bool Track::getSoloMute() const
+{
+	return m_soloMute;
 }
 
 void Track::setPositionCallback(PositionCallback callback)

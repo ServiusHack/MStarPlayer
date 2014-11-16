@@ -110,6 +110,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 	addAndMakeVisible(m_tracksViewport = new Viewport());
 	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannelNames->getNumberOfChannels(), [&](double position) {
 		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
+	},[&]() {
+		m_channelCountChanged();
 	}), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
 
@@ -127,9 +129,11 @@ PlaylistPlayerWindow::~PlaylistPlayerWindow()
 void PlaylistPlayerWindow::setGain(float gain)
 {
 	m_tracks->setGain(gain);
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->gainChanged(gain);
 }
 
-float PlaylistPlayerWindow::getGain()
+float PlaylistPlayerWindow::getGain() const
 {
 	return m_tracks->getGain();
 }
@@ -137,9 +141,11 @@ float PlaylistPlayerWindow::getGain()
 void PlaylistPlayerWindow::setPan(float pan)
 {
 
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->panChanged(pan);
 }
 
-float PlaylistPlayerWindow::getPan()
+float PlaylistPlayerWindow::getPan() const
 {
 	return 1.0f;
 }
@@ -150,7 +156,7 @@ void PlaylistPlayerWindow::setSoloMute(bool soloMute)
 	updateGain();
 }
 
-bool PlaylistPlayerWindow::getSoloMute()
+bool PlaylistPlayerWindow::getSoloMute() const
 {
 	return m_soloMute;
 }
@@ -159,9 +165,11 @@ void PlaylistPlayerWindow::setSolo(bool solo)
 {
 	m_solo = solo;
 	updateGain();
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->soloChanged(solo);
 }
 
-bool PlaylistPlayerWindow::getSolo()
+bool PlaylistPlayerWindow::getSolo() const
 {
 	return m_solo;
 }
@@ -170,9 +178,11 @@ void PlaylistPlayerWindow::setMute(bool mute)
 {
 	m_mute = mute;
 	updateGain();
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->muteChanged(mute);
 }
 
-bool PlaylistPlayerWindow::getMute()
+bool PlaylistPlayerWindow::getMute() const
 {
 	return m_mute;
 }
@@ -332,17 +342,7 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 void PlaylistPlayerWindow::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
-		std::vector<std::pair<char, int>> mapping;
-		for (int i = 0; i < m_tracks->playerCount(); ++i) {
-			std::vector<int> playerMapping = m_tracks->player(i).getMapping();
-			for (int j = 0; j < playerMapping.size(); ++j) {
-				if (playerMapping.size() == 1)
-					mapping.push_back(std::pair<char, int>('m', playerMapping[j]));
-				else if (playerMapping.size() == 2)
-					mapping.push_back(std::pair<char, int>(j ? 'r' : 'l', playerMapping[j]));
-			}
-		}
-
+		std::vector<std::pair<char, int>> mapping = createMapping();
 		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, mapping, [&](int source, int target) {
 			for (int i = 0; i < m_tracks->playerCount(); ++i) {
 				if (source - m_tracks->player(i).getNumChannels() < 0) {
@@ -358,4 +358,33 @@ void PlaylistPlayerWindow::configureChannels()
 	}
 	m_channelMappingWindow->addToDesktop();
 	m_channelMappingWindow->toFront(true);
+}
+
+std::vector<std::pair<char, int>> PlaylistPlayerWindow::createMapping()
+{
+	std::vector<std::pair<char, int>> mapping;
+	for (int i = 0; i < m_tracks->playerCount(); ++i) {
+		std::vector<int> playerMapping = m_tracks->player(i).getMapping();
+		for (int j = 0; j < playerMapping.size(); ++j) {
+			if (playerMapping.size() == 1)
+				mapping.push_back(std::pair<char, int>('m', playerMapping[j]));
+			else if (playerMapping.size() == 2)
+				mapping.push_back(std::pair<char, int>(j ? 'r' : 'l', playerMapping[j]));
+		}
+	}
+	return mapping;
+}
+
+std::vector<MixerControlable*> PlaylistPlayerWindow::getSubMixerControlables()
+{
+	std::vector<MixerControlable*> controlables;
+	for (int i = 0; i < m_tracks->playerCount(); ++i) {
+		controlables.push_back(&m_tracks->player(i));
+	}
+	return controlables;
+}
+
+void PlaylistPlayerWindow::SetChannelCountChangedCallback(ChannelCountChangedCallback callback)
+{
+	m_channelCountChanged = callback;
 }

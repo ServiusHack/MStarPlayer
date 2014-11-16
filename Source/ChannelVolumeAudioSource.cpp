@@ -33,7 +33,7 @@ float ChannelVolumeAudioSource::getChannelVolume(const int channelIndex) const
 	if (channelIndex >= 0 && channelIndex < m_setVolumes.size())
 		return m_setVolumes.getUnchecked(channelIndex);
 
-    return -1.0;
+    return 1.0;
 }
 
 void ChannelVolumeAudioSource::setChannelSolo(int channelIndex, bool solo)
@@ -64,7 +64,10 @@ bool ChannelVolumeAudioSource::getChannelSolo(int channelIndex)
 {
 	const ScopedLock sl(m_lock);
 
-	return m_setSolos.getUnchecked(channelIndex);
+	if (channelIndex >= 0 && channelIndex < m_setSolos.size())
+		return m_setSolos.getUnchecked(channelIndex);
+
+	return false;
 }
 
 void ChannelVolumeAudioSource::setChannelMute(int channelIndex, bool mute)
@@ -82,7 +85,10 @@ bool ChannelVolumeAudioSource::getChannelMute(int channelIndex)
 {
 	const ScopedLock sl(m_lock);
 
-	return m_setMutes.getUnchecked(channelIndex);
+	if (channelIndex >= 0 && channelIndex < m_setMutes.size())
+		return m_setMutes.getUnchecked(channelIndex);
+
+	return false;
 }
 
 void ChannelVolumeAudioSource::prepareToPlay(int samplesPerBlockExpected, double sampleRate)

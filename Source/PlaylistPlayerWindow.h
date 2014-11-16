@@ -53,29 +53,35 @@ public:
 	
 	void setGain(float gain);
 
-	float getGain();
+	virtual float getGain() const override;
 
-	void setPan(float pan);
+	virtual void setPan(float pan) override;
 
-	float getPan();
+	virtual float getPan() const override;
 
-	void setSoloMute(bool soloMute);
+	virtual void setSoloMute(bool soloMute) override;
 
-	bool getSoloMute();
+	virtual bool getSoloMute() const override;
 
-	void setSolo(bool solo);
+	virtual void setSolo(bool solo) override;
 
-	bool getSolo();
+	virtual bool getSolo() const override;
 
-	void setMute(bool mute);
+	virtual void setMute(bool mute) override;
 
-	bool getMute();
+	virtual bool getMute() const override;
 
 	void updateGain();
 
 	void configureChannels();
 
+	virtual std::vector<MixerControlable*> getSubMixerControlables() override;
+
+	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) override;
+
 private:
+	std::vector<std::pair<char, int>> createMapping();
+
     // audio output
 	MixerComponent* m_mixer;
 	OutputChannelNames* m_outputChannelNames;
@@ -103,6 +109,8 @@ private:
 
 	Colour m_color;
 	OptionalScopedPointer<RenameDialogWindow> m_renameDialog;
+
+	ChannelCountChangedCallback m_channelCountChanged;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };

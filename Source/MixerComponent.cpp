@@ -11,19 +11,19 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputCha
 	m_audioDeviceManager->addChangeListener(this);
 
 	m_outputChannelNames->addListener(this);
-    
-    // Add enough sliders for all output channels.
-    AudioDeviceManager::AudioDeviceSetup deviceSetup;
-	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-    for (int i = 0; i < deviceSetup.outputChannels.countNumberOfSetBits(); i++) {
-        addChannelSlider();
-		m_channelSliders.getUnchecked(i)->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
-    }
 
     // setup audio playback
 	m_audioDeviceManager->addAudioCallback(&m_audioSourcePlayer);
 	m_channelVolumeAudioSource = new ChannelVolumeAudioSource(&m_mixerAudioSource);
 	m_audioSourcePlayer.setSource(m_channelVolumeAudioSource);
+
+	// Add enough sliders for all output channels.
+	AudioDeviceManager::AudioDeviceSetup deviceSetup;
+	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
+	for (int i = 0; i < deviceSetup.outputChannels.countNumberOfSetBits(); i++) {
+		addChannelSlider();
+		m_channelSliders.getUnchecked(i)->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
+	}
 
     setSize(100,112);
 }
@@ -71,68 +71,127 @@ void MixerComponent::paint (Graphics& g)
 void MixerComponent::resized()
 {
     int x = 0;
-    int sliderWidth = 70;
     int sliderHeight = getHeight();
 
 	for (int i = 0; i < m_playerSliders.size(); i++) {
-		m_playerSliders.getUnchecked(i)->setBounds(x, 0, sliderWidth, sliderHeight);
-		x += sliderWidth;
+		Rectangle<int> bounds = m_playerSliders.getUnchecked(i)->getBounds();
+		bounds.setX(x);
+		bounds.setHeight(sliderHeight);
+		m_playerSliders.getUnchecked(i)->setBounds(bounds);
+		x += bounds.getWidth();
 	}
 
 	m_separatorPosition = x + 5;
 	x += 10;
 
 	for (int i = 0; i < m_channelSliders.size(); i++) {
-		m_channelSliders.getUnchecked(i)->setBounds(x, 0, sliderWidth, sliderHeight);
-        x += sliderWidth;
+		Rectangle<int> bounds = m_channelSliders.getUnchecked(i)->getBounds();
+		bounds.setX(x);
+		bounds.setHeight(sliderHeight);
+		m_channelSliders.getUnchecked(i)->setBounds(bounds);
+		x += bounds.getWidth();
     }
 
 }
 
 void MixerComponent::addPlayerSlider(Player* player)
 {
-	MixerFader::VolumeChangedCallback volumeCallback = [player](float gain) {
-		player->setGain(gain);
+	MixerFader::ResizeCallback resizeCallback = [this]() {
+		resized();
 	};
-	MixerFader::PanChangedCallback panCallback = [player](float pan) {
-		player->setPan(pan);
-	};
-	MixerFader::SoloChangedCallback soloCallback = [this, player](bool solo) {
-		player->setSolo(solo);
 
-		bool anySolo = std::any_of(m_players.begin(), m_players.end(), [](Player* p) { return p->getSolo(); });
-		
-		for (int i = 0; i < m_players.size(); ++i) {
-			m_players.getUnchecked(i)->setSoloMute(anySolo);
-		}
-	};
-	MixerFader::MuteChangedCallback muteCallback = [player](bool mute) {
-		player->setMute(mute);
-	};
-	MixerFader* slider = new MixerFader(false, player->getGain(), player->getSolo(), player->getMute(), volumeCallback, panCallback, soloCallback, muteCallback);
-    addAndMakeVisible (slider);
-
+	MixerFader* slider = new MixerFader(player, player->getSubMixerControlables(), false, resizeCallback);
+	addAndMakeVisible (slider);
 	m_playerSliders.add(slider);
 
+
+
+	player->SetChannelCountChangedCallback([slider, player]() {
+		std::vector<MixerControlable*> mixSettings = player->getSubMixerControlables();
+
+		slider->setMixSettings(mixSettings);
+	});
+
 }
+
+class ChannelMixerControlable : public MixerControlable
+{
+public:
+
+	ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource)
+		: channelNumber(channel)
+		, m_channelVolumeAudioSource(audioSource)
+	{
+	}
+
+	virtual void setGain(float gain) override
+	{
+		m_channelVolumeAudioSource->setChannelVolume(channelNumber, gain);
+	}
+
+	virtual float getGain() const override
+	{
+		return m_channelVolumeAudioSource->getChannelVolume(channelNumber);
+	}
+
+	virtual void setPan(float pan) override
+	{
+		jassert(false);
+	}
+
+	virtual float getPan() const override
+	{
+		jassert(false);
+		return 0.0f;
+	}
+
+	virtual void setSoloMute(bool soloMute) override
+	{
+		jassert(false);
+	}
+
+	virtual bool getSoloMute() const override
+	{
+		jassert(false);
+		return false;
+	}
+
+	virtual void setSolo(bool solo) override
+	{
+		m_channelVolumeAudioSource->setChannelSolo(channelNumber, solo);
+	}
+
+	virtual bool getSolo() const override
+	{
+		return m_channelVolumeAudioSource->getChannelSolo(channelNumber);
+	}
+
+	virtual void setMute(bool mute) override
+	{
+		m_channelVolumeAudioSource->setChannelMute(channelNumber, mute);
+	}
+
+	virtual bool getMute() const override
+	{
+		return m_channelVolumeAudioSource->getChannelMute(channelNumber);
+	}
+
+private:
+	int channelNumber;
+	ChannelVolumeAudioSource* m_channelVolumeAudioSource;
+};
 
 void MixerComponent::addChannelSlider()
 {
 	int channelNumber = m_channelSliders.size();
 
-	MixerFader::VolumeChangedCallback volumeCallback = [this, channelNumber](float gain) {
-		m_channelVolumeAudioSource->setChannelVolume(channelNumber, gain);
-	};
-	MixerFader::PanChangedCallback panCallback = [this, channelNumber](float pan) {
-	};
-	MixerFader::SoloChangedCallback soloCallback = [this, channelNumber](bool solo) {
-		m_channelVolumeAudioSource->setChannelSolo(channelNumber, solo);
-	};
-	MixerFader::MuteChangedCallback muteCallback = [this, channelNumber](bool mute) {
-		m_channelVolumeAudioSource->setChannelMute(channelNumber, mute);
+	ChannelMixerControlable* controlable = new ChannelMixerControlable(channelNumber, m_channelVolumeAudioSource);
+
+	MixerFader::ResizeCallback resizeCallback = [this]() {
+		resized();
 	};
 
-	MixerFader* slider = new MixerFader(false, 1.0f, false, false, volumeCallback, panCallback, soloCallback, muteCallback);
+	MixerFader* slider = new MixerFader(controlable, std::vector<MixerControlable*>(), false, resizeCallback);
     addAndMakeVisible (slider);
 
 	m_channelSliders.add(slider);

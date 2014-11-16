@@ -6,6 +6,8 @@
 
 #include "TrackEditDialog.h"
 
+#include "Player.h"
+
 typedef std::function<void()> DurationChangedCallback;
 typedef std::function<void(double)> PositionCallback;
 
@@ -17,9 +19,10 @@ class Track
 	, public Button::Listener
 	, public juce::Slider::Listener
 	, private Timer
+	, public MixerControlable
 {
 public:
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback);
 	~Track();
 
 	/** Play or stop the audio playback. */
@@ -49,9 +52,11 @@ public:
 	void setLongestDuration(double duration);
 	
 	// Track should be muted because other track(s) are in solo mode.
-	void setSoloMute(bool mute);
+	virtual void setSoloMute(bool mute) override;
 
-	bool isSolo() const;
+	virtual bool getSoloMute() const override;
+
+	virtual bool getSolo() const override;
 
 	void timerCallback();
 
@@ -66,9 +71,19 @@ public:
 
 	void setPlayerGain(float gain);
 
-	void setTrackGain(float gain);
+	virtual void setGain(float gain) override;
 
 	void setPlayerMute(bool mute);
+
+	virtual void setMute(bool mute) override;
+
+	virtual float getGain() const override;
+	virtual bool getMute() const override;
+
+	virtual void setSolo(bool solo) override;
+
+	virtual void setPan(float) override {};
+	virtual float getPan() const override { return 0; };
 
 private:
 	void updateIdText();
@@ -114,6 +129,8 @@ private:
 	DurationChangedCallback m_soloChangedCallback;
 
 	PositionCallback m_positionCallback;
+
+	ChannelCountChangedCallback m_channelCountChangedCallback;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 };

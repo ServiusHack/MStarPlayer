@@ -93,9 +93,11 @@ void JinglePlayerWindow::setGain(float gain)
 {
 	m_gain = gain;
 	updateGain();
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->gainChanged(gain);
 }
 
-float JinglePlayerWindow::getGain()
+float JinglePlayerWindow::getGain() const
 {
 	return m_gain;
 }
@@ -103,9 +105,11 @@ float JinglePlayerWindow::getGain()
 void JinglePlayerWindow::setPan(float pan)
 {
 
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->panChanged(pan);
 }
 
-float JinglePlayerWindow::getPan()
+float JinglePlayerWindow::getPan() const
 {
 	return 1.0f;
 }
@@ -116,7 +120,7 @@ void JinglePlayerWindow::setSoloMute(bool soloMute)
 	updateGain();
 }
 
-bool JinglePlayerWindow::getSoloMute()
+bool JinglePlayerWindow::getSoloMute() const
 {
 	return m_soloMute;
 }
@@ -125,9 +129,11 @@ void JinglePlayerWindow::setSolo(bool solo)
 {
 	m_solo = solo;
 	updateGain();
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->soloChanged(solo);
 }
 
-bool JinglePlayerWindow::getSolo()
+bool JinglePlayerWindow::getSolo() const
 {
 	return m_solo;
 }
@@ -136,9 +142,11 @@ void JinglePlayerWindow::setMute(bool mute)
 {
 	m_mute = mute;
 	updateGain();
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->muteChanged(mute);
 }
 
-bool JinglePlayerWindow::getMute()
+bool JinglePlayerWindow::getMute() const
 {
 	return m_mute;
 }
@@ -152,6 +160,11 @@ void JinglePlayerWindow::updateGain()
 void JinglePlayerWindow::setOutputChannels(int outputChannels)
 {
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
+}
+
+std::vector<MixerControlable*> JinglePlayerWindow::getSubMixerControlables()
+{
+	return std::vector<MixerControlable*>();
 }
 
 void JinglePlayerWindow::resized()
@@ -435,4 +448,9 @@ void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
 
 	XmlElement* channelMappingXml = element.getChildByName("ChannelMapping");
 	m_remappingAudioSource->restoreFromXml(*channelMappingXml->getChildElement(0));
+}
+
+void JinglePlayerWindow::SetChannelCountChangedCallback(ChannelCountChangedCallback callback)
+{
+
 }

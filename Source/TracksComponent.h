@@ -9,7 +9,7 @@
 class TracksComponent : public Component
 {
 public:
-	TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback);
+	TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback, ChannelCountChangedCallback channelCountChanged);
     ~TracksComponent();
 
     void resized();
@@ -43,6 +43,8 @@ private:
 	MixerAudioSource m_tracksMixer;
 
 	PositionCallback m_positionCallback;
+
+	ChannelCountChangedCallback m_channelCountChanged;
 
 	int m_outputChannels;
 

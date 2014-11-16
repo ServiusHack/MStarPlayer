@@ -69,25 +69,29 @@ public:
 
 	void setGain(float gain);
 
-	float getGain();
+	virtual float getGain() const override;
 
-	void setPan(float pan);
+	virtual void setPan(float pan) override;
 
-	float getPan();
+	virtual float getPan() const override;
 
-	void setSoloMute(bool soloMute);
+	virtual void setSoloMute(bool soloMute) override;
 
-	bool getSoloMute();
+	virtual bool getSoloMute() const override;
 
-	void setSolo(bool solo);
+	virtual void setSolo(bool solo) override;
 
-	bool getSolo();
+	virtual bool getSolo() const override;
 
-	void setMute(bool mute);
+	virtual void setMute(bool mute) override;
 
-	bool getMute();
+	virtual bool getMute() const override;
 
 	void updateGain();
+
+	virtual std::vector<MixerControlable*> getSubMixerControlables() override;
+
+	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) override;
 
 private:
 
