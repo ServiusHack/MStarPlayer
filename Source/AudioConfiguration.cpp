@@ -141,7 +141,7 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 	m_closeButton->addListener(this);
 	m_closeButton->setWantsKeyboardFocus(false);
 
-	setSize(700, 400);
+	setSize(500, 400);
 
 	changeListenerCallback(&outputChannelName);
 }
