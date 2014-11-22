@@ -6,6 +6,8 @@
 #include "PlaylistPlayerWindow.h"
 #include "MixerComponent.h"
 #include "OutputChannelNames.h"
+#include "DarkLookAndFeel.h"
+#include "DefaultLookAndFeel.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
@@ -25,6 +27,12 @@ class MainContentComponent
 	, public ChangeListener
 {
 public:
+
+	static DefaultLookAndFeel* s_defaultLookAndFeel;
+	static DarkLookAndFeel* s_darkLookAndFeel;
+
+	static void initLookAndFeel();
+
 	MainContentComponent(ApplicationCommandManager* commandManager);
 	~MainContentComponent();
 
@@ -68,6 +76,9 @@ private:
 		layoutModeTabs = 0x2009,
 
         configureAudio = 0x200A,
+
+		lookAndFeelDefault = 0x200B,
+		lookAndFeelDark = 0x200C
     };
     
     // Project file related methods and fields

@@ -1,7 +1,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
-
 class AudioPlayerJuceApplication : public JUCEApplication
 {
 public:
@@ -12,7 +11,9 @@ public:
     bool moreThanOneInstanceAllowed()       { return true; }
 
     void initialise (const String& /*commandLine*/)
-    {
+	{
+		MainContentComponent::initLookAndFeel();
+		LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
 		m_mainWindow = new MainWindow();
     }
 

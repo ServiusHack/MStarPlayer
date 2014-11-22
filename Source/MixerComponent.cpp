@@ -62,8 +62,6 @@ void MixerComponent::updatePlayerColor(Player* player, Colour color)
 
 void MixerComponent::paint (Graphics& g)
 {
-    g.fillAll (Colour (0xffeeddff));
-
 	if (m_playerSliders.size() > 0)
 		g.drawLine(m_separatorPosition, 0, m_separatorPosition, getHeight(), 1);
 }

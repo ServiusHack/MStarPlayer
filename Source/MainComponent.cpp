@@ -5,6 +5,16 @@ bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/) {
     return true;
 }
 
+
+DefaultLookAndFeel* MainContentComponent::s_defaultLookAndFeel;
+DarkLookAndFeel* MainContentComponent::s_darkLookAndFeel;
+
+void MainContentComponent::initLookAndFeel()
+{
+	s_defaultLookAndFeel = new DefaultLookAndFeel();
+	s_darkLookAndFeel = new DarkLookAndFeel();
+}
+
 MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager)
 	: m_commandManager(commandManager)
 	, m_projectModified(false)
@@ -64,8 +74,15 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
 		menu.addCommandItem(m_commandManager, addPlaylistPlayer);
 		break;
 	case 2:
-		menu.addCommandItem(m_commandManager, layoutModeFloating);
-		menu.addCommandItem(m_commandManager, layoutModeTabs);
+		{
+			menu.addCommandItem(m_commandManager, layoutModeFloating);
+			menu.addCommandItem(m_commandManager, layoutModeTabs);
+
+			PopupMenu stylePopupMenu;
+			stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDefault);
+			stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDark);
+			menu.addSubMenu(TRANS("Style"), stylePopupMenu);
+		}
 		break;
 	case 3:
 		menu.addCommandItem(m_commandManager, configureAudio);
@@ -99,7 +116,9 @@ void MainContentComponent::getAllCommands(Array <CommandID>& commands)
         addPlaylistPlayer,
 		layoutModeFloating,
 		layoutModeTabs,
-        configureAudio
+        configureAudio,
+		lookAndFeelDefault,
+		lookAndFeelDark
     };
 
     commands.addArray(ids, numElementsInArray (ids));
@@ -158,6 +177,18 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     case configureAudio:
         result.setInfo ("Configure Audio", "Configure the audio device to use", optionsCategory, 0);
         break;
+
+	case lookAndFeelDefault:
+	{
+		result.setInfo("Standard", "Use the default look and feel", viewCategory, 0);
+		result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel);
+	}
+		break;
+
+	case lookAndFeelDark:
+		result.setInfo("Dark", "Use a dark look and feel", viewCategory, 0);
+		result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel);
+		break;
     };
 }
 
@@ -202,7 +233,18 @@ bool MainContentComponent::perform (const InvocationInfo& info)
 		break;
     case configureAudio:
 		new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames);
-        break;
+		break;
+
+	case lookAndFeelDefault:
+		LookAndFeel::setDefaultLookAndFeel(s_defaultLookAndFeel);
+		m_multiDocumentPanel->setBackgroundColour(Colours::lightblue);
+		static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(Colours::lightgrey);
+		break;
+	case lookAndFeelDark:
+		LookAndFeel::setDefaultLookAndFeel(s_darkLookAndFeel);
+		m_multiDocumentPanel->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId).darker());
+		static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
+		break;
     default:
         return false;
     };
@@ -311,6 +353,20 @@ void MainContentComponent::readProjectFile()
 			else
 				loadErrors.add("Unknown view layout, using default.");
 		}
+
+		XmlElement* styleElement = view->getChildByName("Style");
+		if (styleElement == nullptr)
+			loadErrors.add("No style settings found, using default.");
+		else
+		{
+			String style = styleElement->getAllSubText().trim();
+			if (style == "default")
+				perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDefault));
+			else if (style == "dark")
+				perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
+			else
+				loadErrors.add("Unknown style, using default.");
+		}
 	}
 
     XmlElement* audio = root->getChildByName("Audio");
@@ -400,6 +456,7 @@ void MainContentComponent::writeProjectFile()
 	XmlElement* root = new XmlElement("Project");
 
 	XmlElement* view = new XmlElement("View");
+
 	XmlElement* layoutMode = new XmlElement("LayoutMode");
 	switch (m_multiDocumentPanel->getLayoutMode()) {
 	case MultiDocumentPanel::FloatingWindows:
@@ -410,6 +467,14 @@ void MainContentComponent::writeProjectFile()
 		break;
 	}
 	view->addChildElement(layoutMode);
+
+	XmlElement* style = new XmlElement("Style");
+	if (&LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel)
+		style->addTextElement("default");
+	else if (&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel)
+		style->addTextElement("dark");
+	view->addChildElement(style);
+
 	root->addChildElement(view);
     
     XmlElement* audio = new XmlElement("Audio");

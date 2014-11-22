@@ -57,6 +57,18 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <GROUP id="{797CF8BB-665B-46ED-3A1A-9FAD5DADBBF3}" name="LookAndFeels">
+        <FILE id="AtlteK" name="AppLookAndFeelInterface.h" compile="0" resource="0"
+              file="Source/AppLookAndFeelInterface.h"/>
+        <FILE id="Orz6mE" name="DefaultLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/DefaultLookAndFeel.cpp"/>
+        <FILE id="NC2r9i" name="DefaultLookAndFeel.h" compile="0" resource="0"
+              file="Source/DefaultLookAndFeel.h"/>
+        <FILE id="ZT52ph" name="DarkLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/DarkLookAndFeel.cpp"/>
+        <FILE id="s0dyuB" name="DarkLookAndFeel.h" compile="0" resource="0"
+              file="Source/DarkLookAndFeel.h"/>
+      </GROUP>
       <FILE id="EU77EN" name="OutputChannelNames.cpp" compile="1" resource="0"
             file="Source/OutputChannelNames.cpp"/>
       <FILE id="o8Orct" name="OutputChannelNames.h" compile="0" resource="0"
