@@ -104,7 +104,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 	addAndMakeVisible(m_digitalDisplay = new Label(String::empty, "00:00:00"));
 	m_digitalDisplay->setFont(Font(Font::getDefaultMonospacedFontName(), 14, Font::plain));
 	m_digitalDisplay->setColour(Label::textColourId, Colours::red);
-	m_digitalDisplay->setColour(Label::backgroundColourId, Colours::white);
+	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
 
 	// tracks
 	addAndMakeVisible(m_tracksViewport = new Viewport());
@@ -264,6 +264,7 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 				}, [this](Colour color) {
 					m_color = color;
 					m_mixer->updatePlayerColor(this, m_color);
+					m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
 					repaint();
 				}, [&]() {
 					// clear is not working
