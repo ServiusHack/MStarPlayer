@@ -50,12 +50,9 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	m_descriptionLabel->setText(getName(), sendNotification);
 	m_descriptionLabel->setJustificationType(Justification::topLeft);
 
-	m_volumeSlider = new Slider("volume");
+	m_volumeSlider = new VolumeSlider();
 	addAndMakeVisible(m_volumeSlider);
-	m_volumeSlider->setRange(0, 2, 0.1);
 	m_volumeSlider->setValue(1.0);
-	m_volumeSlider->setSliderStyle(Slider::LinearVertical);
-	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	m_volumeSlider->addListener(this);
 
 	m_editButton = new ImageButton("edit");

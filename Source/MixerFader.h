@@ -5,6 +5,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "Player.h"
+#include "VolumeSlider.h"
 
 class MixerFader 
 	: public Component
@@ -52,7 +53,7 @@ private:
 	ScopedPointer<TextButton> m_muteButton;
 	ScopedPointer<ArrowButton> m_expandButton;
 	ScopedPointer<Slider> m_panSlider;
-	ScopedPointer<Slider> m_volumeSlider;
+	ScopedPointer<VolumeSlider> m_volumeSlider;
 
 	ResizeCallback m_resizeCallback;
 

@@ -4,6 +4,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "VolumeSlider.h"
+
 typedef std::function<void(String)> TrackSettingsChangedCallback;
 typedef std::function<void(float)> VolumeChangedCallback;
 
@@ -45,7 +47,7 @@ private:
 	ScopedPointer<Label> m_nameLabel;
 	ScopedPointer<TextEditor> m_nameEditor;
 	ScopedPointer<TextButton> m_closeButton;
-	ScopedPointer<Slider> m_volumeSlider;
+	ScopedPointer<VolumeSlider> m_volumeSlider;
 
 	TrackSettingsChangedCallback m_settingsChangedCallback;
 	VolumeChangedCallback m_volumeChangedCallback;

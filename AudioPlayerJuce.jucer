@@ -57,6 +57,9 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="e71wzv" name="VolumeSlider.cpp" compile="1" resource="0"
+            file="Source/VolumeSlider.cpp"/>
+      <FILE id="D8dT2g" name="VolumeSlider.h" compile="0" resource="0" file="Source/VolumeSlider.h"/>
       <GROUP id="{797CF8BB-665B-46ED-3A1A-9FAD5DADBBF3}" name="LookAndFeels">
         <FILE id="AtlteK" name="AppLookAndFeelInterface.h" compile="0" resource="0"
               file="Source/AppLookAndFeelInterface.h"/>

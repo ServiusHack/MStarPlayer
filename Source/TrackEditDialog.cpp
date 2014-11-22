@@ -56,11 +56,8 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain,
 	m_nameEditor->selectAll();
 	m_nameEditor->addListener(this);
 
-	addAndMakeVisible(m_volumeSlider = new Slider("volume slider"));
-	m_volumeSlider->setRange(0, 2, 0.1);
+	addAndMakeVisible(m_volumeSlider = new VolumeSlider());
 	m_volumeSlider->setValue(trackGain);
-	m_volumeSlider->setSliderStyle(Slider::LinearVertical);
-	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	m_volumeSlider->addListener(this);
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));

@@ -22,7 +22,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 , m_muteButton(new TextButton("mute"))
 , m_expandButton(new ArrowButton("expand", 0.0, Colour(0xff000000)))
 , m_panSlider(panEnabled ? new Slider() : nullptr)
-, m_volumeSlider(new Slider())
+, m_volumeSlider(new VolumeSlider())
 , m_resizeCallback(resizeCallback)
 , m_mixerControlable(mainControlable)
 {
@@ -61,10 +61,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 	}
 
 	addAndMakeVisible(m_volumeSlider);
-	m_volumeSlider->setRange(0, 2, 0.1);
 	m_volumeSlider->setValue(m_mixerControlable->getGain());
-	m_volumeSlider->setSliderStyle(Slider::LinearVertical);
-	m_volumeSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	m_volumeSlider->addListener(this);
 
 	addChildComponent(m_expandButton);

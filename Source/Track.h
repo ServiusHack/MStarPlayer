@@ -5,7 +5,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "TrackEditDialog.h"
-
+#include "VolumeSlider.h"
 #include "Player.h"
 
 typedef std::function<void()> DurationChangedCallback;
@@ -98,7 +98,7 @@ private:
 	ScopedPointer<ImageButton> m_openButton;
 	ScopedPointer<ImageButton> m_soloButton;
 	ScopedPointer<ImageButton> m_muteButton;
-	ScopedPointer<Slider> m_volumeSlider;
+	ScopedPointer<VolumeSlider> m_volumeSlider;
 	ScopedPointer<AudioThumbnail> m_audioThumbnail;
 	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
 	ScopedPointer<Label> m_fileNameLabel;
