@@ -7,6 +7,7 @@
 #include "TrackEditDialog.h"
 #include "VolumeSlider.h"
 #include "Player.h"
+#include "ChannelRemappingAudioSourceWithVolume.h"
 
 typedef std::function<void()> DurationChangedCallback;
 typedef std::function<void(double)> PositionCallback;
@@ -85,6 +86,8 @@ public:
 	virtual void setPan(float) override {};
 	virtual float getPan() const override { return 0; };
 
+	virtual float getVolume() const override;
+
 private:
 	void updateIdText();
 	void loadFile();
@@ -100,7 +103,7 @@ private:
 	ScopedPointer<ImageButton> m_muteButton;
 	ScopedPointer<VolumeSlider> m_volumeSlider;
 	ScopedPointer<AudioThumbnail> m_audioThumbnail;
-	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
+	ScopedPointer<ChannelRemappingAudioSourceWithVolume> m_remappingAudioSource;
 	ScopedPointer<Label> m_fileNameLabel;
 	AudioThumbnailCache m_audioThumbnailCache;
 	AudioFormatManager m_formatManager;
@@ -124,6 +127,7 @@ private:
 	double m_longestDuration;
 	float m_playerGain;
 	float m_trackGain;
+	int m_outputChannels;
 
 	DurationChangedCallback m_durationChangedCallback;
 	DurationChangedCallback m_soloChangedCallback;

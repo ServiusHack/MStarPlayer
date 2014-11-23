@@ -57,6 +57,12 @@
             file="Icons/document-new.png"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="XPTtIf" name="ChannelRemappingAudioSourceWithVolume.cpp"
+            compile="1" resource="0" file="Source/ChannelRemappingAudioSourceWithVolume.cpp"/>
+      <FILE id="Tkh4LZ" name="ChannelRemappingAudioSourceWithVolume.h" compile="0"
+            resource="0" file="Source/ChannelRemappingAudioSourceWithVolume.h"/>
+      <FILE id="JJoZFb" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
+      <FILE id="P9Ge44" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
       <FILE id="e71wzv" name="VolumeSlider.cpp" compile="1" resource="0"
             file="Source/VolumeSlider.cpp"/>
       <FILE id="D8dT2g" name="VolumeSlider.h" compile="0" resource="0" file="Source/VolumeSlider.h"/>

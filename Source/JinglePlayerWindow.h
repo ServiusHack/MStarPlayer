@@ -7,6 +7,7 @@
 #include "Utils.h"
 #include "RenameDialog.h"
 #include "OutputChannelNames.h"
+#include "ChannelRemappingAudioSourceWithVolume.h"
 
 //==============================================================================
 /** A jingle player shown within the application.
@@ -87,6 +88,8 @@ public:
 
 	virtual bool getMute() const override;
 
+	virtual float getVolume() const override;
+
 	void updateGain();
 
 	virtual std::vector<MixerControlable*> getSubMixerControlables() override;
@@ -130,7 +133,7 @@ private:
     // audio file playback
 	TimeSliceThread m_thread;
 	AudioTransportSource m_transportSource;
-	ScopedPointer<ChannelRemappingAudioSource> m_remappingAudioSource;
+	ScopedPointer<ChannelRemappingAudioSourceWithVolume> m_remappingAudioSource;
 
 	OptionalScopedPointer<RenameDialogWindow> m_renameDialog;
 
@@ -138,6 +141,7 @@ private:
 	bool m_soloMute;
 	bool m_solo;
 	bool m_mute;
+	int m_outputChannels;
 
 	bool m_showRemainingTime;
 

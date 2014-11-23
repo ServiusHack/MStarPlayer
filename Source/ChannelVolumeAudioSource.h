@@ -46,6 +46,8 @@ public:
 
 	void updateGain(int channelIndex);
 
+	float getActualVolume(int channelIndex);
+
 	int channelCount();
 
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
@@ -62,6 +64,7 @@ private:
     Array<float> m_setVolumes;
 	Array<bool> m_setMutes;
 	Array<bool> m_setSolos;
+	Array<float> m_actualVolumes;
 
 	bool m_anySolo;
 

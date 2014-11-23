@@ -6,12 +6,14 @@
 
 #include "Player.h"
 #include "VolumeSlider.h"
+#include "LevelMeter.h"
 
 class MixerFader 
 	: public Component
 	, public ButtonListener
 	, public juce::Slider::Listener
 	, public MixerControlableChangeListener
+	, public Timer
 {
 public:
 
@@ -47,12 +49,15 @@ public:
 
 	virtual void muteChanged(bool mute) override;
 
+	virtual void timerCallback() override;
+
 private:
 	ScopedPointer<Label> m_label;
 	ScopedPointer<TextButton> m_soloButton;
 	ScopedPointer<TextButton> m_muteButton;
 	ScopedPointer<ArrowButton> m_expandButton;
 	ScopedPointer<Slider> m_panSlider;
+	ScopedPointer<LevelMeter> m_levelMeter;
 	ScopedPointer<VolumeSlider> m_volumeSlider;
 
 	ResizeCallback m_resizeCallback;

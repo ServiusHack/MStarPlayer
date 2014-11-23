@@ -22,6 +22,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 , m_muteButton(new TextButton("mute"))
 , m_expandButton(new ArrowButton("expand", 0.0, Colour(0xff000000)))
 , m_panSlider(panEnabled ? new Slider() : nullptr)
+, m_levelMeter(new LevelMeter())
 , m_volumeSlider(new VolumeSlider())
 , m_resizeCallback(resizeCallback)
 , m_mixerControlable(mainControlable)
@@ -64,6 +65,8 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 	m_volumeSlider->setValue(m_mixerControlable->getGain());
 	m_volumeSlider->addListener(this);
 
+	addAndMakeVisible(m_levelMeter);
+
 	addChildComponent(m_expandButton);
 	m_expandButton->addListener(this);
 
@@ -77,6 +80,8 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 	setMixSettings(subControlable);
 
 	mainControlable->addChangeListener(this);
+
+	startTimer(100);
 }
 
 MixerFader::~MixerFader()
@@ -102,6 +107,11 @@ void MixerFader::soloChanged(bool solo)
 void MixerFader::muteChanged(bool mute)
 {
 	m_muteButton->setToggleState(mute, sendNotification);
+}
+
+void MixerFader::timerCallback()
+{
+	m_levelMeter->setVolume(m_mixerControlable->getVolume());
 }
 
 void MixerFader::paint(Graphics& g)
@@ -148,6 +158,7 @@ void MixerFader::resized()
 		panBounds = getLocalArea(m_panSlider, m_panSlider->getLocalBounds());
 	}
 
+	m_levelMeter->setBounds(padding, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
 	m_volumeSlider->setBounds(padding + (baseWidth - 2 * padding) / 3, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
 	m_expandButton->setBounds(padding + 2 * (baseWidth - 2 * padding) / 3, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
 

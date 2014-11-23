@@ -71,6 +71,8 @@ public:
 
 	virtual bool getMute() const override;
 
+	virtual float getVolume() const override;
+
 	void updateGain();
 
 	void configureChannels();

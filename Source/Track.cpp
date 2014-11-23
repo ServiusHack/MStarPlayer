@@ -28,13 +28,14 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_trackGain(1.0f)
 	, m_playerMute(mute)
 	, m_channelCountChangedCallback(channelCountChangedCallback)
+	, m_outputChannels(outputChannels)
 {
 	m_formatManager.registerBasicFormats();
 	m_thread.startThread(3);
 
 	m_transportSource.setGain(gain);
 
-	m_remappingAudioSource = new ChannelRemappingAudioSource(&m_transportSource, false);
+	m_remappingAudioSource = new ChannelRemappingAudioSourceWithVolume(&m_transportSource, false);
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
 	m_remappingAudioSource->setOutputChannelMapping(0, 0);
 	m_remappingAudioSource->setOutputChannelMapping(1, 1);
@@ -161,6 +162,14 @@ bool Track::getMute() const
 void Track::setSolo(bool solo)
 {
 	m_soloButton->setToggleState(solo, sendNotification);
+}
+
+float Track::getVolume() const
+{
+	float maxVolume = 0;
+	for (int i = 0; i < m_outputChannels; ++i)
+		maxVolume = std::max(maxVolume, m_remappingAudioSource->getVolume(i));
+	return maxVolume;
 }
 
 void Track::buttonClicked(Button *button)
@@ -439,6 +448,7 @@ std::vector<int> Track::getMapping()
 
 void Track::setOutputChannels(int outputChannels)
 {
+	m_outputChannels = outputChannels;
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
 }
 

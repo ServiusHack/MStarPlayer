@@ -174,6 +174,11 @@ public:
 		return m_channelVolumeAudioSource->getChannelMute(channelNumber);
 	}
 
+	virtual float getVolume() const override
+	{
+		return m_channelVolumeAudioSource->getActualVolume(channelNumber);
+	}
+
 private:
 	int channelNumber;
 	ChannelVolumeAudioSource* m_channelVolumeAudioSource;

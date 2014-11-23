@@ -187,6 +187,14 @@ bool PlaylistPlayerWindow::getMute() const
 	return m_mute;
 }
 
+float PlaylistPlayerWindow::getVolume() const
+{
+	float maxVolume = 0;
+	for (int i = 0; i < m_tracks->playerCount(); ++i)
+		maxVolume = std::max(maxVolume, m_tracks->player(i).getVolume());
+	return maxVolume;
+}
+
 void PlaylistPlayerWindow::updateGain()
 {
 	bool mute = m_mute || (m_soloMute && !m_solo);

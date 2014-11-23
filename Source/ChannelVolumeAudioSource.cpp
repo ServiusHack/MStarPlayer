@@ -91,6 +91,16 @@ bool ChannelVolumeAudioSource::getChannelMute(int channelIndex)
 	return false;
 }
 
+float ChannelVolumeAudioSource::getActualVolume(int channelIndex)
+{
+	const ScopedLock sl(m_lock);
+
+	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size())
+		return m_actualVolumes.getUnchecked(channelIndex);
+
+	return 0.0f;
+}
+
 void ChannelVolumeAudioSource::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     m_source->prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -111,6 +121,9 @@ void ChannelVolumeAudioSource::expandListsTo(int channelIndex)
 
 	while (m_setMutes.size() <= channelIndex)
 		m_setMutes.add(false);
+
+	while (m_actualVolumes.size() <= channelIndex)
+		m_actualVolumes.add(0.0f);
 }
 
 int ChannelVolumeAudioSource::channelCount()
@@ -141,5 +154,6 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
         if (channel < m_appliedGains.size())
 			gain = m_appliedGains.getUnchecked(channel);
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
+		m_actualVolumes.set(channel, bufferToFill.buffer->getRMSLevel(channel, bufferToFill.startSample, bufferToFill.numSamples));
     }
 }

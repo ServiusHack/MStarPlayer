@@ -48,6 +48,8 @@ public:
 
 	virtual bool getMute() const = 0;
 
+	virtual float getVolume() const = 0;
+
 protected:
 	Array<MixerControlableChangeListener*> m_listeners;
 };

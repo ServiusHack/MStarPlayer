@@ -26,6 +26,7 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
 	, m_showRemainingTime(false)
 	, m_blink(false)
 	, m_paintColor(m_color)
+	, m_outputChannels(outputChannelNames->getNumberOfChannels())
 {
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
@@ -69,7 +70,7 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
 	m_formatManager.registerBasicFormats();
 	m_thread.startThread(3);
 
-	m_remappingAudioSource = new ChannelRemappingAudioSource(&m_transportSource, false);
+	m_remappingAudioSource = new ChannelRemappingAudioSourceWithVolume(&m_transportSource, false);
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannelNames->getNumberOfChannels());
 	// TODO: Probably do this for outputChannels times.
 	m_remappingAudioSource->setOutputChannelMapping(0, 0);
@@ -151,6 +152,16 @@ bool JinglePlayerWindow::getMute() const
 	return m_mute;
 }
 
+float JinglePlayerWindow::getVolume() const
+{
+	float maxVolume = 0;
+	for (int i = 0; i < m_outputChannels; ++i) {
+		maxVolume = std::max(maxVolume, m_remappingAudioSource->getVolume(i));
+	}
+
+	return maxVolume;
+}
+
 void JinglePlayerWindow::updateGain()
 {
 	bool mute = m_mute || (m_soloMute && !m_solo);
@@ -159,6 +170,7 @@ void JinglePlayerWindow::updateGain()
 
 void JinglePlayerWindow::setOutputChannels(int outputChannels)
 {
+	m_outputChannels = outputChannels;
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
 }
 
