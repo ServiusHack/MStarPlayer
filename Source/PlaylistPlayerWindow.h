@@ -27,31 +27,31 @@ public:
     /** Destructor */
     ~PlaylistPlayerWindow();
 
-    void paint(Graphics&);
-    void resized();
+	virtual void paint(Graphics&) override;
+	virtual void resized() override;
 
-    void mouseDown(const MouseEvent & event);
+	virtual void mouseDown(const MouseEvent & event) override;
 
-    void buttonClicked(Button * /*button*/);
+	virtual void buttonClicked(Button * /*button*/) override;
 
     /** Set the number of output channels.
 
         If the user reconfigures his audio settings the number of output channels
         might change. This method is called to propagate this change to this player.
     */
-    void setOutputChannels(int outputChannels) override;
+    virtual void setOutputChannels(int outputChannels) override;
 	
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    XmlElement* saveToXml() const;
+	virtual XmlElement* saveToXml() const override;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml(const XmlElement& element);
+	void restoreFromXml(const XmlElement& element);
 	
-	void setGain(float gain);
+	virtual void setGain(float gain) override;
 
 	virtual float getGain() const override;
 

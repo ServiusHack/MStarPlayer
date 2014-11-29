@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, Player::ChannelCountChangedCallback channelCountChangedCallback)
 	: m_audioThumbnailCache(1)
 	, m_trackIndex(trackIndex)
 	, m_stereo(stereo)
@@ -198,7 +198,7 @@ void Track::buttonClicked(Button *button)
 
 void Track::sliderValueChanged(Slider* /*slider*/)
 {
-	setGain(m_volumeSlider->getValue());
+	setGain(static_cast<float>(m_volumeSlider->getValue()));
 }
 
 void Track::updateGain()
@@ -249,52 +249,56 @@ void Track::loadFile()
 
 	AudioFormatReader* reader = m_formatManager.createReaderFor(m_audioFile);
 
-	if (reader->numChannels > 2) {
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-			"AudioPlayerJuce",
-			"The selected file has more than two channels. This is not supported."
-			);
-		return;
-	}
-
-	if (!m_stereo && reader->numChannels != 1) {
-		int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
-			"AudioPlayerJuce",
-			"You have selected a stereo file for a mono track.",
-			"Convert to stereo track",
-			"Abort",
-			this,
-			nullptr
-			);
-		switch (result) {
-		case 1:
-			m_stereo = true;
-			m_channelCountChangedCallback();
-			updateIdText();
-			break;
-		default:
+	if (reader != nullptr) {
+		if (reader->numChannels > 2) {
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+				"AudioPlayerJuce",
+				"The selected file has more than two channels. This is not supported."
+				);
 			return;
 		}
-	}
 
-	if (m_stereo && reader->numChannels != 2) {
-		int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
-			"AudioPlayerJuce",
-			"You have selected a mono file for a stereo track.",
-			"Convert to mono track",
-			"Abort",
-			this,
-			nullptr
-			);
-		switch (result) {
-		case 1:
-			m_stereo = false;
-			m_channelCountChangedCallback();
-			updateIdText();
-			break;
-		default:
-			return;
+		if (!m_stereo && reader->numChannels != 1) {
+			int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
+				"AudioPlayerJuce",
+				"You have selected a stereo file for a mono track.",
+				"Convert to stereo track",
+				"Abort",
+				this,
+				nullptr
+				);
+			switch (result) {
+			case 1:
+				m_stereo = true;
+				m_channelCountChangedCallback();
+				updateIdText();
+				break;
+			default:
+				return;
+			}
 		}
+
+		if (m_stereo && reader->numChannels != 2) {
+			int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
+				"AudioPlayerJuce",
+				"You have selected a mono file for a stereo track.",
+				"Convert to mono track",
+				"Abort",
+				this,
+				nullptr
+				);
+			switch (result) {
+			case 1:
+				m_stereo = false;
+				m_channelCountChangedCallback();
+				updateIdText();
+				break;
+			default:
+				return;
+			}
+		}
+
+		delete reader;
 	}
 
 	loadFileIntoTransport();
@@ -312,12 +316,14 @@ void Track::loadFileIntoTransport()
 	m_audioThumbnail->setSource(new FileInputSource(m_audioFile));
 	repaint();
 
-	m_currentAudioFileSource = new AudioFormatReaderSource(reader, true);
-	// ..and plug it into our transport source
-	m_transportSource.setSource(m_currentAudioFileSource,
-								32768, // tells it to buffer this many samples ahead
-								&m_thread, // this is the background thread to use for reading-ahead
-								reader->sampleRate);
+	if (reader != nullptr) {
+		m_currentAudioFileSource = new AudioFormatReaderSource(reader, true);
+		// ..and plug it into our transport source
+		m_transportSource.setSource(m_currentAudioFileSource,
+									32768, // tells it to buffer this many samples ahead
+									&m_thread, // this is the background thread to use for reading-ahead
+									reader->sampleRate);
+		}
 
 	updateGain();
 
@@ -338,7 +344,8 @@ void Track::paint (Graphics& g)
 
 	g.setColour(Colour(255, 0, 0));
 	drawWidth = getWidth() - componentWidth;
-	float lineX = componentWidth + static_cast<float>(drawWidth * m_progress);
+
+	float lineX = componentWidth + static_cast<float>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
 	g.drawLine(lineX, 0.0f, lineX, static_cast<float>(getHeight()));
 }
 

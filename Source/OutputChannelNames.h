@@ -7,18 +7,19 @@
 class OutputChannelNamesListener
 {
 public:
-	virtual void outputChannelNamesReset() {};
-	virtual void outputChannelNameChanged(int /*activeChannelIndex*/, String /*text*/) {};
+	virtual void outputChannelNamesReset() = 0;
+	virtual void outputChannelNameChanged(int activeChannelIndex, String text) = 0;
 };
 
+/**
+	Maintains the user defined output channel names.
+*/
 class OutputChannelNames
 	: public ChangeListener
 	, public ChangeBroadcaster
 {
 public:
 	OutputChannelNames(AudioDeviceManager &deviceManager);
-
-	void addListener();
 
 	int getNumberOfChannels();
 
@@ -30,6 +31,11 @@ public:
 
 	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
 
+	/**
+		Add a listener which will be notified when a channel name changes or all names are reset.
+
+		The ownership will not be transfered, it is the caller's responsibility to remove and destroy the listener later.
+	*/
 	void addListener(OutputChannelNamesListener* listener);
 
 	void removeListener(OutputChannelNamesListener* listener);

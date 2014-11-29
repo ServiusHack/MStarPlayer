@@ -6,13 +6,19 @@ bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/) {
 }
 
 
-DefaultLookAndFeel* MainContentComponent::s_defaultLookAndFeel;
+LookAndFeel_V3* MainContentComponent::s_defaultLookAndFeel;
 DarkLookAndFeel* MainContentComponent::s_darkLookAndFeel;
 
 void MainContentComponent::initLookAndFeel()
 {
-	s_defaultLookAndFeel = new DefaultLookAndFeel();
+	s_defaultLookAndFeel = new LookAndFeel_V3();
 	s_darkLookAndFeel = new DarkLookAndFeel();
+}
+
+void MainContentComponent::destroyLookAndFeel()
+{
+	delete s_defaultLookAndFeel;
+	delete s_darkLookAndFeel;
 }
 
 MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager)

@@ -140,7 +140,6 @@ float PlaylistPlayerWindow::getGain() const
 
 void PlaylistPlayerWindow::setPan(float pan)
 {
-
 	for (MixerControlableChangeListener *listener : m_listeners)
 		listener->panChanged(pan);
 }
@@ -374,7 +373,7 @@ std::vector<std::pair<char, int>> PlaylistPlayerWindow::createMapping()
 	std::vector<std::pair<char, int>> mapping;
 	for (int i = 0; i < m_tracks->playerCount(); ++i) {
 		std::vector<int> playerMapping = m_tracks->player(i).getMapping();
-		for (int j = 0; j < playerMapping.size(); ++j) {
+		for (size_t j = 0; j < playerMapping.size(); ++j) {
 			if (playerMapping.size() == 1)
 				mapping.push_back(std::pair<char, int>('m', playerMapping[j]));
 			else if (playerMapping.size() == 2)

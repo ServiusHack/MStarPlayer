@@ -54,6 +54,11 @@ void AudioConfigurationWindow::closeButtonPressed()
 	delete this;
 }
 
+void AudioConfigurationWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
+{
+	closeButtonPressed();
+}
+
 ChannelNames::ChannelNames(OutputChannelNames& outputChannelName)
 	: m_outputChannelName(outputChannelName)
 {
@@ -115,8 +120,7 @@ void ChannelNames::setChannelName(int row, String text)
 
 
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName)
-	: m_parent(parent)
-	, m_channelNames(new ChannelNames(outputChannelName))
+	: m_channelNames(new ChannelNames(outputChannelName))
 {
 	outputChannelName.addChangeListener(this);
 
@@ -138,7 +142,7 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));
 	m_closeButton->setButtonText(TRANS("Close"));
-	m_closeButton->addListener(this);
+	m_closeButton->addListener(parent);
 	m_closeButton->setWantsKeyboardFocus(false);
 
 	setSize(500, 400);
@@ -160,12 +164,7 @@ void AudioConfigurationComponent::resized()
 	);
 }
 
-void AudioConfigurationComponent::buttonClicked(Button* /*buttonThatWasClicked*/)
-{
-	m_parent->setVisible(false);
-}
-
-void AudioConfigurationComponent::changeListenerCallback(ChangeBroadcaster *source)
+void AudioConfigurationComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
 	m_tableListBox->updateContent();
 }

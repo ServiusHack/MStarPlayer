@@ -68,7 +68,7 @@ public:
     */
     void restoreFromXml (const XmlElement& element);
 
-	void setGain(float gain);
+	virtual void setGain(float gain) override;
 
 	virtual float getGain() const override;
 

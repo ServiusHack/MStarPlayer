@@ -7,7 +7,7 @@ class VolumeSlider : public Slider
 public:
 	VolumeSlider();
 
-	virtual void paint(Graphics &) override;
+	virtual void paint(Graphics&) override;
 	virtual double snapValue(double attemptedValue, DragMode dragMode) override;
 
 protected:

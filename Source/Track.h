@@ -9,8 +9,6 @@
 #include "Player.h"
 #include "ChannelRemappingAudioSourceWithVolume.h"
 
-typedef std::function<void()> DurationChangedCallback;
-typedef std::function<void(double)> PositionCallback;
 
 /*
 */
@@ -23,18 +21,21 @@ class Track
 	, public MixerControlable
 {
 public:
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback);
+	typedef std::function<void()> DurationChangedCallback;
+	typedef std::function<void(double)> PositionCallback;
+
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, Player::ChannelCountChangedCallback channelCountChangedCallback);
 	~Track();
 
 	/** Play or stop the audio playback. */
 	void buttonClicked(Button * /*button*/);
 
-	void paint (Graphics&);
-	void resized();
+	virtual void paint(Graphics&) override;
+	virtual void resized() override;
 
 	virtual void sliderValueChanged(Slider *slider) override;
 
-	void mouseDown (const MouseEvent & event);
+	virtual void mouseDown(const MouseEvent & event) override;
 
 	void play();
 	void pause();
@@ -115,7 +116,6 @@ private:
 
 	int m_trackIndex;
 
-	//AudioFormatManager formatManager;
 	MixerAudioSource &m_tracksMixer;
 	TimeSliceThread m_thread;
 	AudioTransportSource m_transportSource;
@@ -134,7 +134,7 @@ private:
 
 	PositionCallback m_positionCallback;
 
-	ChannelCountChangedCallback m_channelCountChangedCallback;
+	Player::ChannelCountChangedCallback m_channelCountChangedCallback;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 };

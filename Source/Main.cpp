@@ -20,6 +20,7 @@ public:
     void shutdown()
     {
 		m_mainWindow = nullptr; // (deletes our window)
+		MainContentComponent::destroyLookAndFeel();
     }
 
     void systemRequestedQuit()

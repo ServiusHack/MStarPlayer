@@ -7,7 +7,6 @@
 #include "MixerComponent.h"
 #include "OutputChannelNames.h"
 #include "DarkLookAndFeel.h"
-#include "DefaultLookAndFeel.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
@@ -28,10 +27,11 @@ class MainContentComponent
 {
 public:
 
-	static DefaultLookAndFeel* s_defaultLookAndFeel;
+	static LookAndFeel_V3* s_defaultLookAndFeel;
 	static DarkLookAndFeel* s_darkLookAndFeel;
 
 	static void initLookAndFeel();
+	static void destroyLookAndFeel();
 
 	MainContentComponent(ApplicationCommandManager* commandManager);
 	~MainContentComponent();

@@ -19,11 +19,8 @@ void OutputChannelNames::changeListenerCallback(ChangeBroadcaster *source)
 	{
 		m_audioDevice = manager->getCurrentAudioDevice();
 
-		if (m_audioDevice) {
-			m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
-			m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
-		}
-
+		m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
+		m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
 
 		for (OutputChannelNamesListener* listener : m_listeners)
 			listener->outputChannelNamesReset();

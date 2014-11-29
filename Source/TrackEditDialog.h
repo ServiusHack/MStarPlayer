@@ -9,25 +9,27 @@
 typedef std::function<void(String)> TrackSettingsChangedCallback;
 typedef std::function<void(float)> VolumeChangedCallback;
 
-class TrackEditDialogWindow : public DialogWindow
+class TrackEditDialogWindow
+	: public DialogWindow
+	, public ButtonListener
 {
 public:
 	TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback);
 
-	void closeButtonPressed();
+	virtual void closeButtonPressed() override;
 
-	bool keyPressed(const KeyPress &key);
+	virtual bool keyPressed(const KeyPress &key) override;
 
-	void focusGained(FocusChangeType cause);
+	virtual void focusGained(FocusChangeType cause) override;
+
+	virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
-
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrackEditDialogWindow)
 };
 
 class TrackEditDialogComponent
 	: public Component
-    , public ButtonListener
 	, public juce::Slider::Listener
 	, public juce::TextEditor::Listener
 {
@@ -37,8 +39,7 @@ public:
 	TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
 	~TrackEditDialogComponent();
 
-    void resized();
-    void buttonClicked (Button* buttonThatWasClicked);
+	virtual void resized() override;
 	virtual void sliderValueChanged(Slider *slider) override;
 
 	virtual void textEditorTextChanged(TextEditor &) override;
@@ -51,7 +52,6 @@ private:
 
 	TrackSettingsChangedCallback m_settingsChangedCallback;
 	VolumeChangedCallback m_volumeChangedCallback;
-	TrackEditDialogWindow* m_parent;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TrackEditDialogComponent)
 };

@@ -31,9 +31,13 @@ void TrackEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 	static_cast<TrackEditDialogComponent*>(getContentComponent())->m_nameEditor->grabKeyboardFocus();
 }
 
+void TrackEditDialogWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
+{
+	closeButtonPressed();
+}
+
 TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent)
-	: m_parent(parent)
-	, m_settingsChangedCallback(settingsChangedCallback)
+	: m_settingsChangedCallback(settingsChangedCallback)
 	, m_volumeChangedCallback(volumeChangedCallback)
 {
 	addAndMakeVisible(m_nameLabel = new Label("name label",
@@ -62,7 +66,7 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain,
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));
 	m_closeButton->setButtonText(TRANS("Close"));
-	m_closeButton->addListener(this);
+	m_closeButton->addListener(parent);
 	m_closeButton->setWantsKeyboardFocus(false);
 
 	setWantsKeyboardFocus(false);
@@ -96,14 +100,9 @@ void TrackEditDialogComponent::resized()
 		);
 }
 
-void TrackEditDialogComponent::buttonClicked(Button* /*buttonThatWasClicked*/)
-{
-	m_parent->setVisible(false);
-}
-
 void TrackEditDialogComponent::sliderValueChanged(Slider* /*slider*/)
 {
-	m_volumeChangedCallback(m_volumeSlider->getValue());
+	m_volumeChangedCallback(static_cast<float>(m_volumeSlider->getValue()));
 }
 
 void TrackEditDialogComponent::textEditorTextChanged(TextEditor &)

@@ -11,7 +11,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 
-TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback, ChannelCountChangedCallback channelCountChanged)
+TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, Track::PositionCallback positionCallback, Player::ChannelCountChangedCallback channelCountChanged)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_positionCallback(positionCallback)
@@ -83,13 +83,14 @@ void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 			}
 		}
 
-		longestTrack->setPositionCallback(m_positionCallback);
+		if (longestTrack) // might be nullptr if there are only tracks without a file
+			longestTrack->setPositionCallback(m_positionCallback);
 
 		for (Track* track : m_tracks)
 			track->setLongestDuration(longestDuration);
 	};
 
-	ChannelCountChangedCallback channelCountChanged = [&]() {
+	Player::ChannelCountChangedCallback channelCountChanged = [&]() {
 		m_channelCountChanged();
 	};
 

@@ -2,8 +2,6 @@
 
 #include <functional>
 
-typedef std::function<void()> ChannelCountChangedCallback;
-
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class MixerControlableChangeListener {
@@ -58,6 +56,7 @@ protected:
 class Player : public Component, public MixerControlable {
 
 public:
+	typedef std::function<void()> ChannelCountChangedCallback;
 	
 	virtual XmlElement* saveToXml() const = 0;
 

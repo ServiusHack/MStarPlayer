@@ -7,7 +7,6 @@
 #include "MixerFader.h"
 #include "OutputChannelNames.h"
 
-//==============================================================================
 /** Shows sliders for output channels to change the individual volumes of them.
 
 	This component is shown at the bottom and allows the user to change the volume
@@ -19,7 +18,6 @@
 */
 class MixerComponent
 	: public Component
-	, public SliderListener
 	, public ChangeListener
 	, public OutputChannelNamesListener
 {
@@ -79,7 +77,7 @@ private:
 	AudioDeviceManager *m_audioDeviceManager;
 	OutputChannelNames *m_outputChannelNames;
 
-	int m_separatorPosition;
+	float m_separatorPosition;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MixerComponent)
 };

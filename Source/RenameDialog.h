@@ -38,7 +38,7 @@ class RenameDialogComponent
 	friend class RenameDialogWindow;
 
 public:
-	RenameDialogComponent(String playerName, Colour color, String imagePath, RenameDialogWindow* parent, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback, RenameDialogWindow::ImageChangedCallback imageCallback);
+	RenameDialogComponent(String playerName, Colour color, String imagePath, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback, RenameDialogWindow::ImageChangedCallback imageCallback);
 	~RenameDialogComponent();
 
     void resized();
@@ -56,7 +56,6 @@ private:
 	OptionalScopedPointer<TextButton> m_imageSelectorButton;
 	OptionalScopedPointer<TextButton> m_imageResetButton;
 
-	RenameDialogWindow* m_parent;
 	Colour m_color;
 	File m_imageFile;
 

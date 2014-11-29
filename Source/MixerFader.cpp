@@ -39,7 +39,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 	m_soloButton->addListener(this);
 	m_soloButton->setWantsKeyboardFocus(false);
 	m_soloButton->setConnectedEdges(TextButton::ConnectedOnRight);
-	m_soloButton->setTransform(AffineTransform().scaled(0.7));
+	m_soloButton->setTransform(AffineTransform().scaled(0.7f));
 	m_soloButton->setClickingTogglesState(true);
 
 	addAndMakeVisible(m_muteButton);
@@ -47,7 +47,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 	m_muteButton->addListener(this);
 	m_muteButton->setWantsKeyboardFocus(false);
 	m_muteButton->setConnectedEdges(TextButton::ConnectedOnLeft);
-	m_muteButton->setTransform(AffineTransform().scaled(0.7));
+	m_muteButton->setTransform(AffineTransform().scaled(0.7f));
 	m_muteButton->setClickingTogglesState(true);
 
 	if (m_panSlider)
@@ -58,7 +58,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 		m_panSlider->setSliderStyle(Slider::LinearHorizontal);
 		m_panSlider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 		m_panSlider->addListener(this);
-		m_panSlider->setTransform(AffineTransform().scaled(0.7));
+		m_panSlider->setTransform(AffineTransform().scaled(0.7f));
 	}
 
 	addAndMakeVisible(m_volumeSlider);
@@ -87,6 +87,11 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 MixerFader::~MixerFader()
 {
 	m_mixerControlable->removeChangeListener(this);
+
+	for (MixerFader* subfader : m_subfaders) {
+		removeChildComponent(subfader);
+		delete subfader;
+	}
 }
 
 void MixerFader::gainChanged(float gain)
@@ -185,16 +190,16 @@ void MixerFader::buttonClicked(Button* buttonThatWasClicked)
 void MixerFader::sliderValueChanged(Slider* sliderThatWasMoved)
 {
 	if (sliderThatWasMoved == m_panSlider) {
-		m_mixerControlable->setPan(sliderThatWasMoved->getValue());
+		m_mixerControlable->setPan(static_cast<float>(sliderThatWasMoved->getValue()));
 	}
 	else if (sliderThatWasMoved == m_volumeSlider) {
-		m_mixerControlable->setGain(sliderThatWasMoved->getValue());
+		m_mixerControlable->setGain(static_cast<float>(sliderThatWasMoved->getValue()));
 	}
 }
 
 float MixerFader::getValue()
 {
-	return m_volumeSlider->getValue();
+	return static_cast<float>(m_volumeSlider->getValue());
 }
 
 void MixerFader::setValue(float value)
@@ -232,7 +237,7 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
 	m_subfaders.clear();
 
 	m_expandButton->setVisible(mixSettings.size() > 0);
-	for (int i = 0; i < mixSettings.size(); ++i) {
+	for (size_t i = 0; i < mixSettings.size(); ++i) {
 		MixerFader* fader = new MixerFader(mixSettings[i], std::vector<MixerControlable*>(), false, [](){});
 		addAndMakeVisible(fader);
 		m_subfaders.push_back(fader);

@@ -10,7 +10,6 @@
 typedef std::function<void(int, int)> ChangeMappingCallback;
 typedef std::function<void()> CloseCallback;
 
-//==============================================================================
 /** Show a mapping from audio source channels to output channels.
 
     The component shows a table with a colum for the source channel and another

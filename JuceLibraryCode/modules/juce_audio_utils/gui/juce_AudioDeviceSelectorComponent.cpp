@@ -223,7 +223,7 @@ public:
         {
             Rectangle<int> r (proportionOfWidth (0.35f), 0, proportionOfWidth (0.6f), 3000);
 
-            const int maxListBoxHeight = 100;
+            //const int maxListBoxHeight = 100;
             const int h = parent->getItemHeight();
             const int space = h / 4;
 

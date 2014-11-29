@@ -12,5 +12,6 @@ class LevelMeter : public Component
 	  virtual void paint(Graphics& g) override;
 
 private:
+	const AffineTransform m_rotationTransformation;
 	float m_volume;
 };

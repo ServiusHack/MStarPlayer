@@ -9,10 +9,10 @@
 class TracksComponent : public Component
 {
 public:
-	TracksComponent(MixerComponent* mixer, int outputChannels, PositionCallback positionCallback, ChannelCountChangedCallback channelCountChanged);
+	TracksComponent(MixerComponent* mixer, int outputChannels, Track::PositionCallback positionCallback, Player::ChannelCountChangedCallback channelCountChanged);
     ~TracksComponent();
 
-    void resized();
+	virtual void resized() override;
 
 	void addMonoTrack();
 	void addStereoTrack();
@@ -42,9 +42,9 @@ private:
 	MixerComponent* m_mixer;
 	MixerAudioSource m_tracksMixer;
 
-	PositionCallback m_positionCallback;
+	Track::PositionCallback m_positionCallback;
 
-	ChannelCountChangedCallback m_channelCountChanged;
+	Player::ChannelCountChangedCallback m_channelCountChanged;
 
 	int m_outputChannels;
 

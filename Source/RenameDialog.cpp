@@ -4,7 +4,7 @@ RenameDialogWindow::RenameDialogWindow(String playerName, Colour color, String i
 	: DialogWindow("Rename player", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
-	RenameDialogComponent* component = new RenameDialogComponent(playerName, color, imagePath, this, stringCallback, colourCallback, closeCallback, imageCallback);
+	RenameDialogComponent* component = new RenameDialogComponent(playerName, color, imagePath, stringCallback, colourCallback, closeCallback, imageCallback);
 	setContentOwned(component, true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
@@ -36,9 +36,8 @@ void RenameDialogWindow::focusGained(FocusChangeType /*cause*/)
 	static_cast<RenameDialogComponent*>(getContentComponent())->m_textEditor->grabKeyboardFocus();
 }
 
-RenameDialogComponent::RenameDialogComponent(String playerName, Colour color, String imagePath, RenameDialogWindow* parent, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback, RenameDialogWindow::ImageChangedCallback imageCallback)
-	: m_parent(parent)
-	, m_color(color)
+RenameDialogComponent::RenameDialogComponent(String playerName, Colour color, String imagePath, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback, RenameDialogWindow::ImageChangedCallback imageCallback)
+	: m_color(color)
 	, m_colorCallback(colourCallback)
 	, m_stringCallback(stringCallback)
 	, m_closeCallback(closeCallback)

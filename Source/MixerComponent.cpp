@@ -5,7 +5,7 @@
 MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames)
 	: m_audioDeviceManager(audioDeviceManager)
 	, m_outputChannelNames(outputChannelNames)
-	, m_separatorPosition(0)
+	, m_separatorPosition(0.0f)
 {
     // Get notified when the AudioDeviceManager changes.
 	m_audioDeviceManager->addChangeListener(this);
@@ -63,7 +63,7 @@ void MixerComponent::updatePlayerColor(Player* player, Colour color)
 void MixerComponent::paint (Graphics& g)
 {
 	if (m_playerSliders.size() > 0)
-		g.drawLine(m_separatorPosition, 0, m_separatorPosition, getHeight(), 1);
+		g.drawLine(m_separatorPosition, 0.0f, m_separatorPosition, static_cast<float>(getHeight()), 1.0f);
 }
 
 void MixerComponent::resized()
@@ -79,7 +79,7 @@ void MixerComponent::resized()
 		x += bounds.getWidth();
 	}
 
-	m_separatorPosition = x + 5;
+	m_separatorPosition = x + 5.0f;
 	x += 10;
 
 	for (int i = 0; i < m_channelSliders.size(); i++) {
@@ -132,25 +132,25 @@ public:
 		return m_channelVolumeAudioSource->getChannelVolume(channelNumber);
 	}
 
-	virtual void setPan(float pan) override
+	virtual void setPan(float /*pan*/) override
 	{
-		jassert(false);
+		jassertfalse
 	}
 
 	virtual float getPan() const override
 	{
-		jassert(false);
+		jassertfalse
 		return 0.0f;
 	}
 
-	virtual void setSoloMute(bool soloMute) override
+	virtual void setSoloMute(bool /*soloMute*/) override
 	{
-		jassert(false);
+		jassertfalse;
 	}
 
 	virtual bool getSoloMute() const override
 	{
-		jassert(false);
+		jassertfalse
 		return false;
 	}
 
@@ -220,7 +220,7 @@ void MixerComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
     resized();
 }
 
-void MixerComponent::sliderValueChanged (Slider* sliderThatWasMoved)
+void MixerComponent::sliderValueChanged (Slider* /*sliderThatWasMoved*/)
 {
 	/*int channel = m_channelSliders.indexOf(sliderThatWasMoved);
 
@@ -252,7 +252,7 @@ void MixerComponent::restoreFromXml (const XmlElement& element)
 {
 	for (int i = 0; i < m_channelSliders.size(); i++) {
 		String value = element.getChildElement(i)->getAllSubText().trim();
-		m_channelSliders.getUnchecked(i)->setValue(value.getDoubleValue());
+		m_channelSliders.getUnchecked(i)->setValue(value.getFloatValue());
 		m_channelSliders.getUnchecked(i)->setSolo(element.getChildElement(i)->getBoolAttribute("solo"));
 		m_channelSliders.getUnchecked(i)->setMute(element.getChildElement(i)->getBoolAttribute("mute"));
 	}
