@@ -132,7 +132,7 @@
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="2" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
+                       isDebug="1" optimisation="2" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>
