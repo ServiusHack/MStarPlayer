@@ -100,6 +100,8 @@
         <FILE id="s0dyuB" name="DarkLookAndFeel.h" compile="0" resource="0"
               file="Source/DarkLookAndFeel.h"/>
       </GROUP>
+      <FILE id="PdkUrs" name="CrashDumper.cpp" compile="1" resource="0" file="Source/CrashDumper.cpp"/>
+      <FILE id="kXD1G3" name="CrashDumper.h" compile="0" resource="0" file="Source/CrashDumper.h"/>
       <FILE id="fhQ0yw" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
       <FILE id="dTMQkM" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
       <FILE id="vCosBz" name="RenameDialog.cpp" compile="1" resource="0"

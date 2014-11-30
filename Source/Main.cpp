@@ -1,52 +1,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
 
-
-#include <Windows.h>
-#include <Dbghelp.h>
-
-LONG CALLBACK unhandledExceptionFilter(EXCEPTION_POINTERS* e)
-{
-	HMODULE library = LoadLibrary("dbghelp");
-	if (library == nullptr)
-		return EXCEPTION_CONTINUE_SEARCH;
-
-	auto address = (decltype(&MiniDumpWriteDump))GetProcAddress(library, "MiniDumpWriteDump");
-	if (address == nullptr)
-		return EXCEPTION_CONTINUE_SEARCH;
-
-	SYSTEMTIME time;
-	GetSystemTime(&time);
-
-	TCHAR path[MAX_PATH];
-
-	wsprintf(path, "CrashDump AudioPlayerJuce %4d-%02d-%02d %02d_%02d_%02d.dmp",
-		time.wYear, time.wMonth, time.wDay,
-		time.wHour, time.wMinute, time.wSecond);
-
-	HANDLE dumpFile = CreateFile(path, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-
-	MINIDUMP_EXCEPTION_INFORMATION exceptionInformation;
-	exceptionInformation.ThreadId = GetCurrentThreadId();
-	exceptionInformation.ExceptionPointers = e;
-	exceptionInformation.ClientPointers = FALSE;
-
-	const MINIDUMP_TYPE miniDumpType = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
-
-	MiniDumpWriteDump(
-		GetCurrentProcess(),
-		GetCurrentProcessId(),
-		dumpFile,
-		miniDumpType,
-		&exceptionInformation,
-		NULL,
-		NULL);
-
-	CloseHandle(dumpFile);
-
-	return EXCEPTION_CONTINUE_SEARCH;
-}
-
+#include "CrashDumper.h"
 
 class AudioPlayerJuceApplication : public JUCEApplication
 {
@@ -59,7 +14,7 @@ public:
 
     void initialise (const String& /*commandLine*/)
 	{
-		SetUnhandledExceptionFilter(unhandledExceptionFilter);
+		CrashDumper::init();
 		MainContentComponent::initLookAndFeel();
 		LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
 		m_mainWindow = new MainWindow();
