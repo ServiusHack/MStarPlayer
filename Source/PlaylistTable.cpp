@@ -14,14 +14,19 @@ PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
 	getHeader().addColumn("Name", 2, 200, 50, -1, TableHeaderComponent::notResizableOrSortable);
 	getHeader().addColumn("Duration", 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
 
-	PlaylistModel* model = new PlaylistModel();
-	model->addChangeListener(this);
-	setModel(model);
+	m_model = new PlaylistModel();
+	m_model->addChangeListener(this);
+	setModel(m_model);
 
-	model->add("", 0);
+	m_model->add("", 0);
 	updateContent();
 
 	selectRow(0);
+}
+
+PlaylistTable::~PlaylistTable()
+{
+	delete m_model;
 }
 
 void PlaylistTable::selectedRowsChanged(int lastRowSelected)
