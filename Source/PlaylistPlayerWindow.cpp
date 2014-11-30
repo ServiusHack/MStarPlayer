@@ -6,7 +6,7 @@
 #include "PlaylistPlayerWindow.h"
 #include "JinglePlayerWindow.h"
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain, bool solo, bool mute)
+PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain, bool solo, bool mute, bool showPlaylist)
 	: m_mixer(mixer)
 	, m_outputChannelNames(outputChannelNames)
 	, m_thread("audio file preview")
@@ -107,13 +107,31 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
 
 	// tracks
+
+	TracksComponent::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
+		m_tableListBox->setCurrentDuration(duration);
+	};
+
 	addAndMakeVisible(m_tracksViewport = new Viewport());
 	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannelNames->getNumberOfChannels(), [&](double position) {
 		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
 	},[&]() {
 		m_channelCountChanged();
-	}), false);
+	}, longestDurationCallback), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
+
+	// playlist
+
+	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const Array<TrackConfig>& trackConfigs) {
+		Array<TrackConfig> oldTrackConfigs = m_tracks->getTrackConfigs();
+		m_tracks->setTrackConfigs(trackConfigs);
+		return oldTrackConfigs;
+	};
+
+	addAndMakeVisible(m_tableListBox = new PlaylistTable(playlistCallback));
+	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
+	m_tableListBox->setOutlineThickness(1);
+	m_tableListBox->setVisible(showPlaylist);
 
 	setGain(gain);
 	mixer->registerPlayer(this);
@@ -229,7 +247,14 @@ void PlaylistPlayerWindow::resized()
 #undef PLACE_BUTTON
 	m_digitalDisplay->setBounds(8 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
 
-	m_tracksViewport->setBounds(0, buttonHeight, getWidth(), getHeight() - buttonHeight);
+	int top = buttonHeight;
+	if (m_tableListBox->isVisible()) {
+		int playlistHeight = 100;
+		m_tableListBox->setBounds(0, top, getWidth(), playlistHeight);
+		top += playlistHeight;
+	}
+
+	m_tracksViewport->setBounds(0, top, getWidth(), getHeight() - top);
 	m_tracks->setBounds(0, 0, m_tracksViewport->getMaximumVisibleWidth(), m_tracks->getHeight());
 }
 
@@ -319,8 +344,9 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 	XmlElement* tracksXml = new XmlElement("Tracks");
 	for (int i = 0; i < m_tracks->playerCount(); ++i)
 		tracksXml->addChildElement(m_tracks->player(i).saveToXml());
-
 	element->addChildElement(tracksXml);
+
+	element->addChildElement(m_tableListBox->saveToXml());
 
 	return element;
 }
@@ -345,6 +371,9 @@ void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 	XmlElement* tracksXml = element.getChildByName("Tracks");
 	for (int i = 0; i < tracksXml->getNumChildElements(); ++i)
 		m_tracks->addTrackFromXml(tracksXml->getChildElement(i));
+
+	XmlElement* playlistXml = element.getChildByName("Playlist");
+	m_tableListBox->restoreFromXml(*playlistXml);
 }
 
 void PlaylistPlayerWindow::configureChannels()

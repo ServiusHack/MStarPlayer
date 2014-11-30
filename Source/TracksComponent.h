@@ -9,7 +9,10 @@
 class TracksComponent : public Component
 {
 public:
-	TracksComponent(MixerComponent* mixer, int outputChannels, Track::PositionCallback positionCallback, Player::ChannelCountChangedCallback channelCountChanged);
+
+	typedef std::function<void(double)> LongestDurationChangedCallback;
+
+	TracksComponent(MixerComponent* mixer, int outputChannels, Track::PositionCallback positionCallback, Player::ChannelCountChangedCallback channelCountChanged, LongestDurationChangedCallback durationCallback);
     ~TracksComponent();
 
 	virtual void resized() override;
@@ -34,6 +37,9 @@ public:
 	void setMute(bool mute);
 	bool getMute();
 
+	void setTrackConfigs(const Array<TrackConfig>& trackConfigs);
+	Array<TrackConfig> getTrackConfigs();
+
 private:
 	OwnedArray<Track> m_tracks;
 	float m_gain;
@@ -47,6 +53,8 @@ private:
 	Player::ChannelCountChangedCallback m_channelCountChanged;
 
 	int m_outputChannels;
+
+	LongestDurationChangedCallback m_longestDurationChangedCallback;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TracksComponent)
 };

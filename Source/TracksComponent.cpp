@@ -11,13 +11,14 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 
-TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, Track::PositionCallback positionCallback, Player::ChannelCountChangedCallback channelCountChanged)
+TracksComponent::TracksComponent(MixerComponent* mixer, int outputChannels, Track::PositionCallback positionCallback, Player::ChannelCountChangedCallback channelCountChanged, LongestDurationChangedCallback durationCallback)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_positionCallback(positionCallback)
 	, m_channelCountChanged(channelCountChanged)
 	, m_gain(1.0f)
 	, m_mute(false)
+	, m_longestDurationChangedCallback(durationCallback)
 {
 	mixer->getMixerAudioSource().addInputSource(&m_tracksMixer, false);
 	setBounds(0,0,100,100);
@@ -88,6 +89,8 @@ void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 
 		for (Track* track : m_tracks)
 			track->setLongestDuration(longestDuration);
+
+		m_longestDurationChangedCallback(longestDuration);
 	};
 
 	Player::ChannelCountChangedCallback channelCountChanged = [&]() {
@@ -161,4 +164,26 @@ void TracksComponent::setMute(bool mute)
 bool TracksComponent::getMute()
 {
 	return m_mute;
+}
+
+void TracksComponent::setTrackConfigs(const Array<TrackConfig>& trackConfigs)
+{
+	for (int i = 0; i < trackConfigs.size(); ++i) {
+		m_tracks[i]->loadTrackConfig(trackConfigs.getReference(i));
+	}
+
+	static const TrackConfig emptyTrackConfig;
+	for (int i = trackConfigs.size(); i < m_tracks.size(); ++i) {
+		m_tracks[i]->loadTrackConfig(emptyTrackConfig);
+	}
+}
+
+Array<TrackConfig> TracksComponent::getTrackConfigs()
+{
+	Array<TrackConfig> configs;
+	for (int i = 0; i < m_tracks.size(); ++i) {
+		configs.add(m_tracks[i]->getTrackConfig());
+	}
+
+	return configs;
 }

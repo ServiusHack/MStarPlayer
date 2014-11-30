@@ -324,6 +324,9 @@ void Track::loadFileIntoTransport()
 									&m_thread, // this is the background thread to use for reading-ahead
 									reader->sampleRate);
 		}
+	else {
+		m_transportSource.setSource(nullptr);
+	}
 
 	updateGain();
 
@@ -377,12 +380,6 @@ XmlElement* Track::saveToXml() const
 	nameXml->addTextElement(getName());
 	element->addChildElement(nameXml);
 
-	if (m_audioFile != File::nonexistent) {
-		XmlElement* fileXml = new XmlElement("File");
-		fileXml->addTextElement(m_audioFile.getFullPathName());
-		element->addChildElement(fileXml);
-	}
-
 	return element;
 }
 
@@ -396,12 +393,6 @@ void Track::restoreFromXml(const XmlElement& element)
 	XmlElement* nameXml = element.getChildByName("Name");
 	if (nameXml != nullptr)
 		setName(nameXml->getAllSubText().trim());
-
-	XmlElement* fileXml = element.getChildByName("File");
-	if (fileXml != nullptr) {
-		m_audioFile = File(fileXml->getAllSubText().trim());
-		loadFileIntoTransport();
-	}
 }
 
 void Track::resized()
@@ -494,4 +485,18 @@ bool Track::getSoloMute() const
 void Track::setPositionCallback(PositionCallback callback)
 {
 	this->m_positionCallback = callback;
+}
+
+
+void Track::loadTrackConfig(const TrackConfig& config)
+{
+	m_audioFile = File(config.file);
+	loadFileIntoTransport();
+}
+
+TrackConfig Track::getTrackConfig()
+{
+	TrackConfig config;
+	config.file = m_audioFile.getFullPathName();
+	return config;
 }

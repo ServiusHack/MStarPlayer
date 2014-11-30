@@ -7,6 +7,7 @@
 #include "ChannelMapping.h"
 #include "Utils.h"
 #include "RenameDialog.h"
+#include "PlaylistTable.h"
 
 /*
 */
@@ -22,7 +23,7 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain = 1.0f, bool solo = false, bool mute = false);
+	PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain = 1.0f, bool solo = false, bool mute = false, bool showPlaylist = true);
 
     /** Destructor */
     ~PlaylistPlayerWindow();
@@ -103,6 +104,7 @@ private:
 	ScopedPointer<Label>       m_digitalDisplay;
 	ScopedPointer<TracksComponent> m_tracks;
 	ScopedPointer<Viewport>    m_tracksViewport;
+	ScopedPointer<PlaylistTable> m_tableListBox;
 
 	float m_gain;
 	bool m_soloMute;

@@ -8,7 +8,7 @@
 #include "VolumeSlider.h"
 #include "Player.h"
 #include "ChannelRemappingAudioSourceWithVolume.h"
-
+#include "PlaylistModel.h"
 
 /*
 */
@@ -88,6 +88,9 @@ public:
 	virtual float getPan() const override { return 0; };
 
 	virtual float getVolume() const override;
+
+	void loadTrackConfig(const TrackConfig& config);
+	TrackConfig getTrackConfig();
 
 private:
 	void updateIdText();

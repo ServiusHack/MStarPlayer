@@ -56,6 +56,12 @@
               file="Source/AudioConfiguration.cpp"/>
       </GROUP>
       <GROUP id="{DC708048-A62E-7E29-DEED-0F0BC48DFD2E}" name="PlaylistPlayer">
+        <FILE id="YZg235" name="PlaylistTable.cpp" compile="1" resource="0"
+              file="Source/PlaylistTable.cpp"/>
+        <FILE id="TBykeh" name="PlaylistTable.h" compile="0" resource="0" file="Source/PlaylistTable.h"/>
+        <FILE id="RtqfR0" name="PlaylistModel.cpp" compile="1" resource="0"
+              file="Source/PlaylistModel.cpp"/>
+        <FILE id="DZqG2e" name="PlaylistModel.h" compile="0" resource="0" file="Source/PlaylistModel.h"/>
         <FILE id="LNf3Xd" name="PlaylistPlayerWindow.h" compile="0" resource="0"
               file="Source/PlaylistPlayerWindow.h"/>
         <FILE id="qxV0Yk" name="PlaylistPlayerWindow.cpp" compile="1" resource="0"
