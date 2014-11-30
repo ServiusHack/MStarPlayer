@@ -25,6 +25,8 @@ public:
 
 	void restoreFromXml(const XmlElement& element);
 
+	virtual void resized() override;
+
 private:
 	PlaylistEntryChangedCallback m_callback;
 

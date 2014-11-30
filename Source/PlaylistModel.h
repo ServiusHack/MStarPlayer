@@ -2,6 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "PlaylistEntryDialog.h"
+
 struct TrackConfig {
 	File file;
 };
@@ -32,6 +34,8 @@ public:
 	virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
 	void add(String name, double durationInSeconds);
+	void insert(int rowNumber, String name, double durationInSeconds);
+	void remove(int rowNumber);
 
 	virtual void cellClicked(int rowNumber, int columnId, const MouseEvent &) override;
 	virtual void backgroundClicked(const MouseEvent &) override;
@@ -48,9 +52,10 @@ public:
 	void clear();
 
 private:
-	void showPopup(bool enableInsert, bool enableDelete);
+	void showPopup(int rowNumber, bool enableInsert, bool enableDelete);
 
 	Array<PlaylistEntry> m_playlist;
+	ScopedPointer<PlaylistEntryDialogWindow> m_editDialog;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistModel)
 };

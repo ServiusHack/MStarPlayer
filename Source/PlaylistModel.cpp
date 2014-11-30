@@ -94,11 +94,20 @@ void PlaylistModel::add(String name, double durationInSeconds)
 	sendChangeMessage();
 }
 
+void PlaylistModel::insert(int rowNumber, String name, double durationInSeconds)
+{
+	PlaylistEntry entry;
+	entry.name = name;
+	entry.durationInSeconds = durationInSeconds;
+	m_playlist.insert(rowNumber, entry);
+	sendChangeMessage();
+}
+
 void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const MouseEvent & event)
 {
 	if (event.mods.isPopupMenu())
 	{
-		showPopup(rowNumber >= 0, rowNumber >= 0);
+		showPopup(rowNumber, rowNumber >= 0, rowNumber >= 0);
 	}
 }
 
@@ -106,23 +115,48 @@ void PlaylistModel::backgroundClicked(const MouseEvent & event)
 {
 	if (event.mods.isPopupMenu())
 	{
-		showPopup(false, false);
+		showPopup(-1, false, false);
 	}
 }
 
-void PlaylistModel::showPopup(bool enableInsert, bool enableDelete)
+void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelete)
 {
 
 	PopupMenu popup;
 	popup.addItem(1, "append");
 	popup.addItem(2, "insert", enableInsert);
-	popup.addItem(3, "delete", enableDelete);
+	popup.addItem(3, "edit", enableInsert);
+	popup.addItem(4, "delete", enableDelete);
 
 	switch (popup.show()) {
 	case 1:
-		add("Test", 0);
+		add("", 0);
+		break;
+	case 2:
+		insert(rowNumber, "", 0);
+		break;
+	case 3:
+	{
+		PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](String name) {
+			PlaylistEntry entry = m_playlist.getUnchecked(rowNumber);
+			entry.name = name;
+			m_playlist.set(rowNumber, entry);
+			sendChangeMessage();
+		};
+		m_editDialog = ScopedPointer<PlaylistEntryDialogWindow>(new PlaylistEntryDialogWindow(m_playlist.getUnchecked(rowNumber).name, callback));
 		break;
 	}
+	case 4:
+		remove(rowNumber);
+		break;
+	}
+}
+
+void PlaylistModel::remove(int rowNumber)
+{
+	m_playlist.remove(rowNumber);
+	sendChangeMessage();
+
 }
 
 const Array<TrackConfig>& PlaylistModel::getTrackConfigs(int selectedRow)

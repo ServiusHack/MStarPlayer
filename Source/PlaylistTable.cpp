@@ -6,10 +6,13 @@ PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
 	: m_callback(callback)
 	, m_previousRow(-1)
 {
+	setAutoSizeMenuOptionShown(false);
+	getHeader().setPopupMenuActive(false);
+
 	// set the table header columns
-	getHeader().addColumn("#", 1, 50, 50, 100, TableHeaderComponent::defaultFlags);
-	getHeader().addColumn("Name", 2, 200, 50, -1, TableHeaderComponent::defaultFlags);
-	getHeader().addColumn("Duration", 3, 200, 50, 400, TableHeaderComponent::defaultFlags);
+	getHeader().addColumn("#", 1, 25, 25, 50, TableHeaderComponent::notResizableOrSortable);
+	getHeader().addColumn("Name", 2, 200, 50, -1, TableHeaderComponent::notResizableOrSortable);
+	getHeader().addColumn("Duration", 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
 
 	PlaylistModel* model = new PlaylistModel();
 	model->addChangeListener(this);
@@ -38,6 +41,7 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
 void PlaylistTable::changeListenerCallback(ChangeBroadcaster *source)
 {
 	updateContent();
+	repaint();
 }
 
 void PlaylistTable::setCurrentDuration(double duration)
@@ -66,4 +70,13 @@ void PlaylistTable::restoreFromXml(const XmlElement& element)
 	}
 
 	selectedRowsChanged(getSelectedRow());
+}
+
+void PlaylistTable::resized()
+{
+	TableListBox::resized();
+
+	TableHeaderComponent& header = getHeader();
+	header.setColumnWidth(2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3));
+
 }
