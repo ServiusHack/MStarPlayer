@@ -51,7 +51,7 @@ AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDevi
 
 void AudioConfigurationWindow::closeButtonPressed()
 {
-	delete this;
+	setVisible(false);
 }
 
 void AudioConfigurationWindow::buttonClicked(Button* /*buttonThatWasClicked*/)

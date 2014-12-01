@@ -1,5 +1,4 @@
 #include "MainComponent.h"
-#include "AudioConfiguration.h"
 
 bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/) {
     return true;
@@ -238,7 +237,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
 		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
     case configureAudio:
-		new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames);
+		m_audioConfigurationWindow = new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames);
 		break;
 
 	case lookAndFeelDefault:

@@ -7,6 +7,7 @@
 #include "MixerComponent.h"
 #include "OutputChannelNames.h"
 #include "DarkLookAndFeel.h"
+#include "AudioConfiguration.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
@@ -60,6 +61,7 @@ private:
 	ScopedPointer<MyMultiDocumentPanel> m_multiDocumentPanel;
 	ScopedPointer<AudioDeviceManager> m_audioDeviceManager;
 	ScopedPointer<OutputChannelNames> m_outputChannelNames;
+	ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
 
     // Commands for menu
     enum CommandIDs
