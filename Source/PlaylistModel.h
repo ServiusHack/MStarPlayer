@@ -40,6 +40,7 @@ public:
 	void remove(int rowNumber);
 
 	virtual void cellClicked(int rowNumber, int columnId, const MouseEvent &) override;
+	virtual void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent &) override;
 	virtual void backgroundClicked(const MouseEvent &) override;
 
 	virtual void buttonClicked(Button *) override;
@@ -59,6 +60,7 @@ public:
 
 private:
 	void showPopup(int rowNumber, bool enableInsert, bool enableDelete);
+	void showEditDialog(int rowNumber);
 
 	Array<PlaylistEntry> m_playlist;
 	ScopedPointer<PlaylistEntryDialogWindow> m_editDialog;

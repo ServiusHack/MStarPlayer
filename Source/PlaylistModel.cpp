@@ -164,6 +164,11 @@ void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const MouseEven
 	}
 }
 
+void PlaylistModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent &)
+{
+	showEditDialog(rowNumber);
+}
+
 void PlaylistModel::backgroundClicked(const MouseEvent & event)
 {
 	if (event.mods.isPopupMenu())
@@ -190,19 +195,24 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 		break;
 	case 3:
 	{
-		PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](String name) {
-			PlaylistEntry entry = m_playlist.getUnchecked(rowNumber);
-			entry.name = name;
-			m_playlist.set(rowNumber, entry);
-			sendChangeMessage();
-		};
-		m_editDialog = ScopedPointer<PlaylistEntryDialogWindow>(new PlaylistEntryDialogWindow(m_playlist.getUnchecked(rowNumber).name, callback));
+		showEditDialog(rowNumber);
 		break;
 	}
 	case 4:
 		remove(rowNumber);
 		break;
 	}
+}
+
+void PlaylistModel::showEditDialog(int rowNumber)
+{
+	PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](String name) {
+		PlaylistEntry entry = m_playlist.getUnchecked(rowNumber);
+		entry.name = name;
+		m_playlist.set(rowNumber, entry);
+		sendChangeMessage();
+	};
+	m_editDialog = ScopedPointer<PlaylistEntryDialogWindow>(new PlaylistEntryDialogWindow(m_playlist.getUnchecked(rowNumber).name, callback));
 }
 
 void PlaylistModel::remove(int rowNumber)
