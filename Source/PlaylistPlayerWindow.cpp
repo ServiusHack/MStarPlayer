@@ -113,8 +113,10 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 	};
 
 	addAndMakeVisible(m_tracksViewport = new Viewport());
-	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannelNames->getNumberOfChannels(), [&](double position) {
+	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannelNames->getNumberOfChannels(), [&](double position, bool finished) {
 		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
+		if (finished)
+			m_tableListBox->next();
 	},[&]() {
 		m_channelCountChanged();
 	}, longestDurationCallback), false);
@@ -122,9 +124,11 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 
 	// playlist
 
-	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const Array<TrackConfig>& trackConfigs) {
+	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const Array<TrackConfig>& trackConfigs, bool play) {
 		Array<TrackConfig> oldTrackConfigs = m_tracks->getTrackConfigs();
 		m_tracks->setTrackConfigs(trackConfigs);
+		if (play)
+			m_playButton->triggerClick();
 		return oldTrackConfigs;
 	};
 

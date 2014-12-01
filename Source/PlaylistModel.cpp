@@ -3,6 +3,16 @@
 #include "Utils.h"
 
 
+class PlayNextButton : public ImageButton
+{
+public:
+	void setRowNumber(int rowNumber) { m_rowNumber = rowNumber; }
+	int getRowNumber() { return m_rowNumber; }
+
+private:
+	int m_rowNumber;
+};
+
 XmlElement* PlaylistEntry::saveToXml() const
 {
 	XmlElement* entryXml = new XmlElement("Entry");
@@ -10,6 +20,8 @@ XmlElement* PlaylistEntry::saveToXml() const
 	XmlElement* nameXml = new XmlElement("Name");
 	nameXml->addTextElement(name);
 	entryXml->addChildElement(nameXml);
+
+	entryXml->setAttribute("playNext", playNext);
 
 	XmlElement* trackConfigsXml = new XmlElement("TrackConfigs");
 
@@ -30,6 +42,7 @@ PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element)
 	PlaylistEntry entry;
 
 	entry.name = element.getChildByName("Name")->getAllSubText().trim();
+	entry.playNext = element.getBoolAttribute("playNext");
 
 	XmlElement* trackConfigsXml = element.getChildByName("TrackConfigs");
 
@@ -81,8 +94,46 @@ void PlaylistModel::paintCell(Graphics& g,
 
 Component* PlaylistModel::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
-	jassert(existingComponentToUpdate == 0);
-	return 0;
+	if (columnId == 4) {
+		// If it's the output channel column, we'll return our custom component..
+
+		PlayNextButton* editor = static_cast<PlayNextButton*>(existingComponentToUpdate);
+
+		// If an existing component is being passed-in for updating, we'll re-use it, but
+		// if not, we'll have to create one.
+		if (editor == nullptr) {
+			editor = new PlayNextButton();
+			Image normalImage = ImageFileFormat::loadFrom(BinaryData::arrowrightdouble_png, BinaryData::arrowrightdouble_pngSize);
+			Image desaturedImage(normalImage.createCopy());
+			desaturedImage.desaturate();
+			editor->setClickingTogglesState(true);
+			editor->setImages(true, true, true,
+				desaturedImage, 0.7f, Colours::transparentBlack,
+				normalImage, 1.0f, Colours::transparentBlack,
+				normalImage, 1.0f, Colours::transparentBlack,
+				0.0f);
+			editor->addListener(this);
+		}
+
+		bool playNext = m_playlist.getUnchecked(rowNumber).playNext;
+		editor->setToggleState(playNext, sendNotification);
+		editor->setRowNumber(rowNumber);
+
+		return editor;
+	}
+	else {
+		// for any other column, just return 0, as we'll be painting these columns directly.
+
+		jassert(existingComponentToUpdate == 0);
+		return 0;
+	}
+}
+
+void PlaylistModel::buttonClicked(Button* button)
+{
+	int rowNumber = static_cast<PlayNextButton*>(button)->getRowNumber();
+
+	m_playlist.getReference(rowNumber).playNext = button->getToggleState();
 }
 
 void PlaylistModel::add(String name, double durationInSeconds)
@@ -90,6 +141,7 @@ void PlaylistModel::add(String name, double durationInSeconds)
 	PlaylistEntry entry;
 	entry.name = name;
 	entry.durationInSeconds = durationInSeconds;
+	entry.playNext = false;
 	m_playlist.add(entry);
 	sendChangeMessage();
 }
@@ -99,6 +151,7 @@ void PlaylistModel::insert(int rowNumber, String name, double durationInSeconds)
 	PlaylistEntry entry;
 	entry.name = name;
 	entry.durationInSeconds = durationInSeconds;
+	entry.playNext = false;
 	m_playlist.insert(rowNumber, entry);
 	sendChangeMessage();
 }
@@ -195,4 +248,9 @@ void PlaylistModel::addFromXml(const XmlElement& element)
 void PlaylistModel::clear()
 {
 	m_playlist.clear();
+}
+
+bool PlaylistModel::doPlayNext(int selectedRow)
+{
+	return m_playlist.getUnchecked(selectedRow).playNext;
 }

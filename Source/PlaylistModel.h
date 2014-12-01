@@ -11,6 +11,7 @@ class PlaylistEntry {
 public:
 	String name;
 	double durationInSeconds;
+	bool playNext;
 	Array<TrackConfig> trackConfigs;
 
 	XmlElement* saveToXml() const;
@@ -24,6 +25,7 @@ public:
 class PlaylistModel
 	: public TableListBoxModel
 	, public ChangeBroadcaster
+	, public Button::Listener
 {
 public:
 	PlaylistModel();
@@ -40,6 +42,8 @@ public:
 	virtual void cellClicked(int rowNumber, int columnId, const MouseEvent &) override;
 	virtual void backgroundClicked(const MouseEvent &) override;
 
+	virtual void buttonClicked(Button *) override;
+
 	const Array<TrackConfig>& getTrackConfigs(int selectedRow);
 	void setTrackConfigs(int selectedRow, const Array<TrackConfig>& trackConfigs);
 
@@ -50,6 +54,8 @@ public:
 	void addFromXml(const XmlElement& element);
 
 	void clear();
+
+	bool doPlayNext(int selectedRow);
 
 private:
 	void showPopup(int rowNumber, bool enableInsert, bool enableDelete);

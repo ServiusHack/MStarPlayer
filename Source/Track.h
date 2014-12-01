@@ -22,7 +22,7 @@ class Track
 {
 public:
 	typedef std::function<void()> DurationChangedCallback;
-	typedef std::function<void(double)> PositionCallback;
+	typedef std::function<void(double, bool)> PositionCallback;
 
 	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, Player::ChannelCountChangedCallback channelCountChangedCallback);
 	~Track();

@@ -5,6 +5,7 @@
 PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
 	: m_callback(callback)
 	, m_previousRow(-1)
+	, m_playNext(false)
 {
 	setAutoSizeMenuOptionShown(false);
 	getHeader().setPopupMenuActive(false);
@@ -13,6 +14,7 @@ PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
 	getHeader().addColumn("#", 1, 25, 25, 50, TableHeaderComponent::notResizableOrSortable);
 	getHeader().addColumn("Name", 2, 200, 50, -1, TableHeaderComponent::notResizableOrSortable);
 	getHeader().addColumn("Duration", 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
+	getHeader().addColumn("", 4, 25, 25, 25, TableHeaderComponent::notResizableOrSortable);
 
 	m_model = new PlaylistModel();
 	m_model->addChangeListener(this);
@@ -35,7 +37,7 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
 		return;
 
 	const Array<TrackConfig>& trackConfigs = static_cast<PlaylistModel*>(getModel())->getTrackConfigs(lastRowSelected);
-	Array<TrackConfig> oldTrackConfigs = m_callback(trackConfigs);
+	Array<TrackConfig> oldTrackConfigs = m_callback(trackConfigs, m_playNext);
 
 	if (m_previousRow != -1)
 		static_cast<PlaylistModel*>(getModel())->setTrackConfigs(m_previousRow, oldTrackConfigs);
@@ -82,6 +84,15 @@ void PlaylistTable::resized()
 	TableListBox::resized();
 
 	TableHeaderComponent& header = getHeader();
-	header.setColumnWidth(2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3));
+	header.setColumnWidth(2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3) - header.getColumnWidth(4));
 
+}
+
+void PlaylistTable::next()
+{
+	if (getSelectedRow() + 1 < m_model->getNumRows()) {
+		m_playNext = m_model->doPlayNext(getSelectedRow());
+		selectRow(getSelectedRow() + 1);
+		m_playNext = false;
+	}
 }

@@ -358,7 +358,7 @@ void Track::timerCallback()
 	m_progress = position / m_longestDuration;
 
 	if (m_positionCallback)
-		m_positionCallback(position);
+		m_positionCallback(position, m_transportSource.hasStreamFinished());
 
 	repaint();
 

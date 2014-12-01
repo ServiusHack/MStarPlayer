@@ -11,7 +11,7 @@ class PlaylistTable
 	, public ChangeListener
 {
 public:
-	typedef std::function<Array<TrackConfig>(const Array<TrackConfig>& trackConfigs)> PlaylistEntryChangedCallback;
+	typedef std::function<Array<TrackConfig>(const Array<TrackConfig>& trackConfigs,bool)> PlaylistEntryChangedCallback;
 
 	PlaylistTable(PlaylistEntryChangedCallback callback);
 	~PlaylistTable();
@@ -27,8 +27,12 @@ public:
 
 	virtual void resized() override;
 
+	void next();
+
 private:
 	PlaylistEntryChangedCallback m_callback;
 	PlaylistModel* m_model;
 	int m_previousRow;
+
+	bool m_playNext;
 };
