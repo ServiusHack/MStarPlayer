@@ -6,6 +6,9 @@
 #include "Player.h"
 #include "MixerFader.h"
 #include "OutputChannelNames.h"
+#include "PlayerMixerFader.h"
+
+#include <memory>
 
 /** Shows sliders for output channels to change the individual volumes of them.
 
@@ -58,12 +61,11 @@ public:
 
 	virtual void outputChannelNamesReset() override;
 	virtual void outputChannelNameChanged(int activeChannelIndex, String text) override;
-private:
 
+private:
 	// ui
-	Array< MixerFader* > m_channelSliders;
-	Array< MixerFader* > m_playerSliders;
-	Array< Player* > m_players;
+	std::vector<MixerFader*> m_channelSliders;
+	std::vector<PlayerMixerFader*> m_playerSliders;
 
 	/** Adds a new slider to the component because not enough are being shown. */
 	void addChannelSlider();
@@ -72,7 +74,7 @@ private:
 	
 	// audio output
 	MixerAudioSource m_mixerAudioSource;
-	ChannelVolumeAudioSource* m_channelVolumeAudioSource;
+	ChannelVolumeAudioSource m_channelVolumeAudioSource;
     AudioSourcePlayer m_audioSourcePlayer;
 	AudioDeviceManager *m_audioDeviceManager;
 	OutputChannelNames *m_outputChannelNames;

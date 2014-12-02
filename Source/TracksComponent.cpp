@@ -36,8 +36,8 @@ void TracksComponent::resized()
     // components that your component contains..
 	int y = 0;
 	int height = 100;
-	for (int i = 0; i < m_tracks.size(); i++) {
-		m_tracks.getUnchecked(i)->setBounds(0, y, getWidth(), height);
+	for (size_t i = 0; i < m_tracks.size(); i++) {
+		m_tracks[i]->setBounds(0, y, getWidth(), height);
 		y += height;
 	}
 	setBounds(getX(), getY(), getWidth(), y);
@@ -60,34 +60,34 @@ void TracksComponent::addTrackFromXml(const XmlElement* element)
 
 void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 {
-	bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const Track* track) {
+	bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) {
 		return track->getSolo();
 	});
 
 	auto updateSoloMute = [&]() {
-		bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const Track* track) {
+		bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) {
 			return track->getSolo();
 		});
-		for (Track* track : m_tracks)
+		for (auto& track : m_tracks)
 			track->setSoloMute(soloMute);
 	};
 
 	auto updateLongestDuration = [&]() {
 		double longestDuration = 0;
 		Track* longestTrack = nullptr;
-		for (Track* track : m_tracks) {
+		for (auto& track : m_tracks) {
 			track->setPositionCallback();
 			double duration = track->getDuration();
 			if (duration > longestDuration) {
 				longestDuration = duration;
-				longestTrack = track;
+				longestTrack = track.get();
 			}
 		}
 
 		if (longestTrack) // might be nullptr if there are only tracks without a file
 			longestTrack->setPositionCallback(m_positionCallback);
 
-		for (Track* track : m_tracks)
+		for (auto& track : m_tracks)
 			track->setLongestDuration(longestDuration);
 
 		m_longestDurationChangedCallback(longestDuration);
@@ -97,11 +97,10 @@ void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 		m_channelCountChanged();
 	};
 
-	Track* track = new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged);
-	m_tracks.add(track);
+	m_tracks.emplace_back(new Track (m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged));
 	if (element != nullptr)
-		track->restoreFromXml(*element);
-	addAndMakeVisible(track);
+		m_tracks.back()->restoreFromXml(*element);
+	addAndMakeVisible(*m_tracks.back());
 	resized();
 
 	m_channelCountChanged();
@@ -109,19 +108,19 @@ void TracksComponent::addTrack(bool stereo, const XmlElement* element)
 
 void TracksComponent::play()
 {
-	for (int i = 0; i < m_tracks.size(); ++i)
+	for (size_t i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->play();
 }
 
 void TracksComponent::pause()
 {
-	for (int i = 0; i < m_tracks.size(); ++i)
+	for (size_t i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->pause();
 }
 
 void TracksComponent::stop()
 {
-	for (int i = 0; i < m_tracks.size(); ++i)
+	for (size_t i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->stop();
 }
 
@@ -132,20 +131,20 @@ int TracksComponent::playerCount()
 
 Track& TracksComponent::player(int index)
 {
-	return *m_tracks[index];
+	return *m_tracks[index].get();
 }
 
 void TracksComponent::setOutputChannels(int outputChannels)
 {
 	m_outputChannels = outputChannels;
-	for (int i = 0; i < m_tracks.size(); ++i)
+	for (size_t i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->setOutputChannels(outputChannels);
 }
 
 void TracksComponent::setGain(float gain)
 {
 	m_gain = gain;
-	for (int i = 0; i < m_tracks.size(); ++i)
+	for (size_t i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->setPlayerGain(gain);
 }
 
@@ -157,7 +156,7 @@ float TracksComponent::getGain()
 void TracksComponent::setMute(bool mute)
 {
 	m_mute = mute;
-	for (int i = 0; i < m_tracks.size(); ++i)
+	for (size_t i = 0; i < m_tracks.size(); ++i)
 		m_tracks[i]->setPlayerMute(mute);
 }
 
@@ -166,23 +165,23 @@ bool TracksComponent::getMute()
 	return m_mute;
 }
 
-void TracksComponent::setTrackConfigs(const Array<TrackConfig>& trackConfigs)
+void TracksComponent::setTrackConfigs(const std::vector<TrackConfig>& trackConfigs)
 {
-	for (int i = 0; i < trackConfigs.size(); ++i) {
-		m_tracks[i]->loadTrackConfig(trackConfigs.getReference(i));
+	for (size_t i = 0; i < trackConfigs.size(); ++i) {
+		m_tracks[i]->loadTrackConfig(trackConfigs[i]);
 	}
 
 	static const TrackConfig emptyTrackConfig;
-	for (int i = trackConfigs.size(); i < m_tracks.size(); ++i) {
+	for (size_t i = trackConfigs.size(); i < m_tracks.size(); ++i) {
 		m_tracks[i]->loadTrackConfig(emptyTrackConfig);
 	}
 }
 
-Array<TrackConfig> TracksComponent::getTrackConfigs()
+std::vector<TrackConfig> TracksComponent::getTrackConfigs()
 {
-	Array<TrackConfig> configs;
-	for (int i = 0; i < m_tracks.size(); ++i) {
-		configs.add(m_tracks[i]->getTrackConfig());
+	std::vector<TrackConfig> configs;
+	for (size_t i = 0; i < m_tracks.size(); ++i) {
+		configs.push_back(m_tracks[i]->getTrackConfig());
 	}
 
 	return configs;

@@ -16,8 +16,6 @@ class AudioConfigurationWindow
 public:
     AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames);
     
-    /** Delete (and thus close) the window when requested by the user.
-    */
 	virtual void closeButtonPressed() override;
 
 	virtual void buttonClicked(Button* buttonThatWasClicked) override;
@@ -32,6 +30,7 @@ private:
 */
 class ChannelNames
 	: public TableListBoxModel
+	, public TextEditor::Listener
 {
 public:
 	ChannelNames(OutputChannelNames& outputChannelName);
@@ -43,8 +42,11 @@ public:
 
 	void setChannelName(int row, String text);
 
+	virtual void textEditorTextChanged(TextEditor& textEditor) override;
+
 private:
 	OutputChannelNames& m_outputChannelName;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelNames)
 };
 

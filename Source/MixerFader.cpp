@@ -88,9 +88,8 @@ MixerFader::~MixerFader()
 {
 	m_mixerControlable->removeChangeListener(this);
 
-	for (MixerFader* subfader : m_subfaders) {
-		removeChildComponent(subfader);
-		delete subfader;
+	for (std::unique_ptr<MixerFader>& subfader : m_subfaders) {
+		removeChildComponent(subfader.get());
 	}
 }
 
@@ -230,17 +229,15 @@ void MixerFader::setLabel(String text)
 
 void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
 {
-	for (MixerFader* subfader : m_subfaders) {
-		removeChildComponent(subfader);
-		delete subfader;
+	for (std::unique_ptr<MixerFader>& subfader : m_subfaders) {
+		removeChildComponent(subfader.get());
 	}
 	m_subfaders.clear();
 
 	m_expandButton->setVisible(mixSettings.size() > 0);
 	for (size_t i = 0; i < mixSettings.size(); ++i) {
-		MixerFader* fader = new MixerFader(mixSettings[i], std::vector<MixerControlable*>(), false, [](){});
-		addAndMakeVisible(fader);
-		m_subfaders.push_back(fader);
+		m_subfaders.emplace_back(new MixerFader(mixSettings[i], std::vector<MixerControlable*>(), false, [](){}));
+		addAndMakeVisible(m_subfaders.back().get());
 	}
 
 	// resize

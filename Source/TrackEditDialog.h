@@ -53,5 +53,5 @@ private:
 	TrackSettingsChangedCallback m_settingsChangedCallback;
 	VolumeChangedCallback m_volumeChangedCallback;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TrackEditDialogComponent)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrackEditDialogComponent)
 };

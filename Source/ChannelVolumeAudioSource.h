@@ -30,41 +30,39 @@ public:
                                     source specified when this object was created).
         @param gain                 the gain to multiply the samples with during our getNextAudioBlock() callback
     */
-    void setChannelVolume(int channelIndex, float gain);
+    void setChannelVolume(size_t channelIndex, float gain);
 
     /** Returns the volume from a channel.
     */
-	float getChannelVolume(int channelIndex) const;
+	float getChannelVolume(size_t channelIndex) const;
 
-	void setChannelSolo(int channelIndex, bool solo);
+	void setChannelSolo(size_t channelIndex, bool solo);
 
-	bool getChannelSolo(int channelIndex);
+	bool getChannelSolo(size_t channelIndex) const;
 
-	void setChannelMute(int channelIndex, bool mute);
+	void setChannelMute(size_t channelIndex, bool mute);
 
-	bool getChannelMute(int channelIndex);
+	bool getChannelMute(size_t channelIndex) const;
 
-	void updateGain(int channelIndex);
+	void updateGain(size_t channelIndex);
 
-	float getActualVolume(int channelIndex);
+	float getActualVolume(size_t channelIndex) const;
 
-	int channelCount();
+	int channelCount() const;
 
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	virtual void releaseResources() override;
 	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
-
 private:
-	void expandListsTo(int channelIndex);
-
+	void expandListsTo(size_t channelIndex);
 
 	AudioSource* m_source;
-	Array<float> m_appliedGains;
-    Array<float> m_setVolumes;
-	Array<bool> m_setMutes;
-	Array<bool> m_setSolos;
-	Array<float> m_actualVolumes;
+	std::vector<float> m_appliedGains;
+    std::vector<float> m_setVolumes;
+	std::vector<bool> m_setMutes;
+	std::vector<bool> m_setSolos;
+	std::vector<float> m_actualVolumes;
 
 	bool m_anySolo;
 

@@ -20,7 +20,9 @@ typedef std::function<void()> CloseCallback;
     this component, where they begin with 1. This is because 0 is a magic value
     for the combo box component.
 */
-class ChannelMapping : public TableListBoxModel
+class ChannelMapping
+	: public TableListBoxModel
+	, public ComboBoxListener
 {
 public:
     /** A component to view and edit the channel mapping.
@@ -41,6 +43,7 @@ public:
     virtual void paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
     virtual void paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
 	virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+	virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
     /** Get the output channel for a table row.
 

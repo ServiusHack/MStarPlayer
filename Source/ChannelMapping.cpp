@@ -9,42 +9,25 @@
 //==============================================================================
 // This is a custom component containing a combo box, which we're going to put inside
 // our table's "output channel" column.
-class OutputChannelColumnCustomComponent
-	: public Component
-	, public ComboBoxListener
+class OutputChannelColumnCustomComponent : public ComboBox
 {
-	friend class ChannelMapping;
 public:
-    OutputChannelColumnCustomComponent(ChannelMapping& owner)
-		: m_owner(owner)
+    OutputChannelColumnCustomComponent()
     {
-        // just put a combo box inside this component
-		addAndMakeVisible(&m_comboBox);
-
-        // when the combo is changed, we'll get a callback.
-		m_comboBox.addListener(this);
-		m_comboBox.setWantsKeyboardFocus(false);
+		setBoundsInset(BorderSize<int>(2));
     }
 
-    virtual void resized() override
-    {
-		m_comboBox.setBoundsInset(BorderSize<int>(2));
-    }
-
-    void setRowAndValue(const int newRow, int outputChannel)
+    void setRow(const int newRow)
     {
 		m_row = newRow;
-		m_comboBox.setSelectedId(outputChannel, dontSendNotification);
     }
 
-    virtual void comboBoxChanged(ComboBox* /*comboBoxThatHasChanged*/) override
-    {
-		m_owner.setChannelMapping(m_row, m_comboBox.getSelectedId());
-    }
+	int getRow() const
+	{
+		return m_row;
+	}
 
 private:
-    ChannelMapping& m_owner;
-	ComboBox m_comboBox;
 	int m_row;
 };
 
@@ -102,14 +85,17 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 
         // If an existing component is being passed-in for updating, we'll re-use it, but
         // if not, we'll have to create one.
-        if (comboBox == nullptr)
-            comboBox = new OutputChannelColumnCustomComponent(*this);
+		if (comboBox == nullptr) {
+			comboBox = new OutputChannelColumnCustomComponent();
+			comboBox->addListener(this);
+			comboBox->setWantsKeyboardFocus(false);
+		}
 
-		comboBox->m_comboBox.clear();
-		for (int i = 0; i < m_outputChannelNames->getNumberOfChannels(); ++i)
-			comboBox->m_comboBox.addItem(m_outputChannelNames->getInternalOutputChannelName(i), i+1);
+		comboBox->clear();
+		comboBox->addItemList(m_outputChannelNames->getAllDeviceOutputChannelNames(), 0);
 
-		comboBox->setRowAndValue(rowNumber, getOutputChannel(rowNumber));
+		comboBox->setRow(rowNumber);
+		comboBox->setSelectedId(getOutputChannel(rowNumber), dontSendNotification);
 
         return comboBox;
     } else {
@@ -118,6 +104,12 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
         jassert (existingComponentToUpdate == 0);
         return 0;
     }
+}
+
+void ChannelMapping::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+{
+	OutputChannelColumnCustomComponent* outputChannelColumn = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
+	setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId());
 }
 
 int ChannelMapping::getOutputChannel(int row)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -62,9 +63,11 @@ private:
 
 	ResizeCallback m_resizeCallback;
 
-	std::vector<MixerFader*> m_subfaders;
+	std::vector<std::unique_ptr<MixerFader>> m_subfaders;
 
 	MixerControlable* m_mixerControlable;
 
 	Colour m_color;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerFader)
 };

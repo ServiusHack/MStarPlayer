@@ -2,48 +2,33 @@
 
 #include "AudioConfiguration.h"
 
-class ChannelNameCustomComponent
-	: public Component
-	, public TextEditor::Listener
+class ChannelNameTextEditor
+	: public TextEditor
 {
 public:
-	ChannelNameCustomComponent(ChannelNames& owner)
-		: m_owner(owner)
+	ChannelNameTextEditor()
 	{
-		// just put a combo box inside this component
-		addAndMakeVisible(&m_textEditor);
-
-		// when the combo is changed, we'll get a callback.
-		m_textEditor.addListener(this);
+		setBoundsInset(BorderSize<int>(2));
 	}
 
-	virtual void resized() override
-	{
-		m_textEditor.setBoundsInset(BorderSize<int>(2));
-	}
-
-	void setRowAndColumn(const int newRow, String text)
+	void setRow(const int newRow)
 	{
 		m_row = newRow;
-		m_textEditor.setText(text, dontSendNotification);
 	}
 
-	virtual void textEditorTextChanged(TextEditor &) override
+	int getRow()
 	{
-		m_owner.setChannelName(m_row, m_textEditor.getText());
+		return m_row;
 	}
 
 private:
-	ChannelNames& m_owner;
-	TextEditor m_textEditor;
-	int m_row, m_columnId;
+	int m_row;
 };
 
 AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames)
 	: DialogWindow ("Configure Audio", Colours::lightgrey, true, true)
 {
-	AudioConfigurationComponent* component = new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames);
-	setContentOwned(component, true);
+	setContentOwned(new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames), true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
 	setResizable(true, true);
@@ -54,7 +39,7 @@ void AudioConfigurationWindow::closeButtonPressed()
 	setVisible(false);
 }
 
-void AudioConfigurationWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
+void AudioConfigurationWindow::buttonClicked(Button*)
 {
 	closeButtonPressed();
 }
@@ -81,9 +66,8 @@ void ChannelNames::paintCell(Graphics& g,
 {
 	g.setColour(Colours::black);
 
-	if (columnId == 1) {
+	if (columnId == 1)
 		g.drawText(m_outputChannelName.getDeviceOutputChannelName(rowNumber), 2, 0, width - 4, height, Justification::centredLeft, true);
-	}
 
 	g.setColour(Colours::black.withAlpha(0.2f));
 	g.fillRect(width - 1, 0, 1, height);
@@ -92,32 +76,27 @@ void ChannelNames::paintCell(Graphics& g,
 Component* ChannelNames::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
 	if (columnId == 2) {
-		// If it's the output channel column, we'll return our custom component..
+		ChannelNameTextEditor* editor = static_cast<ChannelNameTextEditor*>(existingComponentToUpdate);
 
-		ChannelNameCustomComponent* editor = static_cast<ChannelNameCustomComponent*>(existingComponentToUpdate);
-
-		// If an existing component is being passed-in for updating, we'll re-use it, but
-		// if not, we'll have to create one.
 		if (editor == nullptr)
-			editor = new ChannelNameCustomComponent(*this);
+			editor = new ChannelNameTextEditor();
 
-		editor->setRowAndColumn(rowNumber, m_outputChannelName.getInternalOutputChannelName(rowNumber));
+		editor->setRow(rowNumber);
+		editor->setText(m_outputChannelName.getInternalOutputChannelName(rowNumber), dontSendNotification);
 
 		return editor;
 	}
 	else {
-		// for any other column, just return 0, as we'll be painting these columns directly.
-
 		jassert(existingComponentToUpdate == 0);
 		return 0;
 	}
 }
 
-void ChannelNames::setChannelName(int row, String text)
+void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
 {
-	m_outputChannelName.setInternalOutputChannelName(row, text);
+	ChannelNameTextEditor& channelNameTextEditor = static_cast<ChannelNameTextEditor&>(textEditor);
+	m_outputChannelName.setInternalOutputChannelName(channelNameTextEditor.getRow(), channelNameTextEditor.getText());
 }
-
 
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName)
 	: m_channelNames(new ChannelNames(outputChannelName))

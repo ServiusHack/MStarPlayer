@@ -34,6 +34,14 @@ int OutputChannelNames::getNumberOfChannels()
 	return m_audioDevice->getActiveOutputChannels().countNumberOfSetBits();
 }
 
+StringArray OutputChannelNames::getAllDeviceOutputChannelNames()
+{
+	StringArray names;
+	for (int i = 0; i < getNumberOfChannels(); ++i)
+		names.add(getInternalOutputChannelName(i));
+	return names;
+}
+
 String OutputChannelNames::getDeviceOutputChannelName(int activeChannelIndex)
 {
 	jassert(activeChannelIndex >= 0 && activeChannelIndex < m_deviceOutputChannelNames.size());

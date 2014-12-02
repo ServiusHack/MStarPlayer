@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "ChannelMapping.h"
 #include "Utils.h"
-#include "RenameDialog.h"
+#include "PlayerEditDialog.h"
 #include "OutputChannelNames.h"
 #include "ChannelRemappingAudioSourceWithVolume.h"
 
@@ -92,7 +92,7 @@ public:
 
 	void updateGain();
 
-	virtual std::vector<MixerControlable*> getSubMixerControlables() override;
+	virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
 	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) override;
 
@@ -135,7 +135,7 @@ private:
 	AudioTransportSource m_transportSource;
 	ScopedPointer<ChannelRemappingAudioSourceWithVolume> m_remappingAudioSource;
 
-	OptionalScopedPointer<RenameDialogWindow> m_renameDialog;
+	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
 
 	float m_gain;
 	bool m_soloMute;

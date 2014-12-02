@@ -37,7 +37,7 @@ public:
 	MainContentComponent(ApplicationCommandManager* commandManager);
 	~MainContentComponent();
 
-	void resized();
+	virtual void resized() override;
 
 	// MenuBarModel overrides
 	virtual StringArray getMenuBarNames() override;

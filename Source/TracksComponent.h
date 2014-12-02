@@ -37,11 +37,11 @@ public:
 	void setMute(bool mute);
 	bool getMute();
 
-	void setTrackConfigs(const Array<TrackConfig>& trackConfigs);
-	Array<TrackConfig> getTrackConfigs();
+	void setTrackConfigs(const std::vector<TrackConfig>& trackConfigs);
+	std::vector<TrackConfig> getTrackConfigs();
 
 private:
-	OwnedArray<Track> m_tracks;
+	std::vector<std::unique_ptr<Track>> m_tracks;
 	float m_gain;
 	bool m_mute;
 

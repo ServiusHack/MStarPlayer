@@ -15,34 +15,34 @@ void ChannelVolumeAudioSource::resetAllVolumes()
 	m_appliedGains.clear();
 }
 
-void ChannelVolumeAudioSource::setChannelVolume(const int channelIndex, float gain)
+void ChannelVolumeAudioSource::setChannelVolume(size_t channelIndex, float gain)
 {
     const ScopedLock sl(m_lock);
 
 	expandListsTo(channelIndex);
 
-	m_setVolumes.set(channelIndex, gain);
+	m_setVolumes[channelIndex] = gain;
 
 	updateGain(channelIndex);
 }
 
-float ChannelVolumeAudioSource::getChannelVolume(const int channelIndex) const
+float ChannelVolumeAudioSource::getChannelVolume(size_t channelIndex) const
 {
     const ScopedLock sl (m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_setVolumes.size())
-		return m_setVolumes.getUnchecked(channelIndex);
+		return m_setVolumes[channelIndex];
 
     return 1.0;
 }
 
-void ChannelVolumeAudioSource::setChannelSolo(int channelIndex, bool solo)
+void ChannelVolumeAudioSource::setChannelSolo(size_t channelIndex, bool solo)
 {
 	const ScopedLock sl(m_lock);
 
 	expandListsTo(channelIndex);
 
-	m_setSolos.set(channelIndex, solo);
+	m_setSolos[channelIndex] = solo;
 
 	bool anySolo = std::any_of(m_setSolos.begin(), m_setSolos.end(), [](bool solo) { return solo; });
 
@@ -51,7 +51,7 @@ void ChannelVolumeAudioSource::setChannelSolo(int channelIndex, bool solo)
 		// need to update every channel gain
 
 		m_anySolo = anySolo;
-		for (int i = 0; i < m_appliedGains.size(); ++i)
+		for (size_t i = 0; i < m_appliedGains.size(); ++i)
 			updateGain(i);
 	}
 	else
@@ -60,43 +60,43 @@ void ChannelVolumeAudioSource::setChannelSolo(int channelIndex, bool solo)
 	}
 }
 
-bool ChannelVolumeAudioSource::getChannelSolo(int channelIndex)
+bool ChannelVolumeAudioSource::getChannelSolo(size_t channelIndex) const
 {
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_setSolos.size())
-		return m_setSolos.getUnchecked(channelIndex);
+		return m_setSolos[channelIndex];
 
 	return false;
 }
 
-void ChannelVolumeAudioSource::setChannelMute(int channelIndex, bool mute)
+void ChannelVolumeAudioSource::setChannelMute(size_t channelIndex, bool mute)
 {
 	const ScopedLock sl(m_lock);
 
 	expandListsTo(channelIndex);
 
-	m_setMutes.set(channelIndex, mute);
+	m_setMutes[channelIndex] = mute;
 
 	updateGain(channelIndex);
 }
 
-bool ChannelVolumeAudioSource::getChannelMute(int channelIndex)
+bool ChannelVolumeAudioSource::getChannelMute(size_t channelIndex) const
 {
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_setMutes.size())
-		return m_setMutes.getUnchecked(channelIndex);
+		return m_setMutes[channelIndex];
 
 	return false;
 }
 
-float ChannelVolumeAudioSource::getActualVolume(int channelIndex)
+float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
 {
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size())
-		return m_actualVolumes.getUnchecked(channelIndex);
+		return m_actualVolumes[channelIndex];
 
 	return 0.0f;
 }
@@ -111,35 +111,28 @@ void ChannelVolumeAudioSource::releaseResources()
     m_source->releaseResources();
 }
 
-void ChannelVolumeAudioSource::expandListsTo(int channelIndex)
+void ChannelVolumeAudioSource::expandListsTo(size_t channelIndex)
 {
-	while (m_setVolumes.size() <= channelIndex)
-		m_setVolumes.add(1.0);
-
-	while (m_setSolos.size() <= channelIndex)
-		m_setSolos.add(false);
-
-	while (m_setMutes.size() <= channelIndex)
-		m_setMutes.add(false);
-
-	while (m_actualVolumes.size() <= channelIndex)
-		m_actualVolumes.add(0.0f);
+	channelIndex += 1;
+	m_setVolumes.resize(channelIndex, 1.0);
+	m_setSolos.resize(channelIndex, false);
+	m_setMutes.resize(channelIndex, false);
+	m_actualVolumes.resize(channelIndex, 0.0f);
 }
 
-int ChannelVolumeAudioSource::channelCount()
+int ChannelVolumeAudioSource::channelCount() const
 {
 	return m_setVolumes.size();
 }
 
-void ChannelVolumeAudioSource::updateGain(int channelIndex)
+void ChannelVolumeAudioSource::updateGain(size_t channelIndex)
 {
-	while (m_appliedGains.size() < channelIndex)
-		m_appliedGains.add(1.0);
+	m_appliedGains.resize(channelIndex + 1, 1.0);
 
-	bool mute = m_setMutes.getUnchecked(channelIndex);
-	bool solo = m_setSolos.getUnchecked(channelIndex);
-	float gain = (mute || (m_anySolo && !solo ) ) ? 0.0f : m_setVolumes.getUnchecked(channelIndex);
-	m_appliedGains.set(channelIndex, gain);
+	bool mute = m_setMutes[channelIndex];
+	bool solo = m_setSolos[channelIndex];
+	float gain = (mute || (m_anySolo && !solo ) ) ? 0.0f : m_setVolumes[channelIndex];
+	m_appliedGains[channelIndex] =gain;
 }
 
 void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
@@ -148,12 +141,14 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
 
     m_source->getNextAudioBlock(bufferToFill);
 
-    for (int channel = 0; channel < bufferToFill.buffer->getNumChannels(); channel++)
+	size_t numberOfChannels = bufferToFill.buffer->getNumChannels(); 
+	for (size_t channel = 0; channel < numberOfChannels; channel++)
     {
         float gain = 1.0;
         if (channel < m_appliedGains.size())
-			gain = m_appliedGains.getUnchecked(channel);
+			gain = m_appliedGains[channel];
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
-		m_actualVolumes.set(channel, bufferToFill.buffer->getRMSLevel(channel, bufferToFill.startSample, bufferToFill.numSamples));
+		if (channel < m_actualVolumes.size())
+			m_actualVolumes[channel] = bufferToFill.buffer->getRMSLevel(channel, bufferToFill.startSample, bufferToFill.numSamples);
     }
 }

@@ -6,7 +6,7 @@
 #include "TracksComponent.h"
 #include "ChannelMapping.h"
 #include "Utils.h"
-#include "RenameDialog.h"
+#include "PlayerEditDialog.h"
 #include "PlaylistTable.h"
 
 /*
@@ -78,7 +78,7 @@ public:
 
 	void configureChannels();
 
-	virtual std::vector<MixerControlable*> getSubMixerControlables() override;
+	virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
 	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) override;
 
@@ -112,7 +112,7 @@ private:
 	bool m_mute;
 
 	Colour m_color;
-	OptionalScopedPointer<RenameDialogWindow> m_renameDialog;
+	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
 
 	ChannelCountChangedCallback m_channelCountChanged;
 

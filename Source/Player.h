@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <set>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -22,12 +23,11 @@ public:
 	virtual float getGain() const = 0;
 
 	void addChangeListener(MixerControlableChangeListener* listener) {
-		if (!m_listeners.contains(listener))
-			m_listeners.add(listener);
+		m_listeners.insert(listener);
 	}
 
 	void removeChangeListener(MixerControlableChangeListener* listener) {
-		m_listeners.removeFirstMatchingValue(listener);
+		m_listeners.erase(listener);
 	}
 
 	virtual void setPan(float pan) = 0;
@@ -49,7 +49,7 @@ public:
 	virtual float getVolume() const = 0;
 
 protected:
-	Array<MixerControlableChangeListener*> m_listeners;
+	std::set<MixerControlableChangeListener*> m_listeners;
 };
 
 
@@ -62,7 +62,7 @@ public:
 
 	virtual void setOutputChannels(int outputChannels) = 0;
 
-	virtual std::vector<MixerControlable*> getSubMixerControlables() = 0;
+	virtual std::vector<MixerControlable*> getSubMixerControlables() const = 0;
 
 	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) = 0;
 };

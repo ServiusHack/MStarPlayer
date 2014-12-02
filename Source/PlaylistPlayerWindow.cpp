@@ -124,8 +124,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 
 	// playlist
 
-	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const Array<TrackConfig>& trackConfigs, bool play) {
-		Array<TrackConfig> oldTrackConfigs = m_tracks->getTrackConfigs();
+	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const std::vector<TrackConfig>& trackConfigs, bool play) {
+		std::vector<TrackConfig> oldTrackConfigs = m_tracks->getTrackConfigs();
 		m_tracks->setTrackConfigs(trackConfigs);
 		if (play)
 			m_playButton->triggerClick();
@@ -294,8 +294,8 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 		break;
 	case 4:
 		{
-			if (m_renameDialog.get() == nullptr) {
-				m_renameDialog.set(new RenameDialogWindow(getName(), m_color, "", [this](String name) {
+			if (m_PlayerEditDialog.get() == nullptr) {
+				m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, "", [this](String name) {
 					setName(name);
 				}, [this](Colour color) {
 					m_color = color;
@@ -304,11 +304,11 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 					repaint();
 				}, [&]() {
 					// clear is not working
-					delete m_renameDialog.release();
+					delete m_PlayerEditDialog.release();
 				}), true);
 			}
-			m_renameDialog->addToDesktop();
-			m_renameDialog->toFront(true);
+			m_PlayerEditDialog->addToDesktop();
+			m_PlayerEditDialog->toFront(true);
 		}
 	}
 }
@@ -416,7 +416,7 @@ std::vector<std::pair<char, int>> PlaylistPlayerWindow::createMapping()
 	return mapping;
 }
 
-std::vector<MixerControlable*> PlaylistPlayerWindow::getSubMixerControlables()
+std::vector<MixerControlable*> PlaylistPlayerWindow::getSubMixerControlables() const
 {
 	std::vector<MixerControlable*> controlables;
 	for (int i = 0; i < m_tracks->playerCount(); ++i) {

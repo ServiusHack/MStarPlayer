@@ -174,7 +174,7 @@ void JinglePlayerWindow::setOutputChannels(int outputChannels)
 	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
 }
 
-std::vector<MixerControlable*> JinglePlayerWindow::getSubMixerControlables()
+std::vector<MixerControlable*> JinglePlayerWindow::getSubMixerControlables() const
 {
 	return std::vector<MixerControlable*>();
 }
@@ -253,8 +253,8 @@ void JinglePlayerWindow::configureChannels()
 
 void JinglePlayerWindow::rename()
 {
-	if (m_renameDialog.get() == nullptr) {
-		m_renameDialog.set(new RenameDialogWindow(getName(), m_color, m_userImagePath, [this](String name) {
+	if (m_PlayerEditDialog.get() == nullptr) {
+		m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, m_userImagePath, [this](String name) {
 			setName(name);
 		}, [this](Colour color) {
 			m_color = color;
@@ -263,7 +263,7 @@ void JinglePlayerWindow::rename()
 			repaint();
 		}, [&]() {
 			// clear is not working
-			delete m_renameDialog.release();
+			delete m_PlayerEditDialog.release();
 		}, [this](juce::File file) {
 			if (file == File::nonexistent)
 			{
@@ -279,8 +279,8 @@ void JinglePlayerWindow::rename()
 			}
 		}), true);
 	}
-	m_renameDialog->addToDesktop();
-	m_renameDialog->toFront(true);
+	m_PlayerEditDialog->addToDesktop();
+	m_PlayerEditDialog->toFront(true);
 }
 
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)

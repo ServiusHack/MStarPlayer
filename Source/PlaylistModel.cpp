@@ -25,10 +25,10 @@ XmlElement* PlaylistEntry::saveToXml() const
 
 	XmlElement* trackConfigsXml = new XmlElement("TrackConfigs");
 
-	for (int i = 0; i < trackConfigs.size(); ++i) {
+	for (size_t i = 0; i < trackConfigs.size(); ++i) {
 		XmlElement* trackConfigXml = new XmlElement("TrackConfig");
 		XmlElement* fileXml = new XmlElement("File");
-		fileXml->addTextElement(trackConfigs.getUnchecked(i).file.getFullPathName());
+		fileXml->addTextElement(trackConfigs[i].file.getFullPathName());
 		trackConfigXml->addChildElement(fileXml);
 		trackConfigsXml->addChildElement(trackConfigXml);
 	}
@@ -49,7 +49,7 @@ PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element)
 	for (int i = 0; i < trackConfigsXml->getNumChildElements(); ++i) {
 		TrackConfig config;
 		config.file = File(trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim());
-		entry.trackConfigs.add(config);
+		entry.trackConfigs.push_back(config);
 	}
 
 	return entry;
@@ -82,10 +82,10 @@ void PlaylistModel::paintCell(Graphics& g,
 		g.drawText(String(rowNumber + 1), 2, 0, width - 4, height, Justification::centredLeft, true);
 	}
 	else if (columnId == 2) {
-		g.drawText(m_playlist.getUnchecked(rowNumber).name, 2, 0, width - 4, height, Justification::centredLeft, true);
+		g.drawText(m_playlist[rowNumber].name, 2, 0, width - 4, height, Justification::centredLeft, true);
 	}
 	else if (columnId == 3) {
-		g.drawText(Utils::formatSeconds(m_playlist.getUnchecked(rowNumber).durationInSeconds), 2, 0, width - 4, height, Justification::centredLeft, true);
+		g.drawText(Utils::formatSeconds(m_playlist[rowNumber].durationInSeconds), 2, 0, width - 4, height, Justification::centredLeft, true);
 	}
 
 	g.setColour(Colours::black.withAlpha(0.2f));
@@ -115,7 +115,7 @@ Component* PlaylistModel::refreshComponentForCell(int rowNumber, int columnId, b
 			editor->addListener(this);
 		}
 
-		bool playNext = m_playlist.getUnchecked(rowNumber).playNext;
+		bool playNext = m_playlist[rowNumber].playNext;
 		editor->setToggleState(playNext, sendNotification);
 		editor->setRowNumber(rowNumber);
 
@@ -133,7 +133,7 @@ void PlaylistModel::buttonClicked(Button* button)
 {
 	int rowNumber = static_cast<PlayNextButton*>(button)->getRowNumber();
 
-	m_playlist.getReference(rowNumber).playNext = button->getToggleState();
+	m_playlist[rowNumber].playNext = button->getToggleState();
 }
 
 void PlaylistModel::add(String name, double durationInSeconds)
@@ -142,7 +142,7 @@ void PlaylistModel::add(String name, double durationInSeconds)
 	entry.name = name;
 	entry.durationInSeconds = durationInSeconds;
 	entry.playNext = false;
-	m_playlist.add(entry);
+	m_playlist.push_back(entry);
 	sendChangeMessage();
 }
 
@@ -152,7 +152,7 @@ void PlaylistModel::insert(int rowNumber, String name, double durationInSeconds)
 	entry.name = name;
 	entry.durationInSeconds = durationInSeconds;
 	entry.playNext = false;
-	m_playlist.insert(rowNumber, entry);
+	m_playlist.insert(m_playlist.begin() + rowNumber, entry);
 	sendChangeMessage();
 }
 
@@ -164,7 +164,7 @@ void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const MouseEven
 	}
 }
 
-void PlaylistModel::cellDoubleClicked(int rowNumber, int columnId, const MouseEvent &)
+void PlaylistModel::cellDoubleClicked(int rowNumber, int /*columnId*/, const MouseEvent &)
 {
 	showEditDialog(rowNumber);
 }
@@ -207,52 +207,46 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 void PlaylistModel::showEditDialog(int rowNumber)
 {
 	PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](String name) {
-		PlaylistEntry entry = m_playlist.getUnchecked(rowNumber);
-		entry.name = name;
-		m_playlist.set(rowNumber, entry);
+		m_playlist[rowNumber].name = name;
 		sendChangeMessage();
 	};
-	m_editDialog = ScopedPointer<PlaylistEntryDialogWindow>(new PlaylistEntryDialogWindow(m_playlist.getUnchecked(rowNumber).name, callback));
+	m_editDialog = ScopedPointer<PlaylistEntryDialogWindow>(new PlaylistEntryDialogWindow(m_playlist[rowNumber].name, callback));
 }
 
 void PlaylistModel::remove(int rowNumber)
 {
-	m_playlist.remove(rowNumber);
+	m_playlist.erase(m_playlist.begin() + rowNumber);
 	sendChangeMessage();
 
 }
 
-const Array<TrackConfig>& PlaylistModel::getTrackConfigs(int selectedRow)
+const std::vector<TrackConfig>& PlaylistModel::getTrackConfigs(size_t selectedRow)
 {
 	jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
-	return m_playlist.getReference(selectedRow).trackConfigs;
+	return m_playlist[selectedRow].trackConfigs;
 }
 
-void PlaylistModel::setTrackConfigs(int selectedRow, const Array<TrackConfig>& trackConfigs)
+void PlaylistModel::setTrackConfigs(size_t selectedRow, const std::vector<TrackConfig>& trackConfigs)
 {
 	jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
-	PlaylistEntry entry = m_playlist.getUnchecked(selectedRow);
-	entry.trackConfigs = trackConfigs;
-	m_playlist.set(selectedRow, entry);
+	m_playlist[selectedRow].trackConfigs = trackConfigs;
 }
 
-void PlaylistModel::setTrackDuration(int selectedRow, double duration)
+void PlaylistModel::setTrackDuration(size_t selectedRow, double duration)
 {
 	jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
-	PlaylistEntry entry = m_playlist.getUnchecked(selectedRow);
-	entry.durationInSeconds = duration;
-	m_playlist.set(selectedRow, entry);
+	m_playlist[selectedRow].durationInSeconds = duration;
 }
 
-XmlElement* PlaylistModel::saveToXml(int row) const
+XmlElement* PlaylistModel::saveToXml(size_t row) const
 {
 	jassert(row >= 0 && row < m_playlist.size());
-	return m_playlist.getUnchecked(row).saveToXml();
+	return m_playlist[row].saveToXml();
 }
 
 void PlaylistModel::addFromXml(const XmlElement& element)
 {
-	m_playlist.add(PlaylistEntry::createFromXml(element));
+	m_playlist.push_back(PlaylistEntry::createFromXml(element));
 }
 
 void PlaylistModel::clear()
@@ -262,5 +256,5 @@ void PlaylistModel::clear()
 
 bool PlaylistModel::doPlayNext(int selectedRow)
 {
-	return m_playlist.getUnchecked(selectedRow).playNext;
+	return m_playlist[selectedRow].playNext;
 }

@@ -25,6 +25,8 @@ public:
 
 	String getDeviceOutputChannelName(int activeChannelIndex);
 
+	StringArray getAllDeviceOutputChannelNames();
+
 	String getInternalOutputChannelName(int activeChannelIndex);
 
 	void setInternalOutputChannelName(int activeChannelIndex, String text);

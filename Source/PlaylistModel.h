@@ -12,7 +12,7 @@ public:
 	String name;
 	double durationInSeconds;
 	bool playNext;
-	Array<TrackConfig> trackConfigs;
+	std::vector<TrackConfig> trackConfigs;
 
 	XmlElement* saveToXml() const;
 
@@ -45,12 +45,12 @@ public:
 
 	virtual void buttonClicked(Button *) override;
 
-	const Array<TrackConfig>& getTrackConfigs(int selectedRow);
-	void setTrackConfigs(int selectedRow, const Array<TrackConfig>& trackConfigs);
+	const std::vector<TrackConfig>& getTrackConfigs(size_t selectedRow);
+	void setTrackConfigs(size_t selectedRow, const std::vector<TrackConfig>& trackConfigs);
 
-	void setTrackDuration(int row, double duration);
+	void setTrackDuration(size_t row, double duration);
 
-	XmlElement* saveToXml(int row) const;
+	XmlElement* saveToXml(size_t row) const;
 
 	void addFromXml(const XmlElement& element);
 
@@ -62,7 +62,7 @@ private:
 	void showPopup(int rowNumber, bool enableInsert, bool enableDelete);
 	void showEditDialog(int rowNumber);
 
-	Array<PlaylistEntry> m_playlist;
+	std::vector<PlaylistEntry> m_playlist;
 	ScopedPointer<PlaylistEntryDialogWindow> m_editDialog;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistModel)

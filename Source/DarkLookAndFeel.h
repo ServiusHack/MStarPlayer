@@ -4,7 +4,6 @@
 
 class DarkLookAndFeel
 	: public LookAndFeel_V3
-		
 {
 public:
 	DarkLookAndFeel();

@@ -16,19 +16,13 @@ PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
 	getHeader().addColumn("Duration", 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
 	getHeader().addColumn("", 4, 25, 25, 25, TableHeaderComponent::notResizableOrSortable);
 
-	m_model = new PlaylistModel();
-	m_model->addChangeListener(this);
-	setModel(m_model);
+	m_model.addChangeListener(this);
+	setModel(&m_model);
 
-	m_model->add("", 0);
+	m_model.add("", 0);
 	updateContent();
 
 	selectRow(0);
-}
-
-PlaylistTable::~PlaylistTable()
-{
-	delete m_model;
 }
 
 void PlaylistTable::selectedRowsChanged(int lastRowSelected)
@@ -36,8 +30,8 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
 	if (lastRowSelected == -1)
 		return;
 
-	const Array<TrackConfig>& trackConfigs = static_cast<PlaylistModel*>(getModel())->getTrackConfigs(lastRowSelected);
-	Array<TrackConfig> oldTrackConfigs = m_callback(trackConfigs, m_playNext);
+	const std::vector<TrackConfig>& trackConfigs = static_cast<PlaylistModel*>(getModel())->getTrackConfigs(lastRowSelected);
+	std::vector<TrackConfig> oldTrackConfigs = m_callback(trackConfigs, m_playNext);
 
 	if (m_previousRow != -1)
 		static_cast<PlaylistModel*>(getModel())->setTrackConfigs(m_previousRow, oldTrackConfigs);
@@ -45,7 +39,7 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
 	m_previousRow = lastRowSelected;
 }
 
-void PlaylistTable::changeListenerCallback(ChangeBroadcaster *source)
+void PlaylistTable::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
 	updateContent();
 	repaint();
@@ -90,8 +84,8 @@ void PlaylistTable::resized()
 
 void PlaylistTable::next()
 {
-	if (getSelectedRow() + 1 < m_model->getNumRows()) {
-		m_playNext = m_model->doPlayNext(getSelectedRow());
+	if (getSelectedRow() + 1 < m_model.getNumRows()) {
+		m_playNext = m_model.doPlayNext(getSelectedRow());
 		selectRow(getSelectedRow() + 1);
 		m_playNext = false;
 	}

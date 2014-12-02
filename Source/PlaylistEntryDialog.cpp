@@ -1,7 +1,5 @@
 #include "PlaylistEntryDialog.h"
 
-
-
 PlaylistEntryDialogWindow::PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback)
 	: DialogWindow("Edit playlist entry", Colours::lightgrey, true, true)
 {

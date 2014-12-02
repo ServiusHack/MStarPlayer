@@ -12,9 +12,9 @@ public:
 
 	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
-	float getVolume(int channel);
+	float getVolume(size_t channel);
 
 private:
-	Array<float> m_volumes;
+	std::vector<float> m_volumes;
 	CriticalSection lock;
 };

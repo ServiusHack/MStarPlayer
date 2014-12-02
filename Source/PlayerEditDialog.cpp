@@ -1,27 +1,27 @@
-#include "RenameDialog.h"
+#include "PlayerEditDialog.h"
 
-RenameDialogWindow::RenameDialogWindow(String playerName, Colour color, String imagePath, StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, CloseCallback closeCallback, ImageChangedCallback imageCallback)
+PlayerEditDialogWindow::PlayerEditDialogWindow(String playerName, Colour color, String imagePath, StringChangedCallback stringCallback, PlayerEditDialogWindow::ColourChangedCallback colourCallback, CloseCallback closeCallback, ImageChangedCallback imageCallback)
 	: DialogWindow("Rename player", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
-	RenameDialogComponent* component = new RenameDialogComponent(playerName, color, imagePath, stringCallback, colourCallback, closeCallback, imageCallback);
+	PlayerEditDialogComponent* component = new PlayerEditDialogComponent(playerName, color, imagePath, stringCallback, colourCallback, closeCallback, imageCallback);
 	setContentOwned(component, true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
 	setResizable(false, false);
 }
 
-void RenameDialogWindow::closeButtonPressed()
+void PlayerEditDialogWindow::closeButtonPressed()
 {
 	m_closeCallback();
 }
 
-String RenameDialogWindow::getPlayerName()
+String PlayerEditDialogWindow::getPlayerName() const
 {
-	return static_cast<RenameDialogComponent*>(getContentComponent())->m_textEditor->getText();
+	return static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor->getText();
 }
 
-bool RenameDialogWindow::keyPressed(const KeyPress &key)
+bool PlayerEditDialogWindow::keyPressed(const KeyPress &key)
 {
 	if (key == KeyPress::returnKey) {
 		exitModalState(0);
@@ -31,12 +31,12 @@ bool RenameDialogWindow::keyPressed(const KeyPress &key)
 	return false;
 }
 
-void RenameDialogWindow::focusGained(FocusChangeType /*cause*/)
+void PlayerEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 {
-	static_cast<RenameDialogComponent*>(getContentComponent())->m_textEditor->grabKeyboardFocus();
+	static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor->grabKeyboardFocus();
 }
 
-RenameDialogComponent::RenameDialogComponent(String playerName, Colour color, String imagePath, RenameDialogWindow::StringChangedCallback stringCallback, RenameDialogWindow::ColourChangedCallback colourCallback, RenameDialogWindow::CloseCallback closeCallback, RenameDialogWindow::ImageChangedCallback imageCallback)
+PlayerEditDialogComponent::PlayerEditDialogComponent(String playerName, Colour color, String imagePath, PlayerEditDialogWindow::StringChangedCallback stringCallback, PlayerEditDialogWindow::ColourChangedCallback colourCallback, PlayerEditDialogWindow::CloseCallback closeCallback, PlayerEditDialogWindow::ImageChangedCallback imageCallback)
 	: m_color(color)
 	, m_colorCallback(colourCallback)
 	, m_stringCallback(stringCallback)
@@ -96,14 +96,14 @@ RenameDialogComponent::RenameDialogComponent(String playerName, Colour color, St
     setSize(200, 200);
 }
 
-RenameDialogComponent::~RenameDialogComponent()
+PlayerEditDialogComponent::~PlayerEditDialogComponent()
 {
 	m_label = nullptr;
 	m_textEditor = nullptr;
 	m_closeButton = nullptr;
 }
 
-void RenameDialogComponent::resized()
+void PlayerEditDialogComponent::resized()
 {
 	static const int rowHeight = 24;
 	static const int padding = 10;
@@ -131,7 +131,7 @@ void RenameDialogComponent::resized()
 		);
 }
 
-void RenameDialogComponent::buttonClicked(Button* buttonThatWasClicked)
+void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 {
 	if (buttonThatWasClicked == m_closeButton)
 		m_closeCallback();
@@ -169,14 +169,14 @@ void RenameDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 	}
 }
 
-void RenameDialogComponent::changeListenerCallback(ChangeBroadcaster *source)
+void PlayerEditDialogComponent::changeListenerCallback(ChangeBroadcaster *source)
 {
 	ColourSelector* selector = static_cast<ColourSelector*>(source);
 	m_color = selector->getCurrentColour();
 	m_colorCallback(m_color);
 }
 
-void RenameDialogComponent::textEditorTextChanged(TextEditor &)
+void PlayerEditDialogComponent::textEditorTextChanged(TextEditor &)
 {
 	m_stringCallback(m_textEditor->getText());
 }

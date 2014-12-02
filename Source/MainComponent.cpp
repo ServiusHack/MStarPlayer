@@ -328,7 +328,7 @@ void MainContentComponent::readProjectFile()
 {
 	m_multiDocumentPanel->closeAllDocuments(false);
 
-    Array<String> loadErrors;
+    std::vector<String> loadErrors;
     
 	XmlDocument document(m_projectFile);
 
@@ -343,11 +343,11 @@ void MainContentComponent::readProjectFile()
 
 	XmlElement* view = root->getChildByName("View");
 	if (view == nullptr)
-		loadErrors.add("No view settings found, using default.");
+		loadErrors.push_back("No view settings found, using default.");
 	else {
 		XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
 		if (layoutModeElement == nullptr)
-			loadErrors.add("No layout mode settings found, using default.");
+			loadErrors.push_back("No layout mode settings found, using default.");
 		else
 		{
 			String layoutMode = layoutModeElement->getAllSubText().trim();
@@ -356,12 +356,12 @@ void MainContentComponent::readProjectFile()
 			else if (layoutMode == "tabs")
 				m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
 			else
-				loadErrors.add("Unknown view layout, using default.");
+				loadErrors.push_back("Unknown view layout, using default.");
 		}
 
 		XmlElement* styleElement = view->getChildByName("Style");
 		if (styleElement == nullptr)
-			loadErrors.add("No style settings found, using default.");
+			loadErrors.push_back("No style settings found, using default.");
 		else
 		{
 			String style = styleElement->getAllSubText().trim();
@@ -370,24 +370,24 @@ void MainContentComponent::readProjectFile()
 			else if (style == "dark")
 				perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
 			else
-				loadErrors.add("Unknown style, using default.");
+				loadErrors.push_back("Unknown style, using default.");
 		}
 	}
 
     XmlElement* audio = root->getChildByName("Audio");
     if (audio == nullptr)
-        loadErrors.add("No audio settings found, using current.");
+        loadErrors.push_back("No audio settings found, using current.");
     else
     {
         if (audio->getNumChildElements() != 1)
-            loadErrors.add("Invalid number of audio settings found, using current.");
+            loadErrors.push_back("Invalid number of audio settings found, using current.");
         else
 			m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
     }
 
 	XmlElement* channelNames = root->getChildByName("ChannelNames");
 	if (channelNames == nullptr)
-		loadErrors.add("No channel names found, using device defaults.");
+		loadErrors.push_back("No channel names found, using device defaults.");
 	else
 	{
 		m_outputChannelNames->restoreFromXml(*channelNames);
@@ -396,27 +396,27 @@ void MainContentComponent::readProjectFile()
     XmlElement* mixer = root->getChildByName("Mixer");
 
     if (mixer == nullptr)
-        loadErrors.add("No mixer settings found, using current.");
+        loadErrors.push_back("No mixer settings found, using current.");
     else
 		m_mixerComponent->restoreFromXml(*mixer);
 
     XmlElement* players = root->getChildByName("Players");
 
     if (players == nullptr)
-        loadErrors.add("No players found. None will be loaded.");
+        loadErrors.push_back("No players found. None will be loaded.");
     else {
 
         for (int i = 0; i < players->getNumChildElements(); i++)
         {
             XmlElement* player = players->getChildElement(i);
             if (player->getTagName() != "Player") {
-                loadErrors.add("Unknown tag '" + player->getTagName() + "' in players list.");
+                loadErrors.push_back("Unknown tag '" + player->getTagName() + "' in players list.");
                 continue;
             }
 
             String type = player->getStringAttribute("type", "");
             if (type == "") {
-                loadErrors.add("Unknown player type '" + type + "'.");
+                loadErrors.push_back("Unknown player type '" + type + "'.");
                 continue;
             }
 

@@ -80,6 +80,14 @@
         <FILE id="JMGgdW" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
       </GROUP>
       <GROUP id="{865AC646-72F7-2874-4DCD-D4F50884E329}" name="Mixer">
+        <FILE id="S33LU4" name="ChannelMixerControlable.cpp" compile="1" resource="0"
+              file="Source/ChannelMixerControlable.cpp"/>
+        <FILE id="GOXvD4" name="ChannelMixerControlable.h" compile="0" resource="0"
+              file="Source/ChannelMixerControlable.h"/>
+        <FILE id="XZqJ7D" name="PlayerMixerFader.cpp" compile="1" resource="0"
+              file="Source/PlayerMixerFader.cpp"/>
+        <FILE id="ePix8J" name="PlayerMixerFader.h" compile="0" resource="0"
+              file="Source/PlayerMixerFader.h"/>
         <FILE id="S1uxar" name="TrackEditDialog.cpp" compile="1" resource="0"
               file="Source/TrackEditDialog.cpp"/>
         <FILE id="ejt3rD" name="TrackEditDialog.h" compile="0" resource="0"
@@ -106,9 +114,10 @@
       <FILE id="kXD1G3" name="CrashDumper.h" compile="0" resource="0" file="Source/CrashDumper.h"/>
       <FILE id="fhQ0yw" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
       <FILE id="dTMQkM" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
-      <FILE id="vCosBz" name="RenameDialog.cpp" compile="1" resource="0"
-            file="Source/RenameDialog.cpp"/>
-      <FILE id="PItGjI" name="RenameDialog.h" compile="0" resource="0" file="Source/RenameDialog.h"/>
+      <FILE id="vCosBz" name="PlayerEditDialog.cpp" compile="1" resource="0"
+            file="Source/PlayerEditDialog.cpp"/>
+      <FILE id="PItGjI" name="PlayerEditDialog.h" compile="0" resource="0"
+            file="Source/PlayerEditDialog.h"/>
       <FILE id="OBFTZF" name="Player.h" compile="0" resource="0" file="Source/Player.h"/>
       <FILE id="CjxKBf" name="ChannelMapping.cpp" compile="1" resource="0"
             file="Source/ChannelMapping.cpp"/>

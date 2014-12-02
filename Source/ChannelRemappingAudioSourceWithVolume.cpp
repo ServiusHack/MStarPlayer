@@ -9,7 +9,7 @@ ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(Aud
 void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int requiredNumberOfChannels_)
 {
 	const ScopedLock sl(lock);
-	m_volumes.resize(requiredNumberOfChannels_);
+	m_volumes.resize(requiredNumberOfChannels_, 0.0f);
 	ChannelRemappingAudioSource::setNumberOfChannelsToProduce(requiredNumberOfChannels_);
 }
 
@@ -17,15 +17,14 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 {
 	const ScopedLock sl(lock);
 	ChannelRemappingAudioSource::getNextAudioBlock(bufferToFill);
-	for (int i = 0; i < m_volumes.size(); ++i)
-		m_volumes.set(i, bufferToFill.buffer->getRMSLevel(i, bufferToFill.startSample, bufferToFill.numSamples));
+	for (size_t i = 0; i < m_volumes.size(); ++i)
+		m_volumes[i] = bufferToFill.buffer->getRMSLevel(i, bufferToFill.startSample, bufferToFill.numSamples);
 }
 
-float ChannelRemappingAudioSourceWithVolume::getVolume(int channel)
+float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel)
 {
 	const ScopedLock sl(lock);
-	if (channel < m_volumes.size())
-		return m_volumes.getUnchecked(channel);
-	else
-		return 0.0f;
+	jassert(channel < m_volumes.size());
+	
+	return m_volumes[channel];
 }
