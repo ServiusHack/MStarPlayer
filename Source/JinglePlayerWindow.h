@@ -20,6 +20,7 @@
 class JinglePlayerWindow
 	: public Player
 	, public Button::Listener
+	, public ChangeListener
 	, private Timer
 {
 public:
@@ -96,6 +97,8 @@ public:
 
 	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) override;
 
+	void changeListenerCallback(ChangeBroadcaster *source);
+
 private:
 
 	const std::vector<std::pair<char, int>> createMapping();
@@ -113,6 +116,9 @@ private:
 	OptionalScopedPointer<Drawable> m_userImage;
 	ScopedPointer<Label> m_fileNameLabel;
 	String m_userImagePath;
+
+	AudioThumbnailCache m_audioThumbnailCache;
+	ScopedPointer<AudioThumbnail> m_audioThumbnail;
     
     // configuration menu actions
     void loadFile();

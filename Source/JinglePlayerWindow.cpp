@@ -27,12 +27,18 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
 	, m_blink(false)
 	, m_paintColor(m_color)
 	, m_outputChannels(outputChannelNames->getNumberOfChannels())
+	, m_audioThumbnailCache(1)
 {
+	// audio thumbnail
+	m_audioThumbnail = new AudioThumbnail(1000, m_formatManager, m_audioThumbnailCache);
+	m_audioThumbnail->addChangeListener(this);
+
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
 	m_progressBar->setPercentageDisplay(false);
 	m_progressBar->setTextToDisplay("00:00:000");
 	m_progressBar->addMouseListener(this, false);
+	m_progressBar->setColour(ProgressBar::backgroundColourId, Colours::transparentBlack);
 	addAndMakeVisible(m_progressBar);
 
 	// total duration text
@@ -88,6 +94,12 @@ JinglePlayerWindow::~JinglePlayerWindow()
 	m_mixer->getMixerAudioSource().removeInputSource(m_remappingAudioSource);
 	m_mixer->unregisterPlayer(this);
 	m_transportSource.setSource(nullptr);
+}
+
+void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster *source)
+{
+	if (source == m_audioThumbnail)
+		repaint();
 }
 
 void JinglePlayerWindow::setGain(float gain)
@@ -191,6 +203,10 @@ void JinglePlayerWindow::resized()
 void JinglePlayerWindow::paint(Graphics& g)
 {
 	g.fillAll(m_paintColor);
+	g.setColour(Colour(0x55000000));
+	m_audioThumbnail->drawChannels(g, Rectangle<int>(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, m_audioThumbnail->getTotalLength(), 1.0f);
+
+	Player::paint(g);
 }
 
 void JinglePlayerWindow::mouseDown (const MouseEvent & event)
@@ -317,6 +333,7 @@ void JinglePlayerWindow::loadFileIntoTransport ()
 	if (reader != nullptr)
 	{
 		m_currentAudioFileSource = new AudioFormatReaderSource(reader, true);
+		m_audioThumbnail->setSource(new FileInputSource(m_audioFile));
 
 		// ..and plug it into our transport source
 		m_transportSource.setSource(m_currentAudioFileSource,

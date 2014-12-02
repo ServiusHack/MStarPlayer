@@ -8,6 +8,7 @@
 #include "OutputChannelNames.h"
 #include "DarkLookAndFeel.h"
 #include "AudioConfiguration.h"
+#include "DefaultLookAndFeel.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
@@ -28,7 +29,7 @@ class MainContentComponent
 {
 public:
 
-	static LookAndFeel_V3* s_defaultLookAndFeel;
+	static DefaultLookAndFeel* s_defaultLookAndFeel;
 	static DarkLookAndFeel* s_darkLookAndFeel;
 
 	static void initLookAndFeel();

@@ -227,7 +227,6 @@ void Track::changeListenerCallback(ChangeBroadcaster *source)
 		repaint();
 }
 
-
 void Track::mouseDown (const MouseEvent & event)
 {
 	if (event.eventComponent != m_openButton)
