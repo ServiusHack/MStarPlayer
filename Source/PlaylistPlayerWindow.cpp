@@ -115,7 +115,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(MixerComponent* mixer, OutputChannelN
 	addAndMakeVisible(m_tracksViewport = new Viewport());
 	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(mixer, outputChannelNames->getNumberOfChannels(), [&](double position, bool finished) {
 		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
-		if (finished)
+		if (finished && m_tableListBox->isVisible())
 			m_tableListBox->next();
 	},[&]() {
 		m_channelCountChanged();
@@ -277,6 +277,10 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 	m.addItem (2, "add mono track");
 	m.addItem (3, "configure channels");
 	m.addItem (4, "rename");
+	m.addSeparator();
+	//m.addItem(5, "Jingle Mode");
+	m.addItem(6, "Multitrack Mode", true, !m_tableListBox->isVisible());
+	m.addItem(7, "Playlist Mode", true, m_tableListBox->isVisible());
 	const int result = m.show();
 
 	switch (result) {
@@ -310,6 +314,17 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 			m_PlayerEditDialog->addToDesktop();
 			m_PlayerEditDialog->toFront(true);
 		}
+		break;
+	case 6:
+		m_tableListBox->setVisible(false);
+		resized();
+		repaint();
+		break;
+	case 7:
+		m_tableListBox->setVisible(true);
+		resized();
+		repaint();
+		break;
 	}
 }
 
@@ -326,7 +341,10 @@ void PlaylistPlayerWindow::buttonClicked(Button * button)
 XmlElement* PlaylistPlayerWindow::saveToXml() const
 {
     XmlElement* element = new XmlElement("Player");
-	element->setAttribute("type", "playlist");
+	if (m_tableListBox->isVisible())
+		element->setAttribute("type", "playlist");
+	else
+		element->setAttribute("type", "multitrack");
 	element->setAttribute("gain", m_tracks->getGain());
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
@@ -357,6 +375,7 @@ XmlElement* PlaylistPlayerWindow::saveToXml() const
 
 void PlaylistPlayerWindow::restoreFromXml (const XmlElement& element)
 {
+	m_tableListBox->setVisible(element.getStringAttribute("type") != "multitrack"); // default should be playlist mode
 	m_color = Colour::fromString(element.getStringAttribute("color", "0xffffffff"));
 	m_mixer->updatePlayerColor(this, m_color);
 	repaint();

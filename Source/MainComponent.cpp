@@ -430,7 +430,7 @@ void MainContentComponent::readProjectFile()
 
             }
 
-			else if (type == "playlist") {
+			else if (type == "playlist" || type == "multitrack") {
 				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
 				const bool solo = player->getBoolAttribute("solo");
 				const bool mute = player->getBoolAttribute("mute");
