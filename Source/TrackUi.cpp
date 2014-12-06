@@ -255,6 +255,8 @@ void TrackUi::resized()
 	m_soloButton->setBounds(100 + 20 + 3 + buttonWidth, 3, buttonWidth - 6, getHeight() / 2 - 6);
 	m_muteButton->setBounds(100 + 20 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
 
-	int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
+	int textWidth = 0;
+	if (m_fileNameLabel->getText() == "")
+		m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
 	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 }
