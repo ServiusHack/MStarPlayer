@@ -1,68 +1,100 @@
 #pragma once
 
-#include <functional>
 #include <set>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class MixerControlableChangeListener {
-public:
-	virtual void gainChanged(float /*gain*/) {};
+#include "MixerComponent.h"
+#include "MixerControlable.h"
 
-	virtual void panChanged(float /*pan*/) {};
-
-	virtual void soloChanged(bool /*solo*/) {};
-
-	virtual void muteChanged(bool /*mute*/) {};
-};
-
-class MixerControlable {
-public:
-	virtual void setGain(float gain) = 0;
-
-	virtual float getGain() const = 0;
-
-	void addChangeListener(MixerControlableChangeListener* listener) {
-		m_listeners.insert(listener);
-	}
-
-	void removeChangeListener(MixerControlableChangeListener* listener) {
-		m_listeners.erase(listener);
-	}
-
-	virtual void setPan(float pan) = 0;
-
-	virtual float getPan() const = 0;
-
-	virtual void setSoloMute(bool soloMute) = 0;
-
-	virtual bool getSoloMute() const = 0;
-
-	virtual void setSolo(bool solo) = 0;
-
-	virtual bool getSolo() const = 0;
-
-	virtual void setMute(bool mute) = 0;
-
-	virtual bool getMute() const = 0;
-
-	virtual float getVolume() const = 0;
-
-protected:
-	std::set<MixerControlableChangeListener*> m_listeners;
-};
+#include "PlaylistPlayerWindow.h"
+#include "SubchannelPlayer.h"
+#include "PlaylistModel.h"
+#include "JinglePlayerWindow.h"
+#include "InterPlayerCommunication.h"
 
 
-class Player : public Component, public MixerControlable {
+class Player : public Component, public SubchannelPlayer {
 
 public:
-	typedef std::function<void()> ChannelCountChangedCallback;
+	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, float gain = 1.0f, bool solo = false, bool mute = false);
+	~Player();
+
+	void setType(InterPlayerCommunication::PlayerType type);
+
+	virtual void resized() override;
+
+	virtual void setGain(float gain) override;
+
+	virtual float getGain() const override;
+
+	virtual void setPan(float pan) override;
+
+	virtual float getPan() const override;
+
+	virtual void setSoloMute(bool soloMute) override;
+
+	virtual bool getSoloMute() const override;
+
+	virtual void setSolo(bool solo) override;
+
+	virtual bool getSolo() const override;
+
+	virtual void setMute(bool mute) override;
+
+	virtual bool getMute() const override;
+
+	virtual float getVolume() const override;
+
+    /** Set the number of output channels.
+
+        If the user reconfigures his audio settings the number of output channels
+        might change. This method is called to propagate this change to this player.
+    */
+    void setOutputChannels(int outputChannels);
 	
-	virtual XmlElement* saveToXml() const = 0;
+    /** Returns an XML object to encapsulate the state of the volumes.
+        @see restoreFromXml
+    */
+	XmlElement* saveToXml() const;
 
-	virtual void setOutputChannels(int outputChannels) = 0;
+    /** Restores the volumes from an XML object created by createXML().
+        @see createXml
+    */
+	void restoreFromXml(const XmlElement& element);
+	
+	virtual void SetChannelCountChangedCallback(Track::ChannelCountChangedCallback callback) override;
 
-	virtual std::vector<MixerControlable*> getSubMixerControlables() const = 0;
+	virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
-	virtual void SetChannelCountChangedCallback(ChannelCountChangedCallback callback) = 0;
+
+private:
+
+	void updateGain();
+
+	void setColor(Colour color);
+
+	void showEditDialog();
+	void configureChannels();
+
+	MixerComponent* m_mixer;
+	OutputChannelNames* m_outputChannelNames;
+	TracksContainer* m_tracksContainer;
+
+	PlaylistPlayerWindow* m_playlistPlayer;
+	JinglePlayerWindow* m_jinglePlayer;
+
+	float m_gain;
+	bool m_soloMute;
+	bool m_solo;
+	bool m_mute;
+	InterPlayerCommunication::PlayerType m_type;
+
+	Colour m_color;
+
+	Track::ChannelCountChangedCallback m_channelCountChanged;
+	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
+	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
+
+	PlaylistModel playlistModel;
 };

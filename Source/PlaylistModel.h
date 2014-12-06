@@ -3,21 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "PlaylistEntryDialog.h"
-
-struct TrackConfig {
-	File file;
-};
-class PlaylistEntry {
-public:
-	String name;
-	double durationInSeconds;
-	bool playNext;
-	std::vector<TrackConfig> trackConfigs;
-
-	XmlElement* saveToXml() const;
-
-	static PlaylistEntry createFromXml(const XmlElement& element);
-};
+#include "PlaylistEntry.h"
 
 /**
 	Table model for the channel names.
@@ -28,6 +14,7 @@ class PlaylistModel
 	, public Button::Listener
 {
 public:
+	typedef std::function<void()> ReloadedCallback;
 	PlaylistModel();
 
 	virtual int getNumRows() override;
@@ -50,13 +37,15 @@ public:
 
 	void setTrackDuration(size_t row, double duration);
 
-	XmlElement* saveToXml(size_t row) const;
+	XmlElement* saveToXml() const;
 
-	void addFromXml(const XmlElement& element);
+	void restoreFromXml(const XmlElement& element);
 
 	void clear();
 
 	bool doPlayNext(int selectedRow);
+
+	void setReloadedCallback(ReloadedCallback);
 
 private:
 	void showPopup(int rowNumber, bool enableInsert, bool enableDelete);
@@ -64,6 +53,7 @@ private:
 
 	std::vector<PlaylistEntry> m_playlist;
 	ScopedPointer<PlaylistEntryDialogWindow> m_editDialog;
+	ReloadedCallback m_reloadedCallback;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistModel)
 };

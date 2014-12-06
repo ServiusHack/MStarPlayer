@@ -12,7 +12,7 @@ public:
 
 	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
-	float getVolume(size_t channel);
+	float getVolume(size_t channel) const;
 
 private:
 	std::vector<float> m_volumes;

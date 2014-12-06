@@ -3,7 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "ChannelVolumeAudioSource.h"
-#include "Player.h"
+#include "SubchannelPlayer.h"
 #include "MixerFader.h"
 #include "OutputChannelNames.h"
 #include "PlayerMixerFader.h"
@@ -44,10 +44,10 @@ public:
 	/** Returns the MixerAudioSource into which all Players mix their audio stream. */
 	MixerAudioSource& getMixerAudioSource();
 
-	void registerPlayer(Player* player);
-	void unregisterPlayer(Player* player);
+	void registerPlayer(SubchannelPlayer* player);
+	void unregisterPlayer(SubchannelPlayer* player);
 
-	void updatePlayerColor(Player* player, Colour color);
+	void updatePlayerColor(SubchannelPlayer* player, Colour color);
 	
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
@@ -70,7 +70,7 @@ private:
 	/** Adds a new slider to the component because not enough are being shown. */
 	void addChannelSlider();
 
-	void addPlayerSlider(Player* player);
+	void addPlayerSlider(SubchannelPlayer* player);
 	
 	// audio output
 	MixerAudioSource m_mixerAudioSource;

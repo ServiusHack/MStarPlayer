@@ -21,7 +21,7 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 		m_volumes[i] = bufferToFill.buffer->getRMSLevel(i, bufferToFill.startSample, bufferToFill.numSamples);
 }
 
-float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel)
+float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel) const
 {
 	const ScopedLock sl(lock);
 	jassert(channel < m_volumes.size());

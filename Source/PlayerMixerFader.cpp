@@ -1,6 +1,6 @@
 #include "PlayerMixerFader.h"
 
-PlayerMixerFader::PlayerMixerFader(Player* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback)
+PlayerMixerFader::PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback)
 	: MixerFader(player, subControlable, panEnabled, resizeCallback)
 	, player(player)
 {
@@ -11,7 +11,7 @@ PlayerMixerFader::PlayerMixerFader(Player* player, std::vector<MixerControlable*
 	});
 }
 
-Player* PlayerMixerFader::getPlayer() const
+SubchannelPlayer* PlayerMixerFader::getPlayer() const
 {
 	return player;
 };

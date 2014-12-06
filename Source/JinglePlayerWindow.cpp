@@ -6,32 +6,28 @@
 
 #include "JinglePlayerWindow.h"
 
+using namespace InterPlayerCommunication;
+
 namespace {
 	const int ProgressBarHeight = 26;
 	const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain, bool solo, bool mute)
-	: m_mixer(mixer)
+JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback)
+	: m_tracksContainer(tracksContainer)
 	, m_outputChannelNames(outputChannelNames)
-	, m_thread("audio file preview")
 	, m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
 	, m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
-	, m_progress(0.0)
-	, m_gain(1.0f)
-	, m_solo(solo)
-	, m_soloMute(false) // might be updated later
-	, m_mute(mute)
-	, m_color(0xffffffff)
 	, m_showRemainingTime(false)
 	, m_blink(false)
 	, m_paintColor(m_color)
-	, m_outputChannels(outputChannelNames->getNumberOfChannels())
-	, m_audioThumbnailCache(1)
+	, m_showEditDialogCallback(showEditDialogCallback)
+	, m_configureChannelsCallback(configureChannelsCallback)
+	, m_changePlayerTypeCallback(changePlayerTypeCallback)
+	, m_totalLength(0)
+	, m_progress(0)
 {
-	// audio thumbnail
-	m_audioThumbnail = new AudioThumbnail(1000, m_formatManager, m_audioThumbnailCache);
-	m_audioThumbnail->addChangeListener(this);
+	m_formatManager.registerBasicFormats();
 
 	// progress bar
 	m_progressBar = new ProgressBar(m_progress);
@@ -51,7 +47,6 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
 	m_playButton = new DrawableButton("Play", DrawableButton::ImageFitted);
 	addAndMakeVisible(m_playButton);
 	m_playButton->setImages(m_playImage);
-	m_playButton->setEnabled(false);
 	m_playButton->addListener(this);
 	m_playButton->setEdgeIndent(30);
 
@@ -71,124 +66,45 @@ JinglePlayerWindow::JinglePlayerWindow(MixerComponent* mixer, OutputChannelNames
 	m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
 	m_fileNameLabel->setJustificationType(Justification::centred);
 	addAndMakeVisible(m_fileNameLabel);
-	
-	// audio setup
-	m_formatManager.registerBasicFormats();
-	m_thread.startThread(3);
 
-	m_remappingAudioSource = new ChannelRemappingAudioSourceWithVolume(&m_transportSource, false);
-	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannelNames->getNumberOfChannels());
-	// TODO: Probably do this for outputChannels times.
-	m_remappingAudioSource->setOutputChannelMapping(0, 0);
-	m_remappingAudioSource->setOutputChannelMapping(1, 1);
-	mixer->getMixerAudioSource().addInputSource(m_remappingAudioSource, false);
-	
-	setGain(gain);
-	mixer->registerPlayer(this);
+	Track::PositionCallback positionCallback = [&](double position, bool finished) {
 
-	setBounds(0, 0, 300, 150);
+		double remainingTime = m_totalLength - position;
+		
+		if (m_totalLength == 0)
+			m_progress = 0.0;
+		else
+			m_progress = position / m_totalLength;
+
+		m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
+		m_totalDurationText->setText(Utils::formatSeconds(m_totalLength), sendNotification);
+
+		if (remainingTime < 10) {
+			double decimal = remainingTime - static_cast<long>(remainingTime);
+			bool blink = decimal >= 0.5;
+			if (blink != m_blink) {
+				m_blink = blink;
+				updatePointColor();
+				repaint();
+			}
+		}
+
+		if (finished)
+			m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
+
+	};
+	m_tracksContainer->addPositionCallback(positionCallback);
+
+	TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
+		m_totalDurationText->setText(Utils::formatSeconds(duration), sendNotification);
+		m_totalLength = duration;
+	};
+	m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 }
 
-JinglePlayerWindow::~JinglePlayerWindow()
+void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
-	m_mixer->getMixerAudioSource().removeInputSource(m_remappingAudioSource);
-	m_mixer->unregisterPlayer(this);
-	m_transportSource.setSource(nullptr);
-}
-
-void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster *source)
-{
-	if (source == m_audioThumbnail)
-		repaint();
-}
-
-void JinglePlayerWindow::setGain(float gain)
-{
-	m_gain = gain;
-	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->gainChanged(gain);
-}
-
-float JinglePlayerWindow::getGain() const
-{
-	return m_gain;
-}
-
-void JinglePlayerWindow::setPan(float pan)
-{
-
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->panChanged(pan);
-}
-
-float JinglePlayerWindow::getPan() const
-{
-	return 1.0f;
-}
-
-void JinglePlayerWindow::setSoloMute(bool soloMute)
-{
-	m_soloMute = soloMute;
-	updateGain();
-}
-
-bool JinglePlayerWindow::getSoloMute() const
-{
-	return m_soloMute;
-}
-
-void JinglePlayerWindow::setSolo(bool solo)
-{
-	m_solo = solo;
-	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->soloChanged(solo);
-}
-
-bool JinglePlayerWindow::getSolo() const
-{
-	return m_solo;
-}
-
-void JinglePlayerWindow::setMute(bool mute)
-{
-	m_mute = mute;
-	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->muteChanged(mute);
-}
-
-bool JinglePlayerWindow::getMute() const
-{
-	return m_mute;
-}
-
-float JinglePlayerWindow::getVolume() const
-{
-	float maxVolume = 0;
-	for (int i = 0; i < m_outputChannels; ++i) {
-		maxVolume = std::max(maxVolume, m_remappingAudioSource->getVolume(i));
-	}
-
-	return maxVolume;
-}
-
-void JinglePlayerWindow::updateGain()
-{
-	bool mute = m_mute || (m_soloMute && !m_solo);
-	m_transportSource.setGain(mute ? 0.0f : m_gain);
-}
-
-void JinglePlayerWindow::setOutputChannels(int outputChannels)
-{
-	m_outputChannels = outputChannels;
-	m_remappingAudioSource->setNumberOfChannelsToProduce(outputChannels);
-}
-
-std::vector<MixerControlable*> JinglePlayerWindow::getSubMixerControlables() const
-{
-	return std::vector<MixerControlable*>();
+	repaint();
 }
 
 void JinglePlayerWindow::resized()
@@ -204,9 +120,11 @@ void JinglePlayerWindow::paint(Graphics& g)
 {
 	g.fillAll(m_paintColor);
 	g.setColour(Colour(0x55000000));
-	m_audioThumbnail->drawChannels(g, Rectangle<int>(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, m_audioThumbnail->getTotalLength(), 1.0f);
 
-	Player::paint(g);
+	AudioThumbnail& audioThumbnail = m_tracksContainer->player(0).getAudioThumbnail();
+	audioThumbnail.drawChannels(g, Rectangle<int>(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, audioThumbnail.getTotalLength(), 1.0f);
+
+	Component::paint(g);
 }
 
 void JinglePlayerWindow::mouseDown (const MouseEvent & event)
@@ -214,27 +132,38 @@ void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 	if (event.eventComponent == m_progressBar)
 	{
 		m_showRemainingTime = !m_showRemainingTime;
-		timerCallback();
 	}
 	if (event.eventComponent == m_configureButton)
 	{
 		PopupMenu m;
 		m.addItem (1, "load file");
-		m.addItem(2, "configure channels", m_currentAudioFileSource != nullptr);
+		m.addItem(2, "configure channels");
 		m.addItem(3, "rename");
+		m.addSeparator();
+		m.addItem(4, "Jingle Mode", true, true);
+		m.addItem(5, "Multitrack Mode");
+		m.addItem(6, "Playlist Mode");
+
 		const int result = m.show();
 
 		switch (result) {
 		case 1:
 			loadFile();
 			break;
-
 		case 2:
-			configureChannels();
+			m_configureChannelsCallback();
 			break;
-
 		case 3:
-			rename();
+			m_showEditDialogCallback();
+			break;
+		case 4:
+			m_changePlayerTypeCallback(PlayerType::Jingle);
+			break;
+		case 5:
+			m_changePlayerTypeCallback(PlayerType::Multitrack);
+			break;
+		case 6:
+			m_changePlayerTypeCallback(PlayerType::Playlist);
 			break;
 		}
 	}
@@ -249,149 +178,20 @@ void JinglePlayerWindow::loadFile()
 	if (!myChooser.browseForFileToOpen())
 		return;
 
-	m_audioFile = File(myChooser.getResult());
-	loadFileIntoTransport();
+	File audioFile = File(myChooser.getResult());
+	m_tracksContainer->player(0).loadFileIntoTransport(audioFile);
 }
 
-void JinglePlayerWindow::configureChannels()
-{
-	if (m_channelMappingWindow.get() == nullptr) {
-		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, createMapping(), [&](int source, int target) {
-			m_remappingAudioSource->setOutputChannelMapping(source, target);
-		}, [&]() {
-			// clear is not working
-			delete m_channelMappingWindow.release();
-		}), true);
-	}
-	m_channelMappingWindow->addToDesktop();
-	m_channelMappingWindow->toFront(true);
-}
-
-void JinglePlayerWindow::rename()
-{
-	if (m_PlayerEditDialog.get() == nullptr) {
-		m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, m_userImagePath, [this](String name) {
-			setName(name);
-		}, [this](Colour color) {
-			m_color = color;
-			m_mixer->updatePlayerColor(this, m_color);
-			updatePointColor();
-			repaint();
-		}, [&]() {
-			// clear is not working
-			delete m_PlayerEditDialog.release();
-		}, [this](juce::File file) {
-			if (file == File::nonexistent)
-			{
-				m_userImagePath = "";
-				delete m_userImage.release();
-				m_playButton->setImages(m_transportSource.isPlaying() ? m_stopImage : m_playImage);
-			}
-			else
-			{
-				m_userImagePath = file.getFullPathName();
-				m_userImage.set(Drawable::createFromImageFile(file), true);
-				m_playButton->setImages(m_userImage.get());
-			}
-		}), true);
-	}
-	m_PlayerEditDialog->addToDesktop();
-	m_PlayerEditDialog->toFront(true);
-}
 
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)
 {
-	if (m_transportSource.isPlaying()) {
+	if (m_tracksContainer->isPlaying()) {
 		m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
-		m_transportSource.stop();
-		m_transportSource.setPosition(0);
-		stopTimer();
+		m_tracksContainer->stop();
 	}
 	else {
 		m_playButton->setImages(m_userImage ? m_userImage.get() : m_stopImage);
-		m_transportSource.setPosition(0);
-		m_transportSource.start();
-		startTimer(50);
-	}
-}
-
-void JinglePlayerWindow::loadFileIntoTransport ()
-{
-	stopTimer();
-
-	// unload the previous file source and delete it..
-	m_transportSource.setSource(nullptr);
-	m_currentAudioFileSource = nullptr;
-	m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
-
-	m_fileNameLabel->setText(m_audioFile.getFileName(), sendNotification);
-
-	AudioFormatReader* reader = m_formatManager.createReaderFor(m_audioFile);
-
-	m_playButton->setEnabled(reader != nullptr);
-
-	if (reader != nullptr)
-	{
-		m_currentAudioFileSource = new AudioFormatReaderSource(reader, true);
-		m_audioThumbnail->setSource(new FileInputSource(m_audioFile));
-
-		// ..and plug it into our transport source
-		m_transportSource.setSource(m_currentAudioFileSource,
-								   32768, // tells it to buffer this many samples ahead
-								   &m_thread, // this is the background thread to use for reading-ahead
-								   reader->sampleRate);
-
-		if (m_channelMappingWindow.get() != nullptr)
-			m_channelMappingWindow->setMapping(createMapping());
-
-		timerCallback();
-	}
-}
-
-const std::vector<std::pair<char,int>> JinglePlayerWindow::createMapping()
-{
-	std::vector<std::pair<char, int>> mapping(m_currentAudioFileSource->getAudioFormatReader()->numChannels, std::pair<char, int>(0,-1));
-
-	for (size_t channel = 0; channel < mapping.size(); ++channel)
-	{
-		char side = 'm';
-		if (mapping.size() == 2)
-			side = channel ? 'r' : 'l';
-		mapping[channel] = std::pair<char, int>(side, (m_remappingAudioSource->getRemappedOutputChannel(channel)));
-	}
-
-	return mapping;
-}
-
-void JinglePlayerWindow::timerCallback()
-{
-	if (!m_currentAudioFileSource)
-		return;
-
-	double position    = m_transportSource.getCurrentPosition();
-	double totalLength = m_transportSource.getLengthInSeconds();
-	
-	if (position > totalLength) {
-		m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
-		position = 0;
-		m_progress = 0.0;
-	} else {
-		m_progress = position / totalLength;
-	}
-
-	double remainingTime = totalLength - position;
-	
-	m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
-	m_totalDurationText->setText(Utils::formatSeconds(totalLength), sendNotification);
-
-	if (remainingTime < 10) {
-		double decimal = remainingTime - static_cast<long>(remainingTime);
-		bool blink = decimal >= 0.5;
-		if (blink != m_blink) {
-			m_blink = blink;
-			updatePointColor();
-			repaint();
-		}
+		m_tracksContainer->play();
 	}
 }
 
@@ -405,81 +205,22 @@ void JinglePlayerWindow::updatePointColor()
 	m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
 }
 
-XmlElement* JinglePlayerWindow::saveToXml() const
+
+void JinglePlayerWindow::setColor(Colour color)
 {
-    XmlElement* element = new XmlElement("Player");
-    element->setAttribute("type", "jingle");
-	element->setAttribute("gain", m_transportSource.getGain());
-	element->setAttribute("mute", m_mute);
-	element->setAttribute("solo", m_solo);
-	element->setAttribute("color", m_color.toString());
-	if (m_userImage)
-		element->setAttribute("image", m_userImagePath);
-	element->setAttribute("showRemainingTime", m_showRemainingTime);
-
-	XmlElement* boundsXml = new XmlElement("Bounds");
-	Rectangle<int> bounds = getParentComponent()->getBounds();
-	boundsXml->setAttribute("x", bounds.getX());
-	boundsXml->setAttribute("y", bounds.getY());
-	boundsXml->setAttribute("width", bounds.getWidth());
-	boundsXml->setAttribute("height", bounds.getHeight());
-	element->addChildElement(boundsXml);
-
-	XmlElement* nameXml = new XmlElement("Name");
-	nameXml->addTextElement(getName());
-	element->addChildElement(nameXml);
-	
-	if (m_audioFile != File::nonexistent) {
-		XmlElement* fileXml = new XmlElement("File");
-		fileXml->addTextElement(m_audioFile.getFullPathName());
-		element->addChildElement(fileXml);
-	}
-
-	XmlElement* channelMappingXml = new XmlElement("ChannelMapping");
-	channelMappingXml->addChildElement(m_remappingAudioSource->createXml());
-	element->addChildElement(channelMappingXml);
-
-	return element;
+	m_color = color;
+	updatePointColor();
+	repaint();
 }
 
-void JinglePlayerWindow::restoreFromXml (const XmlElement& element)
+void JinglePlayerWindow::setUserImage(File file)
 {
-	m_color = Colour::fromString(element.getStringAttribute("color", "0xffffffff"));
-	if (element.hasAttribute("image")) {
-		m_userImagePath = element.getStringAttribute("image");
-		m_userImage.set(Drawable::createFromImageFile(File(m_userImagePath)), true);
+	if (file == File::nonexistent) {
+		delete m_userImage.release();
+		m_playButton->setImages(m_tracksContainer->isPlaying() ? m_stopImage : m_playImage);
+	}
+	else {
+		m_userImage.set(Drawable::createFromImageFile(file), true);
 		m_playButton->setImages(m_userImage.get());
 	}
-
-	m_showRemainingTime = element.getBoolAttribute("showRemainingTime", false);
-
-	m_mixer->updatePlayerColor(this, m_color);
-
-	repaint();
-
-	XmlElement* boundsXml = element.getChildByName("Bounds");
-
-	String x = boundsXml->getStringAttribute("x", "0");
-	String y = boundsXml->getStringAttribute("y", "0");
-	String width = boundsXml->getStringAttribute("width", "150");
-	String height = boundsXml->getStringAttribute("height", "150");
-	getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
-
-	XmlElement* nameXml = element.getChildByName("Name");
-	setName(nameXml->getAllSubText().trim());
-
-	XmlElement* fileXml = element.getChildByName("File");
-	if (fileXml != nullptr)
-	{
-		m_audioFile = File(fileXml->getAllSubText().trim());
-		loadFileIntoTransport();
-	}
-
-	XmlElement* channelMappingXml = element.getChildByName("ChannelMapping");
-	m_remappingAudioSource->restoreFromXml(*channelMappingXml->getChildElement(0));
-}
-
-void JinglePlayerWindow::SetChannelCountChangedCallback(ChannelCountChangedCallback callback)
-{
-
 }

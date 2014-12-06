@@ -72,16 +72,17 @@ private:
         projectSave = 0x2002,
         projectSaveAs = 0x2003,
 
-        addJinglePlayer = 0x2006,
-        addPlaylistPlayer = 0x2007,
+        addJinglePlayer = 0x3000,
+        addMultitrackPlayer = 0x3001,
+        addPlaylistPlayer = 0x3002,
 
-		layoutModeFloating = 0x2008,
-		layoutModeTabs = 0x2009,
+		layoutModeFloating = 0x4000,
+		layoutModeTabs = 0x4001,
 
-        configureAudio = 0x200A,
+        configureAudio = 0x5000,
 
-		lookAndFeelDefault = 0x200B,
-		lookAndFeelDark = 0x200C
+		lookAndFeelDefault = 0x6000,
+		lookAndFeelDark = 0x6001
     };
     
     // Project file related methods and fields

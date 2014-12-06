@@ -2,18 +2,18 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "Player.h"
+#include "SubchannelPlayer.h"
 #include "MixerFader.h"
 
 class PlayerMixerFader : public MixerFader
 {
 public:
-	PlayerMixerFader(Player* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
+	PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
 
-	Player* getPlayer() const;
+	SubchannelPlayer* getPlayer() const;
 
 private:
-	Player* player;
+	SubchannelPlayer* player;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerMixerFader)
 };

@@ -1,5 +1,7 @@
 #include "MainComponent.h"
 
+#include "Player.h"
+
 bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/) {
     return true;
 }
@@ -76,6 +78,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
 		break;
 	case 1:
 		menu.addCommandItem(m_commandManager, addJinglePlayer);
+		menu.addCommandItem(m_commandManager, addMultitrackPlayer);
 		menu.addCommandItem(m_commandManager, addPlaylistPlayer);
 		break;
 	case 2:
@@ -118,6 +121,7 @@ void MainContentComponent::getAllCommands(Array <CommandID>& commands)
         projectSave,
         projectSaveAs,
         addJinglePlayer,
+        addMultitrackPlayer,
         addPlaylistPlayer,
 		layoutModeFloating,
 		layoutModeTabs,
@@ -160,12 +164,17 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
         break;
 
     case addJinglePlayer:
-        result.setInfo ("Add Jingle Player", "Add a player for jingles", playerCategory, 0);
+        result.setInfo ("Add Jingle Player", "Add a simple player", playerCategory, 0);
         result.addDefaultKeypress ('J', ModifierKeys::commandModifier);
         break;
 
+    case addMultitrackPlayer:
+        result.setInfo ("Add Multitrack Player", "Add a player with multiple tracks", playerCategory, 0);
+        result.addDefaultKeypress ('M', ModifierKeys::commandModifier);
+        break;
+
     case addPlaylistPlayer:
-        result.setInfo ("Add Playlist Player", "Add a player for playlists", playerCategory, 0);
+        result.setInfo ("Add Playlist Player", "Add a player with a playlist", playerCategory, 0);
         result.addDefaultKeypress ('P', ModifierKeys::commandModifier);
         break;
 
@@ -216,17 +225,25 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addJinglePlayer:
         {
-			JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), m_outputChannelNames);
-            window->setName("Jingle Player");
-			m_multiDocumentPanel->addDocument(window, Colours::white, true);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle);
+            player->setName("Jingle Player");
+			m_multiDocumentPanel->addDocument(player, Colours::white, true);
+			m_projectModified = true;
+        }
+        break;
+    case addMultitrackPlayer:
+        {
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack);
+            player->setName("Multitrack Player");
+			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
         }
         break;
     case addPlaylistPlayer:
         {
-			PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), m_outputChannelNames);
-            window->setName("Playlist Player");
-			m_multiDocumentPanel->addDocument(window, Colours::white, true);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist);
+            player->setName("Playlist Player");
+			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
         }
         break;
@@ -408,38 +425,32 @@ void MainContentComponent::readProjectFile()
 
         for (int i = 0; i < players->getNumChildElements(); i++)
         {
+			using namespace InterPlayerCommunication;
+
             XmlElement* player = players->getChildElement(i);
             if (player->getTagName() != "Player") {
                 loadErrors.push_back("Unknown tag '" + player->getTagName() + "' in players list.");
                 continue;
             }
 
+			const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
+			const bool solo = player->getBoolAttribute("solo");
+			const bool mute = player->getBoolAttribute("mute");
+			PlayerType playerType = PlayerType::Playlist;
             String type = player->getStringAttribute("type", "");
-            if (type == "") {
+			if (type == "jingle") {
+				playerType = PlayerType::Jingle;
+			}
+			else if (type == "multitrack") {
+				playerType = PlayerType::Multitrack;
+			}
+			else if (type != "playlist") {
                 loadErrors.push_back("Unknown player type '" + type + "'.");
                 continue;
-            }
-
-            else if (type == "jingle") {
-				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
-				const bool solo = player->getBoolAttribute("solo");
-				const bool mute = player->getBoolAttribute("mute");
-				JinglePlayerWindow* window = new JinglePlayerWindow(m_mixerComponent.get(), m_outputChannelNames, gain, solo, mute);
-				m_multiDocumentPanel->addDocument(window, Colours::white, true);
-                window->restoreFromXml(*player);
-
-            }
-
-			else if (type == "playlist" || type == "multitrack") {
-				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
-				const bool solo = player->getBoolAttribute("solo");
-				const bool mute = player->getBoolAttribute("mute");
-				PlaylistPlayerWindow* window = new PlaylistPlayerWindow(m_mixerComponent.get(), m_outputChannelNames, gain, solo, mute);
-				m_multiDocumentPanel->addDocument(window, Colours::white, true);
-                window->restoreFromXml(*player);
-
-            }
-
+			}
+			Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, gain, solo, mute);
+			m_multiDocumentPanel->addDocument(window, Colours::white, true);
+			window->restoreFromXml(*player);
 		}
 
 		// update soloMute for all players

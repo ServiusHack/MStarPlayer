@@ -41,12 +41,12 @@ MixerComponent::~MixerComponent()
 	m_audioSourcePlayer.setSource(nullptr);
 }
 
-void MixerComponent::registerPlayer(Player* player) {
+void MixerComponent::registerPlayer(SubchannelPlayer* player) {
 	addPlayerSlider(player);
 	resized();
 }
 
-void MixerComponent::unregisterPlayer(Player* player) {
+void MixerComponent::unregisterPlayer(SubchannelPlayer* player) {
 	auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](PlayerMixerFader* probe) { return probe->getPlayer() == player; });
 
 	delete *it;
@@ -54,7 +54,7 @@ void MixerComponent::unregisterPlayer(Player* player) {
 	resized();
 }
 
-void MixerComponent::updatePlayerColor(Player* player, Colour color)
+void MixerComponent::updatePlayerColor(SubchannelPlayer* player, Colour color)
 {
 	auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](PlayerMixerFader* probe) { return probe->getPlayer() == player; });
 	(*it)->setColor(color);
@@ -89,7 +89,7 @@ void MixerComponent::resized()
 }
 
 
-void MixerComponent::addPlayerSlider(Player* player)
+void MixerComponent::addPlayerSlider(SubchannelPlayer* player)
 {
 	PlayerMixerFader* slider = new PlayerMixerFader(player, player->getSubMixerControlables(), false, std::bind(&MixerComponent::resized, this));
 	addAndMakeVisible(slider);

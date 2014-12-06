@@ -13,16 +13,12 @@ class PlaylistTable
 public:
 	typedef std::function<std::vector<TrackConfig>(const std::vector<TrackConfig>& trackConfigs,bool)> PlaylistEntryChangedCallback;
 
-	PlaylistTable(PlaylistEntryChangedCallback callback);
+	PlaylistTable(PlaylistEntryChangedCallback callback, PlaylistModel& playlistModel);
 
 	virtual void selectedRowsChanged(int lastRowSelected) override;
 	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
 
 	void setCurrentDuration(double duration);
-
-	XmlElement* saveToXml() const;
-
-	void restoreFromXml(const XmlElement& element);
 
 	virtual void resized() override;
 
@@ -30,7 +26,7 @@ public:
 
 private:
 	PlaylistEntryChangedCallback m_callback;
-	PlaylistModel m_model;
+	PlaylistModel& m_model;
 	int m_previousRow;
 
 	bool m_playNext;

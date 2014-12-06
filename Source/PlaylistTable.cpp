@@ -2,10 +2,11 @@
 
 #include "PlaylistModel.h"
 
-PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
+PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback, PlaylistModel& playlistModel)
 	: m_callback(callback)
 	, m_previousRow(-1)
 	, m_playNext(false)
+	, m_model(playlistModel)
 {
 	setAutoSizeMenuOptionShown(false);
 	getHeader().setPopupMenuActive(false);
@@ -23,6 +24,11 @@ PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback)
 	updateContent();
 
 	selectRow(0);
+
+	playlistModel.setReloadedCallback([&]() {
+		m_previousRow = -1;
+		selectedRowsChanged(getSelectedRow());
+	});
 }
 
 void PlaylistTable::selectedRowsChanged(int lastRowSelected)
@@ -51,35 +57,12 @@ void PlaylistTable::setCurrentDuration(double duration)
 	repaint();
 }
 
-XmlElement* PlaylistTable::saveToXml() const
-{
-	PlaylistModel* model = static_cast<PlaylistModel*>(getModel());
-	XmlElement* playlistXml = new XmlElement("Playlist");
-		for (int i = 0; i < model->getNumRows(); ++i)
-			playlistXml->addChildElement(model->saveToXml(i));
-	return playlistXml;
-}
-
-void PlaylistTable::restoreFromXml(const XmlElement& element)
-{
-	PlaylistModel* model = static_cast<PlaylistModel*>(getModel());
-	model->clear();
-	m_previousRow = -1;
-
-	for (int i = 0; i < element.getNumChildElements(); ++i) {
-		model->addFromXml(*element.getChildElement(i));
-	}
-
-	selectedRowsChanged(getSelectedRow());
-}
-
 void PlaylistTable::resized()
 {
 	TableListBox::resized();
 
 	TableHeaderComponent& header = getHeader();
 	header.setColumnWidth(2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3) - header.getColumnWidth(4));
-
 }
 
 void PlaylistTable::next()

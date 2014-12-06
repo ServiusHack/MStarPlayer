@@ -5,7 +5,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "Player.h"
+#include "MixerControlable.h"
 #include "VolumeSlider.h"
 #include "LevelMeter.h"
 

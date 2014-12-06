@@ -1,41 +1,26 @@
 #pragma once
 
 #include <functional>
+#include <list>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "TrackEditDialog.h"
-#include "VolumeSlider.h"
-#include "Player.h"
+#include "MixerControlable.h"
 #include "ChannelRemappingAudioSourceWithVolume.h"
-#include "PlaylistModel.h"
+#include "PlaylistEntry.h"
 
-/*
-*/
 class Track
-	: public Component
-	, public ChangeListener
-	, public Button::Listener
-	, public juce::Slider::Listener
+	: public MixerControlable
 	, private Timer
-	, public MixerControlable
 {
 public:
 	typedef std::function<void()> DurationChangedCallback;
 	typedef std::function<void(double, bool)> PositionCallback;
+	typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
+	typedef std::function<void()> ChannelCountChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, Player::ChannelCountChangedCallback channelCountChangedCallback);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback);
 	~Track();
-
-	/** Play or stop the audio playback. */
-	void buttonClicked(Button * /*button*/);
-
-	virtual void paint(Graphics&) override;
-	virtual void resized() override;
-
-	virtual void sliderValueChanged(Slider *slider) override;
-
-	virtual void mouseDown(const MouseEvent & event) override;
 
 	void play();
 	void pause();
@@ -43,101 +28,124 @@ public:
 
 	double getDuration();
 
-	std::vector<int> getMapping();
 	int getNumChannels();
 
 	void setOutputChannels(int outputChannels);
+
 	void setOutputChannelMapping(int source, int target);
-
-	void changeListenerCallback(ChangeBroadcaster *source);
-
-	void setLongestDuration(double duration);
-	
-	// Track should be muted because other track(s) are in solo mode.
-	virtual void setSoloMute(bool mute) override;
-
-	virtual bool getSoloMute() const override;
-
-	virtual bool getSolo() const override;
+	std::vector<int> getMapping();
 
 	void timerCallback();
 
-	void loadFileIntoTransport();
+	void loadFileIntoTransport(File audioFile);
 
-	void setPositionCallback(PositionCallback callback = PositionCallback());
+	PositionCallbackRegistrationToken addPositionCallback(PositionCallback callback = PositionCallback());
+	void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
 
 	XmlElement* saveToXml() const;
 	void restoreFromXml(const XmlElement& element);
 
-	void setName(String name);
+	void loadTrackConfig(const TrackConfig& config);
+	TrackConfig getTrackConfig();
 
+	bool isPlaying();
+	
+// Solo mute: Track should be muted because other track(s) are in solo mode.
+public:
+	virtual void setSoloMute(bool mute) override;
+	virtual bool getSoloMute() const override;
+private:
+	bool m_soloMute;
+
+// player gain
+public:
 	void setPlayerGain(float gain);
+private:
+	float m_playerGain;
 
-	virtual void setGain(float gain) override;
-
+// player mute
+public:
 	void setPlayerMute(bool mute);
+private:
+	bool m_playerMute;
 
-	virtual void setMute(bool mute) override;
-
+// MixerControlable gain
+public:
+	virtual void setGain(float gain) override;
 	virtual float getGain() const override;
+private:
+	float m_trackGain;
+
+// MixerControlable mute
+public:
+	virtual void setMute(bool mute) override;
 	virtual bool getMute() const override;
+private:
+	bool m_mute;
 
+// MixerControlable solo
+public:
 	virtual void setSolo(bool solo) override;
+	virtual bool getSolo() const override;
+private:
+	bool m_solo;
 
+// MixerControlable pan
+public:
 	virtual void setPan(float) override {};
 	virtual float getPan() const override { return 0; };
 
 	virtual float getVolume() const override;
 
-	void loadTrackConfig(const TrackConfig& config);
-	TrackConfig getTrackConfig();
-
+// MixerControlable name
+public:
+	void setName(String name);
+	String getName() const;
 private:
-	void updateIdText();
-	void loadFile();
-	void updateGain();
+	String m_name;
 
-	double m_progress; // the progress of the playback
-
-	ScopedPointer<Label> m_idLabel;
-	ScopedPointer<Label> m_descriptionLabel;
-	ScopedPointer<ImageButton> m_editButton;
-	ScopedPointer<ImageButton> m_openButton;
-	ScopedPointer<ImageButton> m_soloButton;
-	ScopedPointer<ImageButton> m_muteButton;
-	ScopedPointer<VolumeSlider> m_volumeSlider;
-	ScopedPointer<AudioThumbnail> m_audioThumbnail;
-	ScopedPointer<ChannelRemappingAudioSourceWithVolume> m_remappingAudioSource;
-	ScopedPointer<Label> m_fileNameLabel;
-	AudioThumbnailCache m_audioThumbnailCache;
+// AudioFormat
+public:
+	AudioFormatManager& getAudioFormatManager();
+private:
 	AudioFormatManager m_formatManager;
 
-	ScopedPointer<TrackEditDialogWindow> m_editDialog;
-
-	File m_audioFile;
+// stereo
+public:
+	bool isStereo() const;
+	void setStereo(bool stereo);
+private:
 	bool m_stereo;
 
+// track ID
+public:
+	int getTrackIndex() const;
+private:
 	int m_trackIndex;
 
+private:
+	void updateGain();
+
+	File m_audioFile;
 	MixerAudioSource &m_tracksMixer;
 	TimeSliceThread m_thread;
 	AudioTransportSource m_transportSource;
 	AudioFormatReaderSource* m_currentAudioFileSource;
+	ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
-	bool m_playerMute;
-	bool m_soloMute;
 	double m_duration;
-	double m_longestDuration;
-	float m_playerGain;
-	float m_trackGain;
 	int m_outputChannels;
 
 	DurationChangedCallback m_durationChangedCallback;
 	DurationChangedCallback m_soloChangedCallback;
+	std::list<PositionCallback> m_positionCallbacks;
+	ChannelCountChangedCallback m_channelCountChangedCallback;
 
-	PositionCallback m_positionCallback;
-
-	Player::ChannelCountChangedCallback m_channelCountChangedCallback;
+public:
+	AudioThumbnail& getAudioThumbnail();
+private:
+	AudioThumbnailCache m_audioThumbnailCache;
+	AudioThumbnail m_audioThumbnail;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 };

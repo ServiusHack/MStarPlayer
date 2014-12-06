@@ -37,6 +37,16 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="nJSTpx" name="InterPlayerCommunication.h" compile="0" resource="0"
+            file="Source/InterPlayerCommunication.h"/>
+      <FILE id="VuWSy2" name="SubchannelPlayer.h" compile="0" resource="0"
+            file="Source/SubchannelPlayer.h"/>
+      <FILE id="gfU9MK" name="TracksContainer.cpp" compile="1" resource="0"
+            file="Source/TracksContainer.cpp"/>
+      <FILE id="GUfNuG" name="TracksContainer.h" compile="0" resource="0"
+            file="Source/TracksContainer.h"/>
+      <FILE id="xTolkD" name="MixerControlable.h" compile="0" resource="0"
+            file="Source/MixerControlable.h"/>
       <GROUP id="{866D1597-278B-B850-8DA8-F5FA7648EA97}" name="AudioSources">
         <FILE id="XPTtIf" name="ChannelRemappingAudioSourceWithVolume.cpp"
               compile="1" resource="0" file="Source/ChannelRemappingAudioSourceWithVolume.cpp"/>
@@ -58,6 +68,11 @@
               file="Source/AudioConfiguration.cpp"/>
       </GROUP>
       <GROUP id="{DC708048-A62E-7E29-DEED-0F0BC48DFD2E}" name="PlaylistPlayer">
+        <FILE id="EfjB2Q" name="PlaylistEntry.cpp" compile="1" resource="0"
+              file="Source/PlaylistEntry.cpp"/>
+        <FILE id="friTmZ" name="PlaylistEntry.h" compile="0" resource="0" file="Source/PlaylistEntry.h"/>
+        <FILE id="wotj4T" name="TrackUi.cpp" compile="1" resource="0" file="Source/TrackUi.cpp"/>
+        <FILE id="ugc75T" name="TrackUi.h" compile="0" resource="0" file="Source/TrackUi.h"/>
         <FILE id="lAektu" name="PlaylistEntryDialog.cpp" compile="1" resource="0"
               file="Source/PlaylistEntryDialog.cpp"/>
         <FILE id="Gnsv6r" name="PlaylistEntryDialog.h" compile="0" resource="0"
@@ -122,6 +137,7 @@
             file="Source/PlayerEditDialog.cpp"/>
       <FILE id="PItGjI" name="PlayerEditDialog.h" compile="0" resource="0"
             file="Source/PlayerEditDialog.h"/>
+      <FILE id="gB336a" name="Player.cpp" compile="1" resource="0" file="Source/Player.cpp"/>
       <FILE id="OBFTZF" name="Player.h" compile="0" resource="0" file="Source/Player.h"/>
       <FILE id="CjxKBf" name="ChannelMapping.cpp" compile="1" resource="0"
             file="Source/ChannelMapping.cpp"/>
