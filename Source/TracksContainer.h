@@ -22,8 +22,8 @@ public:
 	void pause();
 	void stop();
 
-	int playerCount();
-	Track& player(int index);
+	size_t size();
+	Track& operator[](size_t index);
 	void clear();
 
 	void setOutputChannels(int outputChannels);

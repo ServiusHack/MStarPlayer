@@ -14,7 +14,7 @@
 TracksComponent::TracksComponent(TracksContainer& container)
 	: m_container(container)
 {
-	trackAdded(m_container.player(0));
+	trackAdded(m_container[0]);
 	m_container.setTrackAddedCallback(std::bind(&TracksComponent::trackAdded, this, std::placeholders::_1));
 	m_container.addLongestDurationChangedCallback([&](double duration) {
 		for (auto& track : m_tracks)

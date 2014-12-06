@@ -124,8 +124,8 @@ bool Player::getMute() const
 float Player::getVolume() const
 {
 	float maxVolume = 0;
-	for (int i = 0; i < m_tracksContainer->playerCount(); ++i)
-		maxVolume = std::max(maxVolume, m_tracksContainer->player(i).getVolume());
+	for (size_t i = 0; i < m_tracksContainer->size(); ++i)
+		maxVolume = std::max(maxVolume, (*m_tracksContainer)[i].getVolume());
 	return maxVolume;
 }
 
@@ -182,8 +182,8 @@ XmlElement* Player::saveToXml() const
 	element->addChildElement(nameXml);
 
 	XmlElement* tracksXml = new XmlElement("Tracks");
-	for (int i = 0; i < m_tracksContainer->playerCount(); ++i)
-		tracksXml->addChildElement(m_tracksContainer->player(i).saveToXml());
+	for (size_t i = 0; i < m_tracksContainer->size(); ++i)
+		tracksXml->addChildElement((*m_tracksContainer)[i].saveToXml());
 	element->addChildElement(tracksXml);
 
 	element->addChildElement(playlistModel.saveToXml());
@@ -224,8 +224,8 @@ void Player::SetChannelCountChangedCallback(Track::ChannelCountChangedCallback c
 std::vector<MixerControlable*> Player::getSubMixerControlables() const
 {
 	std::vector<MixerControlable*> controlables;
-	for (int i = 0; i < m_tracksContainer->playerCount(); ++i) {
-		controlables.push_back(&m_tracksContainer->player(i));
+	for (size_t i = 0; i < m_tracksContainer->size(); ++i) {
+		controlables.push_back(&(*m_tracksContainer)[i]);
 	}
 	return controlables;
 }
@@ -250,7 +250,7 @@ void Player::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
 		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_tracksContainer->createMapping(), [&](int source, int target) {
-			m_tracksContainer->player(0).setOutputChannelMapping(source, target);
+			(*m_tracksContainer)[0].setOutputChannelMapping(source, target);
 		}, [&]() {
 			// clear is not working
 			delete m_channelMappingWindow.release();

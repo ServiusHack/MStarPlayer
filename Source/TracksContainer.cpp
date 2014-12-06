@@ -49,12 +49,12 @@ void TracksContainer::stop()
 		m_tracks[i]->stop();
 }
 
-int TracksContainer::playerCount()
+size_t TracksContainer::size()
 {
 	return m_tracks.size();
 }
 
-Track& TracksContainer::player(int index)
+Track& TracksContainer::operator[](size_t index)
 {
 	return *m_tracks[index].get();
 }
@@ -191,8 +191,8 @@ void TracksContainer::setTracksClearedCallback(TracksClearedCallback callback)
 std::vector<std::pair<char, int>> TracksContainer::createMapping()
 {
 	std::vector<std::pair<char, int>> mapping;
-	for (int i = 0; i < playerCount(); ++i) {
-		std::vector<int> playerMapping = player(i).getMapping();
+	for (size_t i = 0; i < m_tracks.size(); ++i) {
+		std::vector<int> playerMapping = m_tracks[i]->getMapping();
 		for (size_t j = 0; j < playerMapping.size(); ++j) {
 			if (playerMapping.size() == 1)
 				mapping.push_back(std::pair<char, int>('m', playerMapping[j]));

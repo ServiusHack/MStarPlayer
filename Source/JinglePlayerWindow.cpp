@@ -121,7 +121,7 @@ void JinglePlayerWindow::paint(Graphics& g)
 	g.fillAll(m_paintColor);
 	g.setColour(Colour(0x55000000));
 
-	AudioThumbnail& audioThumbnail = m_tracksContainer->player(0).getAudioThumbnail();
+	AudioThumbnail& audioThumbnail = (*m_tracksContainer)[0].getAudioThumbnail();
 	audioThumbnail.drawChannels(g, Rectangle<int>(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, audioThumbnail.getTotalLength(), 1.0f);
 
 	Component::paint(g);
@@ -179,7 +179,7 @@ void JinglePlayerWindow::loadFile()
 		return;
 
 	File audioFile = File(myChooser.getResult());
-	m_tracksContainer->player(0).loadFileIntoTransport(audioFile);
+	(*m_tracksContainer)[0].loadFileIntoTransport(audioFile);
 }
 
 
