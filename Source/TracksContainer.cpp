@@ -49,12 +49,12 @@ void TracksContainer::stop()
 		m_tracks[i]->stop();
 }
 
-size_t TracksContainer::size()
+size_t TracksContainer::size() const
 {
 	return m_tracks.size();
 }
 
-Track& TracksContainer::operator[](size_t index)
+Track& TracksContainer::operator[](size_t index) const
 {
 	return *m_tracks[index].get();
 }
@@ -82,7 +82,7 @@ void TracksContainer::setGain(float gain)
 		m_tracks[i]->setPlayerGain(gain);
 }
 
-float TracksContainer::getGain()
+float TracksContainer::getGain() const
 {
 	return m_gain;
 }
@@ -94,7 +94,7 @@ void TracksContainer::setMute(bool mute)
 		m_tracks[i]->setPlayerMute(mute);
 }
 
-bool TracksContainer::getMute()
+bool TracksContainer::getMute() const
 {
 	return m_mute;
 }
@@ -111,7 +111,7 @@ void TracksContainer::setTrackConfigs(const std::vector<TrackConfig>& trackConfi
 	}
 }
 
-std::vector<TrackConfig> TracksContainer::getTrackConfigs()
+std::vector<TrackConfig> TracksContainer::getTrackConfigs() const
 {
 	std::vector<TrackConfig> configs;
 	for (size_t i = 0; i < m_tracks.size(); ++i) {
@@ -203,7 +203,7 @@ std::vector<std::pair<char, int>> TracksContainer::createMapping()
 	return mapping;
 }
 
-bool TracksContainer::isPlaying()
+bool TracksContainer::isPlaying() const
 {
 	for (size_t i = 0; i < m_tracks.size(); ++i)
 		if (m_tracks[i]->isPlaying())

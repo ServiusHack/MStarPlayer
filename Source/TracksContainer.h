@@ -22,20 +22,20 @@ public:
 	void pause();
 	void stop();
 
-	size_t size();
-	Track& operator[](size_t index);
+	size_t size() const;
+	Track& operator[](size_t index) const;
 	void clear();
 
 	void setOutputChannels(int outputChannels);
 
 	void setGain(float gain);
-	float getGain();
+	float getGain() const;
 
 	void setMute(bool mute);
-	bool getMute();
+	bool getMute() const;
 
 	void setTrackConfigs(const std::vector<TrackConfig>& trackConfigs);
-	std::vector<TrackConfig> getTrackConfigs();
+	std::vector<TrackConfig> getTrackConfigs() const;
 
 	void addTrack(bool stereo, const XmlElement* element = nullptr);
 
@@ -47,7 +47,7 @@ public:
 
 	std::vector<std::pair<char, int>> createMapping();
 
-	bool isPlaying();
+	bool isPlaying() const;
 
 protected:
 	std::vector<LongestDurationChangedCallback> m_longestDurationChangedCallbacks;

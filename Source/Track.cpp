@@ -188,6 +188,11 @@ void Track::unregisterPositionCallback(PositionCallbackRegistrationToken& token)
 	m_positionCallbacks.erase(token);
 }
 
+void Track::setFileChangedCallback(FileChangedCallback fileChangedCallback)
+{
+	m_fileChangedCallback = fileChangedCallback;
+}
+
 void Track::loadTrackConfig(const TrackConfig& config)
 {
 	loadFileIntoTransport(File(config.file));
@@ -242,6 +247,8 @@ void Track::loadFileIntoTransport(File audioFile)
 
 	m_duration = m_transportSource.getLengthInSeconds();
 	m_durationChangedCallback();
+
+	m_fileChangedCallback(m_audioFile.getFileName());
 }
 
 void Track::timerCallback()

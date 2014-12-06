@@ -70,6 +70,7 @@ TrackUi::TrackUi(Track& track)
 
 	m_track.getAudioThumbnail().addChangeListener(this);
 	m_track.addPositionCallback(std::bind(&TrackUi::positionChanged, this, std::placeholders::_1));
+	m_track.setFileChangedCallback(std::bind(&Label::setText, m_fileNameLabel.get(), std::placeholders::_1, sendNotification));
 }
 
 TrackUi::~TrackUi()
@@ -256,7 +257,7 @@ void TrackUi::resized()
 	m_muteButton->setBounds(100 + 20 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
 
 	int textWidth = 0;
-	if (m_fileNameLabel->getText() == "")
-		m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
+	if (m_fileNameLabel->getText() != "")
+		textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
 	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 }

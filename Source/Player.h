@@ -79,10 +79,12 @@ private:
 
 	MixerComponent* m_mixer;
 	OutputChannelNames* m_outputChannelNames;
-	TracksContainer* m_tracksContainer;
 
-	PlaylistPlayerWindow* m_playlistPlayer;
-	JinglePlayerWindow* m_jinglePlayer;
+	PlaylistModel playlistModel;
+	TracksContainer m_tracksContainer;
+
+	PlaylistPlayerWindow m_playlistPlayer;
+	JinglePlayerWindow m_jinglePlayer;
 
 	float m_gain;
 	bool m_soloMute;
@@ -96,5 +98,4 @@ private:
 	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
 	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
 
-	PlaylistModel playlistModel;
 };

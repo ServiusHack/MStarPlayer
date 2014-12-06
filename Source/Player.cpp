@@ -13,23 +13,23 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 	, m_soloMute(false)
 	, m_mute(mute)
 	, m_type(type)
-{
-	m_tracksContainer = new TracksContainer(mixer, outputChannelNames->getNumberOfChannels());
-
-	m_playlistPlayer = new PlaylistPlayerWindow(m_tracksContainer, outputChannelNames, type == PlayerType::Playlist, 
+	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels())
+	, m_playlistPlayer(&m_tracksContainer, outputChannelNames, type == PlayerType::Playlist, 
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
 		std::bind(&Player::setType, this, std::placeholders::_1),
-		playlistModel);
-	addChildComponent(m_playlistPlayer);
-
-	m_jinglePlayer = new JinglePlayerWindow(m_tracksContainer, outputChannelNames,
+		playlistModel)
+	, m_jinglePlayer(&m_tracksContainer, outputChannelNames,
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
-		std::bind(&Player::setType, this, std::placeholders::_1));
-	addChildComponent(m_jinglePlayer);
+		std::bind(&Player::setType, this, std::placeholders::_1))
+{
 
-	m_tracksContainer->addChannelCountChangedCallback([&]() {
+	addChildComponent(&m_playlistPlayer);
+
+	addChildComponent(&m_jinglePlayer);
+
+	m_tracksContainer.addChannelCountChangedCallback([&]() {
 		if (m_channelCountChanged)
 			m_channelCountChanged();
 	});
@@ -48,29 +48,29 @@ Player::~Player()
 
 void Player::resized()
 {
-	m_playlistPlayer->setBounds(getLocalBounds());
-	m_jinglePlayer->setBounds(getLocalBounds());
+	m_playlistPlayer.setBounds(getLocalBounds());
+	m_jinglePlayer.setBounds(getLocalBounds());
 }
 
 void Player::setType(PlayerType type)
 {
 	m_type = type;
 
-	m_jinglePlayer->setVisible(type == PlayerType::Jingle);
-	m_playlistPlayer->setVisible(type == PlayerType::Multitrack || type == PlayerType::Playlist);
-	m_playlistPlayer->setShowPlaylist(type == PlayerType::Playlist);
+	m_jinglePlayer.setVisible(type == PlayerType::Jingle);
+	m_playlistPlayer.setVisible(type == PlayerType::Multitrack || type == PlayerType::Playlist);
+	m_playlistPlayer.setShowPlaylist(type == PlayerType::Playlist);
 }
 
 void Player::setGain(float gain)
 {
-	m_tracksContainer->setGain(gain);
+	m_tracksContainer.setGain(gain);
 	for (MixerControlableChangeListener *listener : m_listeners)
 		listener->gainChanged(gain);
 }
 
 float Player::getGain() const
 {
-	return m_tracksContainer->getGain();
+	return m_tracksContainer.getGain();
 }
 
 void Player::setPan(float pan)
@@ -124,19 +124,19 @@ bool Player::getMute() const
 float Player::getVolume() const
 {
 	float maxVolume = 0;
-	for (size_t i = 0; i < m_tracksContainer->size(); ++i)
-		maxVolume = std::max(maxVolume, (*m_tracksContainer)[i].getVolume());
+	for (size_t i = 0; i < m_tracksContainer.size(); ++i)
+		maxVolume = std::max(maxVolume, m_tracksContainer[i].getVolume());
 	return maxVolume;
 }
 
 void Player::updateGain()
 {
-	m_tracksContainer->setMute(m_mute || (m_soloMute && !m_solo));
+	m_tracksContainer.setMute(m_mute || (m_soloMute && !m_solo));
 }
 
 void Player::setOutputChannels(int outputChannels)
 {
-	m_tracksContainer->setOutputChannels(outputChannels);
+	m_tracksContainer.setOutputChannels(outputChannels);
 }
 
 void Player::setColor(Colour color)
@@ -144,8 +144,8 @@ void Player::setColor(Colour color)
 	m_color = color;
 
 	m_mixer->updatePlayerColor(this, m_color);
-	m_playlistPlayer->setColor(m_color);
-	m_jinglePlayer->setColor(m_color);
+	m_playlistPlayer.setColor(m_color);
+	m_jinglePlayer.setColor(m_color);
 }
 
 XmlElement* Player::saveToXml() const
@@ -163,7 +163,7 @@ XmlElement* Player::saveToXml() const
 		element->setAttribute("type", "playlist");
 		break;
 	}
-	element->setAttribute("gain", m_tracksContainer->getGain());
+	element->setAttribute("gain", m_tracksContainer.getGain());
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
 	element->setAttribute("color", m_color.toString());
@@ -182,8 +182,8 @@ XmlElement* Player::saveToXml() const
 	element->addChildElement(nameXml);
 
 	XmlElement* tracksXml = new XmlElement("Tracks");
-	for (size_t i = 0; i < m_tracksContainer->size(); ++i)
-		tracksXml->addChildElement((*m_tracksContainer)[i].saveToXml());
+	for (size_t i = 0; i < m_tracksContainer.size(); ++i)
+		tracksXml->addChildElement(m_tracksContainer[i].saveToXml());
 	element->addChildElement(tracksXml);
 
 	element->addChildElement(playlistModel.saveToXml());
@@ -208,9 +208,9 @@ void Player::restoreFromXml (const XmlElement& element)
 	setName(nameXml->getAllSubText().trim());
 
 	XmlElement* tracksXml = element.getChildByName("Tracks");
-	m_tracksContainer->clear();
+	m_tracksContainer.clear();
 	for (int i = 0; i < tracksXml->getNumChildElements(); ++i)
-		m_tracksContainer->addTrack(false, tracksXml->getChildElement(i));
+		m_tracksContainer.addTrack(false, tracksXml->getChildElement(i));
 
 	XmlElement* playlistXml = element.getChildByName("Playlist");
 	playlistModel.restoreFromXml(*playlistXml);
@@ -224,8 +224,8 @@ void Player::SetChannelCountChangedCallback(Track::ChannelCountChangedCallback c
 std::vector<MixerControlable*> Player::getSubMixerControlables() const
 {
 	std::vector<MixerControlable*> controlables;
-	for (size_t i = 0; i < m_tracksContainer->size(); ++i) {
-		controlables.push_back(&(*m_tracksContainer)[i]);
+	for (size_t i = 0; i < m_tracksContainer.size(); ++i) {
+		controlables.push_back(&m_tracksContainer[i]);
 	}
 	return controlables;
 }
@@ -240,7 +240,7 @@ void Player::showEditDialog()
 				// clear is not working
 				delete m_PlayerEditDialog.release();
 			},
-			std::bind(&JinglePlayerWindow::setUserImage, m_jinglePlayer, std::placeholders::_1)), true);
+			std::bind(&JinglePlayerWindow::setUserImage, &m_jinglePlayer, std::placeholders::_1)), true);
 	}
 	m_PlayerEditDialog->addToDesktop();
 	m_PlayerEditDialog->toFront(true);
@@ -249,8 +249,8 @@ void Player::showEditDialog()
 void Player::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
-		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_tracksContainer->createMapping(), [&](int source, int target) {
-			(*m_tracksContainer)[0].setOutputChannelMapping(source, target);
+		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_tracksContainer.createMapping(), [&](int source, int target) {
+			m_tracksContainer[0].setOutputChannelMapping(source, target);
 		}, [&]() {
 			// clear is not working
 			delete m_channelMappingWindow.release();

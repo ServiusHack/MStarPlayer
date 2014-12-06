@@ -18,6 +18,7 @@ public:
 	typedef std::function<void(double, bool)> PositionCallback;
 	typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
 	typedef std::function<void()> ChannelCountChangedCallback;
+	typedef std::function<void(String)> FileChangedCallback;
 
 	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback);
 	~Track();
@@ -41,6 +42,7 @@ public:
 
 	PositionCallbackRegistrationToken addPositionCallback(PositionCallback callback = PositionCallback());
 	void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
+	void setFileChangedCallback(FileChangedCallback fileChangedCallback);
 
 	XmlElement* saveToXml() const;
 	void restoreFromXml(const XmlElement& element);
@@ -129,8 +131,8 @@ private:
 	File m_audioFile;
 	MixerAudioSource &m_tracksMixer;
 	TimeSliceThread m_thread;
+	ScopedPointer<AudioFormatReaderSource> m_currentAudioFileSource;
 	AudioTransportSource m_transportSource;
-	AudioFormatReaderSource* m_currentAudioFileSource;
 	ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
 	double m_duration;
@@ -140,6 +142,7 @@ private:
 	DurationChangedCallback m_soloChangedCallback;
 	std::list<PositionCallback> m_positionCallbacks;
 	ChannelCountChangedCallback m_channelCountChangedCallback;
+	FileChangedCallback m_fileChangedCallback;
 
 public:
 	AudioThumbnail& getAudioThumbnail();
