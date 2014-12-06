@@ -92,7 +92,7 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 		}
 
 		comboBox->clear();
-		comboBox->addItemList(m_outputChannelNames->getAllDeviceOutputChannelNames(), 0);
+		comboBox->addItemList(m_outputChannelNames->getAllDeviceOutputChannelNames(), 1);
 
 		comboBox->setRow(rowNumber);
 		comboBox->setSelectedId(getOutputChannel(rowNumber), dontSendNotification);
@@ -109,7 +109,7 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 void ChannelMapping::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
 	OutputChannelColumnCustomComponent* outputChannelColumn = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
-	setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId());
+	setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId()-1);
 }
 
 int ChannelMapping::getOutputChannel(int row)
