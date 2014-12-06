@@ -72,6 +72,11 @@ TrackUi::TrackUi(Track& track)
 	m_track.addPositionCallback(std::bind(&TrackUi::positionChanged, this, std::placeholders::_1));
 }
 
+TrackUi::~TrackUi()
+{
+	m_volumeSlider->removeListener(this);
+}
+
 void TrackUi::gainChanged(float gain)
 {
 	m_volumeSlider->setValue(gain);

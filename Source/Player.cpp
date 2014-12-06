@@ -208,6 +208,7 @@ void Player::restoreFromXml (const XmlElement& element)
 	setName(nameXml->getAllSubText().trim());
 
 	XmlElement* tracksXml = element.getChildByName("Tracks");
+	m_tracksContainer->clear();
 	for (int i = 0; i < tracksXml->getNumChildElements(); ++i)
 		m_tracksContainer->addTrack(false, tracksXml->getChildElement(i));
 

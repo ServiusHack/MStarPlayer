@@ -16,6 +16,7 @@ class TrackUi
 {
 public:
 	TrackUi(Track& track);
+	~TrackUi();
 
 	void changeListenerCallback(ChangeBroadcaster *source);
 	void loadFile();

@@ -59,6 +59,15 @@ Track& TracksContainer::player(int index)
 	return *m_tracks[index].get();
 }
 
+void TracksContainer::clear()
+{
+	std::vector<std::unique_ptr<Track>> tracks;
+	tracks.swap(m_tracks);
+
+	for (auto const callback: m_channelCountChangedCallbacks)
+		callback();
+}
+
 void TracksContainer::setOutputChannels(int outputChannels)
 {
 	m_outputChannels = outputChannels;
@@ -172,6 +181,11 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 void TracksContainer::setTrackAddedCallback(TrackAddedCallback callback)
 {
 	m_trackAddedCallback = callback;
+}
+
+void TracksContainer::setTracksClearedCallback(TracksClearedCallback callback)
+{
+	m_tracksClearedCallback = callback;
 }
 
 std::vector<std::pair<char, int>> TracksContainer::createMapping()

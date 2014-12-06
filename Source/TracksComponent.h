@@ -23,6 +23,7 @@ public:
 
 private:
 	void trackAdded(Track& track);
+	void tracksCleared();
 
 	TracksContainer& m_container;
 

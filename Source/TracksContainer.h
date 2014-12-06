@@ -13,6 +13,7 @@ public:
 	typedef std::function<void(double)> LongestDurationChangedCallback;
 
 	typedef std::function<void(Track&)> TrackAddedCallback;
+	typedef std::function<void()> TracksClearedCallback;
 
 	TracksContainer(MixerComponent* mixer, int outputChannels);
 	~TracksContainer();
@@ -23,6 +24,7 @@ public:
 
 	int playerCount();
 	Track& player(int index);
+	void clear();
 
 	void setOutputChannels(int outputChannels);
 
@@ -38,6 +40,7 @@ public:
 	void addTrack(bool stereo, const XmlElement* element = nullptr);
 
 	void setTrackAddedCallback(TrackAddedCallback callback);
+	void setTracksClearedCallback(TracksClearedCallback callback);
 	void addLongestDurationChangedCallback(LongestDurationChangedCallback durationCallback);
 	void addPositionCallback(Track::PositionCallback positionCallback);
 	void addChannelCountChangedCallback(Track::ChannelCountChangedCallback channelCountChangedCallback);
@@ -62,6 +65,7 @@ private:
 	bool m_mute;
 
 	TrackAddedCallback m_trackAddedCallback;
+	TracksClearedCallback m_tracksClearedCallback;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TracksContainer)
 };
