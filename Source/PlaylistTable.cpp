@@ -65,16 +65,27 @@ void PlaylistTable::resized()
 	header.setColumnWidth(2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3) - header.getColumnWidth(4));
 }
 
-void PlaylistTable::next()
+void PlaylistTable::previous()
+{
+	if (getSelectedRow() > 0) {
+		selectRow(getSelectedRow() - 1);
+	}
+	else
+	{
+		selectRow(m_model.getNumRows() - 1);
+	}
+}
+
+void PlaylistTable::next(bool onlyIfEntrySaysSo)
 {
 	if (getSelectedRow() + 1 < m_model.getNumRows()) {
-		m_playNext = m_model.doPlayNext(getSelectedRow());
+		m_playNext = onlyIfEntrySaysSo && m_model.doPlayNext(getSelectedRow());
 		selectRow(getSelectedRow() + 1);
 		m_playNext = false;
 	}
 	else
 	{
-		m_playNext = m_model.doPlayNext(getSelectedRow());
+		m_playNext = onlyIfEntrySaysSo && m_model.doPlayNext(getSelectedRow());
 		selectRow(0);
 		m_playNext = false;
 	}

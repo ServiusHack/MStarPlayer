@@ -51,6 +51,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 	
 	// skip backward button
 	m_skipBackwardButton = new ImageButton("Skip Backward");
+	m_skipBackwardButton->addListener(this);
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
 	m_skipBackwardButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
@@ -61,6 +62,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 	
 	// skip forward button
 	m_skipForwardButton = new ImageButton("Skip Forward");
+	m_skipForwardButton->addListener(this);
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
 	m_skipForwardButton->setImages(true, true, true,
                                 normalImage, 0.7f, Colours::transparentBlack,
@@ -110,7 +112,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 	Track::PositionCallback positionCallback = [&](double position, bool finished) {
 		m_digitalDisplay->setText(Utils::formatSeconds(position), sendNotification);
 		if (finished && m_tableListBox->isVisible())
-			m_tableListBox->next();
+			m_tableListBox->next(true);
 	};
 	m_tracksContainer->addPositionCallback(positionCallback);
 
@@ -210,6 +212,10 @@ void PlaylistPlayerWindow::buttonClicked(Button * button)
 		m_tracksContainer->pause();
 	else if (button == m_stopButton)
 		m_tracksContainer->stop();
+	else if (button == m_skipBackwardButton)
+		m_tableListBox->previous();
+	else if (button == m_skipForwardButton)
+		m_tableListBox->next();
 }
 
 void PlaylistPlayerWindow::setColor(Colour color)

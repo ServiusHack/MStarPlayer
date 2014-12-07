@@ -22,7 +22,8 @@ public:
 
 	virtual void resized() override;
 
-	void next();
+	void previous();
+	void next(bool onlyIfEntrySaysSo = false);
 
 private:
 	PlaylistEntryChangedCallback m_callback;
