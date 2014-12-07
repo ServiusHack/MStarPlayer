@@ -72,4 +72,10 @@ void PlaylistTable::next()
 		selectRow(getSelectedRow() + 1);
 		m_playNext = false;
 	}
+	else
+	{
+		m_playNext = m_model.doPlayNext(getSelectedRow());
+		selectRow(0);
+		m_playNext = false;
+	}
 }
