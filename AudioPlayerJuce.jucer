@@ -6,6 +6,8 @@
   <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
       <GROUP id="{D237656F-512F-DB00-8A88-AF061CED5A4A}" name="oxygen">
+        <FILE id="lxkaB9" name="document-edit.png" compile="0" resource="1"
+              file="Icons/oxygen/document-edit.png"/>
         <FILE id="VFraj5" name="arrow-right-double.png" compile="0" resource="1"
               file="Icons/oxygen/arrow-right-double.png"/>
         <FILE id="e5rN3f" name="audio-volume-medium.png" compile="0" resource="1"
@@ -37,6 +39,9 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="p1XpVy" name="EditSettings.cpp" compile="1" resource="0"
+            file="Source/EditSettings.cpp"/>
+      <FILE id="CmAMS3" name="EditSettings.h" compile="0" resource="0" file="Source/EditSettings.h"/>
       <FILE id="nJSTpx" name="InterPlayerCommunication.h" compile="0" resource="0"
             file="Source/InterPlayerCommunication.h"/>
       <FILE id="VuWSy2" name="SubchannelPlayer.h" compile="0" resource="0"

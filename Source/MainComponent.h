@@ -9,6 +9,7 @@
 #include "DarkLookAndFeel.h"
 #include "AudioConfiguration.h"
 #include "DefaultLookAndFeel.h"
+#include "EditSettings.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
@@ -63,6 +64,7 @@ private:
 	ScopedPointer<AudioDeviceManager> m_audioDeviceManager;
 	ScopedPointer<OutputChannelNames> m_outputChannelNames;
 	ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
+	ScopedPointer<EditSettingsWindow> m_editSettingsWindow;
 
     // Commands for menu
     enum CommandIDs
@@ -80,6 +82,7 @@ private:
 		layoutModeTabs = 0x4001,
 
         configureAudio = 0x5000,
+		editSettings = 0x5001,
 
 		lookAndFeelDefault = 0x6000,
 		lookAndFeelDark = 0x6001
@@ -98,6 +101,8 @@ private:
 
 	File m_projectFile;
 	bool m_projectModified;
+
+	ApplicationProperties m_applicationProperties;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };

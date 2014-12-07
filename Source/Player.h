@@ -17,7 +17,7 @@
 class Player : public Component, public SubchannelPlayer {
 
 public:
-	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, float gain = 1.0f, bool solo = false, bool mute = false);
+	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, float gain = 1.0f, bool solo = false, bool mute = false);
 	~Player();
 
 	void setType(InterPlayerCommunication::PlayerType type);
@@ -98,4 +98,5 @@ private:
 	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
 	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
 
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Player)
 };

@@ -11,8 +11,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 
-TracksComponent::TracksComponent(TracksContainer& container)
+TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties)
 	: m_container(container)
+	, m_applicationProperties(applicationProperties)
 {
 	trackAdded(m_container[0]);
 	m_container.setTrackAddedCallback(std::bind(&TracksComponent::trackAdded, this, std::placeholders::_1));
@@ -48,7 +49,7 @@ void TracksComponent::addStereoTrack()
 
 void TracksComponent::trackAdded(Track& track)
 {
-	m_tracks.emplace_back(new TrackUi(track));
+	m_tracks.emplace_back(new TrackUi(track, m_applicationProperties));
 	addAndMakeVisible(*m_tracks.back());
 	resized();
 }

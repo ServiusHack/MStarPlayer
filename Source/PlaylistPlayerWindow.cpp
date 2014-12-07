@@ -8,7 +8,7 @@
 
 using namespace InterPlayerCommunication;
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, bool showPlaylist, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback, PlaylistModel& playlistModel)
+PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, bool showPlaylist, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
 	: m_color(0xffffffff)
 	, m_tracksContainer(tracksContainer)
 	, m_outputChannelNames(outputChannelNames)
@@ -108,7 +108,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 
 
 	addAndMakeVisible(m_tracksViewport = new Viewport());
-	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(*m_tracksContainer), false);
+	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(*m_tracksContainer, applicationProperties), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
 
 	// playlist

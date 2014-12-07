@@ -15,7 +15,7 @@ class TrackUi
 	, public MixerControlableChangeListener
 {
 public:
-	TrackUi(Track& track);
+	TrackUi(Track& track, ApplicationProperties& applicationProperties);
 	~TrackUi();
 
 	void changeListenerCallback(ChangeBroadcaster *source);
@@ -32,6 +32,7 @@ private:
 	ScopedPointer<Label> m_descriptionLabel;
 	ScopedPointer<ImageButton> m_editButton;
 	ScopedPointer<ImageButton> m_openButton;
+	ScopedPointer<ImageButton> m_editFileButton;
 	ScopedPointer<ImageButton> m_soloButton;
 	ScopedPointer<ImageButton> m_muteButton;
 	ScopedPointer<VolumeSlider> m_volumeSlider;
@@ -41,6 +42,8 @@ private:
 
 	double m_longestDuration;
 	double m_progress; // the progress of the playback
+
+	ApplicationProperties& m_applicationProperties;
 
 // Button::Listener
 public:

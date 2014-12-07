@@ -42,6 +42,11 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 	addAndMakeVisible(m_multiDocumentPanel);
 	m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
 
+	PropertiesFile::Options options;
+	options.applicationName = "AudioPlayerJuce";
+	options.filenameSuffix = ".settings";
+	m_applicationProperties.setStorageParameters(options);
+
     setSize(700, 600);
 }
 
@@ -49,6 +54,7 @@ MainContentComponent::~MainContentComponent()
 {
 	delete m_multiDocumentPanel.release();
 	delete m_mixerComponent.release();
+	m_applicationProperties.closeFiles();
 }
 
 void MainContentComponent::resized()
@@ -94,6 +100,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
 		break;
 	case 3:
 		menu.addCommandItem(m_commandManager, configureAudio);
+		menu.addCommandItem(m_commandManager, editSettings);
 		break;
     }
 
@@ -126,6 +133,7 @@ void MainContentComponent::getAllCommands(Array <CommandID>& commands)
 		layoutModeFloating,
 		layoutModeTabs,
         configureAudio,
+		editSettings,
 		lookAndFeelDefault,
 		lookAndFeelDark
     };
@@ -192,11 +200,13 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
         result.setInfo ("Configure Audio", "Configure the audio device to use", optionsCategory, 0);
         break;
 
+	case editSettings:
+		result.setInfo("Edit Settings", "Edit the application settings", optionsCategory, 0);
+		break;
+
 	case lookAndFeelDefault:
-	{
 		result.setInfo("Standard", "Use the default look and feel", viewCategory, 0);
 		result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel);
-	}
 		break;
 
 	case lookAndFeelDark:
@@ -225,7 +235,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addJinglePlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties);
             player->setName("Jingle Player");
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
@@ -233,7 +243,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addMultitrackPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties);
             player->setName("Multitrack Player");
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
@@ -241,7 +251,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addPlaylistPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties);
             player->setName("Playlist Player");
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
@@ -253,8 +263,12 @@ bool MainContentComponent::perform (const InvocationInfo& info)
 	case layoutModeTabs:
 		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
+
     case configureAudio:
 		m_audioConfigurationWindow = new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames);
+		break;
+    case editSettings:
+		m_editSettingsWindow = new EditSettingsWindow(m_applicationProperties);
 		break;
 
 	case lookAndFeelDefault:
@@ -448,7 +462,7 @@ void MainContentComponent::readProjectFile()
                 loadErrors.push_back("Unknown player type '" + type + "'.");
                 continue;
 			}
-			Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, gain, solo, mute);
+			Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, gain, solo, mute);
 			m_multiDocumentPanel->addDocument(window, Colours::white, true);
 			window->restoreFromXml(*player);
 		}

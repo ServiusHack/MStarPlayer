@@ -249,6 +249,11 @@ void Track::loadFileIntoTransport(File audioFile)
 	m_fileChangedCallback(m_audioFile.getFileName());
 }
 
+void Track::reloadFile()
+{
+	loadFileIntoTransport(m_audioFile);
+}
+
 void Track::timerCallback()
 {
 	double position = m_transportSource.getCurrentPosition();

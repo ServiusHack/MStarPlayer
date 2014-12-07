@@ -5,7 +5,7 @@
 
 using namespace InterPlayerCommunication;
 
-Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, PlayerType type, float gain, bool solo, bool mute)
+Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, PlayerType type, ApplicationProperties& applicationProperties, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
 	, m_outputChannelNames(outputChannelNames)
 	, m_gain(1.0f)
@@ -18,7 +18,8 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
 		std::bind(&Player::setType, this, std::placeholders::_1),
-		playlistModel)
+		playlistModel,
+		applicationProperties)
 	, m_jinglePlayer(&m_tracksContainer, outputChannelNames,
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),

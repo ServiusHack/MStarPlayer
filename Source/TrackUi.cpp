@@ -2,10 +2,11 @@
 
 #include <sstream>
 
-TrackUi::TrackUi(Track& track)
+TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties)
 	: m_track(track)
 	, m_longestDuration(0)
 	, m_progress(0)
+	, m_applicationProperties(applicationProperties)
 {
 	m_idLabel = new Label();
 	addAndMakeVisible(m_idLabel);
@@ -40,6 +41,16 @@ TrackUi::TrackUi(Track& track)
 		0.0f);
 	addAndMakeVisible(m_openButton);
 	m_openButton->addMouseListener(this, false);
+
+	m_editFileButton = new ImageButton("editFile");
+	Image editFileImage = ImageFileFormat::loadFrom(BinaryData::documentedit_png, BinaryData::documentedit_pngSize);
+	m_editFileButton->setImages(true, true, true,
+		editFileImage, 0.7f, Colours::transparentBlack,
+		editFileImage, 1.0f, Colours::transparentBlack,
+		editFileImage, 1.0f, Colours::transparentBlack,
+		0.0f);
+	addAndMakeVisible(m_editFileButton);
+	m_editFileButton->addListener(this);
 
 	m_soloButton = new ImageButton("solo");
 	Image soloImage = ImageFileFormat::loadFrom(BinaryData::audioheadphones_png, BinaryData::audioheadphones_pngSize);
@@ -111,6 +122,26 @@ void TrackUi::buttonClicked(Button *button)
 		m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(m_track.getName(), m_track.getGain(), 
 			std::bind(&Track::setName, &m_track, std::placeholders::_1),
 			std::bind(&Track::setGain, &m_track, std::placeholders::_1)));
+	}
+	else if (button == m_editFileButton) {
+
+		if (!File(m_applicationProperties.getUserSettings()->getValue("audioEditor")).existsAsFile()) {
+			AlertWindow::showMessageBox(AlertWindow::WarningIcon, TRANS("No audio editor"), TRANS("No audio editor was configured."));
+			return;
+		}
+
+		ChildProcess process;
+		StringArray arguments(m_applicationProperties.getUserSettings()->getValue("audioEditor"));
+		arguments.add(m_track.getTrackConfig().file.getFullPathName());
+		if (!process.start(arguments)) {
+			AlertWindow::showMessageBox(AlertWindow::WarningIcon, TRANS("Failed launch audio editor"), TRANS("Failed to start the audio editor."));
+			return;
+		}
+
+		AlertWindow blockDialog("Audio editor launched", "Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again.", AlertWindow::NoIcon);
+		blockDialog.addButton("ok", 1);
+		blockDialog.runModalLoop();
+		m_track.reloadFile();
 	}
 }
 
@@ -250,8 +281,9 @@ void TrackUi::resized()
 
 	m_volumeSlider->setBounds(100 + 3, 3, 20, getHeight() - 6);
 	
-	m_editButton->setBounds(100 + 20 + 3, 3, buttonWidth - 6, getHeight() / 2 - 6);
-	m_openButton->setBounds(100 + 20 + 3, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
+	m_editButton->setBounds(100 + 20 + 3, 3, buttonWidth - 6, getHeight() / 3 - 6);
+	m_openButton->setBounds(100 + 20 + 3, 3 + getHeight() / 3, buttonWidth - 6, getHeight() / 3 - 6);
+	m_editFileButton->setBounds(100 + 20 + 3, 3 + getHeight() * 2 / 3, buttonWidth - 6, getHeight() / 3 - 6);
 
 	m_soloButton->setBounds(100 + 20 + 3 + buttonWidth, 3, buttonWidth - 6, getHeight() / 2 - 6);
 	m_muteButton->setBounds(100 + 20 + 3 + buttonWidth, 3 + getHeight() / 2, buttonWidth - 6, getHeight() / 2 - 6);
