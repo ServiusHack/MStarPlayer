@@ -71,7 +71,7 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputC
 
 		double remainingTime = m_totalLength - position;
 		
-		if (m_totalLength == 0)
+		if (finished)
 			m_progress = 0.0;
 		else
 			m_progress = position / m_totalLength;
