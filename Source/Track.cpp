@@ -228,6 +228,7 @@ void Track::loadFileIntoTransport(File audioFile)
 
 	AudioFormatReader* reader = m_formatManager.createReaderFor(m_audioFile);
 
+	m_transportSource.setSource(nullptr);
 
 	m_audioThumbnail.setSource(new FileInputSource(m_audioFile));
 
@@ -239,9 +240,6 @@ void Track::loadFileIntoTransport(File audioFile)
 									&m_thread, // this is the background thread to use for reading-ahead
 									reader->sampleRate);
 		}
-	else {
-		m_transportSource.setSource(nullptr);
-	}
 
 	updateGain();
 
@@ -255,7 +253,10 @@ void Track::timerCallback()
 {
 	double position = m_transportSource.getCurrentPosition();
 
-	for (const auto callback : m_positionCallbacks)
+	// Copy list so the callback can remove items and we continue to iterate.
+	std::list<PositionCallback> positionCallbacks(m_positionCallbacks);
+
+	for (const auto& callback : positionCallbacks)
 		callback(position, m_transportSource.hasStreamFinished());
 
 	if (!m_transportSource.isPlaying())
