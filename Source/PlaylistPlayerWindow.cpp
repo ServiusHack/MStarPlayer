@@ -140,14 +140,12 @@ void PlaylistPlayerWindow::resized()
 #define PLACE_BUTTON(IDX,BTN) BTN->setBounds(IDX * buttonWidth + 3, 3, buttonWidth - 6, buttonHeight - 6);
 	PLACE_BUTTON(0, m_playButton);
 	PLACE_BUTTON(1, m_pauseButton);
-	PLACE_BUTTON(0, m_playButton);
-	PLACE_BUTTON(1, m_pauseButton);
 	PLACE_BUTTON(2, m_stopButton);
 	PLACE_BUTTON(3, m_skipBackwardButton);
 	PLACE_BUTTON(4, m_skipForwardButton);
 	PLACE_BUTTON(5, m_configureButton);
 #undef PLACE_BUTTON
-	m_digitalDisplay->setBounds(5 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
+	m_digitalDisplay->setBounds(6 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
 
 	int top = buttonHeight;
 	if (m_tableListBox->isVisible()) {
