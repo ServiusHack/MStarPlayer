@@ -49,26 +49,6 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
                                 0.0f);
 	addAndMakeVisible(m_stopButton);
 	
-	// seek backward button
-	m_seekBackwardButton = new ImageButton("Seek Backward");
-	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaseekbackward_png, BinaryData::mediaseekbackward_pngSize);
-	m_seekBackwardButton->setImages(true, true, true,
-                                normalImage, 0.7f, Colours::transparentBlack,
-                                normalImage, 1.0f, Colours::transparentBlack,
-                                normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
-                                0.0f);
-	addAndMakeVisible(m_seekBackwardButton);
-	
-	// seek forward button
-	m_seekForwardButton = new ImageButton("Seek Forward");
-	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaseekforward_png, BinaryData::mediaseekforward_pngSize);
-	m_seekForwardButton->setImages(true, true, true,
-                                normalImage, 0.7f, Colours::transparentBlack,
-                                normalImage, 1.0f, Colours::transparentBlack,
-                                normalImage, 1.0f, Colours::pink.withAlpha (0.8f),
-                                0.0f);
-	addAndMakeVisible(m_seekForwardButton);
-	
 	// skip backward button
 	m_skipBackwardButton = new ImageButton("Skip Backward");
 	normalImage = ImageFileFormat::loadFrom (BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
@@ -161,13 +141,11 @@ void PlaylistPlayerWindow::resized()
 	PLACE_BUTTON(0, m_playButton);
 	PLACE_BUTTON(1, m_pauseButton);
 	PLACE_BUTTON(2, m_stopButton);
-	PLACE_BUTTON(3, m_seekBackwardButton);
-	PLACE_BUTTON(4, m_seekForwardButton);
-	PLACE_BUTTON(5, m_skipBackwardButton);
-	PLACE_BUTTON(6, m_skipForwardButton);
-	PLACE_BUTTON(7, m_configureButton);
+	PLACE_BUTTON(3, m_skipBackwardButton);
+	PLACE_BUTTON(4, m_skipForwardButton);
+	PLACE_BUTTON(5, m_configureButton);
 #undef PLACE_BUTTON
-	m_digitalDisplay->setBounds(8 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
+	m_digitalDisplay->setBounds(5 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
 
 	int top = buttonHeight;
 	if (m_tableListBox->isVisible()) {

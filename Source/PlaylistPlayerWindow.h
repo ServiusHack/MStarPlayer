@@ -42,8 +42,6 @@ private:
 	ScopedPointer<ImageButton> m_playButton;
 	ScopedPointer<ImageButton> m_pauseButton;
 	ScopedPointer<ImageButton> m_stopButton;
-	ScopedPointer<ImageButton> m_seekBackwardButton;
-	ScopedPointer<ImageButton> m_seekForwardButton;
 	ScopedPointer<ImageButton> m_skipBackwardButton;
 	ScopedPointer<ImageButton> m_skipForwardButton;
 	ScopedPointer<ImageButton> m_configureButton;

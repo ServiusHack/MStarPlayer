@@ -26,10 +26,6 @@
               file="Icons/oxygen/media-playback-start.png"/>
         <FILE id="mfBR0L" name="media-playback-stop.png" compile="0" resource="1"
               file="Icons/oxygen/media-playback-stop.png"/>
-        <FILE id="uPGPKT" name="media-seek-backward.png" compile="0" resource="1"
-              file="Icons/oxygen/media-seek-backward.png"/>
-        <FILE id="HTvkiy" name="media-seek-forward.png" compile="0" resource="1"
-              file="Icons/oxygen/media-seek-forward.png"/>
         <FILE id="s8BcFV" name="media-skip-backward.png" compile="0" resource="1"
               file="Icons/oxygen/media-skip-backward.png"/>
         <FILE id="PHHxdN" name="media-skip-forward.png" compile="0" resource="1"
