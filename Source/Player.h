@@ -14,7 +14,11 @@
 #include "InterPlayerCommunication.h"
 
 
-class Player : public Component, public SubchannelPlayer {
+class Player 
+	: public Component
+	, public SubchannelPlayer
+	, public KeyListener
+{
 
 public:
 	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, float gain = 1.0f, bool solo = false, bool mute = false);
@@ -67,6 +71,7 @@ public:
 
 	virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
+	virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
 
 private:
 

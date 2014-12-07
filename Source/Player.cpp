@@ -39,6 +39,7 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 	setGain(gain);
 	setType(type);
 
+	addKeyListener(this);
 	setBounds(0, 0, 600, 300);
 }
 
@@ -60,6 +61,7 @@ void Player::setType(PlayerType type)
 	m_jinglePlayer.setVisible(type == PlayerType::Jingle);
 	m_playlistPlayer.setVisible(type == PlayerType::Multitrack || type == PlayerType::Playlist);
 	m_playlistPlayer.setShowPlaylist(type == PlayerType::Playlist);
+	grabKeyboardFocus();
 }
 
 void Player::setGain(float gain)
@@ -259,4 +261,15 @@ void Player::configureChannels()
 	}
 	m_channelMappingWindow->addToDesktop();
 	m_channelMappingWindow->toFront(true);
+}
+
+bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
+{
+	if (key == KeyPress::spaceKey)
+	{
+		m_tracksContainer.play();
+		return true;
+	}
+
+	return false;
 }

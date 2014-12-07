@@ -21,7 +21,6 @@ class JinglePlayerWindow
 	: public Component
 	, public Button::Listener
 	, public ChangeListener
-	, public KeyListener
 {
 public:
     /** Creates a new JinglePlayer.
@@ -48,7 +47,6 @@ public:
 
 	void setUserImage(File file);
 
-	virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
 private:
 
     // ui values
