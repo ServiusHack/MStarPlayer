@@ -100,6 +100,8 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputC
 		m_totalLength = duration;
 	};
 	m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
+
+	addKeyListener(this);
 }
 
 void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster* /*source*/)
@@ -223,4 +225,15 @@ void JinglePlayerWindow::setUserImage(File file)
 		m_userImage.set(Drawable::createFromImageFile(file), true);
 		m_playButton->setImages(m_userImage.get());
 	}
+}
+
+bool JinglePlayerWindow::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
+{
+	if (key == KeyPress::spaceKey)
+	{
+		m_playButton->triggerClick();
+		return true;
+	}
+
+	return false;
 }
