@@ -109,7 +109,7 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 void ChannelMapping::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
 	OutputChannelColumnCustomComponent* outputChannelColumn = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
-	setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId()-1);
+	setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId());
 }
 
 int ChannelMapping::getOutputChannel(int row)
