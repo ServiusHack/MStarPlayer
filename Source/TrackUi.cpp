@@ -179,7 +179,12 @@ void TrackUi::mouseDrag(const MouseEvent& event)
 		return;
 
 	const static int componentWidth = 100 + 40 + 40 + 20;
-	double positionFraction = static_cast<double>(event.x - componentWidth) / static_cast<double>(getWidth() - componentWidth);
+	int xPosition = event.x - componentWidth;
+
+	if (xPosition < 0)
+		return;
+
+	double positionFraction = static_cast<double>(xPosition) / static_cast<double>(getWidth() - componentWidth);
 	m_setPositionCallback(positionFraction * m_longestDuration);
 }
 
