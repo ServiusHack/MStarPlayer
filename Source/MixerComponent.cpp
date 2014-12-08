@@ -1,7 +1,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "MixerComponent.h"
-#include "ChannelMixerControlable.h"
+#include "ChannelMixerFader.h"
 
 MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames)
 	: m_mixerAudioSource()
@@ -100,10 +100,8 @@ void MixerComponent::addChannelSlider()
 {
 	int channelNumber = m_channelSliders.size();
 
-	ChannelMixerControlable* controlable = new ChannelMixerControlable(channelNumber, &m_channelVolumeAudioSource);
-	
-	MixerFader* slider = new MixerFader(controlable, std::vector<MixerControlable*>(), false, std::bind(&MixerComponent::resized, this));
-    addAndMakeVisible (slider);
+	MixerFader* slider = new ChannelMixerFader(channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
+    addAndMakeVisible(slider);
 
 	m_channelSliders.push_back(slider);
 }

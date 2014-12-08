@@ -54,6 +54,9 @@ public:
 
 	virtual void timerCallback() override;
 
+protected:
+	ScopedPointer<VolumeSlider> m_volumeSlider;
+
 private:
 	ScopedPointer<Label> m_label;
 	ScopedPointer<TextButton> m_soloButton;
@@ -61,7 +64,6 @@ private:
 	ScopedPointer<ArrowButton> m_expandButton;
 	ScopedPointer<Slider> m_panSlider;
 	ScopedPointer<LevelMeter> m_levelMeter;
-	ScopedPointer<VolumeSlider> m_volumeSlider;
 
 	ResizeCallback m_resizeCallback;
 

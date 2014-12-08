@@ -96,6 +96,10 @@
         <FILE id="JMGgdW" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
       </GROUP>
       <GROUP id="{865AC646-72F7-2874-4DCD-D4F50884E329}" name="Mixer">
+        <FILE id="W5gwzk" name="ChannelMixerFader.cpp" compile="1" resource="0"
+              file="Source/ChannelMixerFader.cpp"/>
+        <FILE id="JOwZkp" name="ChannelMixerFader.h" compile="0" resource="0"
+              file="Source/ChannelMixerFader.h"/>
         <FILE id="S33LU4" name="ChannelMixerControlable.cpp" compile="1" resource="0"
               file="Source/ChannelMixerControlable.cpp"/>
         <FILE id="GOXvD4" name="ChannelMixerControlable.h" compile="0" resource="0"
