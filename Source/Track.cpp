@@ -117,22 +117,35 @@ float Track::getVolume() const
 
 void Track::play()
 {
-	startTimer(50);
-	m_transportSource.setPosition(0);
+	if (m_transportSource.hasStreamFinished())
+		setPosition(0);
 	m_transportSource.start();
+	startTimer(50);
 }
 
 void Track::pause()
 {
-	m_transportSource.stop();
-	stopTimer();
+	if (m_transportSource.isPlaying()) {
+		m_transportSource.stop();
+		stopTimer();
+	}
+	else {
+		m_transportSource.start();
+		startTimer(50);
+	}
 }
 
 void Track::stop()
 {
 	m_transportSource.stop();
-	m_transportSource.setPosition(0);
+	setPosition(0);
 	stopTimer();
+}
+
+void Track::setPosition(double position)
+{
+	m_transportSource.setPosition(position);
+	callPositionCallbacks(position);
 }
 
 std::vector<int> Track::getMapping()
@@ -256,16 +269,19 @@ void Track::reloadFile()
 
 void Track::timerCallback()
 {
-	double position = m_transportSource.getCurrentPosition();
+	callPositionCallbacks(m_transportSource.getCurrentPosition());
 
+	if (!m_transportSource.isPlaying())
+		stopTimer();
+}
+
+void Track::callPositionCallbacks(double position)
+{
 	// Copy list so the callback can remove items and we continue to iterate.
 	std::list<PositionCallback> positionCallbacks(m_positionCallbacks);
 
 	for (const auto& callback : positionCallbacks)
 		callback(position, m_transportSource.hasStreamFinished());
-
-	if (!m_transportSource.isPlaying())
-		stopTimer();
 }
 
 XmlElement* Track::saveToXml() const

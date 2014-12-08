@@ -29,6 +29,8 @@ public:
 
 	double getDuration();
 
+	void setPosition(double position);
+
 	int getNumChannels();
 
 	void setOutputChannels(int outputChannels);
@@ -37,6 +39,7 @@ public:
 	std::vector<int> getMapping();
 
 	void timerCallback();
+	void callPositionCallbacks(double position);
 
 	void loadFileIntoTransport(File audioFile);
 	void reloadFile();

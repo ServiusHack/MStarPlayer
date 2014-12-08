@@ -15,7 +15,9 @@ class TrackUi
 	, public MixerControlableChangeListener
 {
 public:
-	TrackUi(Track& track, ApplicationProperties& applicationProperties);
+	typedef std::function<void(double)> SetPositionCallback;
+
+	TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback);
 	~TrackUi();
 
 	void changeListenerCallback(ChangeBroadcaster *source);
@@ -45,6 +47,8 @@ private:
 
 	ApplicationProperties& m_applicationProperties;
 
+	SetPositionCallback m_setPositionCallback;
+
 // Button::Listener
 public:
 	void buttonClicked(Button* button);
@@ -54,6 +58,7 @@ public:
 	virtual void paint(Graphics&) override;
 	virtual void resized() override;
 	virtual void mouseDown(const MouseEvent & event) override;
+	virtual void mouseDrag(const MouseEvent & event) override;
 
 // juce::Slider::Listener
 public:

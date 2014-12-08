@@ -22,6 +22,8 @@ public:
 	void pause();
 	void stop();
 
+	void setPosition(double position);
+
 	size_t size() const;
 	Track& operator[](size_t index) const;
 	void clear();

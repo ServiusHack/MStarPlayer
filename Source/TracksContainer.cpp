@@ -49,6 +49,12 @@ void TracksContainer::stop()
 		m_tracks[i]->stop();
 }
 
+void TracksContainer::setPosition(double position)
+{
+	for (size_t i = 0; i < m_tracks.size(); ++i)
+		m_tracks[i]->setPosition(position);
+}
+
 size_t TracksContainer::size() const
 {
 	return m_tracks.size();

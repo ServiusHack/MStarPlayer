@@ -2,11 +2,12 @@
 
 #include <sstream>
 
-TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties)
+TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback)
 	: m_track(track)
 	, m_longestDuration(0)
 	, m_progress(0)
 	, m_applicationProperties(applicationProperties)
+	, m_setPositionCallback(setPositionCallback)
 {
 	m_idLabel = new Label();
 	addAndMakeVisible(m_idLabel);
@@ -40,7 +41,7 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties)
 		openImage, 1.0f, Colours::transparentBlack,
 		0.0f);
 	addAndMakeVisible(m_openButton);
-	m_openButton->addMouseListener(this, false);
+	m_openButton->addListener(this);
 
 	m_editFileButton = new ImageButton("editFile");
 	Image editFileImage = ImageFileFormat::loadFrom(BinaryData::documentedit_png, BinaryData::documentedit_pngSize);
@@ -112,7 +113,10 @@ void TrackUi::nameChanged(String name)
 
 void TrackUi::buttonClicked(Button *button)
 {
-	if (button == m_muteButton) {
+	if (button == m_openButton) {
+		loadFile();
+	}
+	else if (button == m_muteButton) {
 		m_track.setMute(m_muteButton->getToggleState());
 	}
 	else if (button == m_soloButton) {
@@ -164,12 +168,19 @@ void TrackUi::changeListenerCallback(ChangeBroadcaster* /*source*/)
 	repaint();
 }
 
-void TrackUi::mouseDown (const MouseEvent & event)
+void TrackUi::mouseDown(const MouseEvent& event)
 {
-	if (event.eventComponent != m_openButton)
+	mouseDrag(event);
+}
+
+void TrackUi::mouseDrag(const MouseEvent& event)
+{
+	if (event.eventComponent != this)
 		return;
 
-	loadFile();
+	const static int componentWidth = 100 + 40 + 40 + 20;
+	double positionFraction = static_cast<double>(event.x - componentWidth) / static_cast<double>(getWidth() - componentWidth);
+	m_setPositionCallback(positionFraction * m_longestDuration);
 }
 
 void TrackUi::setLongestDuration(double duration)

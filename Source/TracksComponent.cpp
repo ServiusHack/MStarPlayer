@@ -49,7 +49,7 @@ void TracksComponent::addStereoTrack()
 
 void TracksComponent::trackAdded(Track& track)
 {
-	m_tracks.emplace_back(new TrackUi(track, m_applicationProperties));
+	m_tracks.emplace_back(new TrackUi(track, m_applicationProperties, std::bind(&TracksContainer::setPosition, &m_container, std::placeholders::_1)));
 	addAndMakeVisible(*m_tracks.back());
 	resized();
 }
