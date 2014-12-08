@@ -79,7 +79,10 @@ Component* ChannelNames::refreshComponentForCell(int rowNumber, int columnId, bo
 		ChannelNameTextEditor* editor = static_cast<ChannelNameTextEditor*>(existingComponentToUpdate);
 
 		if (editor == nullptr)
+		{
 			editor = new ChannelNameTextEditor();
+			editor->addListener(this);
+		}
 
 		editor->setRow(rowNumber);
 		editor->setText(m_outputChannelName.getInternalOutputChannelName(rowNumber), dontSendNotification);
