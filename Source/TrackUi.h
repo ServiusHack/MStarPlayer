@@ -69,7 +69,7 @@ public:
 	virtual void gainChanged(float gain) override;
 	virtual void muteChanged(bool /*mute*/) override;
 	virtual void soloChanged(bool /*solo*/) override;
-	virtual void nameChanged(String name) override;
+	virtual void nameChanged(const String& name) override;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrackUi)
 };

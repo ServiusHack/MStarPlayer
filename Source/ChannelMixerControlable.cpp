@@ -62,3 +62,9 @@ float ChannelMixerControlable::getVolume() const
 {
 	return m_channelVolumeAudioSource->getActualVolume(channelNumber);
 }
+
+String ChannelMixerControlable::getName() const
+{
+	// not actually used, see MixerComponent implementing OutputChannelNamesListener
+	return String();
+}

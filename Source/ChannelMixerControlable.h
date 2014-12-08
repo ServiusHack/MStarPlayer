@@ -33,6 +33,8 @@ public:
 
 	virtual float getVolume() const override;
 
+	virtual String getName() const override;
+
 private:
 	int channelNumber;
 	ChannelVolumeAudioSource* m_channelVolumeAudioSource;

@@ -50,6 +50,10 @@ public:
 
 	virtual float getVolume() const override;
 
+	virtual String getName() const override;
+
+	virtual void setName (const String& newName) override;
+
     /** Set the number of output channels.
 
         If the user reconfigures his audio settings the number of output channels

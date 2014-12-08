@@ -17,7 +17,7 @@ namespace {
 }
 
 MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback)
-: m_label(new Label("label", "C1"))
+: m_label(new Label("label"))
 , m_soloButton(new TextButton("solo"))
 , m_muteButton(new TextButton("mute"))
 , m_expandButton(new ArrowButton("expand", 0.0, Colour(0xff000000)))
@@ -28,6 +28,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 , m_mixerControlable(mainControlable)
 {
 	addAndMakeVisible(m_label);
+	m_label->setText(mainControlable->getName(), sendNotification);
 	m_label->setFont(Font(10.00f, Font::plain));
 	m_label->setJustificationType(Justification::centredLeft);
 	m_label->setEditable(false, false, false);
@@ -111,6 +112,11 @@ void MixerFader::soloChanged(bool solo)
 void MixerFader::muteChanged(bool mute)
 {
 	m_muteButton->setToggleState(mute, sendNotification);
+}
+
+void MixerFader::nameChanged(const String& name)
+{
+	m_label->setText(name, sendNotification);
 }
 
 void MixerFader::timerCallback()

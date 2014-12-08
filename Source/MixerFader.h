@@ -50,6 +50,8 @@ public:
 
 	virtual void muteChanged(bool mute) override;
 
+	virtual void nameChanged(const String& name) override;
+
 	virtual void timerCallback() override;
 
 private:

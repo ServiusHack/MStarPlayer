@@ -80,6 +80,7 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
 	m_fileNameLabel->setColour(Label::backgroundColourId, Colour(0xccffffff));
 	addAndMakeVisible(m_fileNameLabel);
 
+	m_track.addChangeListener(this);
 	m_track.getAudioThumbnail().addChangeListener(this);
 	m_track.addPositionCallback(std::bind(&TrackUi::positionChanged, this, std::placeholders::_1));
 	m_track.setFileChangedCallback(std::bind(&Label::setText, m_fileNameLabel.get(), std::placeholders::_1, sendNotification));
@@ -105,9 +106,8 @@ void TrackUi::soloChanged(bool solo)
 	m_soloButton->setToggleState(solo, sendNotification);
 }
 
-void TrackUi::nameChanged(String name)
+void TrackUi::nameChanged(const String& name)
 {
-	Component::setName(name);
 	m_descriptionLabel->setText(name, sendNotification);
 }
 

@@ -14,7 +14,7 @@ public:
 
 	virtual void muteChanged(bool /*mute*/) {};
 
-	virtual void nameChanged(String /*name*/) {};
+	virtual void nameChanged(const String& /*name*/) {};
 };
 
 class MixerControlable {
@@ -40,6 +40,8 @@ public:
 	virtual bool getMute() const = 0;
 
 	virtual float getVolume() const = 0;
+
+	virtual String getName() const = 0;
 
 // manage listeners
 public:

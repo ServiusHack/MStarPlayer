@@ -132,6 +132,18 @@ float Player::getVolume() const
 	return maxVolume;
 }
 
+String Player::getName() const
+{
+	return Component::getName();
+}
+
+void Player::setName(const String& newName)
+{
+	Component::setName(newName);
+	for (MixerControlableChangeListener *listener : m_listeners)
+		listener->nameChanged(newName);
+}
+
 void Player::updateGain()
 {
 	m_tracksContainer.setMute(m_mute || (m_soloMute && !m_solo));
@@ -181,7 +193,7 @@ XmlElement* Player::saveToXml() const
 	element->addChildElement(boundsXml);
 
 	XmlElement* nameXml = new XmlElement("Name");
-	nameXml->addTextElement(getName());
+	nameXml->addTextElement(Component::getName());
 	element->addChildElement(nameXml);
 
 	XmlElement* tracksXml = new XmlElement("Tracks");
