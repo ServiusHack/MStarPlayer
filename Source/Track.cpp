@@ -252,7 +252,11 @@ void Track::loadFileIntoTransport(File audioFile)
 									32768, // tells it to buffer this many samples ahead
 									&m_thread, // this is the background thread to use for reading-ahead
 									reader->sampleRate);
-		}
+	}
+	else {
+		m_transportSource.setSource(nullptr);
+		m_currentAudioFileSource = nullptr;
+	}
 
 	updateGain();
 

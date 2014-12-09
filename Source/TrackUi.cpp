@@ -133,10 +133,12 @@ void TrackUi::buttonClicked(Button *button)
 				return;
 			}
 
+			File file(m_track.getTrackConfig().file);
+			m_track.unloadFile();
 			AlertWindow blockDialog("Audio editor launched", "Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again.", AlertWindow::NoIcon);
 			blockDialog.addButton("ok", 1);
 			blockDialog.runModalLoop();
-			m_track.reloadFile();
+			m_track.loadFileIntoTransport(file);
 			break;
 		}
 		case 4:
