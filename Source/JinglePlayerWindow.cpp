@@ -90,7 +90,7 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputC
 		}
 
 		if (finished)
-			m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
+			m_playButton->setImages(m_playImage);
 
 	};
 	m_tracksContainer->addPositionCallback(positionCallback);
@@ -120,6 +120,10 @@ void JinglePlayerWindow::resized()
 void JinglePlayerWindow::paint(Graphics& g)
 {
 	g.fillAll(m_paintColor);
+
+	if (m_userImage)
+		m_userImage->drawWithin(g, getLocalBounds().toFloat(), RectanglePlacement::centred, 1.0f);
+
 	g.setColour(Colour(0x55000000));
 
 	AudioThumbnail& audioThumbnail = (*m_tracksContainer)[0].getAudioThumbnail();
@@ -187,11 +191,11 @@ void JinglePlayerWindow::loadFile()
 void JinglePlayerWindow::buttonClicked(Button * /*button*/)
 {
 	if (m_tracksContainer->isPlaying()) {
-		m_playButton->setImages(m_userImage ? m_userImage.get() : m_playImage);
+		m_playButton->setImages(m_playImage);
 		m_tracksContainer->stop();
 	}
 	else {
-		m_playButton->setImages(m_userImage ? m_userImage.get() : m_stopImage);
+		m_playButton->setImages(m_stopImage);
 		m_tracksContainer->play();
 	}
 }
@@ -216,12 +220,9 @@ void JinglePlayerWindow::setColor(Colour color)
 
 void JinglePlayerWindow::setUserImage(File file)
 {
-	if (file == File::nonexistent) {
+	if (file == File::nonexistent)
 		delete m_userImage.release();
-		m_playButton->setImages(m_tracksContainer->isPlaying() ? m_stopImage : m_playImage);
-	}
-	else {
+	else
 		m_userImage.set(Drawable::createFromImageFile(file), true);
-		m_playButton->setImages(m_userImage.get());
-	}
+	repaint();
 }
