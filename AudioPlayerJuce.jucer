@@ -6,8 +6,6 @@
   <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
       <GROUP id="{D237656F-512F-DB00-8A88-AF061CED5A4A}" name="oxygen">
-        <FILE id="lxkaB9" name="document-edit.png" compile="0" resource="1"
-              file="Icons/oxygen/document-edit.png"/>
         <FILE id="VFraj5" name="arrow-right-double.png" compile="0" resource="1"
               file="Icons/oxygen/arrow-right-double.png"/>
         <FILE id="e5rN3f" name="audio-volume-medium.png" compile="0" resource="1"
@@ -19,7 +17,6 @@
               file="Icons/oxygen/audio-headphones.png"/>
         <FILE id="LOfA33" name="audio-volume-muted.png" compile="0" resource="1"
               file="Icons/oxygen/audio-volume-muted.png"/>
-        <FILE id="TCGZqS" name="folder-open.png" compile="0" resource="1" file="Icons/oxygen/folder-open.png"/>
         <FILE id="T6LiLz" name="media-playback-pause.png" compile="0" resource="1"
               file="Icons/oxygen/media-playback-pause.png"/>
         <FILE id="l2NpS7" name="media-playback-start.png" compile="0" resource="1"

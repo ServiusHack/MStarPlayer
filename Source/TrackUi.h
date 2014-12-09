@@ -33,8 +33,6 @@ private:
 	ScopedPointer<Label> m_idLabel;
 	ScopedPointer<Label> m_descriptionLabel;
 	ScopedPointer<ImageButton> m_editButton;
-	ScopedPointer<ImageButton> m_openButton;
-	ScopedPointer<ImageButton> m_editFileButton;
 	ScopedPointer<ImageButton> m_soloButton;
 	ScopedPointer<ImageButton> m_muteButton;
 	ScopedPointer<VolumeSlider> m_volumeSlider;

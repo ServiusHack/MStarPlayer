@@ -267,6 +267,11 @@ void Track::reloadFile()
 	loadFileIntoTransport(m_audioFile);
 }
 
+void Track::unloadFile()
+{
+	loadFileIntoTransport(File::nonexistent);
+}
+
 void Track::timerCallback()
 {
 	callPositionCallbacks(m_transportSource.getCurrentPosition());

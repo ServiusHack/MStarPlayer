@@ -43,6 +43,7 @@ public:
 
 	void loadFileIntoTransport(File audioFile);
 	void reloadFile();
+	void unloadFile();
 
 	PositionCallbackRegistrationToken addPositionCallback(PositionCallback callback = PositionCallback());
 	void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
