@@ -237,6 +237,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         {
 			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties);
             player->setName("Jingle Player");
+			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
         }
@@ -245,6 +246,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         {
 			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties);
             player->setName("Multitrack Player");
+			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
         }
@@ -253,6 +255,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         {
 			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties);
             player->setName("Playlist Player");
+			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
         }
@@ -463,6 +466,7 @@ void MainContentComponent::readProjectFile()
                 continue;
 			}
 			Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, gain, solo, mute);
+			window->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(window, Colours::white, true);
 			window->restoreFromXml(*player);
 		}
@@ -530,17 +534,24 @@ void MainContentComponent::writeProjectFile()
 		m_projectModified = false;
 }
 
-void MainContentComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
-{
-	
-	for (int i = 0; i < m_multiDocumentPanel->getNumChildComponents(); ++i)
-		static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setOutputChannels(getOutputChannels());
-}
-
 int MainContentComponent::getOutputChannels()
 {
 	AudioDeviceManager::AudioDeviceSetup deviceSetup;
 	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
 
 	return deviceSetup.outputChannels.countNumberOfSetBits();
+}
+
+void MainContentComponent::soloChanged(bool /*solo*/)
+{
+	bool soloMute = false;
+	for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
+		soloMute = static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->getSolo();
+		if (soloMute)
+			break;
+	}
+
+	for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
+		static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setSoloMute(soloMute);
+	}
 }

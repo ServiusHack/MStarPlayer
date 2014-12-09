@@ -26,7 +26,7 @@ class MainContentComponent
 	: public Component
 	, public MenuBarModel
 	, public ApplicationCommandTarget
-	, public ChangeListener
+	, public MixerControlableChangeListener
 {
 public:
 
@@ -51,8 +51,9 @@ public:
     virtual void getAllCommands(Array <CommandID>& commands) override;
     virtual void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
     virtual bool perform(const InvocationInfo& info) override;
-    
-    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+
+	// MixerControlableChangeListener overrides
+	virtual void soloChanged(bool solo) override;
 
 private:
 
