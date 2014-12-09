@@ -114,10 +114,16 @@ void ChannelVolumeAudioSource::releaseResources()
 void ChannelVolumeAudioSource::expandListsTo(size_t channelIndex)
 {
 	channelIndex += 1;
-	m_setVolumes.resize(channelIndex, 1.0);
-	m_setSolos.resize(channelIndex, false);
-	m_setMutes.resize(channelIndex, false);
-	m_actualVolumes.resize(channelIndex, 0.0f);
+	if (channelIndex > m_setVolumes.size())
+		m_setVolumes.resize(channelIndex, 1.0);
+	if (channelIndex > m_setSolos.size())
+		m_setSolos.resize(channelIndex, false);
+	if (channelIndex > m_setMutes.size())
+		m_setMutes.resize(channelIndex, false);
+	if (channelIndex > m_actualVolumes.size())
+		m_actualVolumes.resize(channelIndex, 0.0f);
+	if (channelIndex > m_appliedGains.size())
+		m_appliedGains.resize(channelIndex, 0.0f);
 }
 
 int ChannelVolumeAudioSource::channelCount() const
@@ -127,8 +133,6 @@ int ChannelVolumeAudioSource::channelCount() const
 
 void ChannelVolumeAudioSource::updateGain(size_t channelIndex)
 {
-	m_appliedGains.resize(channelIndex + 1, 1.0);
-
 	bool mute = m_setMutes[channelIndex];
 	bool solo = m_setSolos[channelIndex];
 	float gain = (mute || (m_anySolo && !solo ) ) ? 0.0f : m_setVolumes[channelIndex];
@@ -144,9 +148,11 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
 	size_t numberOfChannels = bufferToFill.buffer->getNumChannels(); 
 	for (size_t channel = 0; channel < numberOfChannels; channel++)
     {
-        float gain = 1.0;
+        float gain = 1.0f;
         if (channel < m_appliedGains.size())
 			gain = m_appliedGains[channel];
+		else if (m_anySolo)
+			gain = 0.0f; // some channel is in solo but not this one (otherwise it would be in m_appliedGains)
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
 		if (channel < m_actualVolumes.size())
 			m_actualVolumes[channel] = bufferToFill.buffer->getRMSLevel(channel, bufferToFill.startSample, bufferToFill.numSamples);
