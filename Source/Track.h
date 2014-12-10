@@ -19,8 +19,9 @@ public:
 	typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
 	typedef std::function<void()> ChannelCountChangedCallback;
 	typedef std::function<void(String)> FileChangedCallback;
+	typedef std::function<void(bool)> PlayingStateChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback);
 	~Track();
 
 	void play();
@@ -148,6 +149,7 @@ private:
 	std::list<PositionCallback> m_positionCallbacks;
 	ChannelCountChangedCallback m_channelCountChangedCallback;
 	FileChangedCallback m_fileChangedCallback;
+	PlayingStateChangedCallback m_playingStateChangedCallback;
 
 public:
 	AudioThumbnail& getAudioThumbnail();

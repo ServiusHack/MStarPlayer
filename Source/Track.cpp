@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback)
 	: m_trackIndex(trackIndex)
 	, m_stereo(stereo)
 	, m_tracksMixer(tracksMixer)
@@ -25,6 +25,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_trackGain(1.0f)
 	, m_playerMute(mute)
 	, m_channelCountChangedCallback(channelCountChangedCallback)
+	, m_playingStateChangedCallback(playingStateChangedCallback)
 	, m_mute(false)
 	, m_solo(false)
 	, m_audioThumbnailCache(1)
@@ -121,6 +122,7 @@ void Track::play()
 		setPosition(0);
 	m_transportSource.start();
 	startTimer(50);
+	m_playingStateChangedCallback(true);
 }
 
 void Track::pause()
@@ -128,10 +130,12 @@ void Track::pause()
 	if (m_transportSource.isPlaying()) {
 		m_transportSource.stop();
 		stopTimer();
+		m_playingStateChangedCallback(false);
 	}
 	else {
 		m_transportSource.start();
 		startTimer(50);
+		m_playingStateChangedCallback(true);
 	}
 }
 
@@ -140,6 +144,7 @@ void Track::stop()
 	m_transportSource.stop();
 	setPosition(0);
 	stopTimer();
+	m_playingStateChangedCallback(false);
 }
 
 void Track::setPosition(double position)
@@ -280,8 +285,10 @@ void Track::timerCallback()
 {
 	callPositionCallbacks(m_transportSource.getCurrentPosition());
 
-	if (!m_transportSource.isPlaying())
+	if (!m_transportSource.isPlaying()) {
 		stopTimer();
+		m_playingStateChangedCallback(false);
+	}
 }
 
 void Track::callPositionCallbacks(double position)

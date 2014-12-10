@@ -46,6 +46,7 @@ public:
 	void addLongestDurationChangedCallback(LongestDurationChangedCallback durationCallback);
 	void addPositionCallback(Track::PositionCallback positionCallback);
 	void addChannelCountChangedCallback(Track::ChannelCountChangedCallback channelCountChangedCallback);
+	void addPlayingStateChangedCallback(Track::PlayingStateChangedCallback playingStateChangedCallback);
 
 	std::vector<std::pair<char, int>> createMapping();
 
@@ -56,6 +57,7 @@ protected:
 	std::vector<Track::PositionCallback> m_positionCallbacks;
 	std::vector<Track::ChannelCountChangedCallback> m_channelCountChangedCallbacks;
 	std::vector<Track::PositionCallbackRegistrationToken> m_positionCallbackRegistrationTokens;
+	std::vector<Track::PlayingStateChangedCallback> m_playingStateChangedCallback;
 	Track* m_longestTrack;
 
 private:

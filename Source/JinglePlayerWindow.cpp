@@ -101,6 +101,11 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputC
 	};
 	m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 
+	Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
+		m_playButton->setImages(isPlaying ? m_stopImage : m_playImage);
+	};
+	m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
+
 }
 
 void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster* /*source*/)

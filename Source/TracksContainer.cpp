@@ -26,6 +26,11 @@ void TracksContainer::addChannelCountChangedCallback(Track::ChannelCountChangedC
 	m_channelCountChangedCallbacks.push_back(channelCountChangedCallback);
 }
 
+void TracksContainer::addPlayingStateChangedCallback(Track::PlayingStateChangedCallback playingStateChangedCallback)
+{
+	m_playingStateChangedCallback.push_back(playingStateChangedCallback);
+}
+
 TracksContainer::~TracksContainer()
 {
 	m_mixer->getMixerAudioSource().removeInputSource(&m_tracksMixer);
@@ -173,7 +178,21 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 			callback();
 	};
 
-	m_tracks.emplace_back(new Track (m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged));
+	Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
+		if (isPlaying)
+			for (auto const& callback: m_playingStateChangedCallback)
+				callback(true);
+		else {
+			bool isAnyPlaying = std::any_of(m_tracks.cbegin(), m_tracks.cend(), [](const std::unique_ptr<Track>& track) {
+				return track->isPlaying();
+			});
+			if (!isAnyPlaying)
+				for (auto const& callback: m_playingStateChangedCallback)
+					callback(false);
+		}
+	};
+
+	m_tracks.emplace_back(new Track (m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged, playingStateChangedCallback));
 	if (element != nullptr)
 		m_tracks.back()->restoreFromXml(*element);
 

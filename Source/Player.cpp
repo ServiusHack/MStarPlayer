@@ -279,7 +279,10 @@ bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/
 {
 	if (key == KeyPress::spaceKey)
 	{
-		m_tracksContainer.play();
+		if (m_tracksContainer.isPlaying())
+			m_tracksContainer.stop();
+		else
+			m_tracksContainer.play();
 		return true;
 	}
 
