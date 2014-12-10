@@ -120,6 +120,12 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 		m_tableListBox->setCurrentDuration(duration);
 	};
 	m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
+
+	addAndMakeVisible(m_resizeBar = new StretchableLayoutResizerBar(&m_layout, 1, false));
+
+	m_layout.setItemLayout (0, 60, -1.0, -0.3); // playlist
+	m_layout.setItemLayout (1, 7, 7, 7); // resize bar
+	m_layout.setItemLayout (2, 100, -1.0, -0.7); // tracks
 }
 
 void PlaylistPlayerWindow::paint (Graphics& g)
@@ -147,14 +153,11 @@ void PlaylistPlayerWindow::resized()
 #undef PLACE_BUTTON
 	m_digitalDisplay->setBounds(6 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
 
-	int top = buttonHeight;
-	if (m_tableListBox->isVisible()) {
-		int playlistHeight = 100;
-		m_tableListBox->setBounds(0, top, getWidth(), playlistHeight);
-		top += playlistHeight;
-	}
+	Component* components[] = { m_tableListBox, m_resizeBar, m_tracksViewport };
+	m_layout.layOutComponents(components, 3,
+		0, buttonHeight, getWidth(), getHeight() - buttonHeight,
+		true, true);
 
-	m_tracksViewport->setBounds(0, top, getWidth(), getHeight() - top);
 	m_tracks->setBounds(0, 0, m_tracksViewport->getMaximumVisibleWidth(), m_tracks->getHeight());
 }
 

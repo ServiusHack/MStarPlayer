@@ -49,6 +49,7 @@ private:
 	ScopedPointer<TracksComponent> m_tracks;
 	ScopedPointer<Viewport>    m_tracksViewport;
 	ScopedPointer<PlaylistTable> m_tableListBox;
+	ScopedPointer<StretchableLayoutResizerBar> m_resizeBar;
 
 	TracksContainer* m_tracksContainer;
 
@@ -59,6 +60,8 @@ private:
 	InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
 	InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;
 	InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
+
+	StretchableLayoutManager m_layout;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };
