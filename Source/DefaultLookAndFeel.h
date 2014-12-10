@@ -6,7 +6,9 @@ class DefaultLookAndFeel
 	: public LookAndFeel_V3
 {
 public:
-	void drawProgressBar (Graphics& g, ProgressBar& progressBar,
+	virtual void drawProgressBar (Graphics& g, ProgressBar& progressBar,
 						  int width, int height,
-						  double progress, const String& textToShow);
+						  double progress, const String& textToShow) override;
+
+    virtual void drawLevelMeter (Graphics&, int width, int height, float level) override;
 };
