@@ -31,6 +31,11 @@ void TracksContainer::addPlayingStateChangedCallback(Track::PlayingStateChangedC
 	m_playingStateChangedCallback.push_back(playingStateChangedCallback);
 }
 
+void TracksContainer::addTrackRemovedCallback(TrackRemovedCallback callback)
+{
+	m_trackRemovedCallbacks.push_back(callback);
+}
+
 TracksContainer::~TracksContainer()
 {
 	m_mixer->getMixerAudioSource().removeInputSource(&m_tracksMixer);
@@ -234,4 +239,26 @@ bool TracksContainer::isPlaying() const
 		if (m_tracks[i]->isPlaying())
 			return true;
 	return false;
+}
+
+void TracksContainer::removeTrack(Track* track)
+{
+	auto it = std::find_if(m_tracks.begin(), m_tracks.end(), [track](const std::unique_ptr<Track>& probe) {
+		return probe.get() == track;
+	});
+	jassert(it != m_tracks.cend());
+
+	for (auto it2 = it; it2 != m_tracks.end(); ++it2)
+		(*it2)->setTrackIndex((*it2)->getTrackIndex() - 1);
+
+	// keep track alive so unregistering still works
+	std::unique_ptr<Track> tmpTrack = std::move(*it);
+	m_tracks.erase(it);
+
+	for (auto const callback: m_trackRemovedCallbacks)
+		callback(tmpTrack->getTrackIndex());
+
+	for (auto const callback: m_channelCountChangedCallbacks)
+		callback();
+
 }

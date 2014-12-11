@@ -229,3 +229,21 @@ void PlaylistModel::restoreFromXml(const XmlElement& element)
 
 	m_reloadedCallback();
 }
+
+bool PlaylistModel::trackHasFiles(int trackIndex) const
+{
+	trackIndex -= 1; // adjust index to zero-based
+	return std::any_of(m_playlist.cbegin(), m_playlist.cend(), [trackIndex](const PlaylistEntry& entry) {
+		if (trackIndex < entry.trackConfigs.size())
+			return entry.trackConfigs.at(trackIndex).file != File::nonexistent;
+		else
+			return false;
+	});
+}
+
+void PlaylistModel::removeTrack(int trackIndex)
+{
+	std::for_each(m_playlist.begin(), m_playlist.end(), [trackIndex](PlaylistEntry& entry) {
+		entry.trackConfigs.erase(std::next(entry.trackConfigs.begin(), trackIndex));
+	});
+}

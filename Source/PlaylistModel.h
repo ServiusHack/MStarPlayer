@@ -47,6 +47,10 @@ public:
 
 	void setReloadedCallback(ReloadedCallback);
 
+	bool trackHasFiles(int track) const;
+	
+	void removeTrack(int trackIndex);
+
 private:
 	void showPopup(int rowNumber, bool enableInsert, bool enableDelete);
 	void showEditDialog(int rowNumber);

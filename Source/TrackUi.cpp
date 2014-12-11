@@ -2,12 +2,14 @@
 
 #include <sstream>
 
-TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback)
+TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback)
 	: m_track(track)
 	, m_longestDuration(0)
 	, m_progress(0)
 	, m_applicationProperties(applicationProperties)
 	, m_setPositionCallback(setPositionCallback)
+	, m_removeTrackCallback(removeTrackCallback)
+	, m_trackHasFilesCallback(trackHasFilesCallback)
 {
 	m_idLabel = new Label();
 	addAndMakeVisible(m_idLabel);
@@ -68,6 +70,7 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
 
 TrackUi::~TrackUi()
 {
+	m_track.removeChangeListener(this);
 	m_volumeSlider->removeListener(this);
 }
 
@@ -102,6 +105,7 @@ void TrackUi::buttonClicked(Button *button)
 	else if (button == m_editButton) {
 		PopupMenu m;
 		m.addItem (1, "edit track");
+		m.addItem (5, "delete track", !m_trackHasFilesCallback(m_track.getTrackIndex()));
 		m.addItem (2, "open file");
 		m.addItem (3, "edit file");
 		m.addItem (4, "remove file");
@@ -153,7 +157,11 @@ void TrackUi::buttonClicked(Button *button)
 
 			if (result == 1)
 				m_track.unloadFile();
+
+			break;
 		}
+		case 5:
+			m_removeTrackCallback(&m_track);
 		}
 	}
 }

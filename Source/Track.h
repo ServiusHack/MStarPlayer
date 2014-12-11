@@ -128,6 +128,7 @@ private:
 // track ID
 public:
 	int getTrackIndex() const;
+	void setTrackIndex(int index);
 private:
 	int m_trackIndex;
 

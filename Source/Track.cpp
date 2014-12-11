@@ -350,6 +350,11 @@ int Track::getTrackIndex() const
 	return m_trackIndex;
 }
 
+void Track::setTrackIndex(int index)
+{
+	m_trackIndex = index;
+}
+
 AudioThumbnail& Track::getAudioThumbnail()
 {
 	return m_audioThumbnail;

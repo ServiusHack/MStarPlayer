@@ -88,13 +88,13 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 	m_digitalDisplay->setColour(Label::textColourId, Colours::red);
 	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
 
-
 	addAndMakeVisible(m_tracksViewport = new Viewport());
-	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(*m_tracksContainer, applicationProperties), false);
+	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(*m_tracksContainer, applicationProperties,
+		std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
+		std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1)), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
 
 	// playlist
-
 	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const std::vector<TrackConfig>& trackConfigs, bool play) {
 		std::vector<TrackConfig> oldTrackConfigs = m_tracksContainer->getTrackConfigs();
 		m_tracksContainer->setTrackConfigs(trackConfigs);

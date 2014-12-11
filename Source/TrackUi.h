@@ -16,8 +16,10 @@ class TrackUi
 {
 public:
 	typedef std::function<void(double)> SetPositionCallback;
+	typedef std::function<void(Track*)> RemoveTrackCallback;
+	typedef std::function<bool(int)> TrackHasFilesCallback;
 
-	TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback);
+	TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback);
 	~TrackUi();
 
 	void changeListenerCallback(ChangeBroadcaster *source);
@@ -25,8 +27,9 @@ public:
 	void setLongestDuration(double duration);
 	void positionChanged(double position);
 
-private:
 	void updateIdText();
+
+private:
 
 	Track& m_track;
 
@@ -46,6 +49,10 @@ private:
 	ApplicationProperties& m_applicationProperties;
 
 	SetPositionCallback m_setPositionCallback;
+
+	RemoveTrackCallback m_removeTrackCallback;
+
+	TrackHasFilesCallback m_trackHasFilesCallback;
 
 // Button::Listener
 public:
