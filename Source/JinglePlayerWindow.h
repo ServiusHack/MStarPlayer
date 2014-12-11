@@ -2,7 +2,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MixerComponent.h"
-#include "ChannelMapping.h"
+#include "ChannelMappingDialog.h"
 #include "Utils.h"
 #include "PlayerEditDialog.h"
 #include "OutputChannelNames.h"

@@ -3,7 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "TracksComponent.h"
-#include "ChannelMapping.h"
+#include "ChannelMappingDialog.h"
 #include "Utils.h"
 #include "PlayerEditDialog.h"
 #include "PlaylistTable.h"

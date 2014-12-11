@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "ChannelMapping.h"
+#include "ChannelMappingDialog.h"
 
 
 

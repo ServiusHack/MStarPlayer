@@ -1,6 +1,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "EditSettings.h"
+#include "EditSettingsDialog.h"
 
 
 EditSettingsWindow::EditSettingsWindow(ApplicationProperties& applicationProperties)

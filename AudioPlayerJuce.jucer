@@ -11,8 +11,6 @@
         <FILE id="e5rN3f" name="audio-volume-medium.png" compile="0" resource="1"
               file="Icons/oxygen/audio-volume-medium.png"/>
         <FILE id="AfCXL8" name="configure.png" compile="0" resource="1" file="Icons/oxygen/configure.png"/>
-        <FILE id="GxEw3o" name="applications-system.png" compile="0" resource="1"
-              file="Icons/oxygen/applications-system.png"/>
         <FILE id="PSL3B2" name="audio-headphones.png" compile="0" resource="1"
               file="Icons/oxygen/audio-headphones.png"/>
         <FILE id="LOfA33" name="audio-volume-muted.png" compile="0" resource="1"
@@ -32,19 +30,63 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
-      <FILE id="p1XpVy" name="EditSettings.cpp" compile="1" resource="0"
-            file="Source/EditSettings.cpp"/>
-      <FILE id="CmAMS3" name="EditSettings.h" compile="0" resource="0" file="Source/EditSettings.h"/>
-      <FILE id="nJSTpx" name="InterPlayerCommunication.h" compile="0" resource="0"
-            file="Source/InterPlayerCommunication.h"/>
-      <FILE id="VuWSy2" name="SubchannelPlayer.h" compile="0" resource="0"
-            file="Source/SubchannelPlayer.h"/>
-      <FILE id="gfU9MK" name="TracksContainer.cpp" compile="1" resource="0"
-            file="Source/TracksContainer.cpp"/>
-      <FILE id="GUfNuG" name="TracksContainer.h" compile="0" resource="0"
-            file="Source/TracksContainer.h"/>
-      <FILE id="xTolkD" name="MixerControlable.h" compile="0" resource="0"
-            file="Source/MixerControlable.h"/>
+      <GROUP id="{F77B95C1-AB4A-6CDF-7261-C2BEEFA2CBEE}" name="Player">
+        <FILE id="vCosBz" name="PlayerEditDialog.cpp" compile="1" resource="0"
+              file="Source/PlayerEditDialog.cpp"/>
+        <FILE id="PItGjI" name="PlayerEditDialog.h" compile="0" resource="0"
+              file="Source/PlayerEditDialog.h"/>
+        <FILE id="gB336a" name="Player.cpp" compile="1" resource="0" file="Source/Player.cpp"/>
+        <FILE id="OBFTZF" name="Player.h" compile="0" resource="0" file="Source/Player.h"/>
+        <FILE id="CjxKBf" name="ChannelMappingDialog.cpp" compile="1" resource="0"
+              file="Source/ChannelMappingDialog.cpp"/>
+        <FILE id="t01lMb" name="ChannelMappingDialog.h" compile="0" resource="0"
+              file="Source/ChannelMappingDialog.h"/>
+        <FILE id="thbyOJ" name="JinglePlayerWindow.cpp" compile="1" resource="0"
+              file="Source/JinglePlayerWindow.cpp"/>
+        <FILE id="rL5aSl" name="JinglePlayerWindow.h" compile="0" resource="0"
+              file="Source/JinglePlayerWindow.h"/>
+        <FILE id="qxV0Yk" name="PlaylistPlayerWindow.cpp" compile="1" resource="0"
+              file="Source/PlaylistPlayerWindow.cpp"/>
+        <FILE id="LNf3Xd" name="PlaylistPlayerWindow.h" compile="0" resource="0"
+              file="Source/PlaylistPlayerWindow.h"/>
+        <FILE id="nJSTpx" name="InterPlayerCommunication.h" compile="0" resource="0"
+              file="Source/InterPlayerCommunication.h"/>
+        <GROUP id="{DC708048-A62E-7E29-DEED-0F0BC48DFD2E}" name="Playlist">
+          <FILE id="EfjB2Q" name="PlaylistEntry.cpp" compile="1" resource="0"
+                file="Source/PlaylistEntry.cpp"/>
+          <FILE id="friTmZ" name="PlaylistEntry.h" compile="0" resource="0" file="Source/PlaylistEntry.h"/>
+          <FILE id="lAektu" name="PlaylistEntryDialog.cpp" compile="1" resource="0"
+                file="Source/PlaylistEntryDialog.cpp"/>
+          <FILE id="Gnsv6r" name="PlaylistEntryDialog.h" compile="0" resource="0"
+                file="Source/PlaylistEntryDialog.h"/>
+          <FILE id="YZg235" name="PlaylistTable.cpp" compile="1" resource="0"
+                file="Source/PlaylistTable.cpp"/>
+          <FILE id="TBykeh" name="PlaylistTable.h" compile="0" resource="0" file="Source/PlaylistTable.h"/>
+          <FILE id="RtqfR0" name="PlaylistModel.cpp" compile="1" resource="0"
+                file="Source/PlaylistModel.cpp"/>
+          <FILE id="DZqG2e" name="PlaylistModel.h" compile="0" resource="0" file="Source/PlaylistModel.h"/>
+        </GROUP>
+        <GROUP id="{314572EB-0041-436D-DED0-FBC4C8F7A38B}" name="Tracks Backend">
+          <FILE id="MbiCPb" name="Track.cpp" compile="1" resource="0" file="Source/Track.cpp"/>
+          <FILE id="JMGgdW" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
+          <FILE id="gfU9MK" name="TracksContainer.cpp" compile="1" resource="0"
+                file="Source/TracksContainer.cpp"/>
+          <FILE id="GUfNuG" name="TracksContainer.h" compile="0" resource="0"
+                file="Source/TracksContainer.h"/>
+        </GROUP>
+        <GROUP id="{FDE83201-63E0-AB5E-F0CB-EEF929E10440}" name="Tracks">
+          <FILE id="S1uxar" name="TrackEditDialog.cpp" compile="1" resource="0"
+                file="Source/TrackEditDialog.cpp"/>
+          <FILE id="ejt3rD" name="TrackEditDialog.h" compile="0" resource="0"
+                file="Source/TrackEditDialog.h"/>
+          <FILE id="wotj4T" name="TrackUi.cpp" compile="1" resource="0" file="Source/TrackUi.cpp"/>
+          <FILE id="ugc75T" name="TrackUi.h" compile="0" resource="0" file="Source/TrackUi.h"/>
+          <FILE id="XPNZmU" name="TracksComponent.cpp" compile="1" resource="0"
+                file="Source/TracksComponent.cpp"/>
+          <FILE id="CSEcYH" name="TracksComponent.h" compile="0" resource="0"
+                file="Source/TracksComponent.h"/>
+        </GROUP>
+      </GROUP>
       <GROUP id="{866D1597-278B-B850-8DA8-F5FA7648EA97}" name="AudioSources">
         <FILE id="XPTtIf" name="ChannelRemappingAudioSourceWithVolume.cpp"
               compile="1" resource="0" file="Source/ChannelRemappingAudioSourceWithVolume.cpp"/>
@@ -65,33 +107,6 @@
         <FILE id="jS4Ju4" name="AudioConfiguration.cpp" compile="1" resource="0"
               file="Source/AudioConfiguration.cpp"/>
       </GROUP>
-      <GROUP id="{DC708048-A62E-7E29-DEED-0F0BC48DFD2E}" name="PlaylistPlayer">
-        <FILE id="EfjB2Q" name="PlaylistEntry.cpp" compile="1" resource="0"
-              file="Source/PlaylistEntry.cpp"/>
-        <FILE id="friTmZ" name="PlaylistEntry.h" compile="0" resource="0" file="Source/PlaylistEntry.h"/>
-        <FILE id="wotj4T" name="TrackUi.cpp" compile="1" resource="0" file="Source/TrackUi.cpp"/>
-        <FILE id="ugc75T" name="TrackUi.h" compile="0" resource="0" file="Source/TrackUi.h"/>
-        <FILE id="lAektu" name="PlaylistEntryDialog.cpp" compile="1" resource="0"
-              file="Source/PlaylistEntryDialog.cpp"/>
-        <FILE id="Gnsv6r" name="PlaylistEntryDialog.h" compile="0" resource="0"
-              file="Source/PlaylistEntryDialog.h"/>
-        <FILE id="YZg235" name="PlaylistTable.cpp" compile="1" resource="0"
-              file="Source/PlaylistTable.cpp"/>
-        <FILE id="TBykeh" name="PlaylistTable.h" compile="0" resource="0" file="Source/PlaylistTable.h"/>
-        <FILE id="RtqfR0" name="PlaylistModel.cpp" compile="1" resource="0"
-              file="Source/PlaylistModel.cpp"/>
-        <FILE id="DZqG2e" name="PlaylistModel.h" compile="0" resource="0" file="Source/PlaylistModel.h"/>
-        <FILE id="LNf3Xd" name="PlaylistPlayerWindow.h" compile="0" resource="0"
-              file="Source/PlaylistPlayerWindow.h"/>
-        <FILE id="qxV0Yk" name="PlaylistPlayerWindow.cpp" compile="1" resource="0"
-              file="Source/PlaylistPlayerWindow.cpp"/>
-        <FILE id="XPNZmU" name="TracksComponent.cpp" compile="1" resource="0"
-              file="Source/TracksComponent.cpp"/>
-        <FILE id="CSEcYH" name="TracksComponent.h" compile="0" resource="0"
-              file="Source/TracksComponent.h"/>
-        <FILE id="MbiCPb" name="Track.cpp" compile="1" resource="0" file="Source/Track.cpp"/>
-        <FILE id="JMGgdW" name="Track.h" compile="0" resource="0" file="Source/Track.h"/>
-      </GROUP>
       <GROUP id="{865AC646-72F7-2874-4DCD-D4F50884E329}" name="Mixer">
         <FILE id="W5gwzk" name="ChannelMixerFader.cpp" compile="1" resource="0"
               file="Source/ChannelMixerFader.cpp"/>
@@ -105,10 +120,6 @@
               file="Source/PlayerMixerFader.cpp"/>
         <FILE id="ePix8J" name="PlayerMixerFader.h" compile="0" resource="0"
               file="Source/PlayerMixerFader.h"/>
-        <FILE id="S1uxar" name="TrackEditDialog.cpp" compile="1" resource="0"
-              file="Source/TrackEditDialog.cpp"/>
-        <FILE id="ejt3rD" name="TrackEditDialog.h" compile="0" resource="0"
-              file="Source/TrackEditDialog.h"/>
         <FILE id="NhXE8w" name="MixerComponent.cpp" compile="1" resource="0"
               file="Source/MixerComponent.cpp"/>
         <FILE id="tfmUCI" name="MixerComponent.h" compile="0" resource="0"
@@ -118,9 +129,6 @@
         <FILE id="JJoZFb" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
         <FILE id="P9Ge44" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
       </GROUP>
-      <FILE id="e71wzv" name="VolumeSlider.cpp" compile="1" resource="0"
-            file="Source/VolumeSlider.cpp"/>
-      <FILE id="D8dT2g" name="VolumeSlider.h" compile="0" resource="0" file="Source/VolumeSlider.h"/>
       <GROUP id="{797CF8BB-665B-46ED-3A1A-9FAD5DADBBF3}" name="LookAndFeels">
         <FILE id="qom8he" name="DefaultLookAndFeel.cpp" compile="1" resource="0"
               file="Source/DefaultLookAndFeel.cpp"/>
@@ -131,24 +139,21 @@
         <FILE id="s0dyuB" name="DarkLookAndFeel.h" compile="0" resource="0"
               file="Source/DarkLookAndFeel.h"/>
       </GROUP>
+      <FILE id="p1XpVy" name="EditSettingsDialog.cpp" compile="1" resource="0"
+            file="Source/EditSettingsDialog.cpp"/>
+      <FILE id="CmAMS3" name="EditSettingsDialog.h" compile="0" resource="0"
+            file="Source/EditSettingsDialog.h"/>
+      <FILE id="VuWSy2" name="SubchannelPlayer.h" compile="0" resource="0"
+            file="Source/SubchannelPlayer.h"/>
+      <FILE id="xTolkD" name="MixerControlable.h" compile="0" resource="0"
+            file="Source/MixerControlable.h"/>
       <FILE id="PdkUrs" name="CrashDumper.cpp" compile="1" resource="0" file="Source/CrashDumper.cpp"/>
       <FILE id="kXD1G3" name="CrashDumper.h" compile="0" resource="0" file="Source/CrashDumper.h"/>
       <FILE id="fhQ0yw" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
       <FILE id="dTMQkM" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
-      <FILE id="vCosBz" name="PlayerEditDialog.cpp" compile="1" resource="0"
-            file="Source/PlayerEditDialog.cpp"/>
-      <FILE id="PItGjI" name="PlayerEditDialog.h" compile="0" resource="0"
-            file="Source/PlayerEditDialog.h"/>
-      <FILE id="gB336a" name="Player.cpp" compile="1" resource="0" file="Source/Player.cpp"/>
-      <FILE id="OBFTZF" name="Player.h" compile="0" resource="0" file="Source/Player.h"/>
-      <FILE id="CjxKBf" name="ChannelMapping.cpp" compile="1" resource="0"
-            file="Source/ChannelMapping.cpp"/>
-      <FILE id="t01lMb" name="ChannelMapping.h" compile="0" resource="0"
-            file="Source/ChannelMapping.h"/>
-      <FILE id="rL5aSl" name="JinglePlayerWindow.h" compile="0" resource="0"
-            file="Source/JinglePlayerWindow.h"/>
-      <FILE id="thbyOJ" name="JinglePlayerWindow.cpp" compile="1" resource="0"
-            file="Source/JinglePlayerWindow.cpp"/>
+      <FILE id="e71wzv" name="VolumeSlider.cpp" compile="1" resource="0"
+            file="Source/VolumeSlider.cpp"/>
+      <FILE id="D8dT2g" name="VolumeSlider.h" compile="0" resource="0" file="Source/VolumeSlider.h"/>
       <FILE id="YC8tG2" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="ijWbEQ" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

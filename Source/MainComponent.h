@@ -9,7 +9,7 @@
 #include "DarkLookAndFeel.h"
 #include "AudioConfiguration.h"
 #include "DefaultLookAndFeel.h"
-#include "EditSettings.h"
+#include "EditSettingsDialog.h"
 
 class MyMultiDocumentPanel : public MultiDocumentPanel {
 public:
