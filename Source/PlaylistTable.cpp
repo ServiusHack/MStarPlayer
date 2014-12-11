@@ -4,7 +4,6 @@
 
 PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback, PlaylistModel& playlistModel)
 	: m_callback(callback)
-	, m_previousRow(-1)
 	, m_playNext(false)
 	, m_model(playlistModel)
 {
@@ -23,10 +22,7 @@ PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback, PlaylistMode
 	m_model.add("", 0);
 	updateContent();
 
-	selectRow(0);
-
 	playlistModel.setReloadedCallback([&]() {
-		m_previousRow = -1;
 		selectedRowsChanged(getSelectedRow());
 	});
 }
@@ -37,12 +33,7 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
 		return;
 
 	const std::vector<TrackConfig>& trackConfigs = static_cast<PlaylistModel*>(getModel())->getTrackConfigs(lastRowSelected);
-	std::vector<TrackConfig> oldTrackConfigs = m_callback(trackConfigs, m_playNext);
-
-	if (m_previousRow != -1)
-		static_cast<PlaylistModel*>(getModel())->setTrackConfigs(m_previousRow, oldTrackConfigs);
-
-	m_previousRow = lastRowSelected;
+	m_callback(trackConfigs, m_playNext);
 }
 
 void PlaylistTable::changeListenerCallback(ChangeBroadcaster* /*source*/)

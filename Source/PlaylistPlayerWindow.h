@@ -37,6 +37,8 @@ public:
 
 	void setShowPlaylist(bool showPlaylist);
 
+	int getSelectedRow() const;
+
 private:
 
 	ScopedPointer<ImageButton> m_playButton;

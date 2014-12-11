@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback)
 	: m_trackIndex(trackIndex)
 	, m_stereo(stereo)
 	, m_tracksMixer(tracksMixer)
@@ -26,12 +26,14 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_playerMute(mute)
 	, m_channelCountChangedCallback(channelCountChangedCallback)
 	, m_playingStateChangedCallback(playingStateChangedCallback)
+	, m_trackConfigChangedCallback(trackConfigChangedCallback)
 	, m_mute(false)
 	, m_solo(false)
 	, m_audioThumbnailCache(1)
 	, m_outputChannels(outputChannels)
 	, m_remappingAudioSource(&m_transportSource, false)
 	, m_audioThumbnail(1000, m_formatManager, m_audioThumbnailCache)
+	, m_loadingTrackConfig(false)
 {
 	m_formatManager.registerBasicFormats();
 	m_thread.startThread(3);
@@ -213,7 +215,9 @@ void Track::setFileChangedCallback(FileChangedCallback fileChangedCallback)
 
 void Track::loadTrackConfig(const TrackConfig& config)
 {
+	m_loadingTrackConfig = true;
 	loadFileIntoTransport(File(config.file));
+	m_loadingTrackConfig = false;
 }
 
 TrackConfig Track::getTrackConfig()
@@ -269,6 +273,9 @@ void Track::loadFileIntoTransport(File audioFile)
 	m_durationChangedCallback();
 
 	m_fileChangedCallback(m_audioFile.getFileName());
+
+	if (!m_loadingTrackConfig)
+		m_trackConfigChangedCallback();
 }
 
 void Track::reloadFile()

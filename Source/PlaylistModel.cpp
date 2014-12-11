@@ -244,6 +244,7 @@ bool PlaylistModel::trackHasFiles(int trackIndex) const
 void PlaylistModel::removeTrack(int trackIndex)
 {
 	std::for_each(m_playlist.begin(), m_playlist.end(), [trackIndex](PlaylistEntry& entry) {
-		entry.trackConfigs.erase(std::next(entry.trackConfigs.begin(), trackIndex));
+		if (trackIndex < entry.trackConfigs.size())
+			entry.trackConfigs.erase(std::next(entry.trackConfigs.begin(), trackIndex));
 	});
 }

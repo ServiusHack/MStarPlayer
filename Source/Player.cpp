@@ -13,7 +13,7 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 	, m_soloMute(false)
 	, m_mute(mute)
 	, m_type(type)
-	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels())
+	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this))
 	, m_playlistPlayer(&m_tracksContainer, outputChannelNames, type == PlayerType::Playlist, 
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
@@ -287,4 +287,9 @@ bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/
 	}
 
 	return false;
+}
+
+void Player::trackConfigChanged()
+{
+	playlistModel.setTrackConfigs(m_playlistPlayer.getSelectedRow(), m_tracksContainer.getTrackConfigs());
 }

@@ -20,8 +20,9 @@ public:
 	typedef std::function<void()> ChannelCountChangedCallback;
 	typedef std::function<void(String)> FileChangedCallback;
 	typedef std::function<void(bool)> PlayingStateChangedCallback;
+	typedef std::function<void()> TrackConfigChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback);
 	~Track();
 
 	void play();
@@ -151,12 +152,15 @@ private:
 	ChannelCountChangedCallback m_channelCountChangedCallback;
 	FileChangedCallback m_fileChangedCallback;
 	PlayingStateChangedCallback m_playingStateChangedCallback;
+	TrackConfigChangedCallback m_trackConfigChangedCallback;
 
 public:
 	AudioThumbnail& getAudioThumbnail();
 private:
 	AudioThumbnailCache m_audioThumbnailCache;
 	AudioThumbnail m_audioThumbnail;
+
+	bool m_loadingTrackConfig;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 };

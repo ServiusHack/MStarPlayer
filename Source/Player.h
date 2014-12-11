@@ -86,6 +86,8 @@ private:
 	void showEditDialog();
 	void configureChannels();
 
+	void trackConfigChanged();
+
 	MixerComponent* m_mixer;
 	OutputChannelNames* m_outputChannelNames;
 

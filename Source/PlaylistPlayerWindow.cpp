@@ -96,17 +96,16 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 
 	// playlist
 	PlaylistTable::PlaylistEntryChangedCallback playlistCallback = [&](const std::vector<TrackConfig>& trackConfigs, bool play) {
-		std::vector<TrackConfig> oldTrackConfigs = m_tracksContainer->getTrackConfigs();
 		m_tracksContainer->setTrackConfigs(trackConfigs);
 		if (play)
 			m_playButton->triggerClick();
-		return oldTrackConfigs;
 	};
 
 	addAndMakeVisible(m_tableListBox = new PlaylistTable(playlistCallback, playlistModel));
 	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
 	m_tableListBox->setOutlineThickness(1);
 	m_tableListBox->setVisible(showPlaylist);
+	m_tableListBox->selectRow(0);
 
 	// tracks
 	Track::PositionCallback positionCallback = [&](double position, bool finished) {
@@ -231,4 +230,9 @@ void PlaylistPlayerWindow::setShowPlaylist(bool showPlaylist)
 	m_tableListBox->setVisible(showPlaylist);
 	resized();
 	repaint();
+}
+
+int PlaylistPlayerWindow::getSelectedRow() const
+{
+	return m_tableListBox->getSelectedRow();
 }
