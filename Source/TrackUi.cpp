@@ -227,7 +227,7 @@ void TrackUi::loadFile()
 
 	File audioFile = File(myChooser.getResult());
 
-	AudioFormatReader* reader = m_track.getAudioFormatManager().createReaderFor(audioFile);
+	ScopedPointer<AudioFormatReader> reader = m_track.getAudioFormatManager().createReaderFor(audioFile);
 
 	if (reader != nullptr) {
 		if (reader->numChannels > 2) {
@@ -239,44 +239,20 @@ void TrackUi::loadFile()
 		}
 
 		if (!m_track.isStereo() && reader->numChannels != 1) {
-			int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
 				"AudioPlayerJuce",
-				"You have selected a stereo file for a mono track.",
-				"Convert to stereo track",
-				"Abort",
-				this,
-				nullptr
+				String::formatted("The selected file has %d channels but this is a mono track.", reader->numChannels)
 				);
-			switch (result) {
-			case 1:
-				m_track.setStereo(true);
-				updateIdText();
-				break;
-			default:
-				return;
-			}
+			return;
 		}
 
 		if (m_track.isStereo() && reader->numChannels != 2) {
-			int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
 				"AudioPlayerJuce",
-				"You have selected a mono file for a stereo track.",
-				"Convert to mono track",
-				"Abort",
-				this,
-				nullptr
+				String::formatted("The selected file has %d channel(s) but this is a stereo track.", reader->numChannels)
 				);
-			switch (result) {
-			case 1:
-				m_track.setStereo(false);
-				updateIdText();
-				break;
-			default:
-				return;
-			}
+			return;
 		}
-
-		delete reader;
 	}
 
 	m_track.loadFileIntoTransport(audioFile);
