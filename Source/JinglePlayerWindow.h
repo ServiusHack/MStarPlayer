@@ -9,7 +9,6 @@
 #include "TracksContainer.h"
 #include "InterPlayerCommunication.h"
 
-//==============================================================================
 /** A jingle player shown within the application.
 
     Next to the PlaylistPlayerWindows this is a player that can be added by
@@ -30,25 +29,29 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	JinglePlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback);
+	JinglePlayerWindow(TracksContainer* tracksContainer, OutputChannelNames* outputChannelNames, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback);
 
+	void setColor(const Colour& color);
+
+	void setUserImage(const File& file);
+
+// Component overrides
+public:
     virtual void resized() override;
 	virtual void paint(Graphics& g) override;
-
     /** Show the configuration menu. */
     virtual void mouseDown (const MouseEvent & event) override;
 
+// Button::Listener
+public:
     /** Play or stop the audio playback. */
     virtual void buttonClicked(Button * /*button*/) override;
 
-	void changeListenerCallback(ChangeBroadcaster *source);
-
-	void setColor(Colour color);
-
-	void setUserImage(File file);
+// ChangeListener
+public:
+	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
 
 private:
-
     // ui values
     double m_progress; // the progress of the playback
 	double m_totalLength;
@@ -87,5 +90,5 @@ private:
 
 	AudioFormatManager m_formatManager;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JinglePlayerWindow)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(JinglePlayerWindow)
 };

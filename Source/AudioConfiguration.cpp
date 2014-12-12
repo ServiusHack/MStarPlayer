@@ -7,6 +7,7 @@ class ChannelNameTextEditor
 {
 public:
 	ChannelNameTextEditor()
+		: m_row(0)
 	{
 		setBoundsInset(BorderSize<int>(2));
 	}
@@ -16,7 +17,7 @@ public:
 		m_row = newRow;
 	}
 
-	int getRow()
+	int getRow() const
 	{
 		return m_row;
 	}
@@ -26,7 +27,7 @@ private:
 };
 
 AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames)
-	: DialogWindow ("Configure Audio", Colours::lightgrey, true, true)
+	: DialogWindow("Configure Audio", Colours::lightgrey, true, true)
 {
 	setContentOwned(new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames), true);
 	centreWithSize(getWidth(), getHeight());
@@ -115,7 +116,6 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 	m_tabbedComponent->addTab("Channel Names", Colour(0xffffffff), m_tableListBox, true);
 	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
 	m_tableListBox->setOutlineThickness(1);
-
 	m_tableListBox->setModel(m_channelNames);
 
 	// set the table header columns
@@ -137,6 +137,7 @@ void AudioConfigurationComponent::resized()
 	const static int buttonWidth = 80;
 	const static int buttonHeight = 24;
 	const static int padding = 10;
+
 	m_tabbedComponent->setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
 	m_closeButton->setBounds(
 		(getWidth() - buttonWidth) / 2,

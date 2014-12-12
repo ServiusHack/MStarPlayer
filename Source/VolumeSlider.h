@@ -12,10 +12,12 @@ class VolumeSlider : public Slider
 public:
 	VolumeSlider();
 
-	virtual void paint(Graphics&) override;
-	virtual double snapValue(double attemptedValue, DragMode dragMode) override;
-
 protected:
 	// Distance in gain from 0 when to snap to 0.
 	double m_snapDistance;
+
+// Slider
+public:
+	virtual void paint(Graphics&) override;
+	virtual double snapValue(double attemptedValue, DragMode dragMode) override;
 };

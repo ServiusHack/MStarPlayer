@@ -1,6 +1,6 @@
 #include "TracksContainer.h"
 
-TracksContainer::TracksContainer(MixerComponent* mixer, int outputChannels, Track::TrackConfigChangedCallback trackConfigChangedCallback)
+TracksContainer::TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_gain(1.0f)
@@ -44,26 +44,22 @@ TracksContainer::~TracksContainer()
 
 void TracksContainer::play()
 {
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->play();
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::play, std::placeholders::_1));
 }
 
 void TracksContainer::pause()
 {
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->pause();
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::pause, std::placeholders::_1));
 }
 
 void TracksContainer::stop()
 {
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->stop();
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::stop, std::placeholders::_1));
 }
 
 void TracksContainer::setPosition(double position)
 {
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->setPosition(position);
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setPosition, std::placeholders::_1, position));
 }
 
 size_t TracksContainer::size() const
@@ -81,22 +77,20 @@ void TracksContainer::clear()
 	std::vector<std::unique_ptr<Track>> tracks;
 	tracks.swap(m_tracks);
 
-	for (auto const callback: m_channelCountChangedCallbacks)
+	for (const auto& callback: m_channelCountChangedCallbacks)
 		callback();
 }
 
 void TracksContainer::setOutputChannels(int outputChannels)
 {
 	m_outputChannels = outputChannels;
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->setOutputChannels(outputChannels);
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setOutputChannels, std::placeholders::_1, outputChannels));
 }
 
 void TracksContainer::setGain(float gain)
 {
 	m_gain = gain;
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->setPlayerGain(gain);
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setPlayerGain, std::placeholders::_1, gain));
 }
 
 float TracksContainer::getGain() const
@@ -107,8 +101,7 @@ float TracksContainer::getGain() const
 void TracksContainer::setMute(bool mute)
 {
 	m_mute = mute;
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		m_tracks[i]->setPlayerMute(mute);
+	std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setPlayerMute, std::placeholders::_1, mute));
 }
 
 bool TracksContainer::getMute() const
@@ -130,10 +123,10 @@ void TracksContainer::setTrackConfigs(const std::vector<TrackConfig>& trackConfi
 
 std::vector<TrackConfig> TracksContainer::getTrackConfigs() const
 {
-	std::vector<TrackConfig> configs;
-	for (size_t i = 0; i < m_tracks.size(); ++i) {
-		configs.push_back(m_tracks[i]->getTrackConfig());
-	}
+	std::vector<TrackConfig> configs(m_tracks.size());
+	std::transform(m_tracks.cbegin(), m_tracks.cend(), configs.begin(), [](const std::unique_ptr<Track>& track) {
+		return track->getTrackConfig();
+	});
 
 	return configs;
 }
@@ -147,16 +140,15 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 		bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) {
 			return track->getSolo();
 		});
-		for (auto& track : m_tracks)
-			track->setSoloMute(soloMute);
+		std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setSoloMute, std::placeholders::_1, soloMute));
 	};
 
 	auto updateLongestDuration = [&]() {
 
 		if (m_longestTrack)
 		{
-			for (auto token : m_positionCallbackRegistrationTokens)
-				m_longestTrack->unregisterPositionCallback(token);
+			std::for_each(m_positionCallbackRegistrationTokens.begin(), m_positionCallbackRegistrationTokens.end(),
+				std::bind(&Track::unregisterPositionCallback, m_longestTrack, std::placeholders::_1));
 			m_positionCallbackRegistrationTokens.clear();
 		}
 
@@ -180,20 +172,18 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 	};
 
 	Track::ChannelCountChangedCallback channelCountChanged = [&]() {
-		for (auto const callback: m_channelCountChangedCallbacks)
+		for (const auto& callback: m_channelCountChangedCallbacks)
 			callback();
 	};
 
 	Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
 		if (isPlaying)
-			for (auto const& callback: m_playingStateChangedCallback)
+			for (const auto& callback: m_playingStateChangedCallback)
 				callback(true);
 		else {
-			bool isAnyPlaying = std::any_of(m_tracks.cbegin(), m_tracks.cend(), [](const std::unique_ptr<Track>& track) {
-				return track->isPlaying();
-			});
+			bool isAnyPlaying = std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
 			if (!isAnyPlaying)
-				for (auto const& callback: m_playingStateChangedCallback)
+				for (const auto& callback: m_playingStateChangedCallback)
 					callback(false);
 		}
 	};
@@ -205,7 +195,7 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 	if (m_trackAddedCallback)
 		m_trackAddedCallback(*m_tracks.back());
 
-	for (auto const callback: m_channelCountChangedCallbacks)
+	for (const auto& callback: m_channelCountChangedCallbacks)
 		callback();
 }
 
@@ -236,10 +226,7 @@ std::vector<std::pair<char, int>> TracksContainer::createMapping()
 
 bool TracksContainer::isPlaying() const
 {
-	for (size_t i = 0; i < m_tracks.size(); ++i)
-		if (m_tracks[i]->isPlaying())
-			return true;
-	return false;
+	return std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
 }
 
 void TracksContainer::removeTrack(Track* track)
@@ -256,10 +243,10 @@ void TracksContainer::removeTrack(Track* track)
 	std::unique_ptr<Track> tmpTrack = std::move(*it);
 	m_tracks.erase(it);
 
-	for (auto const callback: m_trackRemovedCallbacks)
+	for (const auto& callback: m_trackRemovedCallbacks)
 		callback(tmpTrack->getTrackIndex());
 
-	for (auto const callback: m_channelCountChangedCallbacks)
+	for (const auto& callback: m_channelCountChangedCallbacks)
 		callback();
 
 }

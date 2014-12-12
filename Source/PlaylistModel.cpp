@@ -104,7 +104,7 @@ void PlaylistModel::add(String name, double durationInSeconds)
 	sendChangeMessage();
 }
 
-void PlaylistModel::insert(int rowNumber, String name, double durationInSeconds)
+void PlaylistModel::insert(int rowNumber, const String& name, double durationInSeconds)
 {
 	PlaylistEntry entry;
 	entry.name = name;
@@ -230,7 +230,7 @@ void PlaylistModel::restoreFromXml(const XmlElement& element)
 	m_reloadedCallback();
 }
 
-bool PlaylistModel::trackHasFiles(int trackIndex) const
+bool PlaylistModel::trackHasFiles(size_t trackIndex) const
 {
 	trackIndex -= 1; // adjust index to zero-based
 	return std::any_of(m_playlist.cbegin(), m_playlist.cend(), [trackIndex](const PlaylistEntry& entry) {
@@ -241,7 +241,7 @@ bool PlaylistModel::trackHasFiles(int trackIndex) const
 	});
 }
 
-void PlaylistModel::removeTrack(int trackIndex)
+void PlaylistModel::removeTrack(size_t trackIndex)
 {
 	std::for_each(m_playlist.begin(), m_playlist.end(), [trackIndex](PlaylistEntry& entry) {
 		if (trackIndex < entry.trackConfigs.size())

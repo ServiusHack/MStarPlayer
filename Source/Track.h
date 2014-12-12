@@ -43,7 +43,7 @@ public:
 	void timerCallback();
 	void callPositionCallbacks(double position);
 
-	void loadFileIntoTransport(File audioFile);
+	void loadFileIntoTransport(const File& audioFile);
 	void reloadFile();
 	void unloadFile();
 
@@ -133,6 +133,13 @@ public:
 private:
 	int m_trackIndex;
 
+// Audio Thumbnail
+public:
+	AudioThumbnail& getAudioThumbnail();
+private:
+	AudioThumbnailCache m_audioThumbnailCache;
+	AudioThumbnail m_audioThumbnail;
+
 private:
 	void updateGain();
 
@@ -153,12 +160,6 @@ private:
 	FileChangedCallback m_fileChangedCallback;
 	PlayingStateChangedCallback m_playingStateChangedCallback;
 	TrackConfigChangedCallback m_trackConfigChangedCallback;
-
-public:
-	AudioThumbnail& getAudioThumbnail();
-private:
-	AudioThumbnailCache m_audioThumbnailCache;
-	AudioThumbnail m_audioThumbnail;
 
 	bool m_loadingTrackConfig;
 

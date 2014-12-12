@@ -8,7 +8,7 @@
 
 using namespace InterPlayerCommunication;
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, bool showPlaylist, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
+PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
 	: m_color(0xffffffff)
 	, m_tracksContainer(tracksContainer)
 	, m_outputChannelNames(outputChannelNames)
@@ -115,10 +115,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 	};
 	m_tracksContainer->addPositionCallback(positionCallback);
 
-	TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
-		m_tableListBox->setCurrentDuration(duration);
-	};
-	m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
+	m_tracksContainer->addLongestDurationChangedCallback(std::bind(&PlaylistTable::setCurrentDuration, m_tableListBox.get(), std::placeholders::_1));
 
 	addAndMakeVisible(m_resizeBar = new StretchableLayoutResizerBar(&m_layout, 1, false));
 
@@ -127,7 +124,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, Out
 	m_layout.setItemLayout (2, 100, -1.0, -0.7); // tracks
 }
 
-void PlaylistPlayerWindow::paint (Graphics& g)
+void PlaylistPlayerWindow::paint(Graphics& g)
 {
 	int buttonWidth = std::min(getWidth() / 11, 32);
 	int buttonHeight = buttonWidth;
@@ -160,7 +157,7 @@ void PlaylistPlayerWindow::resized()
 	m_tracks->setBounds(0, 0, m_tracksViewport->getMaximumVisibleWidth(), m_tracks->getHeight());
 }
 
-void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
+void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
 {
 	if (event.eventComponent != m_configureButton)
 		return;
@@ -204,7 +201,7 @@ void PlaylistPlayerWindow::mouseDown (const MouseEvent & event)
 	}
 }
 
-void PlaylistPlayerWindow::buttonClicked(Button * button)
+void PlaylistPlayerWindow::buttonClicked(Button* button)
 {
 	if (button == m_playButton)
 		m_tracksContainer->play();
@@ -218,7 +215,7 @@ void PlaylistPlayerWindow::buttonClicked(Button * button)
 		m_tableListBox->next();
 }
 
-void PlaylistPlayerWindow::setColor(Colour color)
+void PlaylistPlayerWindow::setColor(const Colour& color)
 {
 	m_color = color;
 	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());

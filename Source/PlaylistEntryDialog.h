@@ -14,12 +14,14 @@ class PlaylistEntryDialogWindow
 public:
 	PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback);
 
+// DialogWindow
+public:
 	virtual void closeButtonPressed() override;
-
 	virtual bool keyPressed(const KeyPress &key) override;
-
 	virtual void focusGained(FocusChangeType cause) override;
 
+// ButtonListener
+public:
 	virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
@@ -33,11 +35,15 @@ class PlaylistEntryDialogComponent
 	friend class PlaylistEntryDialogWindow;
 
 public:
-	PlaylistEntryDialogComponent(String name, PlaylistEntrySettingsChangedCallback changedCallback, PlaylistEntryDialogWindow* parent);
+	PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent);
 	~PlaylistEntryDialogComponent();
 
+// Component
+public:
 	virtual void resized() override;
 
+// TextEditor::Listener
+public:
 	virtual void textEditorTextChanged(TextEditor &) override;
 
 private:

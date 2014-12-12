@@ -55,7 +55,7 @@ Track::~Track()
 void Track::setName(String name)
 {
 	m_name = name;
-	for (MixerControlableChangeListener *listener : m_listeners)
+	for (MixerControlableChangeListener* listener : m_listeners)
 		listener->nameChanged(name);
 }
 
@@ -74,7 +74,7 @@ void Track::setGain(float gain)
 {
 	m_trackGain = gain;
 	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
+	for (MixerControlableChangeListener* listener : m_listeners)
 		listener->gainChanged(gain);
 }
 
@@ -88,7 +88,7 @@ void Track::setMute(bool mute)
 {
 	m_mute = mute;
 	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
+	for (MixerControlableChangeListener* listener : m_listeners)
 		listener->muteChanged(mute);
 }
 
@@ -105,7 +105,7 @@ bool Track::getMute() const
 void Track::setSolo(bool solo)
 {
 	m_solo = solo;
-	for (MixerControlableChangeListener *listener : m_listeners)
+	for (MixerControlableChangeListener* listener : m_listeners)
 		listener->soloChanged(solo);
 	m_soloChangedCallback();
 }
@@ -244,7 +244,7 @@ bool Track::getSolo() const
 }
 
 
-void Track::loadFileIntoTransport(File audioFile)
+void Track::loadFileIntoTransport(const File& audioFile)
 {
 	m_audioFile = audioFile;
 

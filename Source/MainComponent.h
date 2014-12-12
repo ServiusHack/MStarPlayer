@@ -29,35 +29,11 @@ class MainContentComponent
 	, public MixerControlableChangeListener
 {
 public:
-
-	static DefaultLookAndFeel* s_defaultLookAndFeel;
-	static DarkLookAndFeel* s_darkLookAndFeel;
-
-	static void initLookAndFeel();
-	static void destroyLookAndFeel();
-
 	MainContentComponent(ApplicationCommandManager* commandManager);
 	~MainContentComponent();
 
-	virtual void resized() override;
-
-	// MenuBarModel overrides
-	virtual StringArray getMenuBarNames() override;
-	virtual PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;
-	virtual void menuItemSelected(int /*menuItemID*/, int /*topLevelMenuIndex*/) override {};
-
-    // ApplicationCommandTarget overrides
-    virtual ApplicationCommandTarget* getNextCommandTarget() override;
-    virtual void getAllCommands(Array <CommandID>& commands) override;
-    virtual void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
-    virtual bool perform(const InvocationInfo& info) override;
-
-	// MixerControlableChangeListener overrides
-	virtual void soloChanged(bool solo) override;
-
 private:
-
-	int getOutputChannels();
+	ApplicationProperties m_applicationProperties;
 
     ApplicationCommandManager* m_commandManager;
 	ScopedPointer<MixerComponent> m_mixerComponent;
@@ -67,7 +43,37 @@ private:
 	ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
 	ScopedPointer<EditSettingsWindow> m_editSettingsWindow;
 
-    // Commands for menu
+// look and feels
+public:
+	static DefaultLookAndFeel* s_defaultLookAndFeel;
+	static DarkLookAndFeel* s_darkLookAndFeel;
+
+	static void initLookAndFeel();
+	static void destroyLookAndFeel();
+
+// Component overrides
+public:
+	virtual void resized() override;
+
+// MenuBarModel overrides
+public:
+	virtual StringArray getMenuBarNames() override;
+	virtual PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;
+	virtual void menuItemSelected(int /*menuItemID*/, int /*topLevelMenuIndex*/) override {};
+
+// ApplicationCommandTarget overrides
+public:
+    virtual ApplicationCommandTarget* getNextCommandTarget() override;
+    virtual void getAllCommands(Array <CommandID>& commands) override;
+    virtual void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
+    virtual bool perform(const InvocationInfo& info) override;
+
+// MixerControlableChangeListener overrides
+public:
+	virtual void soloChanged(bool solo) override;
+
+// Commands for menu
+public:
     enum CommandIDs
     {
         projectNew= 0x2000,
@@ -89,8 +95,8 @@ private:
 		lookAndFeelDark = 0x6001
     };
     
-    // Project file related methods and fields
-
+// Project file related methods and fields
+private:
     void newProject();
     void openProject();
     bool askSaveProject();
@@ -103,7 +109,7 @@ private:
 	File m_projectFile;
 	bool m_projectModified;
 
-	ApplicationProperties m_applicationProperties;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent)
 };

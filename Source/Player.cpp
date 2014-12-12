@@ -67,8 +67,7 @@ void Player::setType(PlayerType type)
 void Player::setGain(float gain)
 {
 	m_tracksContainer.setGain(gain);
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->gainChanged(gain);
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));
 }
 
 float Player::getGain() const
@@ -78,8 +77,7 @@ float Player::getGain() const
 
 void Player::setPan(float pan)
 {
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->panChanged(pan);
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::panChanged, std::placeholders::_1, pan));
 }
 
 float Player::getPan() const
@@ -102,8 +100,7 @@ void Player::setSolo(bool solo)
 {
 	m_solo = solo;
 	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->soloChanged(solo);
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
 }
 
 bool Player::getSolo() const
@@ -115,8 +112,7 @@ void Player::setMute(bool mute)
 {
 	m_mute = mute;
 	updateGain();
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->muteChanged(mute);
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::muteChanged, std::placeholders::_1, mute));
 }
 
 bool Player::getMute() const
@@ -140,8 +136,7 @@ String Player::getName() const
 void Player::setName(const String& newName)
 {
 	Component::setName(newName);
-	for (MixerControlableChangeListener *listener : m_listeners)
-		listener->nameChanged(newName);
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
 }
 
 void Player::updateGain()
@@ -154,7 +149,7 @@ void Player::setOutputChannels(int outputChannels)
 	m_tracksContainer.setOutputChannels(outputChannels);
 }
 
-void Player::setColor(Colour color)
+void Player::setColor(const Colour& color)
 {
 	m_color = color;
 
@@ -231,7 +226,7 @@ void Player::restoreFromXml (const XmlElement& element)
 	playlistModel.restoreFromXml(*playlistXml);
 }
 
-void Player::SetChannelCountChangedCallback(Track::ChannelCountChangedCallback callback)
+void Player::SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback)
 {
 	m_channelCountChanged = callback;
 }
@@ -239,9 +234,8 @@ void Player::SetChannelCountChangedCallback(Track::ChannelCountChangedCallback c
 std::vector<MixerControlable*> Player::getSubMixerControlables() const
 {
 	std::vector<MixerControlable*> controlables;
-	for (size_t i = 0; i < m_tracksContainer.size(); ++i) {
+	for (size_t i = 0; i < m_tracksContainer.size(); ++i)
 		controlables.push_back(&m_tracksContainer[i]);
-	}
 	return controlables;
 }
 

@@ -35,7 +35,7 @@ void PlaylistEntryDialogWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
 	closeButtonPressed();
 }
 
-PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(String name, PlaylistEntrySettingsChangedCallback changedCallback, PlaylistEntryDialogWindow* parent)
+PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent)
     : m_changedCallback(changedCallback)
 {
 	addAndMakeVisible(m_nameLabel = new Label("name label",

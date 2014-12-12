@@ -16,12 +16,14 @@ class TrackEditDialogWindow
 public:
 	TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback);
 
+// DialogWindow overrides
+public:
 	virtual void closeButtonPressed() override;
-
 	virtual bool keyPressed(const KeyPress &key) override;
-
 	virtual void focusGained(FocusChangeType cause) override;
 
+// ButtonListener
+public:
 	virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
@@ -39,10 +41,17 @@ public:
 	TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
 	~TrackEditDialogComponent();
 
+// Component overrides
+public:
 	virtual void resized() override;
-	virtual void sliderValueChanged(Slider *slider) override;
 
-	virtual void textEditorTextChanged(TextEditor &) override;
+// Slider::Listener
+public:
+	virtual void sliderValueChanged(Slider* slider) override;
+
+// TextEditor::Listener
+public:
+	virtual void textEditorTextChanged(TextEditor&) override;
 
 private:
 	ScopedPointer<Label> m_nameLabel;

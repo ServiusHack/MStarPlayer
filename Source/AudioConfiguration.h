@@ -16,12 +16,14 @@ class AudioConfigurationWindow
 public:
     AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames);
     
+// DialogWindow
 	virtual void closeButtonPressed() override;
 
+// ButtonListener
 	virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioConfigurationWindow)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioConfigurationWindow)
 };
 
 
@@ -35,13 +37,15 @@ class ChannelNames
 public:
 	ChannelNames(OutputChannelNames& outputChannelName);
 
+// TableListBoxModel
+public:
 	virtual int getNumRows() override;
 	virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
 	virtual void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
 	virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
-	void setChannelName(int row, String text);
-
+// TextEditor::Listener
+public:
 	virtual void textEditorTextChanged(TextEditor& textEditor) override;
 
 private:
@@ -60,9 +64,11 @@ class AudioConfigurationComponent
 public:
 	AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames);
 
+// Component
 	virtual void resized() override;
 
-	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
+// ChangeListener
+	virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
 	ScopedPointer<TabbedComponent> m_tabbedComponent;

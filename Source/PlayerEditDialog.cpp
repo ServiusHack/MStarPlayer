@@ -1,6 +1,6 @@
 #include "PlayerEditDialog.h"
 
-PlayerEditDialogWindow::PlayerEditDialogWindow(String playerName, Colour color, String imagePath, StringChangedCallback stringCallback, PlayerEditDialogWindow::ColourChangedCallback colourCallback, CloseCallback closeCallback, ImageChangedCallback imageCallback)
+PlayerEditDialogWindow::PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath, const StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback)
 	: DialogWindow("Rename player", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
@@ -36,7 +36,7 @@ void PlayerEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 	static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor->grabKeyboardFocus();
 }
 
-PlayerEditDialogComponent::PlayerEditDialogComponent(String playerName, Colour color, String imagePath, PlayerEditDialogWindow::StringChangedCallback stringCallback, PlayerEditDialogWindow::ColourChangedCallback colourCallback, PlayerEditDialogWindow::CloseCallback closeCallback, PlayerEditDialogWindow::ImageChangedCallback imageCallback)
+PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, const Colour& color, const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const PlayerEditDialogWindow::CloseCallback& closeCallback, const PlayerEditDialogWindow::ImageChangedCallback& imageCallback)
 	: m_color(color)
 	, m_colorCallback(colourCallback)
 	, m_stringCallback(stringCallback)

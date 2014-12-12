@@ -8,7 +8,7 @@ class OutputChannelNamesListener
 {
 public:
 	virtual void outputChannelNamesReset() = 0;
-	virtual void outputChannelNameChanged(int activeChannelIndex, String text) = 0;
+	virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) = 0;
 };
 
 /**
@@ -19,20 +19,31 @@ class OutputChannelNames
 	, public ChangeBroadcaster
 {
 public:
-	OutputChannelNames(AudioDeviceManager &deviceManager);
+	OutputChannelNames(AudioDeviceManager& deviceManager);
 
 	int getNumberOfChannels();
 
+private:
+	AudioIODevice* m_audioDevice;
+
+// output device names and their internal names
+public:
 	String getDeviceOutputChannelName(int activeChannelIndex);
-
 	StringArray getAllDeviceOutputChannelNames();
-
 	String getInternalOutputChannelName(int activeChannelIndex);
+	void setInternalOutputChannelName(int activeChannelIndex, const String& text);
 
-	void setInternalOutputChannelName(int activeChannelIndex, String text);
+private:
+	StringArray m_deviceOutputChannelNames;
+	StringArray m_internalOutputChannelNames;
 
-	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
+// XML serialization
+public:
+	XmlElement* saveToXml();
+	void restoreFromXml(const XmlElement &element);
 
+// OutputChannelNamesListener management
+public:
 	/**
 		Add a listener which will be notified when a channel name changes or all names are reset.
 
@@ -42,13 +53,10 @@ public:
 
 	void removeListener(OutputChannelNamesListener* listener);
 
-	XmlElement* saveToXml();
-	void restoreFromXml(XmlElement &element);
-
 private:
-	AudioIODevice* m_audioDevice;
-	StringArray m_deviceOutputChannelNames;
-	StringArray m_internalOutputChannelNames;
-
 	std::list<OutputChannelNamesListener*> m_listeners;
+
+// ChangeListener
+public:
+	virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 };

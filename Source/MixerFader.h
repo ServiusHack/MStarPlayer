@@ -24,24 +24,33 @@ public:
 	MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
 	~MixerFader();
 
-	void paint(Graphics&);
-	void resized();
-
-	void buttonClicked(Button* buttonThatWasClicked);
-	void sliderValueChanged(Slider* sliderThatWasMoved);
-
 	float getValue();
 	void setValue(float value);
 
 	void setMute(bool mute);
 	void setSolo(bool solo);
 
-	void setColor(Colour color);
+	void setColor(const Colour& color);
 
-	void setLabel(String text);
+	void setLabel(const String& text);
 
 	void setMixSettings(std::vector<MixerControlable*> mixSettings);
 
+// Component
+public:
+	virtual void paint(Graphics&) override;
+	virtual void resized() override;
+
+// ButtonListener
+public:
+	virtual void buttonClicked(Button* buttonThatWasClicked) override;
+
+// Slider::Listener
+public:
+	virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
+
+// MixerControlableChangeListener
+public:
 	virtual void gainChanged(float gain) override;
 
 	virtual void panChanged(float pan) override;
@@ -52,6 +61,8 @@ public:
 
 	virtual void nameChanged(const String& name) override;
 
+// Timer
+public:
 	virtual void timerCallback() override;
 
 protected:

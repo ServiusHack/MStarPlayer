@@ -263,7 +263,7 @@ void TrackUi::loadFile()
 	repaint();
 }
 
-void TrackUi::paint (Graphics& g)
+void TrackUi::paint(Graphics& g)
 {
 	if (m_track.getTrackIndex() > 1)
 		g.drawLine(0.0f, 0.0f, static_cast<float>(getWidth()), 0.0f);

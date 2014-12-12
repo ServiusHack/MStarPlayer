@@ -99,10 +99,8 @@ void MixerComponent::addPlayerSlider(SubchannelPlayer* player)
 void MixerComponent::addChannelSlider()
 {
 	int channelNumber = m_channelSliders.size();
-
 	MixerFader* slider = new ChannelMixerFader(channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
     addAndMakeVisible(slider);
-
 	m_channelSliders.push_back(slider);
 }
 
@@ -160,7 +158,7 @@ void MixerComponent::outputChannelNamesReset()
 	}
 }
 
-void MixerComponent::outputChannelNameChanged(int activeChannelIndex, String text)
+void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
 {
 	m_channelSliders.at(activeChannelIndex)->setLabel(text);
 }

@@ -2,7 +2,7 @@
 
 #include "PlaylistModel.h"
 
-PlaylistTable::PlaylistTable(PlaylistEntryChangedCallback callback, PlaylistModel& playlistModel)
+PlaylistTable::PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel)
 	: m_callback(callback)
 	, m_playNext(false)
 	, m_model(playlistModel)
@@ -58,13 +58,10 @@ void PlaylistTable::resized()
 
 void PlaylistTable::previous()
 {
-	if (getSelectedRow() > 0) {
+	if (getSelectedRow() > 0)
 		selectRow(getSelectedRow() - 1);
-	}
 	else
-	{
 		selectRow(m_model.getNumRows() - 1);
-	}
 }
 
 void PlaylistTable::next(bool onlyIfEntrySaysSo)
@@ -74,8 +71,7 @@ void PlaylistTable::next(bool onlyIfEntrySaysSo)
 		selectRow(getSelectedRow() + 1);
 		m_playNext = false;
 	}
-	else
-	{
+	else {
 		m_playNext = onlyIfEntrySaysSo && m_model.doPlayNext(getSelectedRow());
 		selectRow(0);
 		m_playNext = false;

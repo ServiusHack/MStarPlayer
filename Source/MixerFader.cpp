@@ -89,9 +89,8 @@ MixerFader::~MixerFader()
 {
 	m_mixerControlable->removeChangeListener(this);
 
-	for (std::unique_ptr<MixerFader>& subfader : m_subfaders) {
+	for (std::unique_ptr<MixerFader>& subfader : m_subfaders)
 		removeChildComponent(subfader.get());
-	}
 }
 
 void MixerFader::gainChanged(float gain)
@@ -127,18 +126,6 @@ void MixerFader::timerCallback()
 void MixerFader::paint(Graphics& g)
 {
 	g.fillAll(m_color);
-	/*g.setColour(Colour(0xff000000));
-	Rectangle<int> b = getLocalBounds();
-	//b.reduce(1,1);
-	g.drawRect(b);
-
-	Rectangle<int> soloBounds = m_soloButton->getLocalBounds();
-	Rectangle<int> localArea = getLocalArea(m_soloButton, soloBounds);
-	g.setColour(Colour(0xffff0000));
-	g.fillRect(localArea);*/
-	/*g.setColour(Colour(0xffff0000));
-	Rectangle<int> panBounds = getLocalArea(m_muteButton, m_muteButton->getLocalBounds());
-	g.fillRect(panBounds);*/
 }
 
 void MixerFader::resized()
@@ -222,13 +209,13 @@ void MixerFader::setSolo(bool solo)
 	m_soloButton->setToggleState(solo, sendNotification);
 }
 
-void MixerFader::setColor(Colour color)
+void MixerFader::setColor(const Colour& color)
 {
 	m_color = color;
 	repaint();
 }
 
-void MixerFader::setLabel(String text)
+void MixerFader::setLabel(const String& text)
 {
 	m_label->setText(text, sendNotification);
 }

@@ -71,7 +71,7 @@ public:
 
         ~MainWindow()
         {
-            setMenuBar (nullptr);
+            setMenuBar(nullptr);
             clearContentComponent();
         }
 

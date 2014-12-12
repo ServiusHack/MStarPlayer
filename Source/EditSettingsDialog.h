@@ -16,12 +16,16 @@ class EditSettingsWindow
 public:
     EditSettingsWindow(ApplicationProperties& applicationProperties);
     
+// DialogWindow overrides
+public:
 	virtual void closeButtonPressed() override;
 
+// ButtonListener
+public:
 	virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EditSettingsWindow)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditSettingsWindow)
 };
 
 /**
@@ -34,10 +38,6 @@ class EditSettingsComponent
 public:
 	EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties);
 
-	virtual void resized() override;
-
-	virtual void filenameComponentChanged(FilenameComponent *fileComponentThatHasChanged) override;
-
 private:
 	ScopedPointer<Label> m_nameLabel;
 	ScopedPointer<FilenameComponent> m_audioEditorFilenameComponent;
@@ -45,5 +45,14 @@ private:
 
 	ApplicationProperties& m_applicationProperties;
 
+// Component overrides
+public:
+	virtual void resized() override;
+
+// FilenameComponentListener
+public:
+	virtual void filenameComponentChanged(FilenameComponent* fileComponentThatHasChanged) override;
+
+private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditSettingsComponent)
 };

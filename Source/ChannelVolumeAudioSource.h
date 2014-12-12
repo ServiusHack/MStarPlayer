@@ -14,7 +14,16 @@ public:
                             responsible for its deletion
     */
     ChannelVolumeAudioSource(AudioSource* source);
+
+	int channelCount() const;
+
+private:
+	void expandListsTo(size_t channelIndex);
+	AudioSource* m_source;
+    CriticalSection m_lock;
     
+// volume
+public:
     /** Resets all volumes.
 
         After this all channels will have their default volume.
@@ -36,37 +45,44 @@ public:
     */
 	float getChannelVolume(size_t channelIndex) const;
 
-	void setChannelSolo(size_t channelIndex, bool solo);
+private:
+    std::vector<float> m_setVolumes;
 
+// solo
+public:
+	void setChannelSolo(size_t channelIndex, bool solo);
 	bool getChannelSolo(size_t channelIndex) const;
 
-	void setChannelMute(size_t channelIndex, bool mute);
+private:
+	std::vector<bool> m_setSolos;
+	bool m_anySolo;
 
+	// mute
+public:
+	void setChannelMute(size_t channelIndex, bool mute);
 	bool getChannelMute(size_t channelIndex) const;
 
-	void updateGain(size_t channelIndex);
+private:
+	std::vector<bool> m_setMutes;
 
+// actual output volume
+public:
 	float getActualVolume(size_t channelIndex) const;
 
-	int channelCount() const;
+private:
+	std::vector<float> m_actualVolumes;
 
+// gain to apply
+private:
+	void updateGain(size_t channelIndex);
+	std::vector<float> m_appliedGains;
+
+// AudioSource
+public:
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	virtual void releaseResources() override;
 	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
 private:
-	void expandListsTo(size_t channelIndex);
-
-	AudioSource* m_source;
-	std::vector<float> m_appliedGains;
-    std::vector<float> m_setVolumes;
-	std::vector<bool> m_setMutes;
-	std::vector<bool> m_setSolos;
-	std::vector<float> m_actualVolumes;
-
-	bool m_anySolo;
-
-    CriticalSection m_lock;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelVolumeAudioSource)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelVolumeAudioSource)
 };

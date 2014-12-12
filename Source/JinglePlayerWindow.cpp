@@ -68,13 +68,9 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputC
 	addAndMakeVisible(m_fileNameLabel);
 
 	Track::PositionCallback positionCallback = [&](double position, bool finished) {
-
 		double remainingTime = m_totalLength - position;
 		
-		if (finished)
-			m_progress = 0.0;
-		else
-			m_progress = position / m_totalLength;
+		m_progress = finished ? 0.0 : position / m_totalLength;
 
 		m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
 		m_totalDurationText->setText(Utils::formatSeconds(m_totalLength), sendNotification);
@@ -207,23 +203,20 @@ void JinglePlayerWindow::buttonClicked(Button * /*button*/)
 
 void JinglePlayerWindow::updatePointColor()
 {
-	if (m_blink)
-		m_paintColor = m_color.contrasting(0.5f);
-	else
-		m_paintColor = m_color;
+	m_paintColor = m_blink ? m_color.contrasting(0.5f) : m_color;
 
 	m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
 }
 
 
-void JinglePlayerWindow::setColor(Colour color)
+void JinglePlayerWindow::setColor(const Colour& color)
 {
 	m_color = color;
 	updatePointColor();
 	repaint();
 }
 
-void JinglePlayerWindow::setUserImage(File file)
+void JinglePlayerWindow::setUserImage(const File& file)
 {
 	if (file == File::nonexistent)
 		delete m_userImage.release();

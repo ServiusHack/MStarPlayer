@@ -26,41 +26,8 @@ public:
 
 	void setType(InterPlayerCommunication::PlayerType type);
 
-	virtual void resized() override;
-
-	virtual void setGain(float gain) override;
-
-	virtual float getGain() const override;
-
-	virtual void setPan(float pan) override;
-
-	virtual float getPan() const override;
-
-	virtual void setSoloMute(bool soloMute) override;
-
-	virtual bool getSoloMute() const override;
-
-	virtual void setSolo(bool solo) override;
-
-	virtual bool getSolo() const override;
-
-	virtual void setMute(bool mute) override;
-
-	virtual bool getMute() const override;
-
-	virtual float getVolume() const override;
-
-	virtual String getName() const override;
-
-	virtual void setName (const String& newName) override;
-
-    /** Set the number of output channels.
-
-        If the user reconfigures his audio settings the number of output channels
-        might change. This method is called to propagate this change to this player.
-    */
-    void setOutputChannels(int outputChannels);
-	
+// XML serialization
+public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
@@ -70,18 +37,45 @@ public:
         @see createXml
     */
 	void restoreFromXml(const XmlElement& element);
-	
-	virtual void SetChannelCountChangedCallback(Track::ChannelCountChangedCallback callback) override;
 
+// Component overrides
+public:
+	virtual void resized() override;
+
+// SubchannelPlayer
+public:
+	virtual void setGain(float gain) override;
+	virtual float getGain() const override;
+	virtual void setPan(float pan) override;
+	virtual float getPan() const override;
+	virtual void setSoloMute(bool soloMute) override;
+	virtual bool getSoloMute() const override;
+	virtual void setSolo(bool solo) override;
+	virtual bool getSolo() const override;
+	virtual void setMute(bool mute) override;
+	virtual bool getMute() const override;
+	virtual float getVolume() const override;
+	virtual String getName() const override;
+	virtual void setName (const String& newName) override;
+	virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;
 	virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
+// KeyListener
+public:
 	virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
 
-private:
+public:
+    /** Set the number of output channels.
 
+        If the user reconfigures his audio settings the number of output channels
+        might change. This method is called to propagate this change to this player.
+    */
+    void setOutputChannels(int outputChannels);
+
+private:
 	void updateGain();
 
-	void setColor(Colour color);
+	void setColor(const Colour& color);
 
 	void showEditDialog();
 	void configureChannels();

@@ -4,8 +4,7 @@
 
 #include "DefaultLookAndFeel.h"
 
-class DarkLookAndFeel
-	: public DefaultLookAndFeel
+class DarkLookAndFeel : public DefaultLookAndFeel
 {
 public:
 	DarkLookAndFeel();

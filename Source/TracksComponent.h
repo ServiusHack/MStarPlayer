@@ -18,10 +18,12 @@ public:
 
 	TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback);
 
-	virtual void resized() override;
-
 	void addMonoTrack();
 	void addStereoTrack();
+
+// Component overrides
+public:
+	virtual void resized() override;
 
 private:
 	void trackAdded(Track& track);

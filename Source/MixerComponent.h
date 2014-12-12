@@ -32,23 +32,18 @@ public:
     MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames);
     ~MixerComponent();
 
-	/** Act accordingly to changes in the AudioDeviceManager. */
-	void changeListenerCallback (ChangeBroadcaster * /*source*/);
-
-	/** A slider value has changed. */
-    void sliderValueChanged (Slider* sliderThatWasMoved);
-
-    void paint (Graphics&);
-    void resized();
-
 	/** Returns the MixerAudioSource into which all Players mix their audio stream. */
 	MixerAudioSource& getMixerAudioSource();
 
+	void updatePlayerColor(SubchannelPlayer* player, Colour color);
+
+// Player registration
+public:
 	void registerPlayer(SubchannelPlayer* player);
 	void unregisterPlayer(SubchannelPlayer* player);
 
-	void updatePlayerColor(SubchannelPlayer* player, Colour color);
-	
+// XML Serialization
+public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
@@ -59,18 +54,33 @@ public:
     */
     void restoreFromXml(const XmlElement& element);
 
-	virtual void outputChannelNamesReset() override;
-	virtual void outputChannelNameChanged(int activeChannelIndex, String text) override;
-
+// Slider for channels and players
 private:
-	// ui
-	std::vector<MixerFader*> m_channelSliders;
-	std::vector<PlayerMixerFader*> m_playerSliders;
 
 	/** Adds a new slider to the component because not enough are being shown. */
 	void addChannelSlider();
 
 	void addPlayerSlider(SubchannelPlayer* player);
+
+	std::vector<MixerFader*> m_channelSliders;
+	std::vector<PlayerMixerFader*> m_playerSliders;
+
+// Component
+public:
+    virtual void paint(Graphics&) override;
+    virtual void resized() override;
+
+// ChangeListener
+public:
+	/** Act accordingly to changes in the AudioDeviceManager. */
+	virtual void changeListenerCallback(ChangeBroadcaster* /*source*/) override;
+
+// OutputChannelNamesListener
+public:
+	virtual void outputChannelNamesReset() override;
+	virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
+
+private:
 	
 	// audio output
 	MixerAudioSource m_mixerAudioSource;
@@ -81,5 +91,5 @@ private:
 
 	float m_separatorPosition;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MixerComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerComponent)
 };

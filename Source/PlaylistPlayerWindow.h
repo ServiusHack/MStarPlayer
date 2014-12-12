@@ -9,7 +9,6 @@
 #include "PlaylistTable.h"
 #include "InterPlayerCommunication.h"
 
-namespace ipc = InterPlayerCommunication;
 /*
 */
 class PlaylistPlayerWindow
@@ -24,23 +23,25 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, bool showPlaylist, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
+	PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames* outputChannelNames, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
 
-	virtual void paint(Graphics&) override;
-	virtual void resized() override;
-
-	virtual void mouseDown(const MouseEvent & event) override;
-
-	virtual void buttonClicked(Button * /*button*/) override;
-
-	void setColor(Colour color);
+	void setColor(const Colour& color);
 
 	void setShowPlaylist(bool showPlaylist);
 
 	int getSelectedRow() const;
 
-private:
+// Component overrides
+public:
+	virtual void paint(Graphics&) override;
+	virtual void resized() override;
+	virtual void mouseDown(const MouseEvent & event) override;
 
+// Button::Listener
+public:
+	virtual void buttonClicked(Button* /*button*/) override;
+
+private:
 	ScopedPointer<ImageButton> m_playButton;
 	ScopedPointer<ImageButton> m_pauseButton;
 	ScopedPointer<ImageButton> m_stopButton;

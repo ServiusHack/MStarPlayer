@@ -534,14 +534,6 @@ void MainContentComponent::writeProjectFile()
 		m_projectModified = false;
 }
 
-int MainContentComponent::getOutputChannels()
-{
-	AudioDeviceManager::AudioDeviceSetup deviceSetup;
-	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-
-	return deviceSetup.outputChannels.countNumberOfSetBits();
-}
-
 void MainContentComponent::soloChanged(bool /*solo*/)
 {
 	bool soloMute = false;

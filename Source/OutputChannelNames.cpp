@@ -72,7 +72,7 @@ String OutputChannelNames::getInternalOutputChannelName(int activeChannelIndex)
 	}
 	return m_internalOutputChannelNames[outputChannel];
 }
-void OutputChannelNames::setInternalOutputChannelName(int activeChannelIndex, String text)
+void OutputChannelNames::setInternalOutputChannelName(int activeChannelIndex, const String& text)
 {
 	int tmpActiveChannelIndex = activeChannelIndex;
 	BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
@@ -113,7 +113,7 @@ XmlElement* OutputChannelNames::saveToXml()
 	return element;
 }
 
-void OutputChannelNames::restoreFromXml(XmlElement &element)
+void OutputChannelNames::restoreFromXml(const XmlElement &element)
 {
 	for (int i = 0; i < element.getNumChildElements(); ++i)
 	{

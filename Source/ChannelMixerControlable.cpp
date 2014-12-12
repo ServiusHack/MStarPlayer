@@ -18,12 +18,12 @@ float ChannelMixerControlable::getGain() const
 
 void ChannelMixerControlable::setPan(float /*pan*/)
 {
-	jassertfalse
+	jassertfalse;
 }
 
 float ChannelMixerControlable::getPan() const
 {
-	jassertfalse
+	jassertfalse;
 	return 0.0f;
 }
 
@@ -34,7 +34,7 @@ void ChannelMixerControlable::setSoloMute(bool /*soloMute*/)
 
 bool ChannelMixerControlable::getSoloMute() const
 {
-	jassertfalse
+	jassertfalse;
 	return false;
 }
 

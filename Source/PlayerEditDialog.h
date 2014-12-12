@@ -7,25 +7,25 @@
 class PlayerEditDialogWindow : public DialogWindow
 {
 public:
-
 	typedef std::function<void(Colour)> ColourChangedCallback;
 	typedef std::function<void(String)> StringChangedCallback;
 	typedef std::function<void(juce::File)> ImageChangedCallback;
 	typedef std::function<void()> CloseCallback;
 
-	PlayerEditDialogWindow(String playerName, Colour color, String imagePath, StringChangedCallback stringCallback, ColourChangedCallback colourCallback, CloseCallback closeCallback, ImageChangedCallback imageCallback = ImageChangedCallback());
-
-	void closeButtonPressed();
+	PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath, const StringChangedCallback& stringCallback, const ColourChangedCallback& colourCallback, const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback = ImageChangedCallback());
 
 	String getPlayerName() const;
-
-	virtual bool keyPressed(const KeyPress &key) override;
-
-	virtual void focusGained(FocusChangeType cause) override;
 
 private:
 	CloseCallback m_closeCallback;
 
+// DialogWindow
+public:
+	virtual void closeButtonPressed() override;
+	virtual bool keyPressed(const KeyPress &key) override;
+	virtual void focusGained(FocusChangeType cause) override;
+
+private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerEditDialogWindow)
 };
 
@@ -38,13 +38,23 @@ class PlayerEditDialogComponent
 	friend class PlayerEditDialogWindow;
 
 public:
-	PlayerEditDialogComponent(String playerName, Colour color, String imagePath, PlayerEditDialogWindow::StringChangedCallback stringCallback, PlayerEditDialogWindow::ColourChangedCallback colourCallback, PlayerEditDialogWindow::CloseCallback closeCallback, PlayerEditDialogWindow::ImageChangedCallback imageCallback);
+	PlayerEditDialogComponent(const String& playerName, const Colour& color, const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const PlayerEditDialogWindow::CloseCallback& closeCallback, const PlayerEditDialogWindow::ImageChangedCallback& imageCallback);
 	~PlayerEditDialogComponent();
 
+// Component overrides
+public:
 	virtual void resized() override;
+
+// ButtonListener overrides
+public:
 	virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
+// ChangeListener overrides
+public:
 	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
+
+// TextEditor::Listener overrides
+public:
 	virtual void textEditorTextChanged(TextEditor &) override;
 
 private:
@@ -65,5 +75,5 @@ private:
 
 	PlayerEditDialogWindow::CloseCallback m_closeCallback;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayerEditDialogComponent)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerEditDialogComponent)
 };

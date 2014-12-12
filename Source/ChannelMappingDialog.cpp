@@ -101,7 +101,7 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
     } else {
         // for any other column, just return 0, as we'll be painting these columns directly.
 
-        jassert (existingComponentToUpdate == 0);
+        jassert(existingComponentToUpdate == 0);
         return 0;
     }
 }
@@ -140,7 +140,7 @@ void ChannelMappingWindow::closeButtonPressed()
 	m_closeCallback();
 }
 
-void ChannelMappingWindow::setMapping(std::vector<std::pair<char,int>> mapping)
+void ChannelMappingWindow::setMapping(const std::vector<std::pair<char,int>>& mapping)
 {
 	m_component->setMapping(mapping);
 }
@@ -172,7 +172,7 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChann
 	setSize(400, 400);
 }
 
-void ChannelMappingComponent::setMapping(std::vector<std::pair<char, int>> mapping)
+void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>& mapping)
 {
 	m_channelMapping = new ChannelMapping(m_outputChannelNames, mapping, m_changeCallback);
 	m_tableListBox->setModel(m_channelMapping);
@@ -188,6 +188,7 @@ void ChannelMappingComponent::resized()
 	const static int buttonWidth = 80;
 	const static int buttonHeight = 24;
 	const static int padding = 10;
+
 	m_tableListBox->setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
 	m_closeButton->setBounds(
 		(getWidth() - buttonWidth) / 2,
