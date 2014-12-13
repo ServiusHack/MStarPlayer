@@ -7,6 +7,11 @@
 
 typedef std::function<void(String)> PlaylistEntrySettingsChangedCallback;
 
+/**
+    Window wrapper for the PlaylistEntryDialogComponent.
+
+    This allows the component to be shown in its own window.
+*/
 class PlaylistEntryDialogWindow
 	: public DialogWindow
 	, public ButtonListener
@@ -28,6 +33,10 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistEntryDialogWindow)
 };
 
+
+/**
+	The actual component containing controls to edit a playlist entry.
+*/
 class PlaylistEntryDialogComponent
 	: public Component
 	, public juce::TextEditor::Listener

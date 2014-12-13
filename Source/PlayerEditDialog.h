@@ -4,6 +4,11 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+    Window wrapper for the PlayerEditDialogComponent.
+
+    This allows the component to be shown in its own window.
+*/
 class PlayerEditDialogWindow : public DialogWindow
 {
 public:
@@ -29,6 +34,10 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerEditDialogWindow)
 };
 
+
+/**
+	The actual component containing controls to edit a player.
+*/
 class PlayerEditDialogComponent
 	: public Component
 	, public ButtonListener

@@ -4,6 +4,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Interface to receive changes on a mixer controlable.
+*/
 class MixerControlableChangeListener {
 public:
 	virtual void gainChanged(float /*gain*/) {};
@@ -17,6 +20,11 @@ public:
 	virtual void nameChanged(const String& /*name*/) {};
 };
 
+/**
+	Interface for everything a mixer can control.
+
+	Currently this can be a player, a player's track or an output channel.
+*/
 class MixerControlable {
 public:
 	virtual void setGain(float gain) = 0;

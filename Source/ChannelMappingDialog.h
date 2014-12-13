@@ -75,6 +75,9 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMapping)
 };
 
+/**
+	The actual component containing controls to change the mapping from playback channels to output channels.
+*/
 class ChannelMappingComponent
 	: public Component
 	, public ButtonListener
@@ -103,7 +106,6 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
 };
 
-//==============================================================================
 /**
     Wrapper window to show the ChannelMapping component.
 */

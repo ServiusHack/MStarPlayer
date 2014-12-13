@@ -4,6 +4,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Interface to receive changes to the output channel names.
+*/
 class OutputChannelNamesListener
 {
 public:

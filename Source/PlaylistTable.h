@@ -6,6 +6,9 @@
 
 #include <functional>
 
+/**
+	The playlist table component.
+*/
 class PlaylistTable
 	: public TableListBox
 	, public ChangeListener

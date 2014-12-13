@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Draw the volume as a level meter.
+*/
 class LevelMeter : public Component
 {
   public:

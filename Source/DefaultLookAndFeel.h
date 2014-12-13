@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Default look and feel which is JUCE's look and feel with some minor improvements.
+*/
 class DefaultLookAndFeel : public LookAndFeel_V3
 {
 public:

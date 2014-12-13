@@ -5,6 +5,9 @@
 #include "Player.h"
 #include "ChannelVolumeAudioSource.h"
 
+/**
+	MixerControlable for an individual channel.
+*/
 class ChannelMixerControlable : public MixerControlable
 {
 public:

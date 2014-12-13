@@ -37,7 +37,6 @@ public:
     {
     }
 
-    //==============================================================================
     /*
         This class implements the desktop window that contains an instance of
         our MainContentComponent class.
@@ -90,6 +89,5 @@ private:
 	ScopedPointer<MainWindow> m_mainWindow;
 };
 
-//==============================================================================
 // This macro generates the main() routine that launches the app.
 START_JUCE_APPLICATION(AudioPlayerJuceApplication)

@@ -16,7 +16,6 @@ public:
     bool tryToCloseDocument(Component *component);
 };
 
-//==============================================================================
 /** Main component of the Audio Player application.
 
     It hosts the MDI area for all players and a mixer console with sliders

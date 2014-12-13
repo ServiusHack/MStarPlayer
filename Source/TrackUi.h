@@ -7,6 +7,10 @@
 #include "MixerControlable.h"
 #include "Track.h"
 
+
+/**
+	User interface for a track, contained in TracksComponent.
+*/
 class TrackUi
 	: public Component
 	, public ChangeListener

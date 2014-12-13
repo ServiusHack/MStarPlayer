@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Audio source which remaps channels and tracks the current volume of each channel.
+*/
 class ChannelRemappingAudioSourceWithVolume : public ChannelRemappingAudioSource
 {
 public:

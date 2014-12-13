@@ -13,7 +13,12 @@
 #include "JinglePlayerWindow.h"
 #include "InterPlayerCommunication.h"
 
+/**
+	A player with a playlist and tracks to play audio files.
 
+	The different types of players only differ in their user interface. The actual logic
+	is almost the same.
+*/
 class Player 
 	: public Component
 	, public SubchannelPlayer

@@ -9,12 +9,8 @@
 #include "TracksContainer.h"
 #include "InterPlayerCommunication.h"
 
-/** A jingle player shown within the application.
-
-    Next to the PlaylistPlayerWindows this is a player that can be added by
-    users to playback audio. It is specifically designed to play back short
-    audio sequences, i.e. jingles.
-
+/**
+	User interface with a single big button to control the playback.
 */
 class JinglePlayerWindow
 	: public Component

@@ -9,6 +9,9 @@
 #include "ChannelRemappingAudioSourceWithVolume.h"
 #include "PlaylistEntry.h"
 
+/**
+	Actual logic for the playback of a track.
+*/
 class Track
 	: public MixerControlable
 	, private Timer

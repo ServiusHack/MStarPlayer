@@ -7,6 +7,9 @@
 #include <Windows.h>
 #include <Dbghelp.h>
 
+/**
+	Show a dialog and write a crash dump when the application crashes.
+*/
 class CrashDumper : public ThreadWithProgressWindow
 {
 public:

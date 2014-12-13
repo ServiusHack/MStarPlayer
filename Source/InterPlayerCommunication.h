@@ -2,6 +2,9 @@
 
 #include <functional>
 
+/**
+	Callbacks and enums for the communication between Player and the user interface classes.
+*/
 namespace InterPlayerCommunication
 {
 	enum class PlayerType {

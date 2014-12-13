@@ -2,10 +2,16 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Track configuration stored for each playlist entry.
+*/
 struct TrackConfig {
 	File file;
 };
 
+/**
+	Entry in the playlist.
+*/
 class PlaylistEntry {
 public:
 	String name;

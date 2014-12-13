@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Audio source which applies a gain, solo and mute state to individual channels.
+*/
 class ChannelVolumeAudioSource : public AudioSource
 {
 public:

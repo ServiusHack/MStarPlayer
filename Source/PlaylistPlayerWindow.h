@@ -9,7 +9,8 @@
 #include "PlaylistTable.h"
 #include "InterPlayerCommunication.h"
 
-/*
+/**
+	User interface with an optional playlist and a list of tracks.
 */
 class PlaylistPlayerWindow
 	: public Component

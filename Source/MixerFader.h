@@ -9,7 +9,17 @@
 #include "VolumeSlider.h"
 #include "LevelMeter.h"
 
-class MixerFader 
+/**
+	A set of controls for an player channel or output channel.
+
+	This includes:
+	- volume fader
+	- level meter
+	- solo button
+	- mute button
+	- pan slider (not fully implemented yet)
+*/
+class MixerFader
 	: public Component
 	, public ButtonListener
 	, public juce::Slider::Listener

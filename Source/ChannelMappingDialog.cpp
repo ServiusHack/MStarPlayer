@@ -4,9 +4,6 @@
 
 #include "ChannelMappingDialog.h"
 
-
-
-//==============================================================================
 // This is a custom component containing a combo box, which we're going to put inside
 // our table's "output channel" column.
 class OutputChannelColumnCustomComponent : public ComboBox
@@ -31,7 +28,6 @@ private:
 	int m_row;
 };
 
-//==============================================================================
 ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback callback)
 	: m_outputChannelNames(outputChannelNames)
 	, m_mapping(mapping)
@@ -123,7 +119,6 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 }
 
 
-//==============================================================================
 ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
 	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)

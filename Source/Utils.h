@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/**
+	Class with some static utility functions.
+*/
 class Utils
 {
 public:

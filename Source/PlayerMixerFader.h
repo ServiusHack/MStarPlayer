@@ -5,6 +5,9 @@
 #include "SubchannelPlayer.h"
 #include "MixerFader.h"
 
+/**
+	MixerFader for a player.
+*/
 class PlayerMixerFader : public MixerFader
 {
 public:

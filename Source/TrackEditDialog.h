@@ -9,6 +9,11 @@
 typedef std::function<void(String)> TrackSettingsChangedCallback;
 typedef std::function<void(float)> VolumeChangedCallback;
 
+/**
+    Window wrapper for the TrackEditDialogComponent.
+
+    This allows the component to be shown in its own window.
+*/
 class TrackEditDialogWindow
 	: public DialogWindow
 	, public ButtonListener
@@ -30,6 +35,9 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrackEditDialogWindow)
 };
 
+/**
+	The actual component containing controls to edit a track.
+*/
 class TrackEditDialogComponent
 	: public Component
 	, public juce::Slider::Listener

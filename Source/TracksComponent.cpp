@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    TracksComponent.cpp
-    Created: 21 Jan 2014 1:15:08am
-    Author:  User
-
-  ==============================================================================
-*/
-
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 

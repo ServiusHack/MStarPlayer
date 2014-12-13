@@ -107,7 +107,6 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
     return menu;
 }
 
-//==============================================================================
 // The following methods implement the ApplicationCommandTarget interface, allowing
 // this window to publish a set of actions it can perform, and which can be mapped
 // onto menus, keypresses, etc.

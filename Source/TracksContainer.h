@@ -7,6 +7,10 @@
 #include "Track.h"
 #include "MixerComponent.h"
 
+
+/**
+	Container to manage all tracks.
+*/
 class TracksContainer
 {
 public:

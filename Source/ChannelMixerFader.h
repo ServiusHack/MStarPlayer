@@ -5,6 +5,9 @@
 #include "MixerFader.h"
 #include "ChannelVolumeAudioSource.h"
 
+/**
+	MixerFader for an output channel.
+*/
 class ChannelMixerFader : public MixerFader
 {
 public:

@@ -10,6 +10,7 @@
 #include <memory>
 
 /*
+	Component containing all tracks.
 */
 class TracksComponent : public Component
 {
