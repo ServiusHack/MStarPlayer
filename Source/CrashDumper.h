@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef _WIN32
+
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include <Windows.h>
@@ -19,3 +21,5 @@ public:
 private:
 	EXCEPTION_POINTERS* e;
 };
+
+#endif

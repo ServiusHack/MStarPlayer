@@ -14,7 +14,9 @@ public:
 
     void initialise (const String& /*commandLine*/)
 	{
+#ifdef _WIN32
 		CrashDumper::init();
+#endif
 		MainContentComponent::initLookAndFeel();
 		LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
 		m_mainWindow = new MainWindow();

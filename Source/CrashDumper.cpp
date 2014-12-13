@@ -1,5 +1,6 @@
 #include "CrashDumper.h"
 
+#ifdef _WIN32
 
 LONG CALLBACK unhandledExceptionFilter(EXCEPTION_POINTERS* e)
 {
@@ -61,3 +62,5 @@ void CrashDumper::init()
 {
 	SetUnhandledExceptionFilter(unhandledExceptionFilter);
 }
+
+#endif
