@@ -14,13 +14,13 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 	, m_mute(mute)
 	, m_type(type)
 	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this))
-	, m_playlistPlayer(&m_tracksContainer, outputChannelNames, type == PlayerType::Playlist, 
+	, m_playlistPlayer(&m_tracksContainer, type == PlayerType::Playlist, 
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
 		std::bind(&Player::setType, this, std::placeholders::_1),
 		playlistModel,
 		applicationProperties)
-	, m_jinglePlayer(&m_tracksContainer, outputChannelNames,
+	, m_jinglePlayer(&m_tracksContainer,
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
 		std::bind(&Player::setType, this, std::placeholders::_1))

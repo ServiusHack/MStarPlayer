@@ -13,9 +13,8 @@ namespace {
 	const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback)
+JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback)
 	: m_tracksContainer(tracksContainer)
-	, m_outputChannelNames(outputChannelNames)
 	, m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
 	, m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
 	, m_showRemainingTime(false)

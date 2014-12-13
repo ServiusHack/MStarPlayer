@@ -23,7 +23,7 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames* outputChannelNames, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
+	PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
 
 	void setColor(const Colour& color);
 
@@ -57,8 +57,6 @@ private:
 	TracksContainer* m_tracksContainer;
 
 	Colour m_color;
-
-	OutputChannelNames* m_outputChannelNames;
 
 	InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
 	InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;

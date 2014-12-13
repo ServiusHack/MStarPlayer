@@ -10,10 +10,8 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputCha
 	, m_outputChannelNames(outputChannelNames)
 	, m_separatorPosition(0.0f)
 {
-    // Get notified when the AudioDeviceManager changes.
-	m_audioDeviceManager->addChangeListener(this);
-
 	m_outputChannelNames->addListener(this);
+	m_outputChannelNames->addChangeListener(this);
 
     // setup audio playback
 	m_audioDeviceManager->addAudioCallback(&m_audioSourcePlayer);
@@ -153,9 +151,9 @@ void MixerComponent::restoreFromXml (const XmlElement& element)
 }
 void MixerComponent::outputChannelNamesReset()
 {
-	for (size_t i = 0; i < m_channelSliders.size(); i++) {
+	/*for (size_t i = 0; i < m_channelSliders.size(); i++) {
 		m_channelSliders[i]->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
-	}
+	}*/
 }
 
 void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)

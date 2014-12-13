@@ -8,10 +8,9 @@
 
 using namespace InterPlayerCommunication;
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, OutputChannelNames *outputChannelNames, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
+PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
 	: m_color(0xffffffff)
 	, m_tracksContainer(tracksContainer)
-	, m_outputChannelNames(outputChannelNames)
 	, m_showEditDialogCallback(showEditDialogCallback)
 	, m_configureChannelsCallback(configureChannelsCallback)
 	, m_changePlayerTypeCallback(changePlayerTypeCallback)

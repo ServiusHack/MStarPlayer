@@ -29,7 +29,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	JinglePlayerWindow(TracksContainer* tracksContainer, OutputChannelNames* outputChannelNames, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback);
+	JinglePlayerWindow(TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback);
 
 	void setColor(const Colour& color);
 
@@ -70,7 +70,6 @@ private:
     void loadFile();
     
     // audio output
-	OutputChannelNames* m_outputChannelNames;
 	OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
 
 	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;

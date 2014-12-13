@@ -19,8 +19,14 @@ void OutputChannelNames::changeListenerCallback(ChangeBroadcaster *source)
 	{
 		m_audioDevice = manager->getCurrentAudioDevice();
 
-		m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
-		m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
+		if (m_audioDevice) {
+			m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
+			m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
+		}
+		else {
+			m_deviceOutputChannelNames.clear();
+			m_internalOutputChannelNames.clear();
+		}
 
 		for (OutputChannelNamesListener* listener : m_listeners)
 			listener->outputChannelNamesReset();
@@ -31,7 +37,10 @@ void OutputChannelNames::changeListenerCallback(ChangeBroadcaster *source)
 
 int OutputChannelNames::getNumberOfChannels()
 {
-	return m_audioDevice->getActiveOutputChannels().countNumberOfSetBits();
+	if (m_audioDevice)
+		return m_audioDevice->getActiveOutputChannels().countNumberOfSetBits();
+	else
+		return 0;
 }
 
 StringArray OutputChannelNames::getAllDeviceOutputChannelNames()
