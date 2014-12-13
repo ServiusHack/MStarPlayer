@@ -36,14 +36,17 @@ void PlaylistModel::paintCell(Graphics& g,
 {
 	g.setColour(Colours::black);
 
-	if (columnId == 1) {
-		g.drawText(String(rowNumber + 1), 2, 0, width - 4, height, Justification::centredLeft, true);
-	}
-	else if (columnId == 2) {
-		g.drawText(m_playlist[rowNumber].name, 2, 0, width - 4, height, Justification::centredLeft, true);
-	}
-	else if (columnId == 3) {
-		g.drawText(Utils::formatSeconds(m_playlist[rowNumber].durationInSeconds), 2, 0, width - 4, height, Justification::centredLeft, true);
+	if (rowNumber >= 0 && static_cast<size_t>(rowNumber) < m_playlist.size())
+	{
+		if (columnId == 1) {
+			g.drawText(String(rowNumber + 1), 2, 0, width - 4, height, Justification::centredLeft, true);
+		}
+		else if (columnId == 2) {
+			g.drawText(m_playlist[rowNumber].name, 2, 0, width - 4, height, Justification::centredLeft, true);
+		}
+		else if (columnId == 3) {
+			g.drawText(Utils::formatSeconds(m_playlist[rowNumber].durationInSeconds), 2, 0, width - 4, height, Justification::centredLeft, true);
+		}
 	}
 
 	g.setColour(Colours::black.withAlpha(0.2f));
