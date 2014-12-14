@@ -259,7 +259,13 @@ void Player::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
 		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_tracksContainer.createMapping(), [&](int source, int target) {
-			m_tracksContainer[0].setOutputChannelMapping(source, target);
+			for (int i = 0; i < m_tracksContainer.size(); ++i) {
+				if (source - m_tracksContainer[i].getNumChannels() < 0) {
+					m_tracksContainer[i].setOutputChannelMapping(source, target);
+					break;
+				}
+				source -= m_tracksContainer[i].getNumChannels();
+			}
 		}, [&]() {
 			// clear is not working
 			delete m_channelMappingWindow.release();
