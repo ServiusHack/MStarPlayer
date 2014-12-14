@@ -4,5 +4,6 @@
 /Builds/VisualStudio2013/ipch
 /Builds/VisualStudio2013/AudioPlayerJuce.sdf
 /Builds/VisualStudio2013/AudioPlayerJuce.sln.docstates.suo
-/Builds/VisualStudio2013/AudioPlayerJuce.suo
+/Builds/VisualStudio2013/AudioPlayerJuce*.suo
 /Builds/VisualStudio2013/AudioPlayerJuce.opensdf
+/Builds/VisualStudio2013/resources.aps
