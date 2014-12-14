@@ -83,9 +83,6 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, boo
 
 	// playback time display
 	addAndMakeVisible(m_digitalDisplay = new Label(String::empty, "00:00:00"));
-	m_digitalDisplay->setFont(Font(Font::getDefaultMonospacedFontName(), 14, Font::plain));
-	m_digitalDisplay->setColour(Label::textColourId, Colours::red);
-	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
 
 	addAndMakeVisible(m_tracksViewport = new Viewport());
 	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(*m_tracksContainer, applicationProperties,
@@ -223,7 +220,7 @@ void PlaylistPlayerWindow::setColor(const Colour& color)
 {
 	m_color = color;
 	m_tableListBox->setColour(ListBox::backgroundColourId, m_color);
-	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
+	m_digitalDisplay->setColour(Label::textColourId, m_color.contrasting());
 	repaint();
 }
 
