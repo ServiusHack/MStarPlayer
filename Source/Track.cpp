@@ -168,7 +168,7 @@ void Track::setOutputChannelMapping(int source, int target)
 
 int Track::getNumChannels()
 {
-	return m_currentAudioFileSource->getAudioFormatReader()->numChannels;
+	return m_stereo ? 2 : 1;
 }
 
 double Track::getDuration()
