@@ -30,6 +30,10 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="Tnke46" name="ChangeableArrowButton.cpp" compile="1" resource="0"
+            file="Source/ChangeableArrowButton.cpp"/>
+      <FILE id="JgAqQL" name="ChangeableArrowButton.h" compile="0" resource="0"
+            file="Source/ChangeableArrowButton.h"/>
       <GROUP id="{F77B95C1-AB4A-6CDF-7261-C2BEEFA2CBEE}" name="Player">
         <FILE id="vCosBz" name="PlayerEditDialog.cpp" compile="1" resource="0"
               file="Source/PlayerEditDialog.cpp"/>

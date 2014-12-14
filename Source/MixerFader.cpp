@@ -10,7 +10,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 : m_label(new Label("label"))
 , m_soloButton(new TextButton("solo"))
 , m_muteButton(new TextButton("mute"))
-, m_expandButton(new ArrowButton("expand", 0.0, Colour(0xff000000)))
+, m_expandButton(new ChangeableArrowButton("expand", 0.0, Colour(0xff000000)))
 , m_panSlider(panEnabled ? new Slider() : nullptr)
 , m_levelMeter(new LevelMeter())
 , m_volumeSlider(new VolumeSlider())
@@ -163,8 +163,10 @@ void MixerFader::buttonClicked(Button* buttonThatWasClicked)
 	}
 	else if (buttonThatWasClicked == m_expandButton) {
 		Rectangle<int> bounds = getBounds();
-		bounds.setWidth(bounds.getWidth() == baseWidth ? (m_subfaders.size() + 1) * baseWidth : baseWidth);
+		bool expand = bounds.getWidth() == baseWidth;
+		bounds.setWidth(expand ? (m_subfaders.size() + 1) * baseWidth : baseWidth);
 		setBounds(bounds);
+		m_expandButton->setArrowDirection(expand ? 0.5f : 0.0f);
 		m_resizeCallback();
 	}
 }

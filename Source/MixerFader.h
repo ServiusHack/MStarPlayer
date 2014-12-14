@@ -8,6 +8,7 @@
 #include "MixerControlable.h"
 #include "VolumeSlider.h"
 #include "LevelMeter.h"
+#include "ChangeableArrowButton.h"
 
 /**
 	A set of controls for an player channel or output channel.
@@ -82,7 +83,7 @@ private:
 	ScopedPointer<Label> m_label;
 	ScopedPointer<TextButton> m_soloButton;
 	ScopedPointer<TextButton> m_muteButton;
-	ScopedPointer<ArrowButton> m_expandButton;
+	ScopedPointer<ChangeableArrowButton> m_expandButton;
 	ScopedPointer<Slider> m_panSlider;
 	ScopedPointer<LevelMeter> m_levelMeter;
 
