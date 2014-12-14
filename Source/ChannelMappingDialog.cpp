@@ -156,8 +156,8 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChann
 	m_tableListBox->setOutlineThickness(1);
 
 	// set the table header columns
-	m_tableListBox->getHeader().addColumn("Player Channel", 1, 100, 50, 400, TableHeaderComponent::defaultFlags);
-	m_tableListBox->getHeader().addColumn("Output Channel", 2, 100, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn("Player Channel", 1, 120, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn("Output Channel", 2, 220, 50, 400, TableHeaderComponent::defaultFlags);
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));
 	m_closeButton->setButtonText(TRANS("Close"));
