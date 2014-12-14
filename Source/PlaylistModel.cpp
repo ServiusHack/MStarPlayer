@@ -115,6 +115,7 @@ void PlaylistModel::insert(int rowNumber, const String& name, double durationInS
 	entry.playNext = false;
 	m_playlist.insert(m_playlist.begin() + rowNumber, entry);
 	sendChangeMessage();
+	m_reloadedCallback();
 }
 
 void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const MouseEvent & event)
