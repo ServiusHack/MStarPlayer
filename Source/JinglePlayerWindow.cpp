@@ -143,7 +143,7 @@ void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 		PopupMenu m;
 		m.addItem (1, "load file");
 		m.addItem(2, "configure channels");
-		m.addItem(3, "rename");
+		m.addItem(3, "configure appearance");
 		m.addSeparator();
 		m.addItem(4, "Jingle Mode", true, true);
 		m.addItem(5, "Multitrack Mode");

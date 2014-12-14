@@ -165,7 +165,7 @@ void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
 	m.addItem (1, "add stereo track");
 	m.addItem (2, "add mono track");
 	m.addItem (3, "configure channels");
-	m.addItem (4, "rename");
+	m.addItem (4, "configure appearance");
 	m.addSeparator();
 	m.addItem(5, "Jingle Mode");
 	m.addItem(6, "Multitrack Mode", true, !m_tableListBox->isVisible());
