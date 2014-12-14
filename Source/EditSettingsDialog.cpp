@@ -48,17 +48,17 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, Applica
 void EditSettingsComponent::resized()
 {
 	const static int buttonWidth = 80;
-	const static int buttonHeight = 24;
+	const static int rowHeight = 24;
 	const static int padding = 10;
 
-	m_nameLabel->setBounds(30, padding, 150, 24);
-	m_audioEditorFilenameComponent->setBounds(160, padding, getWidth() - 160 - 10, 24);
+	m_nameLabel->setBounds(padding, padding, getWidth() - 2 * padding, rowHeight);
+	m_audioEditorFilenameComponent->setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
 
 	m_closeButton->setBounds(
 		(getWidth() - buttonWidth) / 2,
-		getHeight() - 2*(buttonHeight - padding),
+		getHeight() - 2*(rowHeight - padding),
 		buttonWidth,
-		buttonHeight
+		rowHeight
 		);
 
 }

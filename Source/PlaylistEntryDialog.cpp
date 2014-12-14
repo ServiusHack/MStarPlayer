@@ -78,17 +78,17 @@ PlaylistEntryDialogComponent::~PlaylistEntryDialogComponent()
 void PlaylistEntryDialogComponent::resized()
 {
 	const static int buttonWidth = 80;
-	const static int buttonHeight = 24;
+	const static int rowHeight = 24;
 	const static int padding = 10;
 
-	m_nameLabel->setBounds(30, padding, 100, 24);
-	m_nameEditor->setBounds(140, padding, 70, 24);
+	m_nameLabel->setBounds(padding, padding, getWidth() - 2 * padding, rowHeight);
+	m_nameEditor->setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
 
 	m_closeButton->setBounds(
 		(getWidth() - buttonWidth) / 2,
-		getHeight() - 2*(buttonHeight - padding),
+		getHeight() - 2*(rowHeight - padding),
 		buttonWidth,
-		buttonHeight
+		rowHeight
 		);
 }
 
