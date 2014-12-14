@@ -107,8 +107,8 @@ void TrackUi::buttonClicked(Button *button)
 		m.addItem (1, "edit track");
 		m.addItem (5, "delete track", !m_trackHasFilesCallback(m_track.getTrackIndex()));
 		m.addItem (2, "open file");
-		m.addItem (3, "edit file");
-		m.addItem (4, "remove file");
+		m.addItem (3, "edit file", m_track.getTrackConfig().file != File::nonexistent);
+		m.addItem (4, "remove file", m_track.getTrackConfig().file != File::nonexistent);
 		m.addSeparator();
 		const int result = m.show();
 
