@@ -33,6 +33,8 @@ public:
 	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
 
 private:
+	void forceSelectRow(int rowIndex);
+
 	PlaylistEntryChangedCallback m_callback;
 	PlaylistModel& m_model;
 
