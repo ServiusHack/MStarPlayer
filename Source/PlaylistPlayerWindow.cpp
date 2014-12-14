@@ -148,10 +148,15 @@ void PlaylistPlayerWindow::resized()
 #undef PLACE_BUTTON
 	m_digitalDisplay->setBounds(6 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
 
-	Component* components[] = { m_tableListBox, m_resizeBar, m_tracksViewport };
-	m_layout.layOutComponents(components, 3,
-		0, buttonHeight, getWidth(), getHeight() - buttonHeight,
-		true, true);
+	if (m_tableListBox->isVisible()) {
+		Component* components[] = { m_tableListBox, m_resizeBar, m_tracksViewport };
+		m_layout.layOutComponents(components, 3,
+			0, buttonHeight, getWidth(), getHeight() - buttonHeight,
+			true, true);
+	}
+	else {
+		m_tracksViewport->setBounds(0, buttonHeight, getWidth(), getHeight() - buttonHeight);
+	}
 
 	m_tracks->setBounds(0, 0, m_tracksViewport->getMaximumVisibleWidth(), m_tracks->getHeight());
 }
@@ -224,6 +229,7 @@ void PlaylistPlayerWindow::setColor(const Colour& color)
 void PlaylistPlayerWindow::setShowPlaylist(bool showPlaylist)
 {
 	m_tableListBox->setVisible(showPlaylist);
+	m_resizeBar->setVisible(showPlaylist);
 	resized();
 	repaint();
 }
