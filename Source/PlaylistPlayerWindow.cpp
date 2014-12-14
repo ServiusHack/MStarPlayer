@@ -222,6 +222,7 @@ void PlaylistPlayerWindow::buttonClicked(Button* button)
 void PlaylistPlayerWindow::setColor(const Colour& color)
 {
 	m_color = color;
+	m_tableListBox->setColour(ListBox::backgroundColourId, m_color);
 	m_digitalDisplay->setColour(Label::backgroundColourId, m_color.darker());
 	repaint();
 }
