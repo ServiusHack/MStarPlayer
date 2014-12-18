@@ -23,6 +23,7 @@ class MixerComponent
 	: public Component
 	, public ChangeListener
 	, public OutputChannelNamesListener
+	, public ScrollBar::Listener
 {
 public:
 	/** Creates a new MixerComponent.
@@ -64,6 +65,8 @@ private:
 
 	std::vector<MixerFader*> m_channelSliders;
 	std::vector<PlayerMixerFader*> m_playerSliders;
+	Component m_slidersContainer;
+	ScrollBar m_sliderScrollBar;
 
 // Component
 public:
@@ -80,6 +83,10 @@ public:
 	virtual void outputChannelNamesReset() override;
 	virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
 
+// ScrollBar::Listener
+public:
+	virtual void scrollBarMoved(ScrollBar *scrollBarThatHasMoved, double newRangeStart) override;
+
 private:
 	
 	// audio output
@@ -88,8 +95,6 @@ private:
     AudioSourcePlayer m_audioSourcePlayer;
 	AudioDeviceManager *m_audioDeviceManager;
 	OutputChannelNames *m_outputChannelNames;
-
-	float m_separatorPosition;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerComponent)
 };

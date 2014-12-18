@@ -8,8 +8,13 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputCha
 	, m_channelVolumeAudioSource(&m_mixerAudioSource)
 	, m_audioDeviceManager(audioDeviceManager)
 	, m_outputChannelNames(outputChannelNames)
-	, m_separatorPosition(0.0f)
+	, m_sliderScrollBar(false)
 {
+	addAndMakeVisible(m_slidersContainer);
+	addAndMakeVisible(m_sliderScrollBar);
+
+	m_sliderScrollBar.addListener(this);
+
 	m_outputChannelNames->addListener(this);
 	m_outputChannelNames->addChangeListener(this);
 
@@ -60,14 +65,28 @@ void MixerComponent::updatePlayerColor(SubchannelPlayer* player, Colour color)
 
 void MixerComponent::paint (Graphics& g)
 {
-	if (m_playerSliders.size() > 0)
-		g.drawLine(m_separatorPosition, 0.0f, m_separatorPosition, static_cast<float>(getHeight()), 1.0f);
 }
 
 void MixerComponent::resized()
 {
+	const int scrollBarHeight = 18;
+	m_sliderScrollBar.setBounds(0, getHeight() - scrollBarHeight, getWidth(), scrollBarHeight);
+
+	// Determine width of all sliders.
+	int width = 0;
+	auto sumWidths = [&width](const MixerFader* fader) {
+		width += fader->getBounds().getWidth();
+	};
+
+	std::for_each(m_playerSliders.begin(), m_playerSliders.end(), sumWidths);
+	width += 10;
+	std::for_each(m_channelSliders.begin(), m_channelSliders.end(), sumWidths);
+
+	m_sliderScrollBar.setRangeLimits(0, std::max(0, width));
+    const int sliderHeight = getHeight() - (width <= getWidth() ? 0 : scrollBarHeight);
+	
+
     int x = 0;
-    const int sliderHeight = getHeight();
 
 	auto updateBounds = [&x, sliderHeight](MixerFader* fader) {
 		Rectangle<int> bounds = fader->getBounds();
@@ -79,18 +98,25 @@ void MixerComponent::resized()
 
 	std::for_each(m_playerSliders.begin(), m_playerSliders.end(), updateBounds);
 
-	// set place of separation line between player and channel faders
-	m_separatorPosition = x + 5.0f;
 	x += 10;
 
 	std::for_each(m_channelSliders.begin(), m_channelSliders.end(), updateBounds);
+
+	m_sliderScrollBar.setCurrentRange(m_slidersContainer.getX(), getWidth());
+
+	{
+		Rectangle<int> bounds = m_slidersContainer.getBounds();
+		bounds.setWidth(x);
+		bounds.setHeight(sliderHeight);
+		m_slidersContainer.setBounds(bounds);
+	}
 }
 
 
 void MixerComponent::addPlayerSlider(SubchannelPlayer* player)
 {
 	PlayerMixerFader* slider = new PlayerMixerFader(player, player->getSubMixerControlables(), false, std::bind(&MixerComponent::resized, this));
-	addAndMakeVisible(slider);
+	m_slidersContainer.addAndMakeVisible(slider);
 	m_playerSliders.push_back(slider);
 }
 
@@ -98,7 +124,7 @@ void MixerComponent::addChannelSlider()
 {
 	int channelNumber = m_channelSliders.size();
 	MixerFader* slider = new ChannelMixerFader(channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
-    addAndMakeVisible(slider);
+	m_slidersContainer.addAndMakeVisible(slider);
 	m_channelSliders.push_back(slider);
 }
 
@@ -159,4 +185,9 @@ void MixerComponent::outputChannelNamesReset()
 void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
 {
 	m_channelSliders.at(activeChannelIndex)->setLabel(text);
+}
+
+void MixerComponent::scrollBarMoved(ScrollBar* /*scrollBarThatHasMoved*/, double newRangeStart)
+{
+	m_slidersContainer.setTopLeftPosition(-newRangeStart, 0);
 }
