@@ -1,31 +1,47 @@
 #include "OutputChannelNames.h"
 
 
+bool DeviceIdentification::operator!=(const DeviceIdentification& other)
+{
+	return deviceTypeName != other.deviceTypeName || deviceName != other.deviceName;
+}
+
 OutputChannelNames::OutputChannelNames(AudioDeviceManager &deviceManager)
 	: m_audioDevice(deviceManager.getCurrentAudioDevice())
 {
 	if (m_audioDevice) {
 		m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
 		m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
+		m_deviceIdentification = ExtractDeviceIdentification(m_audioDevice);
 	}
 	deviceManager.addChangeListener(this);
+}
+
+DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(AudioIODevice* audioDevice)
+{
+	if (audioDevice)
+		return DeviceIdentification{ audioDevice->getTypeName(), audioDevice->getName() };
+	else
+		return DeviceIdentification();
 }
 
 void OutputChannelNames::changeListenerCallback(ChangeBroadcaster *source)
 {
 	AudioDeviceManager* manager = static_cast<AudioDeviceManager*>(source);
 
-	if (m_audioDevice != manager->getCurrentAudioDevice())
+	if (m_deviceIdentification != ExtractDeviceIdentification(manager->getCurrentAudioDevice()))
 	{
 		m_audioDevice = manager->getCurrentAudioDevice();
 
 		if (m_audioDevice) {
 			m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
 			m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
+			m_deviceIdentification = ExtractDeviceIdentification(m_audioDevice);
 		}
 		else {
 			m_deviceOutputChannelNames.clear();
 			m_internalOutputChannelNames.clear();
+			m_deviceIdentification = DeviceIdentification();
 		}
 
 		for (OutputChannelNamesListener* listener : m_listeners)

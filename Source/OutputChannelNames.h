@@ -15,6 +15,21 @@ public:
 };
 
 /**
+	Identification of an audio device.
+
+	We can't use a pointer to the audio device because the AudioDeviceManager might delete, reuse or do what
+	it wants to with it. Therefore we take the type name and device name which is most likely unique to each
+	device in the system.
+*/
+struct DeviceIdentification
+{
+	String deviceTypeName;
+	String deviceName;
+
+	inline bool operator!=(const DeviceIdentification& other);
+};
+
+/**
 	Maintains the user defined output channel names.
 */
 class OutputChannelNames
@@ -27,7 +42,9 @@ public:
 	int getNumberOfChannels();
 
 private:
+	DeviceIdentification ExtractDeviceIdentification(AudioIODevice* audioDevice);
 	AudioIODevice* m_audioDevice;
+	DeviceIdentification m_deviceIdentification;
 
 // output device names and their internal names
 public:
