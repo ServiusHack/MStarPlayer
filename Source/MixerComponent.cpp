@@ -146,6 +146,11 @@ void MixerComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
         addChannelSlider();
     }
 
+	// get names for all sliders
+	for (size_t i = 0; i < m_channelSliders.size(); i++) {
+		m_channelSliders[i]->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
+	}
+
     // correctly size the new sliders
     resized();
 }
@@ -177,9 +182,6 @@ void MixerComponent::restoreFromXml (const XmlElement& element)
 }
 void MixerComponent::outputChannelNamesReset()
 {
-	/*for (size_t i = 0; i < m_channelSliders.size(); i++) {
-		m_channelSliders[i]->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
-	}*/
 }
 
 void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
