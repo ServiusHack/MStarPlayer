@@ -130,10 +130,7 @@ void MixerComponent::addChannelSlider()
 
 void MixerComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
 {
-    AudioDeviceManager::AudioDeviceSetup deviceSetup;
-	m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-
-	size_t numberOfChannels = static_cast<size_t>(deviceSetup.outputChannels.countNumberOfSetBits());
+	size_t numberOfChannels = m_outputChannelNames->getNumberOfChannels();
 
     // remove sliders until there are not too many
 	while (numberOfChannels < m_channelSliders.size()) {
