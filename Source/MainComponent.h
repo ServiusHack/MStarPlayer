@@ -10,11 +10,7 @@
 #include "AudioConfiguration.h"
 #include "DefaultLookAndFeel.h"
 #include "EditSettingsDialog.h"
-
-class MyMultiDocumentPanel : public MultiDocumentPanel {
-public:
-    bool tryToCloseDocument(Component *component);
-};
+#include "MyMultiDocumentPanel.h"
 
 /** Main component of the Audio Player application.
 

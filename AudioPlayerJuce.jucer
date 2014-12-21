@@ -30,6 +30,14 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="eaHRtp" name="MyMultiDocumentPanel.cpp" compile="1" resource="0"
+            file="Source/MyMultiDocumentPanel.cpp"/>
+      <FILE id="XgATCp" name="MyMultiDocumentPanel.h" compile="0" resource="0"
+            file="Source/MyMultiDocumentPanel.h"/>
+      <FILE id="XZPn6F" name="ResizingComponent.cpp" compile="1" resource="0"
+            file="Source/ResizingComponent.cpp"/>
+      <FILE id="IneXBX" name="ResizingComponent.h" compile="0" resource="0"
+            file="Source/ResizingComponent.h"/>
       <FILE id="Tnke46" name="ChangeableArrowButton.cpp" compile="1" resource="0"
             file="Source/ChangeableArrowButton.cpp"/>
       <FILE id="JgAqQL" name="ChangeableArrowButton.h" compile="0" resource="0"

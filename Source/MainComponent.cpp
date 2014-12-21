@@ -2,9 +2,6 @@
 
 #include "Player.h"
 
-bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/) {
-    return true;
-}
 
 
 DefaultLookAndFeel* MainContentComponent::s_defaultLookAndFeel;
@@ -40,7 +37,7 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
     // player MDI area
 	m_multiDocumentPanel = new MyMultiDocumentPanel();
 	addAndMakeVisible(m_multiDocumentPanel);
-	m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+	m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 
 	PropertiesFile::Options options;
 	options.applicationName = "AudioPlayerJuce";
@@ -260,10 +257,10 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         }
         break;
 	case layoutModeFloating:
-		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+		m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 		break;
 	case layoutModeTabs:
-		m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
+		m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
 
     case configureAudio:
@@ -385,9 +382,9 @@ void MainContentComponent::readProjectFile()
 		{
 			String layoutMode = layoutModeElement->getAllSubText().trim();
 			if (layoutMode == "windows")
-				m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::FloatingWindows);
+				m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 			else if (layoutMode == "tabs")
-				m_multiDocumentPanel->setLayoutMode(MultiDocumentPanel::MaximisedWindowsWithTabs);
+				m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::MaximisedWindowsWithTabs);
 			else
 				loadErrors.push_back("Unknown view layout, using default.");
 		}
