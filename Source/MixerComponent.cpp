@@ -63,10 +63,6 @@ void MixerComponent::updatePlayerColor(SubchannelPlayer* player, Colour color)
 	(*it)->setColor(color);
 }
 
-void MixerComponent::paint (Graphics& g)
-{
-}
-
 void MixerComponent::resized()
 {
 	const int scrollBarHeight = 18;
@@ -188,5 +184,5 @@ void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const Stri
 
 void MixerComponent::scrollBarMoved(ScrollBar* /*scrollBarThatHasMoved*/, double newRangeStart)
 {
-	m_slidersContainer.setTopLeftPosition(-newRangeStart, 0);
+	m_slidersContainer.setTopLeftPosition(-static_cast<int>(newRangeStart), 0);
 }

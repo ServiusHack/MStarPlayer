@@ -70,7 +70,6 @@ private:
 
 // Component
 public:
-    virtual void paint(Graphics&) override;
     virtual void resized() override;
 
 // ChangeListener
