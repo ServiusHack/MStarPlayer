@@ -220,7 +220,7 @@ void TrackUi::positionChanged(double position)
 void TrackUi::loadFile()
 {
 	FileChooser myChooser ("Please select the audio file you want to load ...",
-			File::getSpecialLocation (File::userHomeDirectory),
+			File::nonexistent,
 			m_track.getAudioFormatManager().getWildcardForAllFormats());
 	if (!myChooser.browseForFileToOpen())
 		return;

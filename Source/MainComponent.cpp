@@ -301,7 +301,7 @@ void MainContentComponent::openProject() {
         return;
 
     FileChooser myChooser ("Please select the project file you want to load ...",
-            File::getSpecialLocation (File::userHomeDirectory),
+            File::nonexistent,
             "*.aupp");
     if (myChooser.browseForFileToOpen())
     {
@@ -344,7 +344,7 @@ bool MainContentComponent::saveProject()
 bool MainContentComponent::saveAsProject()
 {
     FileChooser myChooser ("Please select the project file you want to save ...",
-            File::getSpecialLocation (File::userHomeDirectory),
+            File::nonexistent,
             "*.aupp");
 	if (!myChooser.browseForFileToSave(true))
 		return false;

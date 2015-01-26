@@ -177,7 +177,7 @@ void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 void JinglePlayerWindow::loadFile()
 {
 	FileChooser myChooser ("Please select the audio file you want to load ...",
-			File::getSpecialLocation (File::userHomeDirectory),
+			File::nonexistent,
 			m_formatManager.getWildcardForAllFormats());
 	
 	if (!myChooser.browseForFileToOpen())
