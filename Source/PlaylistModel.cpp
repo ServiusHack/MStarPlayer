@@ -77,7 +77,7 @@ Component* PlaylistModel::refreshComponentForCell(int rowNumber, int columnId, b
 		}
 
 		bool playNext = m_playlist[rowNumber].playNext;
-		editor->setToggleState(playNext, sendNotification);
+		editor->setToggleState(playNext, dontSendNotification);
 		editor->setRowNumber(rowNumber);
 
 		return editor;
