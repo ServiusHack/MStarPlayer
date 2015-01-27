@@ -79,6 +79,8 @@ void TracksContainer::clear()
 
 	for (const auto& callback: m_channelCountChangedCallbacks)
 		callback();
+
+	m_tracksClearedCallback();
 }
 
 void TracksContainer::setOutputChannels(int outputChannels)
