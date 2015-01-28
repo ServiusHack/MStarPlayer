@@ -239,10 +239,10 @@ bool MyMultiDocumentPanel::closeDocument (Component* component,
                 }
             }
 
+            components.removeFirstMatchingValue (component);
+
             if (shouldDelete)
                 delete component;
-
-            components.removeFirstMatchingValue (component);
 
             if (isFullscreenWhenOneDocument() && components.size() == 1)
             {
@@ -272,13 +272,13 @@ bool MyMultiDocumentPanel::closeDocument (Component* component,
                 removeChildComponent (component);
             }
 
-            if (shouldDelete)
-                delete component;
-
             if (tabComponent != nullptr && tabComponent->getNumTabs() <= numDocsBeforeTabsUsed)
                 tabComponent = nullptr;
 
             components.removeFirstMatchingValue (component);
+
+            if (shouldDelete)
+                delete component;
 
             if (components.size() > 0 && tabComponent == nullptr)
                 addAndMakeVisible (components.getFirst());
