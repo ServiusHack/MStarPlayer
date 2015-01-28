@@ -158,6 +158,12 @@ void Player::setColor(const Colour& color)
 	m_jinglePlayer.setColor(m_color);
 }
 
+void Player::setUserImage(const File& file)
+{
+	m_userImage = file;
+	m_jinglePlayer.setUserImage(file);
+}
+
 XmlElement* Player::saveToXml() const
 {
     XmlElement* element = new XmlElement("Player");
@@ -177,6 +183,8 @@ XmlElement* Player::saveToXml() const
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
 	element->setAttribute("color", m_color.toString());
+	if (m_userImage != File::nonexistent)
+		element->setAttribute("userImage", m_userImage.getFullPathName());
 
 	Rectangle<int> bounds = getParentComponent()->getBounds();
 
@@ -204,6 +212,8 @@ XmlElement* Player::saveToXml() const
 void Player::restoreFromXml (const XmlElement& element)
 {
 	setColor(Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
+	if (element.hasAttribute("userImage"))
+		setUserImage(element.getStringAttribute("userImage"));
 	repaint();
 
 	XmlElement* boundsXml = element.getChildByName("Bounds");
@@ -249,7 +259,7 @@ void Player::showEditDialog()
 				// clear is not working
 				delete m_PlayerEditDialog.release();
 			},
-			std::bind(&JinglePlayerWindow::setUserImage, &m_jinglePlayer, std::placeholders::_1)), true);
+			std::bind(&Player::setUserImage, this, std::placeholders::_1)), true);
 	}
 	m_PlayerEditDialog->addToDesktop();
 	m_PlayerEditDialog->toFront(true);

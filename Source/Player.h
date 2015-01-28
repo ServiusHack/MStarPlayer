@@ -81,6 +81,7 @@ private:
 	void updateGain();
 
 	void setColor(const Colour& color);
+	void setUserImage(const File& file);
 
 	void showEditDialog();
 	void configureChannels();
@@ -103,6 +104,7 @@ private:
 	InterPlayerCommunication::PlayerType m_type;
 
 	Colour m_color;
+	File m_userImage;
 
 	Track::ChannelCountChangedCallback m_channelCountChanged;
 	OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
