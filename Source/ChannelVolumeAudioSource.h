@@ -70,7 +70,7 @@ private:
 
 // actual output volume
 public:
-	float getActualVolume(size_t channelIndex) const;
+	float takeActualVolume(size_t channelIndex);
 
 private:
 	std::vector<float> m_actualVolumes;

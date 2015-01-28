@@ -34,7 +34,7 @@ public:
 
 	virtual bool getMute() const override;
 
-	virtual float getVolume() const override;
+	virtual float getVolume() override;
 
 	virtual String getName() const override;
 

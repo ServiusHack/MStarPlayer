@@ -18,13 +18,15 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 	const ScopedLock sl(lock);
 	ChannelRemappingAudioSource::getNextAudioBlock(bufferToFill);
 	for (size_t i = 0; i < m_volumes.size(); ++i)
-		m_volumes[i] = bufferToFill.buffer->getRMSLevel(i, bufferToFill.startSample, bufferToFill.numSamples);
+		m_volumes[i] = std::max(m_volumes[i], bufferToFill.buffer->getMagnitude(i, bufferToFill.startSample, bufferToFill.numSamples));
 }
 
-float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel) const
+float ChannelRemappingAudioSourceWithVolume::takeVolume(size_t channel)
 {
 	const ScopedLock sl(lock);
 	jassert(channel < m_volumes.size());
 	
-	return m_volumes[channel];
+	auto volume = m_volumes[channel];
+	m_volumes[channel] = 0.0f;
+	return volume;
 }

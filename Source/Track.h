@@ -107,7 +107,7 @@ public:
 	virtual void setPan(float) override {};
 	virtual float getPan() const override { return 0; };
 
-	virtual float getVolume() const override;
+	virtual float getVolume() override;
 
 // MixerControlable name
 public:

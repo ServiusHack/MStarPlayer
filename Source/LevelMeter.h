@@ -8,6 +8,8 @@
 class LevelMeter : public Component
 {
   public:
+	  static const int refreshRate = 20; // Updates per second.
+
 	  LevelMeter();
 
 	  void setVolume(float volume);
@@ -17,4 +19,6 @@ class LevelMeter : public Component
 private:
 	const AffineTransform m_rotationTransformation;
 	float m_volume;
+	float m_peak;
+	int m_peakDurationLeft;
 };

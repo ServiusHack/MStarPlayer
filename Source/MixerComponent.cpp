@@ -31,6 +31,7 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputCha
 	}
 
     setSize(100,112);
+	startTimer(1000/LevelMeter::refreshRate);
 }
 
 MixerComponent::~MixerComponent()
@@ -185,4 +186,12 @@ void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const Stri
 void MixerComponent::scrollBarMoved(ScrollBar* /*scrollBarThatHasMoved*/, double newRangeStart)
 {
 	m_slidersContainer.setTopLeftPosition(-static_cast<int>(newRangeStart), 0);
+}
+
+void MixerComponent::timerCallback()
+{
+	for (auto&& slider : m_channelSliders)
+		slider->updateLevel();
+	for (auto&& slider : m_playerSliders)
+		slider->updateLevel();
 }

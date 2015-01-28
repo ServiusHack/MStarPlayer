@@ -25,7 +25,6 @@ class MixerFader
 	, public ButtonListener
 	, public juce::Slider::Listener
 	, public MixerControlableChangeListener
-	, public Timer
 {
 public:
 
@@ -46,6 +45,8 @@ public:
 	void setLabel(const String& text);
 
 	void setMixSettings(std::vector<MixerControlable*> mixSettings);
+
+	void updateLevel();
 
 // Component
 public:
@@ -71,10 +72,6 @@ public:
 	virtual void muteChanged(bool mute) override;
 
 	virtual void nameChanged(const String& name) override;
-
-// Timer
-public:
-	virtual void timerCallback() override;
 
 protected:
 	ScopedPointer<VolumeSlider> m_volumeSlider;

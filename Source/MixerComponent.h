@@ -24,6 +24,7 @@ class MixerComponent
 	, public ChangeListener
 	, public OutputChannelNamesListener
 	, public ScrollBar::Listener
+	, public Timer
 {
 public:
 	/** Creates a new MixerComponent.
@@ -85,6 +86,10 @@ public:
 // ScrollBar::Listener
 public:
 	virtual void scrollBarMoved(ScrollBar *scrollBarThatHasMoved, double newRangeStart) override;
+
+// Timer
+public:
+	virtual void timerCallback() override;
 
 private:
 	

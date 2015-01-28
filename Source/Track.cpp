@@ -100,11 +100,11 @@ void Track::setSolo(bool solo)
 	m_soloChangedCallback();
 }
 
-float Track::getVolume() const
+float Track::getVolume()
 {
 	float maxVolume = 0;
 	for (int i = 0; i < m_outputChannels; ++i)
-		maxVolume = std::max(maxVolume, m_remappingAudioSource.getVolume(i));
+		maxVolume = std::max(maxVolume, m_remappingAudioSource.takeVolume(i));
 	return maxVolume;
 }
 

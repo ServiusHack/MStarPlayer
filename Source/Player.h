@@ -59,7 +59,7 @@ public:
 	virtual bool getSolo() const override;
 	virtual void setMute(bool mute) override;
 	virtual bool getMute() const override;
-	virtual float getVolume() const override;
+	virtual float getVolume() override;
 	virtual String getName() const override;
 	virtual void setName (const String& newName) override;
 	virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;

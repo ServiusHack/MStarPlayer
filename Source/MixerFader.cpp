@@ -72,7 +72,6 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 
 	mainControlable->addChangeListener(this);
 
-	startTimer(100);
 }
 
 MixerFader::~MixerFader()
@@ -106,11 +105,6 @@ void MixerFader::muteChanged(bool mute)
 void MixerFader::nameChanged(const String& name)
 {
 	m_label->setText(name, sendNotification);
-}
-
-void MixerFader::timerCallback()
-{
-	m_levelMeter->setVolume(m_mixerControlable->getVolume());
 }
 
 void MixerFader::paint(Graphics& g)
@@ -232,4 +226,11 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
 		setBounds(bounds);
 		m_resizeCallback();
 	}
+}
+
+void MixerFader::updateLevel()
+{
+	m_levelMeter->setVolume(m_mixerControlable->getVolume());
+	for (auto&& fader : m_subfaders)
+		fader->updateLevel();
 }

@@ -59,7 +59,7 @@ void DefaultLookAndFeel::drawProgressBar (Graphics& g, ProgressBar& progressBar,
     }
 }
 
-void DefaultLookAndFeel::drawLevelMeter (Graphics& g, int width, int height, float level)
+void DefaultLookAndFeel::drawLevelMeter (Graphics& g, int width, int height, float level, float peak)
 {
     g.setColour (Colours::white.withAlpha (0.7f));
     g.fillRoundedRectangle(0.0f, 0.0f, (float) width, (float) height, 3.0f);
@@ -68,16 +68,17 @@ void DefaultLookAndFeel::drawLevelMeter (Graphics& g, int width, int height, flo
 
     const int totalBlocks = 20;
     const int numBlocks = roundToInt(totalBlocks * level);
+    const int peakBlock = roundToInt(totalBlocks * peak) - 1;
     const float w = (width - 6.0f) / (float) totalBlocks;
 
     for (int i = 0; i < totalBlocks; ++i)
     {
-		if (i >= numBlocks)
+		if (i >= numBlocks && i != peakBlock)
 			g.setColour(Colours::lightblue.withAlpha(0.6f));
 		else if (i >= totalBlocks - 1)
-            g.setColour(Colours::red);
+            g.setColour(Colours::maroon);
 		else if (i >= totalBlocks - 5)
-            g.setColour(Colours::yellow);
+            g.setColour(Colours::gold);
 		else
 			g.setColour(Colours::blue.withAlpha(0.5f));
 

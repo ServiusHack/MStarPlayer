@@ -12,5 +12,5 @@ public:
 								  int width, int height,
 								  double progress, const String& textToShow) override;
 
-    virtual void drawLevelMeter(Graphics&, int width, int height, float level) override;
+    virtual void drawLevelMeter(Graphics&, int width, int height, float level, float peak);
 };

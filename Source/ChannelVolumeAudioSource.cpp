@@ -91,12 +91,15 @@ bool ChannelVolumeAudioSource::getChannelMute(size_t channelIndex) const
 	return false;
 }
 
-float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
+float ChannelVolumeAudioSource::takeActualVolume(size_t channelIndex)
 {
 	const ScopedLock sl(m_lock);
 
-	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size())
-		return m_actualVolumes[channelIndex];
+	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size()) {
+		auto volume = m_actualVolumes[channelIndex];
+		m_actualVolumes[channelIndex] = 0.0f;
+		return volume;
+	}
 
 	return 0.0f;
 }
@@ -155,6 +158,6 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
 			gain = 0.0f; // some channel is in solo but not this one (otherwise it would be in m_appliedGains)
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
 		if (channel < m_actualVolumes.size())
-			m_actualVolumes[channel] = bufferToFill.buffer->getRMSLevel(channel, bufferToFill.startSample, bufferToFill.numSamples);
+			m_actualVolumes[channel] = std::max(m_actualVolumes[channel], bufferToFill.buffer->getMagnitude(channel, bufferToFill.startSample, bufferToFill.numSamples));
     }
 }
