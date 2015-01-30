@@ -252,7 +252,7 @@ std::vector<MixerControlable*> Player::getSubMixerControlables() const
 void Player::showEditDialog()
 {
 	if (m_PlayerEditDialog.get() == nullptr) {
-		m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, "",
+		m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, m_userImage.getFullPathName(),
 			std::bind(&Player::setName, this, std::placeholders::_1),
 			std::bind(&Player::setColor, this, std::placeholders::_1),
 			[&]() {
