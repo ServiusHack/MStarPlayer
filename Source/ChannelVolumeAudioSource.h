@@ -2,6 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "boost/circular_buffer.hpp"
+
 /**
 	Audio source which applies a gain, solo and mute state to individual channels.
 */
@@ -70,10 +72,11 @@ private:
 
 // actual output volume
 public:
-	float takeActualVolume(size_t channelIndex);
+	float getActualVolume(size_t channelIndex) const;
 
 private:
-	std::vector<float> m_actualVolumes;
+	std::vector<boost::circular_buffer<float>> m_actualVolumes;
+	size_t m_bufferSize;
 
 // gain to apply
 private:

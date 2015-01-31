@@ -2,6 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "boost/circular_buffer.hpp"
+
 /**
 	Audio source which remaps channels and tracks the current volume of each channel.
 */
@@ -12,15 +14,17 @@ public:
 
 // Channel volume
 public:
-	float takeVolume(size_t channel);
+	float getVolume(size_t channel) const;
 
 private:
-	std::vector<float> m_volumes;
+	std::vector<boost::circular_buffer<float>> m_volumes;
 	CriticalSection lock;
+	size_t m_bufferSize;
 
 // ChannelRemappingAudioSource
 public:
 	void setNumberOfChannelsToProduce(int requiredNumberOfChannels);
+    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
 	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
 };

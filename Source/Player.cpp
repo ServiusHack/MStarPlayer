@@ -120,7 +120,7 @@ bool Player::getMute() const
 	return m_mute;
 }
 
-float Player::getVolume()
+float Player::getVolume() const
 {
 	float maxVolume = 0;
 	for (size_t i = 0; i < m_tracksContainer.size(); ++i)

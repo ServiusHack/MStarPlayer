@@ -3,6 +3,7 @@
 
 LevelMeter::LevelMeter()
 	: m_volume(0.0f)
+	, m_peak(0.0f)
 	, m_rotationTransformation(AffineTransform::rotation(-90.0f * float_Pi / 180.0f))
 {
 }

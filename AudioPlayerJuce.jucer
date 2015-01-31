@@ -192,9 +192,9 @@
     <VS2013 targetFolder="Builds/VisualStudio2013">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
+                       isDebug="1" optimisation="1" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common&#10;..\..\boost"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="2" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common"/>
+                       isDebug="1" optimisation="2" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common&#10;..\..\boost"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>

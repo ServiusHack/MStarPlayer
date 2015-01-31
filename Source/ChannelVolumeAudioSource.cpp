@@ -91,14 +91,12 @@ bool ChannelVolumeAudioSource::getChannelMute(size_t channelIndex) const
 	return false;
 }
 
-float ChannelVolumeAudioSource::takeActualVolume(size_t channelIndex)
+float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
 {
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size()) {
-		auto volume = m_actualVolumes[channelIndex];
-		m_actualVolumes[channelIndex] = 0.0f;
-		return volume;
+		return *std::max_element(m_actualVolumes[channelIndex].begin(), m_actualVolumes[channelIndex].end());
 	}
 
 	return 0.0f;
@@ -107,6 +105,10 @@ float ChannelVolumeAudioSource::takeActualVolume(size_t channelIndex)
 void ChannelVolumeAudioSource::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     m_source->prepareToPlay(samplesPerBlockExpected, sampleRate);
+	m_bufferSize = static_cast<size_t>(sampleRate);
+	auto numberOfChannels = m_actualVolumes.size();
+	m_actualVolumes.clear();
+	m_actualVolumes.resize(numberOfChannels, boost::circular_buffer<float>(m_bufferSize,0.0f));
 }
 
 void ChannelVolumeAudioSource::releaseResources()
@@ -124,7 +126,7 @@ void ChannelVolumeAudioSource::expandListsTo(size_t channelIndex)
 	if (channelIndex > m_setMutes.size())
 		m_setMutes.resize(channelIndex, false);
 	if (channelIndex > m_actualVolumes.size())
-		m_actualVolumes.resize(channelIndex, 0.0f);
+		m_actualVolumes.resize(channelIndex, boost::circular_buffer<float>(m_bufferSize,0.0f));
 	if (channelIndex > m_appliedGains.size())
 		m_appliedGains.resize(channelIndex, 0.0f);
 }
@@ -157,7 +159,9 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
 		else if (m_anySolo)
 			gain = 0.0f; // some channel is in solo but not this one (otherwise it would be in m_appliedGains)
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
-		if (channel < m_actualVolumes.size())
-			m_actualVolumes[channel] = std::max(m_actualVolumes[channel], bufferToFill.buffer->getMagnitude(channel, bufferToFill.startSample, bufferToFill.numSamples));
+		if (channel < m_actualVolumes.size()) {
+			const float* buffer = bufferToFill.buffer->getReadPointer(channel) + bufferToFill.startSample;
+			std::copy(buffer, buffer + bufferToFill.numSamples, m_actualVolumes[channel].begin());
+		}
     }
 }

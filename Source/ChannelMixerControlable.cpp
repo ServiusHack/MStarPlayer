@@ -58,9 +58,9 @@ bool ChannelMixerControlable::getMute() const
 	return m_channelVolumeAudioSource->getChannelMute(channelNumber);
 }
 
-float ChannelMixerControlable::getVolume()
+float ChannelMixerControlable::getVolume() const
 {
-	return m_channelVolumeAudioSource->takeActualVolume(channelNumber);
+	return m_channelVolumeAudioSource->getActualVolume(channelNumber);
 }
 
 String ChannelMixerControlable::getName() const
