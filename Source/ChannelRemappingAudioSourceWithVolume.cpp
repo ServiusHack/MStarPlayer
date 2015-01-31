@@ -1,4 +1,5 @@
 #include "ChannelRemappingAudioSourceWithVolume.h"
+#include "Utils.h"
 
 #include <algorithm>
 
@@ -41,5 +42,5 @@ float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel) const
 	const ScopedLock sl(lock);
 	jassert(channel < m_volumes.size());
 	
-	return *std::max_element(m_volumes[channel].begin(), m_volumes[channel].end());
+	return std::abs(*std::max_element(m_volumes[channel].begin(), m_volumes[channel].end(), Utils::absoluteCompare<float>));
 }

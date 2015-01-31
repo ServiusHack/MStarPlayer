@@ -1,5 +1,5 @@
 #include "ChannelVolumeAudioSource.h"
-
+#include "Utils.h"
 
 ChannelVolumeAudioSource::ChannelVolumeAudioSource(AudioSource* const source)
    : m_source(source)
@@ -96,7 +96,7 @@ float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size()) {
-		return *std::max_element(m_actualVolumes[channelIndex].begin(), m_actualVolumes[channelIndex].end());
+		return std::abs(*std::max_element(m_actualVolumes[channelIndex].begin(), m_actualVolumes[channelIndex].end(), Utils::absoluteCompare<float>));
 	}
 
 	return 0.0f;
