@@ -1,5 +1,4 @@
 #include "ChannelRemappingAudioSourceWithVolume.h"
-#include "Utils.h"
 
 #include <algorithm>
 
@@ -33,7 +32,7 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 	ChannelRemappingAudioSource::getNextAudioBlock(bufferToFill);
 	for (size_t i = 0; i < m_volumes.size(); ++i) {
 		const float* buffer = bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample;
-		std::copy(buffer, buffer + bufferToFill.numSamples, m_volumes[i].begin());
+		std::transform(buffer, buffer + bufferToFill.numSamples, m_volumes[i].begin(), static_cast<float(*)(float)>(std::abs));
 	}
 }
 
@@ -42,5 +41,5 @@ float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel) const
 	const ScopedLock sl(lock);
 	jassert(channel < m_volumes.size());
 	
-	return std::abs(*std::max_element(m_volumes[channel].begin(), m_volumes[channel].end(), Utils::absoluteCompare<float>));
+	return *std::max_element(m_volumes[channel].begin(), m_volumes[channel].end());
 }

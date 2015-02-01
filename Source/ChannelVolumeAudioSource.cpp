@@ -1,5 +1,4 @@
 #include "ChannelVolumeAudioSource.h"
-#include "Utils.h"
 
 ChannelVolumeAudioSource::ChannelVolumeAudioSource(AudioSource* const source)
    : m_source(source)
@@ -96,7 +95,7 @@ float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size()) {
-		return std::abs(*std::max_element(m_actualVolumes[channelIndex].begin(), m_actualVolumes[channelIndex].end(), Utils::absoluteCompare<float>));
+		return *std::max_element(m_actualVolumes[channelIndex].begin(), m_actualVolumes[channelIndex].end());
 	}
 
 	return 0.0f;
@@ -161,7 +160,7 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
 		if (channel < m_actualVolumes.size()) {
 			const float* buffer = bufferToFill.buffer->getReadPointer(channel) + bufferToFill.startSample;
-			std::copy(buffer, buffer + bufferToFill.numSamples, m_actualVolumes[channel].begin());
+			std::transform(buffer, buffer + bufferToFill.numSamples, m_actualVolumes[channel].begin(), static_cast<float(*)(float)>(std::abs));
 		}
     }
 }
