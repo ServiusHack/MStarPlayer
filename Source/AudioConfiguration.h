@@ -63,6 +63,7 @@ class AudioConfigurationComponent
 {
 public:
 	AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames);
+	~AudioConfigurationComponent();
 
 // Component
 	virtual void resized() override;
@@ -75,6 +76,7 @@ private:
 	ScopedPointer<TextButton> m_closeButton;
 	ScopedPointer<ChannelNames> m_channelNames;
 	ScopedPointer<TableListBox> m_tableListBox;
+	OutputChannelNames& m_outputChannelName;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioConfigurationComponent)
 };

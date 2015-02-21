@@ -104,8 +104,9 @@ void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
 
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName)
 	: m_channelNames(new ChannelNames(outputChannelName))
+	, m_outputChannelName(outputChannelName)
 {
-	outputChannelName.addChangeListener(this);
+	m_outputChannelName.addChangeListener(this);
 
 	addAndMakeVisible(m_tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop));
 
@@ -130,6 +131,11 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 	setSize(500, 400);
 
 	changeListenerCallback(&outputChannelName);
+}
+
+AudioConfigurationComponent::~AudioConfigurationComponent()
+{
+	m_outputChannelName.removeChangeListener(this);
 }
 
 void AudioConfigurationComponent::resized()

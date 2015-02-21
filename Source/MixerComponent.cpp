@@ -41,6 +41,8 @@ MixerComponent::~MixerComponent()
         m_channelSliders.pop_back();
     }
     
+	m_outputChannelNames->removeListener(this);
+	m_outputChannelNames->removeChangeListener(this);
 	m_audioDeviceManager->removeAudioCallback(&m_audioSourcePlayer);
 	m_audioSourcePlayer.setSource(nullptr);
 }
