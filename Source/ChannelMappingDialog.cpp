@@ -10,6 +10,7 @@ class OutputChannelColumnCustomComponent : public ComboBox
 {
 public:
     OutputChannelColumnCustomComponent()
+		: m_row(-1)
     {
 		setBoundsInset(BorderSize<int>(2));
     }
@@ -28,7 +29,7 @@ private:
 	int m_row;
 };
 
-ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback callback)
+ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback)
 	: m_outputChannelNames(outputChannelNames)
 	, m_mapping(mapping)
 	, m_callback(callback)
@@ -118,8 +119,7 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 	m_callback(row, outputChannel - 1);
 }
 
-
-ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
 	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
@@ -140,7 +140,7 @@ void ChannelMappingWindow::setMapping(const std::vector<std::pair<char,int>>& ma
 	m_component->setMapping(mapping);
 }
 
-ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback)
+ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
 	: m_outputChannelNames(outputChannelNames)
 	, m_changeCallback(changeCallback)
 	, m_closeCallback(closeCallback)

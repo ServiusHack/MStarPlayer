@@ -36,7 +36,7 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-	ChannelMapping(OutputChannelNames* outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback callback);
+	ChannelMapping(OutputChannelNames* outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
 
     /** Get the output channel for a table row.
 
@@ -83,7 +83,7 @@ class ChannelMappingComponent
 	, public ButtonListener
 {
 public:
-	ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback changeCallback, const CloseCallback closeCallback);
+	ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback);
 
 	void setMapping(const std::vector<std::pair<char,int>>& mapping);
 
@@ -118,7 +118,7 @@ public:
 
         @see ChannelMapping
     */
-	ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char,int>> mapping, const ChangeMappingCallback callback, const CloseCallback closeCallback);
+	ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char,int>> mapping, const ChangeMappingCallback& callback, const CloseCallback& closeCallback);
 
 	void setMapping(const std::vector<std::pair<char, int>>& mapping);
 

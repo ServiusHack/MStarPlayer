@@ -6,6 +6,7 @@
 class PlayNextButton : public ImageButton
 {
 public:
+	PlayNextButton() = default;
 	void setRowNumber(int rowNumber) { m_rowNumber = rowNumber; }
 	int getRowNumber() { return m_rowNumber; }
 
