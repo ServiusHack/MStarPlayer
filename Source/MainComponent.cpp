@@ -416,6 +416,11 @@ void MainContentComponent::readProjectFile()
 			String error = m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
 			if (error != "")
 				loadErrors.add(error);
+			else {
+				// AudioDeviceManager only notifies asynchronously but we want to continue loading the project now.
+				// So we fake a change broadcast by the AudioDeviceManager so that OutputChannelNames is configured correctly.
+				m_outputChannelNames->changeListenerCallback(m_audioDeviceManager);
+			}
 		}
     }
 
