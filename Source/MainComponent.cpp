@@ -40,7 +40,7 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 	m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 
 	PropertiesFile::Options options;
-	options.applicationName = "AudioPlayerJuce";
+	options.applicationName = "MStarPlayer";
 	options.filenameSuffix = ".settings";
 	m_applicationProperties.setStorageParameters(options);
 

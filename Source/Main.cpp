@@ -3,10 +3,10 @@
 
 #include "CrashDumper.h"
 
-class AudioPlayerJuceApplication : public JUCEApplication
+class MStarPlayerApplication : public JUCEApplication
 {
 public:
-    AudioPlayerJuceApplication() {}
+    MStarPlayerApplication() {}
 
     const String getApplicationName()       { return ProjectInfo::projectName; }
     const String getApplicationVersion()    { return ProjectInfo::versionString; }
@@ -90,4 +90,4 @@ private:
 };
 
 // This macro generates the main() routine that launches the app.
-START_JUCE_APPLICATION(AudioPlayerJuceApplication)
+START_JUCE_APPLICATION(MStarPlayerApplication)

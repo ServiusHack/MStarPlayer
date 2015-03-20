@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="IUyUss" name="AudioPlayerJuce" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.AudioPlayerJuce" jucerVersion="3.1.0"
+<JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="3.1.0"
               includeBinaryInAppConfig="1">
-  <MAINGROUP id="Ytfmyf" name="AudioPlayerJuce">
+  <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
       <GROUP id="{D237656F-512F-DB00-8A88-AF061CED5A4A}" name="oxygen">
         <FILE id="VFraj5" name="arrow-right-double.png" compile="0" resource="1"
@@ -192,9 +192,9 @@
     <VS2013 targetFolder="Builds/VisualStudio2013">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common&#10;..\..\boost"/>
+                       isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common&#10;..\..\boost"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="2" targetName="AudioPlayerJuce" headerPath="C:\Users\User\AudioPlayerJuce\ASIOSDK2.3\common&#10;..\..\boost"/>
+                       isDebug="1" optimisation="2" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common&#10;..\..\boost"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>
@@ -216,9 +216,9 @@
     <LINUX_MAKE targetFolder="Builds/Linux">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
-                       targetName="AudioPlayerJuce"/>
+                       targetName="MStarPlayer"/>
         <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="2"
-                       targetName="AudioPlayerJuce"/>
+                       targetName="MStarPlayer"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>

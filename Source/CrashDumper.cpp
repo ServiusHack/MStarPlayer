@@ -33,7 +33,7 @@ void CrashDumper::run()
 
 	TCHAR path[MAX_PATH];
 
-	wsprintf(path, "CrashDump AudioPlayerJuce %4d-%02d-%02d %02d_%02d_%02d.dmp",
+	wsprintf(path, "CrashDump MStarPlayer %4d-%02d-%02d %02d_%02d_%02d.dmp",
 		time.wYear, time.wMonth, time.wDay,
 		time.wHour, time.wMinute, time.wSecond);
 

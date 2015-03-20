@@ -232,7 +232,7 @@ void TrackUi::loadFile()
 	if (reader != nullptr) {
 		if (reader->numChannels > 2) {
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-				"AudioPlayerJuce",
+				"MStarPlayer",
 				"The selected file has more than two channels. This is not supported."
 				);
 			return;
@@ -240,7 +240,7 @@ void TrackUi::loadFile()
 
 		if (!m_track.isStereo() && reader->numChannels != 1) {
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-				"AudioPlayerJuce",
+				"MStarPlayer",
 				String::formatted("The selected file has %d channels but this is a mono track.", reader->numChannels)
 				);
 			return;
@@ -248,7 +248,7 @@ void TrackUi::loadFile()
 
 		if (m_track.isStereo() && reader->numChannels != 2) {
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-				"AudioPlayerJuce",
+				"MStarPlayer",
 				String::formatted("The selected file has %d channel(s) but this is a stereo track.", reader->numChannels)
 				);
 			return;
