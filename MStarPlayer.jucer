@@ -100,6 +100,10 @@
         </GROUP>
       </GROUP>
       <GROUP id="{866D1597-278B-B850-8DA8-F5FA7648EA97}" name="AudioSources">
+        <FILE id="ECowQh" name="VolumeAnalyzer.cpp" compile="1" resource="0"
+              file="Source/VolumeAnalyzer.cpp"/>
+        <FILE id="GxjlK3" name="VolumeAnalyzer.h" compile="0" resource="0"
+              file="Source/VolumeAnalyzer.h"/>
         <FILE id="XPTtIf" name="ChannelRemappingAudioSourceWithVolume.cpp"
               compile="1" resource="0" file="Source/ChannelRemappingAudioSourceWithVolume.cpp"/>
         <FILE id="Tkh4LZ" name="ChannelRemappingAudioSourceWithVolume.h" compile="0"
@@ -192,9 +196,9 @@
     <VS2013 targetFolder="Builds/VisualStudio2013">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common&#10;..\..\boost"/>
+                       isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="2" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common&#10;..\..\boost"/>
+                       isDebug="1" optimisation="2" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="JuceLibraryCode/modules"/>

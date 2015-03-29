@@ -5,14 +5,14 @@
 ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(AudioSource* const source_,
                                                           const bool deleteSourceWhenDeleted)
     : ChannelRemappingAudioSource(source_, deleteSourceWhenDeleted)
-	, m_bufferSize(0)
+	, m_bufferSize(1)
 {
 }
 
 void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int requiredNumberOfChannels_)
 {
 	const ScopedLock sl(lock);
-	m_volumes.resize(requiredNumberOfChannels_, boost::circular_buffer<float>(m_bufferSize,0.0f));
+	m_volumes.resize(requiredNumberOfChannels_, VolumeAnalyzer(m_bufferSize));
 	ChannelRemappingAudioSource::setNumberOfChannelsToProduce(requiredNumberOfChannels_);
 }
 
@@ -20,10 +20,10 @@ void ChannelRemappingAudioSourceWithVolume::prepareToPlay(int samplesPerBlockExp
 {
 	ChannelRemappingAudioSource::prepareToPlay(samplesPerBlockExpected, sampleRate);
 	const ScopedLock sl(lock);
-	m_bufferSize = static_cast<size_t>(sampleRate);
+	m_bufferSize = static_cast<size_t>(sampleRate/10);
 	auto numberOfChannels = m_volumes.size();
 	m_volumes.clear();
-	m_volumes.resize(numberOfChannels, boost::circular_buffer<float>(m_bufferSize,0.0f));
+	m_volumes.resize(numberOfChannels, VolumeAnalyzer(m_bufferSize));
 }
 
 void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
@@ -32,7 +32,7 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 	ChannelRemappingAudioSource::getNextAudioBlock(bufferToFill);
 	for (size_t i = 0; i < m_volumes.size(); ++i) {
 		const float* buffer = bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample;
-		std::transform(buffer, buffer + bufferToFill.numSamples, m_volumes[i].begin(), static_cast<float(*)(float)>(std::abs));
+		m_volumes[i].update(buffer, bufferToFill.numSamples);
 	}
 }
 
@@ -41,5 +41,5 @@ float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel) const
 	const ScopedLock sl(lock);
 	jassert(channel < m_volumes.size());
 	
-	return *std::max_element(m_volumes[channel].begin(), m_volumes[channel].end());
+	return m_volumes[channel].getVolume();
 }

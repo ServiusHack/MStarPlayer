@@ -95,7 +95,7 @@ float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
 	const ScopedLock sl(m_lock);
 
 	if (channelIndex >= 0 && channelIndex < m_actualVolumes.size()) {
-		return *std::max_element(m_actualVolumes[channelIndex].begin(), m_actualVolumes[channelIndex].end());
+		return m_actualVolumes[channelIndex].getVolume();
 	}
 
 	return 0.0f;
@@ -104,10 +104,10 @@ float ChannelVolumeAudioSource::getActualVolume(size_t channelIndex) const
 void ChannelVolumeAudioSource::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     m_source->prepareToPlay(samplesPerBlockExpected, sampleRate);
-	m_bufferSize = static_cast<size_t>(sampleRate);
+	m_bufferSize = static_cast<size_t>(sampleRate/10);
 	auto numberOfChannels = m_actualVolumes.size();
 	m_actualVolumes.clear();
-	m_actualVolumes.resize(numberOfChannels, boost::circular_buffer<float>(m_bufferSize,0.0f));
+	m_actualVolumes.resize(numberOfChannels, VolumeAnalyzer(m_bufferSize));
 }
 
 void ChannelVolumeAudioSource::releaseResources()
@@ -125,7 +125,7 @@ void ChannelVolumeAudioSource::expandListsTo(size_t channelIndex)
 	if (channelIndex > m_setMutes.size())
 		m_setMutes.resize(channelIndex, false);
 	if (channelIndex > m_actualVolumes.size())
-		m_actualVolumes.resize(channelIndex, boost::circular_buffer<float>(m_bufferSize,0.0f));
+		m_actualVolumes.resize(channelIndex, VolumeAnalyzer(m_bufferSize));
 	if (channelIndex > m_appliedGains.size())
 		m_appliedGains.resize(channelIndex, 0.0f);
 }
@@ -160,7 +160,7 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
         bufferToFill.buffer->applyGain(channel, bufferToFill.startSample, bufferToFill.numSamples, gain);
 		if (channel < m_actualVolumes.size()) {
 			const float* buffer = bufferToFill.buffer->getReadPointer(channel) + bufferToFill.startSample;
-			std::transform(buffer, buffer + bufferToFill.numSamples, m_actualVolumes[channel].begin(), static_cast<float(*)(float)>(std::abs));
+			m_actualVolumes[channel].update(buffer, bufferToFill.numSamples);
 		}
     }
 }
