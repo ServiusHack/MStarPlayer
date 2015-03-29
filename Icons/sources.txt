@@ -1,15 +1,10 @@
-Oxygen
+oxygen		Oxygen Icons Set
+		Source: https://www.archlinux.org/packages/extra/any/oxygen-icons/
+		License: LGPL
 
-Tango Theme
+play.svg
+		Source: http://www.flaticon.com/free-icon/right-arrow-play-button_61653
 
-http://www.flaticon.com/free-icon/right-arrow-play-button_61653
 
-http://www.flaticon.com/free-icon/basic-square_61827
-
-http://www.flaticon.com/free-icon/mute-volume_8785
-
-http://www.flaticon.com/free-icon/open-folder-outline_25402
-
-http://www.flaticon.com/free-icon/headphones_26723
-
-http://www.flaticon.com/free-icon/settings-cogwheel-button_61720
+stop.svg
+		Source: http://www.flaticon.com/free-icon/basic-square_61827
