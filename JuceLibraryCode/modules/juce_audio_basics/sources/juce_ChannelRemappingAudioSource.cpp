@@ -146,7 +146,7 @@ void ChannelRemappingAudioSource::getNextAudioBlock (const AudioSourceChannelInf
 //==============================================================================
 XmlElement* ChannelRemappingAudioSource::createXml() const
 {
-    XmlElement* e = new XmlElement ("Mappings");
+    XmlElement* e = new XmlElement ("MAPPINGS");
     String ins, outs;
 
     const ScopedLock sl (lock);
@@ -165,7 +165,7 @@ XmlElement* ChannelRemappingAudioSource::createXml() const
 
 void ChannelRemappingAudioSource::restoreFromXml (const XmlElement& e)
 {
-    if (e.hasTagName ("Mappings"))
+    if (e.hasTagName ("MAPPINGS"))
     {
         const ScopedLock sl (lock);
 
