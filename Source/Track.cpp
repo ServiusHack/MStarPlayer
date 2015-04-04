@@ -311,6 +311,8 @@ XmlElement* Track::saveToXml() const
 	nameXml->addTextElement(getName());
 	element->addChildElement(nameXml);
 
+	element->addChildElement(m_remappingAudioSource.createXml());
+
 	return element;
 }
 
@@ -324,6 +326,11 @@ void Track::restoreFromXml(const XmlElement& element)
 	XmlElement* nameXml = element.getChildByName("Name");
 	if (nameXml != nullptr)
 		setName(nameXml->getAllSubText().trim());
+
+	// Element name is forced upon us by ChannelRemappingAudioSource from juce_ChannelRemappingAudioSource.cpp
+	XmlElement* mappingsXml = element.getChildByName("MAPPINGS");
+	if (mappingsXml != nullptr)
+		m_remappingAudioSource.restoreFromXml(*mappingsXml);
 }
 
 AudioFormatManager& Track::getAudioFormatManager()
