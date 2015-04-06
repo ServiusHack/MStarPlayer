@@ -44,6 +44,23 @@ void CrashDumper::run()
 	exceptionInformation.ExceptionPointers = e;
 	exceptionInformation.ClientPointers = FALSE;
 
+	MINIDUMP_USER_STREAM_INFORMATION userStreamInfo;
+	// Include the git revision in dumps. The define is set by the build system.
+#ifdef GIT_REVISION
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+	userStreamInfo.UserStreamCount = 1;
+	MINIDUMP_USER_STREAM userStreams[1];
+
+	userStreams[0].Type = CommentStreamA;
+	userStreams[0].Buffer = TOSTRING(GIT_REVISION);
+	userStreams[0].BufferSize = sizeof(TOSTRING(GIT_REVISION));
+	userStreamInfo.UserStreamArray = userStreams;
+#else
+	userStreamInfo.UserStreamCount = 0;
+#endif
+
+
 	const MINIDUMP_TYPE miniDumpType = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
 
 	MiniDumpWriteDump(
@@ -52,7 +69,7 @@ void CrashDumper::run()
 		dumpFile,
 		miniDumpType,
 		&exceptionInformation,
-		NULL,
+		&userStreamInfo,
 		NULL);
 
 	CloseHandle(dumpFile);
