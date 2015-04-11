@@ -412,9 +412,7 @@ void MainContentComponent::readProjectFile()
         loadErrors.add("No audio settings found, using current.");
     else
     {
-        if (audio->getNumChildElements() != 1)
-            loadErrors.add("Invalid number of audio settings found, using current.");
-		else
+        if (audio->getNumChildElements() > 0)
 		{
 			String error = m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
 			if (error != "")
