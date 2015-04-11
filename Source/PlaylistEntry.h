@@ -19,7 +19,7 @@ public:
 	bool playNext;
 	std::vector<TrackConfig> trackConfigs;
 
-	XmlElement* saveToXml() const;
+	XmlElement* saveToXml(const File& projectDirectory) const;
 
-	static PlaylistEntry createFromXml(const XmlElement& element);
+	static PlaylistEntry createFromXml(const XmlElement& element, const File& projectDirectory);
 };

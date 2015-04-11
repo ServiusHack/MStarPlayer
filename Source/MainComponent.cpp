@@ -474,7 +474,7 @@ void MainContentComponent::readProjectFile()
 			Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, gain, solo, mute);
 			window->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(window, Colours::white, true);
-			window->restoreFromXml(*player);
+			window->restoreFromXml(*player, m_projectFile.getParentDirectory());
 		}
 
 		// update soloMute for all players
@@ -538,7 +538,7 @@ void MainContentComponent::writeProjectFile()
     XmlElement* players = new XmlElement("Players");
 
 	for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
-		players->addChildElement(static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->saveToXml());
+		players->addChildElement(static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->saveToXml(m_projectFile.getParentDirectory()));
 
     root->addChildElement(players);
 

@@ -211,11 +211,11 @@ bool PlaylistModel::doPlayNext(int selectedRow)
 	return m_playlist[selectedRow].playNext;
 }
 
-XmlElement* PlaylistModel::saveToXml() const
+XmlElement* PlaylistModel::saveToXml(const File& projectDirectory) const
 {
 	XmlElement* playlistXml = new XmlElement("Playlist");
 		for (size_t i = 0; i < m_playlist.size(); ++i)
-			playlistXml->addChildElement(m_playlist[i].saveToXml());
+			playlistXml->addChildElement(m_playlist[i].saveToXml(projectDirectory));
 	return playlistXml;
 }
 
@@ -224,12 +224,12 @@ void PlaylistModel::setReloadedCallback(ReloadedCallback callback)
 	m_reloadedCallback = callback;
 }
 
-void PlaylistModel::restoreFromXml(const XmlElement& element)
+void PlaylistModel::restoreFromXml(const XmlElement& element, const File& projectDirectory)
 {
 	clear();
 
 	for (int i = 0; i < element.getNumChildElements(); ++i) {
-		m_playlist.push_back(PlaylistEntry::createFromXml(*element.getChildElement(i)));
+		m_playlist.push_back(PlaylistEntry::createFromXml(*element.getChildElement(i), projectDirectory));
 	}
 
 	m_reloadedCallback();

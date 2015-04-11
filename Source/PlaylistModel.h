@@ -37,8 +37,8 @@ public:
 
 // XML serialization
 public:
-	XmlElement* saveToXml() const;
-	void restoreFromXml(const XmlElement& element);
+	XmlElement* saveToXml(const File& projectDirectory) const;
+	void restoreFromXml(const XmlElement& element, const File& projectDirectory);
 
 // TableListBoxModel
 public:

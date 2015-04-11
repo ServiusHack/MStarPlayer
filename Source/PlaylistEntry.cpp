@@ -1,6 +1,6 @@
 #include "PlaylistEntry.h"
 
-XmlElement* PlaylistEntry::saveToXml() const
+XmlElement* PlaylistEntry::saveToXml(const File& projectDirectory) const
 {
 	XmlElement* entryXml = new XmlElement("Entry");
 	
@@ -15,7 +15,10 @@ XmlElement* PlaylistEntry::saveToXml() const
 	for (size_t i = 0; i < trackConfigs.size(); ++i) {
 		XmlElement* trackConfigXml = new XmlElement("TrackConfig");
 		XmlElement* fileXml = new XmlElement("File");
-		fileXml->addTextElement(trackConfigs[i].file.getFullPathName());
+		if (trackConfigs[i].file.isAChildOf(projectDirectory))
+			fileXml->addTextElement(trackConfigs[i].file.getRelativePathFrom(projectDirectory));
+		else
+			fileXml->addTextElement(trackConfigs[i].file.getFullPathName());
 		trackConfigXml->addChildElement(fileXml);
 		trackConfigsXml->addChildElement(trackConfigXml);
 	}
@@ -24,7 +27,7 @@ XmlElement* PlaylistEntry::saveToXml() const
 
 	return entryXml;
 }
-PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element)
+PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element, const File& projectDirectory)
 {
 	PlaylistEntry entry;
 
@@ -35,7 +38,7 @@ PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element)
 
 	for (int i = 0; i < trackConfigsXml->getNumChildElements(); ++i) {
 		TrackConfig config;
-		config.file = File(trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim());
+		config.file = File(projectDirectory.getChildFile(trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim()));
 		entry.trackConfigs.push_back(config);
 	}
 

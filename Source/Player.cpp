@@ -164,7 +164,7 @@ void Player::setUserImage(const File& file)
 	m_jinglePlayer.setUserImage(file);
 }
 
-XmlElement* Player::saveToXml() const
+XmlElement* Player::saveToXml(const File& projectDirectory) const
 {
     XmlElement* element = new XmlElement("Player");
 	switch (m_type)
@@ -204,12 +204,12 @@ XmlElement* Player::saveToXml() const
 		tracksXml->addChildElement(m_tracksContainer[i].saveToXml());
 	element->addChildElement(tracksXml);
 
-	element->addChildElement(playlistModel.saveToXml());
+	element->addChildElement(playlistModel.saveToXml(projectDirectory));
 
 	return element;
 }
 
-void Player::restoreFromXml (const XmlElement& element)
+void Player::restoreFromXml (const XmlElement& element, const File& projectDirectory)
 {
 	setColor(Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
 	if (element.hasAttribute("userImage"))
@@ -233,7 +233,7 @@ void Player::restoreFromXml (const XmlElement& element)
 		m_tracksContainer.addTrack(false, tracksXml->getChildElement(i));
 
 	XmlElement* playlistXml = element.getChildByName("Playlist");
-	playlistModel.restoreFromXml(*playlistXml);
+	playlistModel.restoreFromXml(*playlistXml, projectDirectory);
 }
 
 void Player::SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback)

@@ -36,12 +36,12 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-	XmlElement* saveToXml() const;
+	XmlElement* saveToXml(const File& projectDirectory) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-	void restoreFromXml(const XmlElement& element);
+	void restoreFromXml(const XmlElement& element, const File& projectDirectory);
 
 // Component overrides
 public:
