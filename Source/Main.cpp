@@ -48,7 +48,7 @@ public:
         // the command manager object used to dispatch command events
         ApplicationCommandManager commandManager;
 
-        MainWindow() : DocumentWindow ("Audio Player",
+        MainWindow() : DocumentWindow ("M*Player",
                                         Colours::lightgrey,
                                         DocumentWindow::allButtons)
         {
