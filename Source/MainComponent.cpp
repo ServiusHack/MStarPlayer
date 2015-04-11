@@ -359,7 +359,7 @@ void MainContentComponent::readProjectFile()
 {
 	m_multiDocumentPanel->closeAllDocuments(false);
 
-	getParentComponent()->setName(m_projectFile.getFileName());
+	getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
     StringArray loadErrors;
     
@@ -499,7 +499,7 @@ void MainContentComponent::readProjectFile()
 
 void MainContentComponent::writeProjectFile()
 {
-	getParentComponent()->setName(m_projectFile.getFileName());
+	getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
 	XmlElement* root = new XmlElement("Project");
 
