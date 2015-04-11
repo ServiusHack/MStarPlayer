@@ -292,6 +292,7 @@ void MainContentComponent::newProject() {
     if (!askSaveProject())
         return;
 
+	getParentComponent()->setName("M*Player");
     m_multiDocumentPanel->closeAllDocuments(true);
 	m_projectModified = false;
 }
@@ -357,6 +358,8 @@ bool MainContentComponent::saveAsProject()
 void MainContentComponent::readProjectFile()
 {
 	m_multiDocumentPanel->closeAllDocuments(false);
+
+	getParentComponent()->setName(m_projectFile.getFileName());
 
     StringArray loadErrors;
     
@@ -498,6 +501,8 @@ void MainContentComponent::readProjectFile()
 
 void MainContentComponent::writeProjectFile()
 {
+	getParentComponent()->setName(m_projectFile.getFileName());
+
 	XmlElement* root = new XmlElement("Project");
 
 	XmlElement* view = new XmlElement("View");
