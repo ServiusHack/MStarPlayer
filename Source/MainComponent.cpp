@@ -361,138 +361,150 @@ void MainContentComponent::readProjectFile()
 
 	getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
-    StringArray loadErrors;
-    
-	XmlDocument document(m_projectFile);
+    StringArray loadWarnings;
 
-    XmlElement* root = document.getDocumentElement();
+	try {
 
-    if (root == nullptr)
-    {
-        String error = document.getLastParseError();
-        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to open project file", error);
-        return;
-	}
+		XmlDocument document(m_projectFile);
 
-	XmlElement* view = root->getChildByName("View");
-	if (view == nullptr)
-		loadErrors.add("No view settings found, using default.");
-	else {
-		XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
-		if (layoutModeElement == nullptr)
-			loadErrors.add("No layout mode settings found, using default.");
-		else
+		XmlElement* root = document.getDocumentElement();
+
+		if (root == nullptr)
 		{
-			String layoutMode = layoutModeElement->getAllSubText().trim();
-			if (layoutMode == "windows")
-				m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
-			else if (layoutMode == "tabs")
-				m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::MaximisedWindowsWithTabs);
-			else
-				loadErrors.add("Unknown view layout, using default.");
+			String error = document.getLastParseError();
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to open project file", error);
+			return;
 		}
 
-		XmlElement* styleElement = view->getChildByName("Style");
-		if (styleElement == nullptr)
-			loadErrors.add("No style settings found, using default.");
+		XmlElement* view = root->getChildByName("View");
+		if (view == nullptr)
+			loadWarnings.add("No view settings found, using default.");
+		else {
+			XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
+			if (layoutModeElement == nullptr)
+				loadWarnings.add("No layout mode settings found, using default.");
+			else
+			{
+				String layoutMode = layoutModeElement->getAllSubText().trim();
+				if (layoutMode == "windows")
+					m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
+				else if (layoutMode == "tabs")
+					m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::MaximisedWindowsWithTabs);
+				else
+					loadWarnings.add("Unknown view layout, using default.");
+			}
+
+			XmlElement* styleElement = view->getChildByName("Style");
+			if (styleElement == nullptr)
+				loadWarnings.add("No style settings found, using default.");
+			else
+			{
+				String style = styleElement->getAllSubText().trim();
+				if (style == "default")
+					perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDefault));
+				else if (style == "dark")
+					perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
+				else
+					loadWarnings.add("Unknown style, using default.");
+			}
+		}
+
+		XmlElement* audio = root->getChildByName("Audio");
+		if (audio == nullptr)
+			loadWarnings.add("No audio settings found, using current.");
 		else
 		{
-			String style = styleElement->getAllSubText().trim();
-			if (style == "default")
-				perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDefault));
-			else if (style == "dark")
-				perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
-			else
-				loadErrors.add("Unknown style, using default.");
-		}
-	}
+			if (audio->getNumChildElements() > 0)
+			{
+				String error = m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
+				if (error != "") {
+					loadWarnings.add(error);
 
-    XmlElement* audio = root->getChildByName("Audio");
-    if (audio == nullptr)
-        loadErrors.add("No audio settings found, using current.");
-    else
-    {
-        if (audio->getNumChildElements() > 0)
-		{
-			String error = m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
-			if (error != "")
-				loadErrors.add(error);
-			else {
+					error = m_audioDeviceManager->initialise(64, 64, nullptr, false, String::empty, 0);
+
+					if (error != "")
+						throw std::exception(error.toRawUTF8());
+				}
+
 				// AudioDeviceManager only notifies asynchronously but we want to continue loading the project now.
 				// So we fake a change broadcast by the AudioDeviceManager so that OutputChannelNames is configured correctly.
 				m_outputChannelNames->changeListenerCallback(m_audioDeviceManager);
 			}
 		}
-    }
 
-	XmlElement* channelNames = root->getChildByName("ChannelNames");
-	if (channelNames == nullptr)
-		loadErrors.add("No channel names found, using device defaults.");
-	else
-	{
-		m_outputChannelNames->restoreFromXml(*channelNames);
+		XmlElement* channelNames = root->getChildByName("ChannelNames");
+		if (channelNames == nullptr)
+			loadWarnings.add("No channel names found, using device defaults.");
+		else
+		{
+			m_outputChannelNames->restoreFromXml(*channelNames);
+		}
+
+		XmlElement* mixer = root->getChildByName("Mixer");
+
+		if (mixer == nullptr)
+			loadWarnings.add("No mixer settings found, using current.");
+		else
+			m_mixerComponent->restoreFromXml(*mixer);
+
+		XmlElement* players = root->getChildByName("Players");
+
+		if (players == nullptr)
+			loadWarnings.add("No players found. None will be loaded.");
+		else {
+
+			for (int i = 0; i < players->getNumChildElements(); i++)
+			{
+				using namespace InterPlayerCommunication;
+
+				XmlElement* player = players->getChildElement(i);
+				if (player->getTagName() != "Player") {
+					loadWarnings.add("Unknown tag '" + player->getTagName() + "' in players list.");
+					continue;
+				}
+
+				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
+				const bool solo = player->getBoolAttribute("solo");
+				const bool mute = player->getBoolAttribute("mute");
+				PlayerType playerType = PlayerType::Playlist;
+				String type = player->getStringAttribute("type", "");
+				if (type == "jingle") {
+					playerType = PlayerType::Jingle;
+				}
+				else if (type == "multitrack") {
+					playerType = PlayerType::Multitrack;
+				}
+				else if (type != "playlist") {
+					loadWarnings.add("Unknown player type '" + type + "'.");
+					continue;
+				}
+				Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, gain, solo, mute);
+				window->addChangeListener(this);
+				m_multiDocumentPanel->addDocument(window, Colours::white, true);
+				window->restoreFromXml(*player, m_projectFile.getParentDirectory());
+			}
+
+			// update soloMute for all players
+			bool anySolo = false;
+			for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
+				anySolo = static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->getSolo();
+				if (anySolo)
+					break;
+			}
+			for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
+				static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setSoloMute(anySolo);
+		}
+
+
+		m_projectModified = false;
+
+		if (loadWarnings.size() > 0)
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Problems while opening the project", loadWarnings.joinIntoString("\n"));
 	}
-
-    XmlElement* mixer = root->getChildByName("Mixer");
-
-    if (mixer == nullptr)
-        loadErrors.add("No mixer settings found, using current.");
-    else
-		m_mixerComponent->restoreFromXml(*mixer);
-
-    XmlElement* players = root->getChildByName("Players");
-
-    if (players == nullptr)
-        loadErrors.add("No players found. None will be loaded.");
-    else {
-
-        for (int i = 0; i < players->getNumChildElements(); i++)
-        {
-			using namespace InterPlayerCommunication;
-
-            XmlElement* player = players->getChildElement(i);
-            if (player->getTagName() != "Player") {
-                loadErrors.add("Unknown tag '" + player->getTagName() + "' in players list.");
-                continue;
-            }
-
-			const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
-			const bool solo = player->getBoolAttribute("solo");
-			const bool mute = player->getBoolAttribute("mute");
-			PlayerType playerType = PlayerType::Playlist;
-            String type = player->getStringAttribute("type", "");
-			if (type == "jingle") {
-				playerType = PlayerType::Jingle;
-			}
-			else if (type == "multitrack") {
-				playerType = PlayerType::Multitrack;
-			}
-			else if (type != "playlist") {
-                loadErrors.add("Unknown player type '" + type + "'.");
-                continue;
-			}
-			Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, gain, solo, mute);
-			window->addChangeListener(this);
-			m_multiDocumentPanel->addDocument(window, Colours::white, true);
-			window->restoreFromXml(*player, m_projectFile.getParentDirectory());
-		}
-
-		// update soloMute for all players
-		bool anySolo = false;
-		for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
-			anySolo = static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->getSolo();
-			if (anySolo)
-				break;
-		}
-		for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
-			static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setSoloMute(anySolo);
-    }
-
-	m_projectModified = false;
-
-	if (loadErrors.size() > 0)
+	catch (const std::exception& e)
 	{
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed opening the project", loadErrors.joinIntoString("\n"));
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed opening the project", String::fromUTF8(e.what()));
+		m_projectModified = false;
 		m_multiDocumentPanel->closeAllDocuments(false);
 	}
 }
