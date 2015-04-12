@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="3.1.0"
+              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="3.1.1"
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
@@ -193,7 +193,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
   <EXPORTFORMATS>
-    <VS2013 targetFolder="Builds/VisualStudio2013">
+    <VS2013 targetFolder="Builds/VisualStudio2013" toolset="v120_xp">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"/>
