@@ -183,8 +183,12 @@ XmlElement* Player::saveToXml(const File& projectDirectory) const
 	element->setAttribute("mute", m_mute);
 	element->setAttribute("solo", m_solo);
 	element->setAttribute("color", m_color.toString());
-	if (m_userImage != File::nonexistent)
-		element->setAttribute("userImage", m_userImage.getFullPathName());
+	if (m_userImage != File::nonexistent) {
+		if (m_userImage.isAChildOf(projectDirectory))
+			element->setAttribute("userImage", m_userImage.getRelativePathFrom(projectDirectory));
+		else
+			element->setAttribute("userImage", m_userImage.getFullPathName());
+	}
 
 	Rectangle<int> bounds = getParentComponent()->getBounds();
 
@@ -213,7 +217,7 @@ void Player::restoreFromXml (const XmlElement& element, const File& projectDirec
 {
 	setColor(Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
 	if (element.hasAttribute("userImage"))
-		setUserImage(element.getStringAttribute("userImage"));
+		setUserImage(projectDirectory.getChildFile(element.getStringAttribute("userImage")));
 	repaint();
 
 	XmlElement* boundsXml = element.getChildByName("Bounds");
