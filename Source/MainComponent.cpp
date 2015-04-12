@@ -367,9 +367,9 @@ void MainContentComponent::readProjectFile()
 
 		XmlDocument document(m_projectFile);
 
-		XmlElement* root = document.getDocumentElement();
+		ScopedPointer<XmlElement> root = document.getDocumentElement();
 
-		if (root == nullptr)
+		if (!root)
 		{
 			String error = document.getLastParseError();
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to open project file", error);
@@ -513,7 +513,7 @@ void MainContentComponent::writeProjectFile()
 {
 	getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
-	XmlElement* root = new XmlElement("Project");
+	ScopedPointer<XmlElement> root = new XmlElement("Project");
 
 	XmlElement* view = new XmlElement("View");
 
