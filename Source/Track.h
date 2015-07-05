@@ -25,7 +25,7 @@ public:
 	typedef std::function<void(bool)> PlayingStateChangedCallback;
 	typedef std::function<void()> TrackConfigChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache);
 	~Track();
 
 	void play();
@@ -140,7 +140,7 @@ private:
 public:
 	AudioThumbnail& getAudioThumbnail();
 private:
-	AudioThumbnailCache m_audioThumbnailCache;
+	AudioThumbnailCache& m_audioThumbnailCache;
 	AudioThumbnail m_audioThumbnail;
 
 private:

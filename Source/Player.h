@@ -26,7 +26,7 @@ class Player
 {
 
 public:
-	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, float gain = 1.0f, bool solo = false, bool mute = false);
+	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, float gain = 1.0f, bool solo = false, bool mute = false);
 	~Player();
 
 	void setType(InterPlayerCommunication::PlayerType type);

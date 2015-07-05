@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache)
 	: m_trackIndex(trackIndex)
 	, m_stereo(stereo)
 	, m_tracksMixer(tracksMixer)
@@ -19,7 +19,7 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_trackConfigChangedCallback(trackConfigChangedCallback)
 	, m_mute(false)
 	, m_solo(false)
-	, m_audioThumbnailCache(1)
+	, m_audioThumbnailCache(audioThumbnailCache)
 	, m_outputChannels(outputChannels)
 	, m_remappingAudioSource(&m_transportSource, false)
 	, m_audioThumbnail(1000, m_formatManager, m_audioThumbnailCache)

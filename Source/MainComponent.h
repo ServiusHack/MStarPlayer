@@ -29,6 +29,7 @@ public:
 
 private:
 	ApplicationProperties m_applicationProperties;
+	AudioThumbnailCache m_audioThumbnailCache;
 
     ApplicationCommandManager* m_commandManager;
 	ScopedPointer<MixerComponent> m_mixerComponent;

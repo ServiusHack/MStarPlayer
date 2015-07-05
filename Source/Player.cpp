@@ -5,7 +5,7 @@
 
 using namespace InterPlayerCommunication;
 
-Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, PlayerType type, ApplicationProperties& applicationProperties, float gain, bool solo, bool mute)
+Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
 	, m_outputChannelNames(outputChannelNames)
 	, m_gain(1.0f)
@@ -13,7 +13,7 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 	, m_soloMute(false)
 	, m_mute(mute)
 	, m_type(type)
-	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this))
+	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), audioThumbnailCache)
 	, m_playlistPlayer(&m_tracksContainer, type == PlayerType::Playlist, 
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),

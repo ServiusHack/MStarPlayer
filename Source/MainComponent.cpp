@@ -22,6 +22,7 @@ void MainContentComponent::destroyLookAndFeel()
 MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager)
 	: m_commandManager(commandManager)
 	, m_projectModified(false)
+	, m_audioThumbnailCache(1000)
 {
     // audio setup
 	m_audioDeviceManager = new AudioDeviceManager();
@@ -231,7 +232,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addJinglePlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache);
             player->setName("Jingle Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -240,7 +241,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addMultitrackPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache);
             player->setName("Multitrack Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -249,7 +250,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addPlaylistPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache);
             player->setName("Playlist Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -362,6 +363,17 @@ void MainContentComponent::readProjectFile()
 	getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
     StringArray loadWarnings;
+
+	FileInputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension()+".aupc"));
+	if (stream.failedToOpen())
+	{
+		loadWarnings.add("Unable to open audio thumbnail cache file.");
+	}
+	m_audioThumbnailCache.readFromStream(stream);
+	if (stream.getStatus().failed())
+	{
+		loadWarnings.add("Unable to load audio thumbnails.");
+	}
 
 	try {
 
@@ -478,7 +490,7 @@ void MainContentComponent::readProjectFile()
 					loadWarnings.add("Unknown player type '" + type + "'.");
 					continue;
 				}
-				Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, gain, solo, mute);
+				Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, m_audioThumbnailCache, gain, solo, mute);
 				window->addChangeListener(this);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
 				window->restoreFromXml(*player, m_projectFile.getParentDirectory());
@@ -558,6 +570,18 @@ void MainContentComponent::writeProjectFile()
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project file", "Failed to save project file.");
     else
 		m_projectModified = false;
+
+	FileOutputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension()+".aupc"));
+	if (stream.failedToOpen())
+	{
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project", "Failed to open audio thumbnail cache file.");
+		return;
+	}
+	m_audioThumbnailCache.writeToStream(stream);
+	if (stream.getStatus().failed())
+	{
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project", "Failed to save audio thumbnails.");
+	}
 }
 
 void MainContentComponent::soloChanged(bool /*solo*/)

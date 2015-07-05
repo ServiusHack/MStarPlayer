@@ -19,7 +19,7 @@ public:
 	typedef std::function<void()> TracksClearedCallback;
 	typedef std::function<void(int)> TrackRemovedCallback;
 
-	TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback);
+	TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache);
 	~TracksContainer();
 
 // Playback
@@ -47,6 +47,7 @@ protected:
 
 private:
 	std::vector<std::unique_ptr<Track>> m_tracks;
+	AudioThumbnailCache& m_audioThumbnailCache;
 
 // Track configs
 public:
