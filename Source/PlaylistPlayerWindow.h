@@ -9,6 +9,8 @@
 #include "TracksComponent.h"
 #include "Utils.h"
 
+class Player;
+
 /**
 	User interface with an optional playlist and a list of tracks.
 */
@@ -25,13 +27,17 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ConfigureMidiCallback& configureMidiCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
+    PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ConfigureMidiCallback& configureMidiCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
 
     void setColor(const Colour& color);
 
     void setShowPlaylist(bool showPlaylist);
 
     int getSelectedRow() const;
+
+    void nextPlaylistEntry(bool onlyIfEntrySaysSo);
+
+    void previousPlaylistEntry();
 
     int getResizerBarPosition() const;
 
@@ -50,6 +56,7 @@ public:
 private:
     void fileLoaded(const String& filename);
 
+    Player& m_player;
     TracksContainer* m_tracksContainer;
 
     ImageButton m_playButton;

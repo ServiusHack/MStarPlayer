@@ -5,11 +5,13 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "JinglePlayerWindow.h"
 #include "PlaylistPlayerWindow.h"
+#include "Player.h"
 
 using namespace InterPlayerCommunication;
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ConfigureMidiCallback& configureMidiCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
-    : m_color(0xffffffff)
+PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ConfigureMidiCallback& configureMidiCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
+    : m_player(player)
+    , m_color(0xffffffff)
     , m_tracksContainer(tracksContainer)
     , m_showEditDialogCallback(showEditDialogCallback)
     , m_configureChannelsCallback(configureChannelsCallback)
@@ -110,8 +112,6 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, boo
     // tracks
     Track::PositionCallback positionCallback = [&](double position, bool finished) {
         m_digitalDisplay.setText(Utils::formatSeconds(position), sendNotification);
-        if (finished && m_tableListBox.isVisible())
-            m_tableListBox.next(true);
     };
     m_tracksContainer->addPositionCallback(positionCallback);
 
@@ -227,15 +227,15 @@ void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
 void PlaylistPlayerWindow::buttonClicked(Button* button)
 {
     if (button == &m_playButton)
-        m_tracksContainer->play();
+        m_player.play();
     else if (button == &m_pauseButton)
-        m_tracksContainer->pause();
+        m_player.pause();
     else if (button == &m_stopButton)
-        m_tracksContainer->stop();
+        m_player.stop();
     else if (button == &m_skipBackwardButton)
-        m_tableListBox.previous();
+        m_player.previousEntry();
     else if (button == &m_skipForwardButton)
-        m_tableListBox.next();
+        m_player.nextEntry();
 }
 
 void PlaylistPlayerWindow::setColor(const Colour& color)
@@ -262,4 +262,14 @@ int PlaylistPlayerWindow::getSelectedRow() const
 void PlaylistPlayerWindow::fileLoaded(const String& filename)
 {
     static_cast<PlaylistModel*>(m_tableListBox.getModel())->setTrackNameIfEmpty(getSelectedRow(), filename);
+}
+
+void PlaylistPlayerWindow::nextPlaylistEntry(bool onlyIfEntrySaysSo)
+{
+    m_tableListBox.next(onlyIfEntrySaysSo);
+}
+
+void PlaylistPlayerWindow::previousPlaylistEntry()
+{
+    m_tableListBox.previous();
 }

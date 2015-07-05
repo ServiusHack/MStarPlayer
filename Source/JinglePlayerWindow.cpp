@@ -5,6 +5,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "JinglePlayerWindow.h"
+#include "Player.h"
 
 using namespace InterPlayerCommunication;
 
@@ -37,8 +38,9 @@ namespace
     const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ConfigureMidiCallback configureMidiCallback, ChangePlayerTypeCallback changePlayerTypeCallback, SetUserImageCallback setUserImageCallback)
-    : m_tracksContainer(tracksContainer)
+JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ConfigureMidiCallback configureMidiCallback, ChangePlayerTypeCallback changePlayerTypeCallback, SetUserImageCallback setUserImageCallback)
+    : m_player(player)
+    , m_tracksContainer(tracksContainer)
     , m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
     , m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
     , m_showRemainingTime(false)
@@ -257,12 +259,12 @@ void JinglePlayerWindow::buttonClicked(Button* /*button*/)
     if (m_tracksContainer->isPlaying())
     {
         m_playButton.setImages(m_playImage);
-        m_tracksContainer->stop();
+        m_player.stop();
     }
     else
     {
         m_playButton.setImages(m_stopImage);
-        m_tracksContainer->play();
+        m_player.play();
     }
 }
 

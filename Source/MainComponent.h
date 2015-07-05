@@ -16,6 +16,7 @@
 #include "SoloBusSettings.h"
 #include "TestToneGeneratorComponent.h"
 #include "MTCSender.h"
+#include "PluginLoader.h"
 
 /** Main component of the Audio Player application.
 
@@ -114,7 +115,9 @@ public:
         editSettings = 0x5001,
 
         lookAndFeelDefault = 0x6000,
-        lookAndFeelDark = 0x6001
+        lookAndFeelDark = 0x6001,
+
+        basePlugin = 0x7000,
     };
 
 // Project file related methods and fields
@@ -135,5 +138,6 @@ private:
     RecentlyOpenedFilesList m_recentlyOpenedFiles;
 
 private:
+    PluginLoader m_pluginLoader;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent)
 };

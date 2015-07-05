@@ -15,7 +15,7 @@
 #include "MyMultiDocumentPanel.h"
 #include "PlayerMidiDialog.h"
 #include "MtcSender.h"
-
+#include "PluginLoader.h"
 /**
 	A player with a playlist and tracks to play audio files.
 
@@ -29,10 +29,17 @@ class Player
     , public SoloBusSettingsListener
 {
 public:
-    Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, float gain = 1.0f, bool solo = false, bool mute = false);
+    Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
     ~Player();
 
     void setType(InterPlayerCommunication::PlayerType type);
+    void play();
+    void pause();
+    void stop();
+    void nextEntry(bool onlyIfEntrySaysSo = false);
+    void previousEntry();
+    void playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index);
+    void gainChangedCallback(const char* track_name, float gain);
 
 // XML serialization
 public:
@@ -102,6 +109,8 @@ private:
 
     PlaylistModel playlistModel;
     TracksContainer m_tracksContainer;
+
+    PluginLoader& m_pluginLoader;
 
     PlaylistPlayerWindow m_playlistPlayer;
     JinglePlayerWindow m_jinglePlayer;

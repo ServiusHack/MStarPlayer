@@ -49,6 +49,11 @@
         <FILE id="bmvhnJ" name="TestToneGeneratorComponent.h" compile="0" resource="0"
               file="Source/TestToneGeneratorComponent.h"/>
       </GROUP>
+      <FILE id="Q2OrPf" name="PluginInterface.h" compile="0" resource="0"
+            file="Source/PluginInterface.h"/>
+      <FILE id="EpkCXe" name="PluginLoader.cpp" compile="1" resource="0"
+            file="Source/PluginLoader.cpp"/>
+      <FILE id="OiDDTo" name="PluginLoader.h" compile="0" resource="0" file="Source/PluginLoader.h"/>
       <FILE id="tVQNwC" name="SoloBusMixer.cpp" compile="1" resource="0"
             file="Source/SoloBusMixer.cpp"/>
       <FILE id="ls59QB" name="SoloBusMixer.h" compile="0" resource="0" file="Source/SoloBusMixer.h"/>

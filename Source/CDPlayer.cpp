@@ -3,7 +3,7 @@
 #include "Track.h"
 #include "Utils.h"
 
-CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, float gain, bool solo, bool mute)
+CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
@@ -11,6 +11,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
     , m_solo(solo)
     , m_soloMute(false)
     , m_mute(mute)
+    , m_pluginLoader(pluginLoader)
     , m_thread(thread)
     , m_playButton("Play")
     , m_pauseButton("Pause")
@@ -26,6 +27,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
         setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
         m_transportSource.start();
         startTimer(50);
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
     })
 {
     // play button
@@ -194,6 +196,7 @@ void CDPlayer::setGain(float gain)
 {
     m_gain = gain;
     updateGain();
+    m_pluginLoader.trackVolumeChanged(getName().toRawUTF8(), "", m_gain);
     std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));
 }
 
@@ -423,6 +426,7 @@ void CDPlayer::buttonClicked(Button* button)
     {
         m_transportSource.start();
         startTimer(50);
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
     }
     else if (button == &m_pauseButton)
     {
@@ -430,11 +434,13 @@ void CDPlayer::buttonClicked(Button* button)
         {
             m_transportSource.stop();
             stopTimer();
+            m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
         }
         else
         {
             m_transportSource.start();
             startTimer(50);
+            m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
         }
     }
     else if (button == &m_stopButton)
@@ -442,11 +448,13 @@ void CDPlayer::buttonClicked(Button* button)
         m_transportSource.setPosition(0);
         m_transportSource.stop();
         stopTimer();
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
     }
     else if (button == &m_ejectButton)
     {
         m_transportSource.stop();
         stopTimer();
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
         m_reader->ejectDisk();
     }
     else if (button == &m_skipBackwardButton)
@@ -541,6 +549,7 @@ void CDPlayer::timerCallback()
         // Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
         m_slider.setValue(static_cast<double>(currentSample), juce::dontSendNotification);
         m_currentTrack = 0;
+        m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), m_currentTrack);
         SparseSet<int> rows;
         rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
         m_tracksTable.setSelectedRows(rows, juce::dontSendNotification);
@@ -582,6 +591,9 @@ void CDPlayer::timerCallback()
 
             lastSample = offsets[probeTrack];
         }
+
+        m_pluginLoader.previousEntrySelected(getName().toRawUTF8());
+        m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), m_currentTrack);
     }
 
     if (currentSample >= offsets[m_currentTrack + 1])
@@ -604,6 +616,9 @@ void CDPlayer::timerCallback()
 
             firstSample = offsets[probeTrack];
         }
+
+        m_pluginLoader.nextEntrySelected(getName().toRawUTF8());
+        m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), m_currentTrack);
     }
 
     jassert(currentSample >= firstSample);
@@ -615,4 +630,5 @@ void CDPlayer::timerCallback()
     SparseSet<int> rows;
     rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
     m_tracksTable.setSelectedRows(rows, juce::dontSendNotification);
+    m_pluginLoader.positionChanged(getName().toRawUTF8(), m_transportSource.getCurrentPosition());
 }

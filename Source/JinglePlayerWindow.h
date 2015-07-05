@@ -9,6 +9,8 @@
 #include "TracksContainer.h"
 #include "Utils.h"
 
+class Player;
+
 /**
 	User interface with a single big button to control the playback.
 */
@@ -26,7 +28,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    JinglePlayerWindow(TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ConfigureMidiCallback configureMidiCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
+    JinglePlayerWindow(Player& player, TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ConfigureMidiCallback configureMidiCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
 
     void setColor(const Colour& color);
 
@@ -82,6 +84,8 @@ private:
     bool m_blink;
     Colour m_paintColor;
     void updatePointColor();
+
+    Player& m_player;
 
     TracksContainer* m_tracksContainer;
 

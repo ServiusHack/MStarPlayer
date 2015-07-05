@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
+Track::Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
     : m_trackIndex(trackIndex)
     , m_stereo(stereo)
     , m_tracksMixer(tracksMixer)
@@ -17,6 +17,7 @@ Track::Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, in
     , m_channelCountChangedCallback(channelCountChangedCallback)
     , m_playingStateChangedCallback(playingStateChangedCallback)
     , m_trackConfigChangedCallback(trackConfigChangedCallback)
+    , m_gainChangedCallback(gainChangedCallback)
     , m_mute(false)
     , m_solo(false)
     , m_playerSolo(false)
@@ -68,6 +69,8 @@ void Track::setGain(float gain)
     updateGain();
     for (MixerControlableChangeListener* listener : m_listeners)
         listener->gainChanged(gain);
+
+    m_gainChangedCallback(getName().toRawUTF8(), m_trackGain);
 }
 
 void Track::setPlayerSolo(bool solo)

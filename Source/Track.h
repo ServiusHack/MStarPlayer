@@ -25,8 +25,9 @@ public:
     typedef std::function<void(const File&, bool)> FileChangedCallback;
     typedef std::function<void(bool)> PlayingStateChangedCallback;
     typedef std::function<void()> TrackConfigChangedCallback;
+    typedef std::function<void(const char*, float)> GainChangedCallback;
 
-    Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+    Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
     ~Track();
 
     void play();
@@ -185,6 +186,7 @@ private:
     FileChangedCallback m_fileChangedCallback;
     PlayingStateChangedCallback m_playingStateChangedCallback;
     TrackConfigChangedCallback m_trackConfigChangedCallback;
+    GainChangedCallback m_gainChangedCallback;
 
     bool m_loadingTrackConfig;
 

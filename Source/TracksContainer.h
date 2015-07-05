@@ -19,7 +19,7 @@ public:
     typedef std::function<void()> TracksClearedCallback;
     typedef std::function<void(int)> TrackRemovedCallback;
 
-    TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender);
+    TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender);
     ~TracksContainer();
 
 // Playback
@@ -100,6 +100,7 @@ private:
     TracksClearedCallback m_tracksClearedCallback;
     std::vector<TrackRemovedCallback> m_trackRemovedCallbacks;
     Track::TrackConfigChangedCallback m_trackConfigChangedCallback;
+    Track::GainChangedCallback m_gainChangedCallback;
 
     TimeSliceThread& m_timeSliceThread;
 

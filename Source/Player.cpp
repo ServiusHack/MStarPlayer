@@ -5,25 +5,28 @@
 
 using namespace InterPlayerCommunication;
 
-Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, float gain, bool solo, bool mute)
+Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
+    , m_pluginLoader(pluginLoader)
     , m_gain(1.0f)
     , m_solo(solo)
     , m_soloMute(false)
     , m_mute(mute)
     , m_type(type)
-    , m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), audioThumbnailCache, thread, mtcSender)
-    , m_playlistPlayer(&m_tracksContainer,
-                       type == PlayerType::Playlist,
+    , m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), std::bind(&Player::gainChangedCallback, this, std::placeholders::_1, std::placeholders::_2), audioThumbnailCache, thread, mtcSender)
+    , m_playlistPlayer(*this,
+                       &m_tracksContainer,
+                       type == PlayerType::Playlist, 
                        std::bind(&Player::showEditDialog, this),
                        std::bind(&Player::configureChannels, this),
                        std::bind(&Player::configureMidi, this),
                        std::bind(&Player::setType, this, std::placeholders::_1),
                        playlistModel,
                        applicationProperties)
-    , m_jinglePlayer(&m_tracksContainer,
+    , m_jinglePlayer(*this,
+                     &m_tracksContainer,
                      std::bind(&Player::showEditDialog, this),
                      std::bind(&Player::configureChannels, this),
                      std::bind(&Player::configureMidi, this),
@@ -46,8 +49,21 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
 
     addKeyListener(this);
     setBounds(0, 0, 600, 300);
+    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), isPlaying);
+    };
+    m_tracksContainer.addPlayingStateChangedCallback(playingStateChangedCallback);
 
     m_soloBusSettings.addListener(this);
+
+    Track::PositionCallback positionCallback = [&](double position, bool finished) {
+        m_pluginLoader.positionChanged(getName().toRawUTF8(), position);
+        if (finished && m_playlistPlayer.isVisible())
+            nextEntry(true);
+
+    };
+    m_tracksContainer.addPositionCallback(positionCallback);
+
 }
 
 Player::~Player()
@@ -359,14 +375,52 @@ void Player::configureMidi()
     m_PlayerMidiDialog->toFront(true);
 }
 
+void Player::play()
+{
+    m_tracksContainer.play();
+}
+
+void Player::pause()
+{
+    m_tracksContainer.pause();
+}
+
+void Player::stop()
+{
+    m_tracksContainer.stop();
+}
+
+void Player::nextEntry(bool onlyIfEntrySaysSo)
+{
+    m_playlistPlayer.nextPlaylistEntry(onlyIfEntrySaysSo);
+    m_pluginLoader.nextEntrySelected(getName().toRawUTF8());
+}
+
+void Player::previousEntry()
+{
+    m_playlistPlayer.previousPlaylistEntry();
+    m_pluginLoader.previousEntrySelected(getName().toRawUTF8());
+}
+
+void Player::playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index) {
+    m_tracksContainer.setTrackConfigs(trackConfigs);
+    m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), index);
+    if (play)
+        this->play();
+}
+
+void Player::gainChangedCallback(const char* track_name, float gain) {
+    m_pluginLoader.trackVolumeChanged(getName().toRawUTF8(), track_name, gain);
+};
+
 bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
 {
     if (key == KeyPress::spaceKey)
     {
         if (m_tracksContainer.isPlaying())
-            m_tracksContainer.stop();
+            stop();
         else
-            m_tracksContainer.play();
+            play();
         return true;
     }
 

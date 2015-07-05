@@ -14,6 +14,7 @@
 
 #include "ChannelMappingDialog.h"
 #include "PlayerEditDialog.h"
+#include "PluginLoader.h"
 
 /**
     A player for audio CDs
@@ -29,7 +30,7 @@ class CDPlayer
     , private Timer
 {
 public:
-    CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
+    CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
     ~CDPlayer();
 
 // XML serialization
@@ -115,6 +116,7 @@ private:
 
     Colour m_color;
 
+    PluginLoader& m_pluginLoader;
     TimeSliceThread& m_thread;
 
     ImageButton m_playButton;

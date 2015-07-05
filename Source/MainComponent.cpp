@@ -45,6 +45,8 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
     , m_projectModified(false)
     , m_audioThumbnailCache(1000)
     , m_applicationProperties(applicationPropeties)
+    , m_multiDocumentPanel(new MyMultiDocumentPanel())
+    , m_pluginLoader(m_multiDocumentPanel.get())
 {
     // audio setup
     m_audioDeviceManager = new AudioDeviceManager();
@@ -64,7 +66,6 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
     addAndMakeVisible(m_soloComponent);
 
     // player MDI area
-    m_multiDocumentPanel = new MyMultiDocumentPanel();
     addAndMakeVisible(m_multiDocumentPanel);
     m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 
@@ -113,7 +114,10 @@ void MainContentComponent::resized()
 StringArray MainContentComponent::getMenuBarNames()
 {
     static const String menuBarNames[] = {TRANS("Project"), TRANS("Player"), TRANS("View"), TRANS("Options")};
-    return StringArray(menuBarNames, 4);
+    StringArray names(menuBarNames, 4);
+    if (m_pluginLoader.count() > 0)
+        names.add("Plugins");
+    return names;
 }
 
 PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*menuName*/)
@@ -160,6 +164,13 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         menu.addCommandItem(m_commandManager, configureAudio);
         menu.addCommandItem(m_commandManager, configureMidi);
         menu.addCommandItem(m_commandManager, editSettings);
+        break;
+    case 4:
+        {
+            size_t numberOfPlugins = m_pluginLoader.count();
+            for (size_t i = 0; i < numberOfPlugins; ++i)
+                menu.addCommandItem(m_commandManager, basePlugin + i);
+        }
         break;
     }
 
@@ -211,6 +222,10 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
         lookAndFeelDark};
 
     commands.addArray(ids, numElementsInArray(ids));
+
+    size_t numberOfPlugins = m_pluginLoader.count();
+    for (size_t i = 0; i < numberOfPlugins; ++i)
+        commands.add(basePlugin + i);
 }
 
 // This method is used when something needs to find out the details about one of the commands
@@ -221,6 +236,7 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     static const String playerCategory("Player");
     static const String viewCategory("View");
     static const String optionsCategory("Options");
+    static const String pluginsCategory("Plugins");
 
     switch (commandID)
     {
@@ -305,6 +321,12 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
         result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel);
         break;
     };
+
+    if (commandID >= basePlugin)
+    {
+        String pluginName = m_pluginLoader.pluginName(commandID - basePlugin);
+        result.setInfo(pluginName, String("Configure ") + pluginName, pluginsCategory, 0);
+    }
 }
 
 // this is the ApplicationCommandTarget method that is used to actually perform one of our commands..
@@ -326,7 +348,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         break;
     case addJinglePlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
         player->setName("Jingle Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -335,7 +357,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addMultitrackPlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
         player->setName("Multitrack Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -344,7 +366,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addPlaylistPlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
         player->setName("Playlist Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -353,7 +375,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addCDPlayer:
     {
-        CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread);
+        CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, m_pluginLoader);
         player->setName("CD Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -405,6 +427,11 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         m_applicationProperties.getUserSettings()->setValue("lookAndFeel", "dark");
         break;
     default:
+        if (info.commandID >= basePlugin)
+        {
+            m_pluginLoader.configure(info.commandID - basePlugin);
+            return true;
+        }
         return false;
     };
 
@@ -636,7 +663,7 @@ void MainContentComponent::readProjectFile()
                         loadWarnings.add(String::formatted(TRANS("Unknown player type '%s'."), type));
                         continue;
                     }
-                    Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, gain, solo, mute);
+                    Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader, gain, solo, mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);
@@ -647,7 +674,7 @@ void MainContentComponent::readProjectFile()
                     const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
                     const bool solo = player->getBoolAttribute("solo");
                     const bool mute = player->getBoolAttribute("mute");
-                    CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, gain, solo, mute);
+                    CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, m_pluginLoader, gain, solo, mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);
@@ -661,6 +688,12 @@ void MainContentComponent::readProjectFile()
 
             // update soloMute for all players
             soloChanged(false);
+        }
+
+        XmlElement* plugins = root->getChildByName("Plugins");
+        if (plugins)
+        {
+            m_pluginLoader.loadConfigurations(plugins);
         }
 
         m_projectModified = false;
@@ -738,6 +771,13 @@ void MainContentComponent::writeProjectFile()
     }
 
     root->addChildElement(players);
+
+    if (m_pluginLoader.count() > 0)
+    {
+        XmlElement* plugins = new XmlElement("Plugins");
+        m_pluginLoader.saveConfigurations(plugins);
+        root->addChildElement(plugins);
+    }
 
     if (!root->writeToFile(m_projectFile, ""))
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to save project file"), TRANS("Failed to save project file."));
