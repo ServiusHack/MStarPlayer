@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="3.1.1"
+              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="3.2.0"
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
@@ -186,7 +186,7 @@
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
-    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
@@ -205,9 +205,7 @@
         <MODULEPATH id="juce_opengl" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_gui_basics" path="JuceLibraryCode/modules"/>
-        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_events" path="JuceLibraryCode/modules"/>
-        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_cryptography" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_core" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_utils" path="JuceLibraryCode/modules"/>
@@ -215,6 +213,8 @@
         <MODULEPATH id="juce_audio_formats" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_devices" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </VS2013>
     <LINUX_MAKE targetFolder="Builds/Linux">
@@ -229,9 +229,7 @@
         <MODULEPATH id="juce_opengl" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_gui_extra" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_gui_basics" path="JuceLibraryCode/modules"/>
-        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_events" path="JuceLibraryCode/modules"/>
-        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_cryptography" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_core" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_utils" path="JuceLibraryCode/modules"/>
@@ -239,6 +237,8 @@
         <MODULEPATH id="juce_audio_formats" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_devices" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_data_structures" path="JuceLibraryCode/modules"/>
+        <MODULEPATH id="juce_graphics" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -223,6 +223,7 @@ public:
         {
             Rectangle<int> r (proportionOfWidth (0.35f), 0, proportionOfWidth (0.6f), 3000);
 
+            const int maxListBoxHeight = 100;
             const int h = parent->getItemHeight();
             const int space = h / 4;
 
@@ -251,83 +252,70 @@ public:
                 r.removeFromTop (space);
             }
 
-			// continue from bottom to use maximum available space for channel lists
-			Rectangle<int> r2(proportionOfWidth(0.35f), getHeight() - space, proportionOfWidth(0.6f), h);
-
-			const bool advancedSettingsVisible = showAdvancedSettingsButton == nullptr
-				|| !showAdvancedSettingsButton->isVisible();
-
-			if (showUIButton != nullptr || resetDeviceButton != nullptr)
-			{
-				r2.setY(r2.getY() - h);
-				Rectangle<int> buttons(r2);
-
-				if (showUIButton != nullptr)
-				{
-					showUIButton->setVisible(advancedSettingsVisible);
-					showUIButton->changeWidthToFitText(h);
-					showUIButton->setBounds(buttons.removeFromLeft(showUIButton->getWidth()));
-					buttons.removeFromLeft(space);
-				}
-
-				if (resetDeviceButton != nullptr)
-				{
-					resetDeviceButton->setVisible(advancedSettingsVisible);
-					resetDeviceButton->changeWidthToFitText(h);
-					resetDeviceButton->setBounds(buttons.removeFromLeft(resetDeviceButton->getWidth()));
-				}
-
-				r2.setY(r2.getY() - space);
-			}
-
-			if (bufferSizeDropDown != nullptr)
-			{
-				r2.setY(r2.getY() - h);
-				bufferSizeDropDown->setVisible(advancedSettingsVisible);
-				bufferSizeDropDown->setBounds(r2);
-				r2.setY(r2.getY() - space);
-			}
-
-			if (sampleRateDropDown != nullptr)
-			{
-				r2.setY(r2.getY() - h);
-				sampleRateDropDown->setVisible(advancedSettingsVisible);
-				sampleRateDropDown->setBounds(r2);
-				r2.setY(r2.getY() - space);
-			}
-
-			if (showAdvancedSettingsButton != nullptr)
-			{
-				showAdvancedSettingsButton->setBounds(r2.withHeight(h));
-				showAdvancedSettingsButton->changeWidthToFitText();
-			}
-
-			// now use the remaining height for both lists
-
-			int listHeight = r2.getY() - r.getY();
-			if (outputChanList != nullptr && inputChanList != nullptr)
-				listHeight /= 2;
-
             if (outputChanList != nullptr)
             {
-				outputChanList->setBounds(r.removeFromTop(listHeight));
+                outputChanList->setBounds (r.removeFromTop (outputChanList->getBestHeight (maxListBoxHeight)));
                 outputChanLabel->setBounds (0, outputChanList->getBounds().getCentreY() - h / 2, r.getX(), h);
                 r.removeFromTop (space);
             }
 
             if (inputChanList != nullptr)
             {
-				inputChanList->setBounds(r.removeFromTop(listHeight));
+                inputChanList->setBounds (r.removeFromTop (inputChanList->getBestHeight (maxListBoxHeight)));
                 inputChanLabel->setBounds (0, inputChanList->getBounds().getCentreY() - h / 2, r.getX(), h);
                 r.removeFromTop (space);
             }
 
-            /*
+            r.removeFromTop (space * 2);
 
-            r.removeFromTop (space);*/
+            if (showAdvancedSettingsButton != nullptr)
+            {
+                showAdvancedSettingsButton->setBounds (r.withHeight (h));
+                showAdvancedSettingsButton->changeWidthToFitText();
+            }
 
-            //setSize (getWidth(), r.getY());
-			//setSize(parent->getWidth(), parent->getHeight());
+            const bool advancedSettingsVisible = showAdvancedSettingsButton == nullptr
+                                                    || ! showAdvancedSettingsButton->isVisible();
+
+            if (sampleRateDropDown != nullptr)
+            {
+                sampleRateDropDown->setVisible (advancedSettingsVisible);
+                sampleRateDropDown->setBounds (r.removeFromTop (h));
+                r.removeFromTop (space);
+            }
+
+            if (bufferSizeDropDown != nullptr)
+            {
+                bufferSizeDropDown->setVisible (advancedSettingsVisible);
+                bufferSizeDropDown->setBounds (r.removeFromTop (h));
+                r.removeFromTop (space);
+            }
+
+            r.removeFromTop (space);
+
+            if (showUIButton != nullptr || resetDeviceButton != nullptr)
+            {
+                Rectangle<int> buttons (r.removeFromTop (h));
+
+                if (showUIButton != nullptr)
+                {
+                    showUIButton->setVisible (advancedSettingsVisible);
+                    showUIButton->changeWidthToFitText (h);
+                    showUIButton->setBounds (buttons.removeFromLeft (showUIButton->getWidth()));
+                    buttons.removeFromLeft (space);
+                }
+
+                if (resetDeviceButton != nullptr)
+                {
+                    resetDeviceButton->setVisible (advancedSettingsVisible);
+                    resetDeviceButton->changeWidthToFitText (h);
+                    resetDeviceButton->setBounds (buttons.removeFromLeft (resetDeviceButton->getWidth()));
+                }
+
+                r.removeFromTop (space);
+            }
+
+            setSize (getWidth(), r.getY());
         }
         else
         {
@@ -508,7 +496,7 @@ public:
 
         sendLookAndFeelChange();
         resized();
-        //setSize (getWidth(), getLowestY() + 4);
+        setSize (getWidth(), getLowestY() + 4);
     }
 
     void changeListenerCallback (ChangeBroadcaster*) override
@@ -1072,8 +1060,8 @@ void AudioDeviceSelectorComponent::resized()
 
     if (audioDeviceSettingsComp != nullptr)
     {
-        //audioDeviceSettingsComp->resized();
-        audioDeviceSettingsComp->setBounds (r.removeFromTop (getHeight() - r.getY() - space)
+        audioDeviceSettingsComp->resized();
+        audioDeviceSettingsComp->setBounds (r.removeFromTop (audioDeviceSettingsComp->getHeight())
                                                 .withX (0).withWidth (getWidth()));
         r.removeFromTop (space);
     }
@@ -1099,7 +1087,7 @@ void AudioDeviceSelectorComponent::comboBoxChanged (ComboBox* comboBoxThatHasCha
 
             deviceManager.setCurrentAudioDeviceType (type->getTypeName(), true);
 
-            updateAllControls(); // needed in case the type hasn't actally changed
+            updateAllControls(); // needed in case the type hasn't actually changed
         }
     }
     else if (comboBoxThatHasChanged == midiOutputSelector)
