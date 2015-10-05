@@ -728,6 +728,8 @@ void MainContentComponent::writeProjectFile()
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to save project"), TRANS("Failed to open audio thumbnail cache file."));
         return;
     }
+    stream.setPosition(0);
+    stream.truncate();
     m_audioThumbnailCache.writeToStream(stream);
     if (stream.getStatus().failed())
     {
