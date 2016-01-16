@@ -199,6 +199,10 @@ XmlElement* Player::saveToXml(const File& projectDirectory) const
 	boundsXml->setAttribute("height", bounds.getHeight());
 	element->addChildElement(boundsXml);
 
+	XmlElement* viewXml = new XmlElement("View");
+	viewXml->setAttribute("playlistResizerPosition", m_playlistPlayer.getResizerBarPosition());
+	element->addChildElement(viewXml);
+
 	XmlElement* nameXml = new XmlElement("Name");
 	nameXml->addTextElement(Component::getName());
 	element->addChildElement(nameXml);
@@ -227,6 +231,10 @@ void Player::restoreFromXml (const XmlElement& element, const File& projectDirec
 	String width = boundsXml->getStringAttribute("width", "150");
 	String height = boundsXml->getStringAttribute("height", "150");
 	getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
+
+	XmlElement* viewXml = element.getChildByName("View");
+	String playlistResizerPosition = viewXml->getStringAttribute("playlistResizerPosition", "100");
+	m_playlistPlayer.setResizerBarPosition(playlistResizerPosition.getIntValue());
 
 	XmlElement* nameXml = element.getChildByName("Name");
 	setName(nameXml->getAllSubText().trim());

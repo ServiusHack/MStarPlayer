@@ -32,6 +32,10 @@ public:
 
 	int getSelectedRow() const;
 
+	int getResizerBarPosition() const;
+
+	void setResizerBarPosition(int position);
+
 // Component overrides
 public:
 	virtual void paint(Graphics&) override;

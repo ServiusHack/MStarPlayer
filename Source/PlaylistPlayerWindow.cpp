@@ -120,6 +120,17 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, boo
 	m_layout.setItemLayout (2, 100, -1.0, -0.7); // tracks
 }
 
+int PlaylistPlayerWindow::getResizerBarPosition() const
+{
+	return m_layout.getItemCurrentPosition(1);
+}
+
+void PlaylistPlayerWindow::setResizerBarPosition(int position)
+{
+	m_layout.setItemPosition(1, position);
+	resized();
+}
+
 void PlaylistPlayerWindow::paint(Graphics& g)
 {
 	int buttonWidth = std::min(getWidth() / 11, 32);
