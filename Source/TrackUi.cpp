@@ -213,8 +213,14 @@ void TrackUi::setLongestDuration(double duration)
 
 void TrackUi::positionChanged(double position)
 {
+	const static int componentWidth = 100 + 40 + 20;
+	int drawWidth = getWidth() - componentWidth;
+
+	int old_lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
 	m_progress = position / m_longestDuration;
-	repaint();
+	int new_lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
+
+	repaint(old_lineX- 0, 0, new_lineX + 0, getHeight());
 }
 
 void TrackUi::loadFile()
@@ -266,7 +272,7 @@ void TrackUi::loadFile()
 void TrackUi::paint(Graphics& g)
 {
 	if (m_track.getTrackIndex() > 1)
-		g.drawLine(0.0f, 0.0f, static_cast<float>(getWidth()), 0.0f);
+		g.drawVerticalLine(0, 0.0f, static_cast<float>(getWidth()));
 
 	const static int componentWidth = 100 + 40 + 20;
 	int drawWidth = getWidth() - componentWidth;
@@ -277,8 +283,8 @@ void TrackUi::paint(Graphics& g)
 	g.setColour(Colour(255, 0, 0));
 	drawWidth = getWidth() - componentWidth;
 
-	float lineX = componentWidth + static_cast<float>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
-	g.drawLine(lineX, 0.0f, lineX, static_cast<float>(getHeight()));
+	int lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
+	g.drawVerticalLine(lineX, 0.0f, static_cast<float>(getHeight()));
 }
 
 void TrackUi::resized()
