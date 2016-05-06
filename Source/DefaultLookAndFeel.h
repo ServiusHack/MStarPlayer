@@ -8,6 +8,8 @@
 class DefaultLookAndFeel : public LookAndFeel_V3
 {
 public:
+	DefaultLookAndFeel();
+
 	virtual void drawProgressBar(Graphics& g, ProgressBar& progressBar,
 								  int width, int height,
 								  double progress, const String& textToShow) override;

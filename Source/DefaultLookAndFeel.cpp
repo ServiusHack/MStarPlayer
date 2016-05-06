@@ -1,5 +1,11 @@
 #include "DefaultLookAndFeel.h"
 
+
+DefaultLookAndFeel::DefaultLookAndFeel()
+{
+    // Fix what LookAndFeelV3 broke in 4.2.0:
+    setColour(TextButton::buttonOnColourId, Colour(0xff4444ff));
+}
 void DefaultLookAndFeel::drawProgressBar (Graphics& g, ProgressBar& progressBar,
                                       int width, int height,
                                       double progress, const String& textToShow)
