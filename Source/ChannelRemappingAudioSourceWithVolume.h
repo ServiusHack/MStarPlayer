@@ -14,7 +14,7 @@ public:
 
 // Channel volume
 public:
-	float getVolume(size_t channel) const;
+	float getVolume() const;
 
 private:
 	std::vector<VolumeAnalyzer> m_volumes;

@@ -36,10 +36,12 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 	}
 }
 
-float ChannelRemappingAudioSourceWithVolume::getVolume(size_t channel) const
+float ChannelRemappingAudioSourceWithVolume::getVolume() const
 {
 	const ScopedLock sl(lock);
-	jassert(channel < m_volumes.size());
-	
-	return m_volumes[channel].getVolume();
+	float maxVolume = 0;
+	for (auto&& volume : m_volumes)
+		maxVolume = std::max(maxVolume, volume.getVolume());
+
+	return maxVolume;
 }
