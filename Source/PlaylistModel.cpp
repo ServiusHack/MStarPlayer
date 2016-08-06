@@ -201,6 +201,17 @@ void PlaylistModel::setTrackDuration(size_t selectedRow, double duration)
 	m_playlist[selectedRow].durationInSeconds = duration;
 }
 
+void PlaylistModel::setTrackNameIfEmpty(size_t selectedRow, const String& name)
+{
+	jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
+	PlaylistEntry& entry = m_playlist[selectedRow];
+	if (entry.name.isEmpty())
+	{
+		entry.name = name;
+		sendChangeMessage();
+	}
+}
+
 void PlaylistModel::clear()
 {
 	m_playlist.clear();

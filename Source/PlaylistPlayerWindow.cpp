@@ -87,7 +87,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, boo
 	addAndMakeVisible(m_tracksViewport = new Viewport());
 	m_tracksViewport->setViewedComponent(m_tracks = new TracksComponent(*m_tracksContainer, applicationProperties,
 		std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
-		std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1)), false);
+		std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1),
+		std::bind(&PlaylistPlayerWindow::fileLoaded, this, std::placeholders::_1)), false);
 	m_tracksViewport->setScrollBarsShown(true, false, false, false);
 
 	// playlist
@@ -246,4 +247,9 @@ void PlaylistPlayerWindow::setShowPlaylist(bool showPlaylist)
 int PlaylistPlayerWindow::getSelectedRow() const
 {
 	return m_tableListBox->getSelectedRow();
+}
+
+void PlaylistPlayerWindow::fileLoaded(const String& filename)
+{
+	static_cast<PlaylistModel*>(m_tableListBox->getModel())->setTrackNameIfEmpty(getSelectedRow(), filename);
 }

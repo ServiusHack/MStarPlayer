@@ -22,8 +22,9 @@ public:
 	typedef std::function<void(double)> SetPositionCallback;
 	typedef std::function<void(Track*)> RemoveTrackCallback;
 	typedef std::function<bool(int)> TrackHasFilesCallback;
+	typedef std::function<void(String)> FileLoadedCallback;
 
-	TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback);
+	TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback, FileLoadedCallback fileLoadedCallback);
 	~TrackUi();
 
 	void changeListenerCallback(ChangeBroadcaster *source);
@@ -57,6 +58,8 @@ private:
 	RemoveTrackCallback m_removeTrackCallback;
 
 	TrackHasFilesCallback m_trackHasFilesCallback;
+
+	FileLoadedCallback m_fileLoadedCallback;
 
 // Button::Listener
 public:

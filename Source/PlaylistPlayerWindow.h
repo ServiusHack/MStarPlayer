@@ -47,6 +47,8 @@ public:
 	virtual void buttonClicked(Button* /*button*/) override;
 
 private:
+	void fileLoaded(const String& filename);
+
 	ScopedPointer<ImageButton> m_playButton;
 	ScopedPointer<ImageButton> m_pauseButton;
 	ScopedPointer<ImageButton> m_stopButton;

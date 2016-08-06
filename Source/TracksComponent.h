@@ -16,8 +16,9 @@ class TracksComponent : public Component
 {
 public:
 	typedef std::function<void(int)> TrackRemovedCallback;
+	typedef std::function<void(String)> FileLoadedCallback;
 
-	TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback);
+	TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback, FileLoadedCallback fileLoadedCallback);
 
 	void addMonoTrack();
 	void addStereoTrack();
@@ -39,6 +40,7 @@ private:
 
 	TrackUi::TrackHasFilesCallback m_trackHasFilesCallback;
 	TrackRemovedCallback m_trackRemovedCallback;
+	FileLoadedCallback m_fileLoadedCallback;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TracksComponent)
 };

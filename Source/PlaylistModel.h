@@ -29,6 +29,7 @@ public:
 	bool doPlayNext(int selectedRow);
 	bool trackHasFiles(size_t track) const;
 	void setTrackDuration(size_t row, double duration);
+	void setTrackNameIfEmpty(size_t row, const String& name);
 
 // Track configs
 public:

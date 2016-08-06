@@ -1,11 +1,12 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 
-TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback)
+TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback, FileLoadedCallback fileLoadedCallback)
 	: m_container(container)
 	, m_applicationProperties(applicationProperties)
 	, m_trackHasFilesCallback(trackHasFilesCallback)
 	, m_trackRemovedCallback(trackRemovedCallback)
+	, m_fileLoadedCallback(fileLoadedCallback)
 {
 	trackAdded(m_container[0]);
 	m_container.setTrackAddedCallback(std::bind(&TracksComponent::trackAdded, this, std::placeholders::_1));
@@ -46,7 +47,8 @@ void TracksComponent::trackAdded(Track& track)
 	m_tracks.emplace_back(new TrackUi(track, m_applicationProperties,
 		std::bind(&TracksContainer::setPosition, &m_container, std::placeholders::_1),
 		std::bind(&TracksContainer::removeTrack, &m_container, std::placeholders::_1),
-		m_trackHasFilesCallback));
+		m_trackHasFilesCallback,
+		m_fileLoadedCallback));
 	addAndMakeVisible(*m_tracks.back());
 	resized();
 }

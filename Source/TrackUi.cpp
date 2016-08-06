@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback)
+TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback, FileLoadedCallback fileLoadedCallback)
 	: m_track(track)
 	, m_longestDuration(0)
 	, m_progress(0)
@@ -10,6 +10,7 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
 	, m_setPositionCallback(setPositionCallback)
 	, m_removeTrackCallback(removeTrackCallback)
 	, m_trackHasFilesCallback(trackHasFilesCallback)
+	, m_fileLoadedCallback(fileLoadedCallback)
 {
 	m_idLabel = new Label();
 	addAndMakeVisible(m_idLabel);
@@ -266,6 +267,7 @@ void TrackUi::loadFile()
 	m_fileNameLabel->setText(audioFile.getFileName(), sendNotification);
 	int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
 	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
+	m_fileLoadedCallback(audioFile.getFileNameWithoutExtension());
 	repaint();
 }
 
