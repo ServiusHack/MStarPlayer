@@ -259,7 +259,7 @@ void Track::loadFileIntoTransport(const File& audioFile)
 	m_duration = m_transportSource.getLengthInSeconds();
 	m_durationChangedCallback();
 
-	m_fileChangedCallback(m_audioFile.getFileName());
+	m_fileChangedCallback(m_audioFile, !m_loadingTrackConfig);
 
 	if (!m_loadingTrackConfig)
 		m_trackConfigChangedCallback();

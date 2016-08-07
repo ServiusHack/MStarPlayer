@@ -21,7 +21,7 @@ public:
 	typedef std::function<void(double, bool)> PositionCallback;
 	typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
 	typedef std::function<void()> ChannelCountChangedCallback;
-	typedef std::function<void(String)> FileChangedCallback;
+	typedef std::function<void(const File&, bool)> FileChangedCallback;
 	typedef std::function<void(bool)> PlayingStateChangedCallback;
 	typedef std::function<void()> TrackConfigChangedCallback;
 

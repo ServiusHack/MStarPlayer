@@ -36,6 +36,7 @@ public:
 	void updateIdText();
 
 private:
+	void fileChanged(const File& file, bool updatePlaylist);
 
 	Track& m_track;
 

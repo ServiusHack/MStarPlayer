@@ -67,7 +67,7 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
 	m_track.addChangeListener(this);
 	m_track.getAudioThumbnail().addChangeListener(this);
 	m_track.addPositionCallback(std::bind(&TrackUi::positionChanged, this, std::placeholders::_1));
-	m_track.setFileChangedCallback(std::bind(&Label::setText, m_fileNameLabel.get(), std::placeholders::_1, sendNotification));
+	m_track.setFileChangedCallback(std::bind(&TrackUi::fileChanged, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 TrackUi::~TrackUi()
@@ -182,6 +182,18 @@ void TrackUi::updateIdText()
 	m_idLabel->setText(stream.str(), sendNotification);
 }
 
+void TrackUi::fileChanged(const File& file, bool updatePlaylist)
+{
+	m_fileNameLabel->setText(file.getFileName(), sendNotification);
+	int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
+	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
+
+	if (updatePlaylist)
+	{
+		m_fileLoadedCallback(file.getFileNameWithoutExtension());
+	}
+}
+
 void TrackUi::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
 	repaint();
@@ -268,10 +280,6 @@ void TrackUi::loadFile(const File& audioFile)
 
 	m_track.loadFileIntoTransport(audioFile);
 
-	m_fileNameLabel->setText(audioFile.getFileName(), sendNotification);
-	int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
-	m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
-	m_fileLoadedCallback(audioFile.getFileNameWithoutExtension());
 	repaint();
 }
 
