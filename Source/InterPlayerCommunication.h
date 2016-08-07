@@ -16,4 +16,5 @@ namespace InterPlayerCommunication
 	typedef std::function<void()> ShowEditDialogCallback;
 	typedef std::function<void()> ConfigureChannelsCallback;
 	typedef std::function<void(PlayerType)> ChangePlayerTypeCallback;
+	typedef std::function<void(String)> SetUserImageCallback;
 }

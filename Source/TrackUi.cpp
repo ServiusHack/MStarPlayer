@@ -3,7 +3,8 @@
 #include <sstream>
 
 TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback, FileLoadedCallback fileLoadedCallback)
-	: m_track(track)
+	: Component("TrackUi")
+	, m_track(track)
 	, m_longestDuration(0)
 	, m_progress(0)
 	, m_applicationProperties(applicationProperties)
@@ -232,8 +233,11 @@ void TrackUi::loadFile()
 	if (!myChooser.browseForFileToOpen())
 		return;
 
-	File audioFile = File(myChooser.getResult());
+	loadFile(File(myChooser.getResult()));
+}
 
+void TrackUi::loadFile(const File& audioFile)
+{
 	ScopedPointer<AudioFormatReader> reader = m_track.getAudioFormatManager().createReaderFor(audioFile);
 
 	if (reader != nullptr) {

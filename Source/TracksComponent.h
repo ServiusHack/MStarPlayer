@@ -13,6 +13,8 @@
 	Component containing all tracks.
 */
 class TracksComponent : public Component
+	, public FileDragAndDropTarget
+
 {
 public:
 	typedef std::function<void(int)> TrackRemovedCallback;
@@ -26,6 +28,11 @@ public:
 // Component overrides
 public:
 	virtual void resized() override;
+
+// FileDragAnDropTarget overrides
+public:
+	bool isInterestedInFileDrag(const StringArray& files) override;
+	void filesDropped(const StringArray& files, int x, int y) override;
 
 private:
 	void trackAdded(Track& track);

@@ -16,6 +16,7 @@ class JinglePlayerWindow
 	: public Component
 	, public Button::Listener
 	, public ChangeListener
+	, public FileDragAndDropTarget
 {
 public:
     /** Creates a new JinglePlayer.
@@ -25,7 +26,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	JinglePlayerWindow(TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback);
+	JinglePlayerWindow(TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
 
 	void setColor(const Colour& color);
 
@@ -46,6 +47,11 @@ public:
 // ChangeListener
 public:
 	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
+
+// FileDragAndDropTarget
+public:
+	bool isInterestedInFileDrag(const StringArray& files) override;
+	void filesDropped(const StringArray& files, int x, int y) override;
 
 private:
     // ui values
@@ -82,6 +88,7 @@ private:
 	InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
 	InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;
 	InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
+	InterPlayerCommunication::SetUserImageCallback m_setUserImageCallback;
 
 	AudioFormatManager m_formatManager;
 

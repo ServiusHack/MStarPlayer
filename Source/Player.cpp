@@ -23,7 +23,8 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 	, m_jinglePlayer(&m_tracksContainer,
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
-		std::bind(&Player::setType, this, std::placeholders::_1))
+		std::bind(&Player::setType, this, std::placeholders::_1),
+		std::bind(&Player::setUserImage, this, std::placeholders::_1))
 {
 
 	addChildComponent(&m_playlistPlayer);

@@ -9,11 +9,34 @@
 using namespace InterPlayerCommunication;
 
 namespace {
+	bool isAudioFile(const String& filePath)
+	{
+		AudioFormatManager formatManager;
+		formatManager.registerBasicFormats();
+
+		for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
+		{
+			for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
+			{
+				if (filePath.endsWithIgnoreCase(extension))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	bool isImageFile(const String& filePath)
+	{
+		return filePath.endsWithIgnoreCase(".jpg") || filePath.endsWithIgnoreCase(".png");
+	}
 	const int ProgressBarHeight = 26;
 	const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback)
+JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback, SetUserImageCallback setUserImageCallback)
 	: m_tracksContainer(tracksContainer)
 	, m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
 	, m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
@@ -23,6 +46,7 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEdi
 	, m_showEditDialogCallback(showEditDialogCallback)
 	, m_configureChannelsCallback(configureChannelsCallback)
 	, m_changePlayerTypeCallback(changePlayerTypeCallback)
+	, m_setUserImageCallback(setUserImageCallback)
 	, m_totalLength(0)
 	, m_progress(0)
 {
@@ -106,6 +130,40 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEdi
 void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
 	repaint();
+}
+
+bool JinglePlayerWindow::isInterestedInFileDrag(const StringArray& /*files*/)
+{
+	return true;
+}
+
+void JinglePlayerWindow::filesDropped(const StringArray& files, int /*x*/, int /*y*/)
+{
+	auto fileIt = files.begin();
+
+	for (size_t trackIndex = 0; trackIndex < m_tracksContainer->size(); ++trackIndex)
+	{
+		while (fileIt != files.end() && !isAudioFile(*fileIt))
+		{
+			++fileIt;
+		}
+
+		if (fileIt == files.end())
+			break;
+
+		(*m_tracksContainer)[trackIndex].loadFileIntoTransport(*fileIt);
+	}
+
+	fileIt = files.begin();
+	while (fileIt != files.end() && !isImageFile(*fileIt))
+	{
+		++fileIt;
+	}
+
+	if (fileIt != files.end())
+	{
+		m_setUserImageCallback(*fileIt);
+	}
 }
 
 void JinglePlayerWindow::resized()

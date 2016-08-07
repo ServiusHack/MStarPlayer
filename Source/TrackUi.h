@@ -29,6 +29,7 @@ public:
 
 	void changeListenerCallback(ChangeBroadcaster *source);
 	void loadFile();
+	void loadFile(const File& file);
 	void setLongestDuration(double duration);
 	void positionChanged(double position);
 

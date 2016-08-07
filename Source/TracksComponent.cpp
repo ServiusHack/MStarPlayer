@@ -1,6 +1,27 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "TracksComponent.h"
 
+namespace {
+	bool isAudioFile(const String& filePath)
+	{
+		AudioFormatManager formatManager;
+		formatManager.registerBasicFormats();
+
+		for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
+		{
+			for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
+			{
+				if (filePath.endsWithIgnoreCase(extension))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+}
+
 TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback, FileLoadedCallback fileLoadedCallback)
 	: m_container(container)
 	, m_applicationProperties(applicationProperties)
@@ -30,6 +51,39 @@ void TracksComponent::resized()
 		y += height;
 	}
 	setBounds(getX(), getY(), getWidth(), y);
+}
+
+bool TracksComponent::isInterestedInFileDrag(const StringArray& /*files*/)
+{
+	return true;
+}
+
+void TracksComponent::filesDropped(const StringArray& files, int x, int y)
+{
+	Component* component = getComponentAt(x, y);
+
+	if (component->getName() != "TrackUi")
+		return;
+
+	TrackUi* trackUi = static_cast<TrackUi*>(component);
+
+	auto trackUiIt = std::find_if(m_tracks.begin(), m_tracks.end(), [trackUi](const std::unique_ptr<TrackUi>& uniquePointer) {
+		return uniquePointer.get() == trackUi;
+	});
+	auto fileIt = files.begin();
+
+	for (; trackUiIt != m_tracks.end(); ++trackUiIt)
+	{
+		while (fileIt != files.end() && !isAudioFile(*fileIt))
+		{
+			++fileIt;
+		}
+
+		if (fileIt == files.end())
+			break;
+
+		(*trackUiIt)->loadFile(File(*fileIt));
+	}
 }
 
 void TracksComponent::addMonoTrack()
