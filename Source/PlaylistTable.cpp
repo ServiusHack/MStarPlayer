@@ -32,7 +32,7 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
 	if (lastRowSelected == -1)
 		return;
 
-	const std::vector<TrackConfig>& trackConfigs = static_cast<PlaylistModel*>(getModel())->getTrackConfigs(lastRowSelected);
+	const std::vector<TrackConfig>& trackConfigs = m_model.getTrackConfigs(lastRowSelected);
 	m_callback(trackConfigs, m_playNext);
 }
 
@@ -44,7 +44,7 @@ void PlaylistTable::changeListenerCallback(ChangeBroadcaster* /*source*/)
 
 void PlaylistTable::setCurrentDuration(double duration)
 {
-	static_cast<PlaylistModel*>(getModel())->setTrackDuration(getSelectedRow(), duration);
+	m_model.setTrackDuration(getSelectedRow(), duration);
 	repaint();
 }
 
