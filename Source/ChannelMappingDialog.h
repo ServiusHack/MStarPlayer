@@ -65,6 +65,9 @@ public:
     virtual void paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
     virtual void paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
 	virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+
+//ComboBoxListener overrides
+public:
 	virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 private:

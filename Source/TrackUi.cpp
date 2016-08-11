@@ -149,7 +149,7 @@ void TrackUi::buttonClicked(Button *button)
 		}
 		case 4:
 		{
-			int result = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
+			int alertResult = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
 				TRANS("Confirm"),
 				TRANS("Do you really want to remove the audio file from this track?"),
 				TRANS("Yes"),
@@ -157,7 +157,7 @@ void TrackUi::buttonClicked(Button *button)
 				this,
 				nullptr);
 
-			if (result == 1)
+			if (alertResult == 1)
 				m_track.unloadFile();
 
 			break;

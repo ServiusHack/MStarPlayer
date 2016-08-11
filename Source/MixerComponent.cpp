@@ -104,10 +104,10 @@ void MixerComponent::resized()
 	m_sliderScrollBar.setCurrentRange(m_slidersContainer.getX(), getWidth());
 
 	{
-		Rectangle<int> bounds = m_slidersContainer.getBounds();
-		bounds.setWidth(x);
-		bounds.setHeight(sliderHeight);
-		m_slidersContainer.setBounds(bounds);
+		Rectangle<int> containerBounds = m_slidersContainer.getBounds();
+		containerBounds.setWidth(x);
+		containerBounds.setHeight(sliderHeight);
+		m_slidersContainer.setBounds(containerBounds);
 	}
 }
 

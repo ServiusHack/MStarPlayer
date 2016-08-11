@@ -31,8 +31,7 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 	const ScopedLock sl(lock);
 	ChannelRemappingAudioSource::getNextAudioBlock(bufferToFill);
 	for (size_t i = 0; i < m_volumes.size(); ++i) {
-		const float* buffer = bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample;
-		m_volumes[i].update(buffer, bufferToFill.numSamples);
+		m_volumes[i].update(bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
 	}
 }
 

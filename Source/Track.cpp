@@ -20,7 +20,6 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_mute(false)
 	, m_solo(false)
 	, m_audioThumbnailCache(audioThumbnailCache)
-	, m_outputChannels(outputChannels)
 	, m_remappingAudioSource(&m_transportSource, false)
 	, m_audioThumbnail(1000, m_formatManager, m_audioThumbnailCache)
 	, m_loadingTrackConfig(false)
@@ -154,7 +153,6 @@ std::vector<int> Track::getMapping()
 
 void Track::setOutputChannels(int outputChannels)
 {
-	m_outputChannels = outputChannels;
 	m_remappingAudioSource.setNumberOfChannelsToProduce(outputChannels);
 }
 

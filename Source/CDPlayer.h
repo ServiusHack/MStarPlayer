@@ -81,14 +81,6 @@ public:
 private:
     void timerCallback() override;
 
-public:
-    /** Set the number of output channels.
-
-        If the user reconfigures his audio settings the number of output channels
-        might change. This method is called to propagate this change to this player.
-    */
-    void setOutputChannels(int outputChannels);
-
 private:
     void updateGain();
 

@@ -43,7 +43,7 @@ public:
 	void setOutputChannelMapping(int source, int target);
 	std::vector<int> getMapping();
 
-	void timerCallback();
+	void timerCallback() override;
 	void callPositionCallbacks(double position);
 
 	void loadFileIntoTransport(const File& audioFile);
@@ -112,7 +112,7 @@ public:
 // MixerControlable name
 public:
 	void setName(String name);
-	String getName() const;
+	String getName() const override;
 private:
 	String m_name;
 
@@ -154,7 +154,6 @@ private:
 	ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
 	double m_duration;
-	int m_outputChannels;
 
 	DurationChangedCallback m_durationChangedCallback;
 	DurationChangedCallback m_soloChangedCallback;

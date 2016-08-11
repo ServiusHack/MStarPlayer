@@ -191,13 +191,13 @@ XmlElement* Player::saveToXml(const File& projectDirectory) const
 			element->setAttribute("userImage", m_userImage.getFullPathName());
 	}
 
-	Rectangle<int> bounds = getParentComponent()->getBounds();
+	Rectangle<int> parentBounds = getParentComponent()->getBounds();
 
 	XmlElement* boundsXml = new XmlElement("Bounds");
-	boundsXml->setAttribute("x", bounds.getX());
-	boundsXml->setAttribute("y", bounds.getY());
-	boundsXml->setAttribute("width", bounds.getWidth());
-	boundsXml->setAttribute("height", bounds.getHeight());
+	boundsXml->setAttribute("x", parentBounds.getX());
+	boundsXml->setAttribute("y", parentBounds.getY());
+	boundsXml->setAttribute("width", parentBounds.getWidth());
+	boundsXml->setAttribute("height", parentBounds.getHeight());
 	element->addChildElement(boundsXml);
 
 	XmlElement* viewXml = new XmlElement("View");

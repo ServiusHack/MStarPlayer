@@ -203,7 +203,7 @@ float CDPlayer::getGain() const
     return 0.0f;
 }
 
-void CDPlayer::setPan(float pan)
+void CDPlayer::setPan(float /*pan*/)
 {
 }
 
@@ -268,11 +268,6 @@ void CDPlayer::updateGain()
 {
     bool mute =  m_mute || (m_soloMute && !m_solo);
     m_transportSource.setGain(mute ? 0.0f : m_gain);
-}
-
-void CDPlayer::setOutputChannels(int outputChannels)
-{
-    m_remappingAudioSource.setNumberOfChannelsToProduce(outputChannels);
 }
 
 void CDPlayer::setColor(const Colour& color)
