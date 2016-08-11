@@ -31,6 +31,8 @@ private:
 	ApplicationProperties m_applicationProperties;
 	AudioThumbnailCache m_audioThumbnailCache;
 
+	TimeSliceThread m_timeSliceThread;
+
     ApplicationCommandManager* m_commandManager;
 	ScopedPointer<MixerComponent> m_mixerComponent;
 	ScopedPointer<MyMultiDocumentPanel> m_multiDocumentPanel;

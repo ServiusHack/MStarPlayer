@@ -3,11 +3,11 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache)
+Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
 	: m_trackIndex(trackIndex)
 	, m_stereo(stereo)
 	, m_tracksMixer(tracksMixer)
-	, m_thread("track")
+	, m_thread(thread)
 	, m_durationChangedCallback(callback)
 	, m_soloMute(soloMute)
 	, m_soloChangedCallback(soloChangedCallback)
@@ -25,7 +25,6 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_loadingTrackConfig(false)
 {
 	m_formatManager.registerBasicFormats();
-	m_thread.startThread(3);
 
 	m_transportSource.setGain(gain);
 

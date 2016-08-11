@@ -20,7 +20,8 @@ void MainContentComponent::destroyLookAndFeel()
 }
 
 MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager)
-	: m_commandManager(commandManager)
+	: m_timeSliceThread("read ahead")
+	, m_commandManager(commandManager)
 	, m_projectModified(false)
 	, m_audioThumbnailCache(1000)
 {
@@ -44,6 +45,8 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 	options.applicationName = "MStarPlayer";
 	options.filenameSuffix = ".settings";
 	m_applicationProperties.setStorageParameters(options);
+
+	m_timeSliceThread.startThread(3);
 
     setSize(700, 600);
 }
@@ -239,7 +242,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addJinglePlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
             player->setName("Jingle Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -248,7 +251,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addMultitrackPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
             player->setName("Multitrack Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -257,7 +260,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addPlaylistPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
             player->setName("Playlist Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -266,7 +269,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addCDPlayer:
         {
-            CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames);
+            CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_timeSliceThread);
             player->setName("CD Player");
             player->addChangeListener(this);
             m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -506,7 +509,7 @@ void MainContentComponent::readProjectFile()
 					loadWarnings.add("Unknown player type '" + type + "'.");
 					continue;
 				}
-				Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, m_audioThumbnailCache, gain, solo, mute);
+				Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
 				window->addChangeListener(this);
 				m_multiDocumentPanel->addDocument(window, Colours::white, true);
 				window->restoreFromXml(*player, m_projectFile.getParentDirectory());

@@ -26,7 +26,7 @@ class CDPlayer
 {
 
 public:
-    CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain = 1.0f, bool solo = false, bool mute = false);
+    CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
     ~CDPlayer();
 
 // XML serialization
@@ -101,7 +101,7 @@ private:
 
     Colour m_color;
 
-    TimeSliceThread m_thread;
+    TimeSliceThread& m_thread;
 
     ScopedPointer<ImageButton> m_playButton;
     ScopedPointer<ImageButton> m_pauseButton;

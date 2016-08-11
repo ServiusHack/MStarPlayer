@@ -3,14 +3,14 @@
 #include "Track.h"
 #include "Utils.h"
 
-CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, float gain, bool solo, bool mute)
+CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, TimeSliceThread& thread, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_gain(1.0f)
     , m_solo(solo)
     , m_soloMute(false)
     , m_mute(mute)
-    , m_thread("track")
+    , m_thread(thread)
     , m_remappingAudioSource(&m_transportSource, false)
 {
     // play button
@@ -135,8 +135,6 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames
 
     addKeyListener(this);
     setBounds(0, 0, 600, 300);
-
-    m_thread.startThread(3);
 }
 
 CDPlayer::~CDPlayer()

@@ -19,7 +19,7 @@ public:
 	typedef std::function<void()> TracksClearedCallback;
 	typedef std::function<void(int)> TrackRemovedCallback;
 
-	TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache);
+	TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
 	~TracksContainer();
 
 // Playback
@@ -90,6 +90,8 @@ private:
 	TracksClearedCallback m_tracksClearedCallback;
 	std::vector<TrackRemovedCallback> m_trackRemovedCallbacks;
 	Track::TrackConfigChangedCallback m_trackConfigChangedCallback;
+
+	TimeSliceThread& m_timeSliceThread;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TracksContainer)
 };

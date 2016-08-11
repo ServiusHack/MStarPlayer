@@ -25,7 +25,7 @@ public:
 	typedef std::function<void(bool)> PlayingStateChangedCallback;
 	typedef std::function<void()> TrackConfigChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache);
+	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
 	~Track();
 
 	void play();
@@ -148,7 +148,7 @@ private:
 
 	File m_audioFile;
 	MixerAudioSource &m_tracksMixer;
-	TimeSliceThread m_thread;
+	TimeSliceThread& m_thread;
 	ScopedPointer<AudioFormatReaderSource> m_currentAudioFileSource;
 	AudioTransportSource m_transportSource;
 	ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;

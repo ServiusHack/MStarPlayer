@@ -1,6 +1,6 @@
 #include "TracksContainer.h"
 
-TracksContainer::TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache)
+TracksContainer::TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
 	: m_mixer(mixer)
 	, m_outputChannels(outputChannels)
 	, m_gain(1.0f)
@@ -8,6 +8,7 @@ TracksContainer::TracksContainer(MixerComponent* mixer, int outputChannels, cons
 	, m_longestTrack(nullptr)
 	, m_audioThumbnailCache(audioThumbnailCache)
 	, m_trackConfigChangedCallback(trackConfigChangedCallback)
+	, m_timeSliceThread(thread)
 {
 	mixer->getMixerAudioSource().addInputSource(&m_tracksMixer, false);
 	addTrack(true);
@@ -191,7 +192,7 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 		}
 	};
 
-	m_tracks.emplace_back(new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged, playingStateChangedCallback, m_trackConfigChangedCallback, m_audioThumbnailCache));
+	m_tracks.emplace_back(new Track(m_tracksMixer, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged, playingStateChangedCallback, m_trackConfigChangedCallback, m_audioThumbnailCache, m_timeSliceThread));
 	if (element != nullptr)
 		m_tracks.back()->restoreFromXml(*element);
 
