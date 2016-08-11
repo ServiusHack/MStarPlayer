@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 #include "Player.h"
-
+#include "CDPlayer.h"
 
 
 DefaultLookAndFeel* MainContentComponent::s_defaultLookAndFeel;
@@ -84,6 +84,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
 		menu.addCommandItem(m_commandManager, addJinglePlayer);
 		menu.addCommandItem(m_commandManager, addMultitrackPlayer);
 		menu.addCommandItem(m_commandManager, addPlaylistPlayer);
+		menu.addCommandItem(m_commandManager, addCDPlayer);
 		break;
 	case 2:
 		{
@@ -127,6 +128,7 @@ void MainContentComponent::getAllCommands(Array <CommandID>& commands)
         addJinglePlayer,
         addMultitrackPlayer,
         addPlaylistPlayer,
+        addCDPlayer,
 		layoutModeFloating,
 		layoutModeTabs,
         configureAudio,
@@ -181,6 +183,11 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     case addPlaylistPlayer:
         result.setInfo ("Add Playlist Player", "Add a player with a playlist", playerCategory, 0);
         result.addDefaultKeypress ('P', ModifierKeys::commandModifier);
+        break;
+
+    case addCDPlayer:
+        result.setInfo ("Add CD Player", "Add a player for audio CDs", playerCategory, 0);
+        result.addDefaultKeypress ('A', ModifierKeys::commandModifier);
         break;
 
 	case layoutModeFloating:
@@ -255,6 +262,15 @@ bool MainContentComponent::perform (const InvocationInfo& info)
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
 			m_projectModified = true;
+        }
+        break;
+    case addCDPlayer:
+        {
+            CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames);
+            player->setName("CD Player");
+            player->addChangeListener(this);
+            m_multiDocumentPanel->addDocument(player, Colours::white, true);
+            m_projectModified = true;
         }
         break;
 	case layoutModeFloating:

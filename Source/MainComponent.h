@@ -80,6 +80,7 @@ public:
         addJinglePlayer = 0x3000,
         addMultitrackPlayer = 0x3001,
         addPlaylistPlayer = 0x3002,
+        addCDPlayer = 0x3003,
 
 		layoutModeFloating = 0x4000,
 		layoutModeTabs = 0x4001,

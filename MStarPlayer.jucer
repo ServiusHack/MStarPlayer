@@ -6,6 +6,7 @@
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
       <GROUP id="{D237656F-512F-DB00-8A88-AF061CED5A4A}" name="oxygen">
+        <FILE id="EXOXNf" name="media-eject.png" compile="0" resource="1" file="Icons/oxygen/media-eject.png"/>
         <FILE id="VFraj5" name="arrow-right-double.png" compile="0" resource="1"
               file="Icons/oxygen/arrow-right-double.png"/>
         <FILE id="e5rN3f" name="audio-volume-medium.png" compile="0" resource="1"
@@ -30,6 +31,20 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <GROUP id="{00619D02-2581-F8AF-E7D7-DDC6F0F1531D}" name="CDPlayer">
+        <FILE id="CAFkeS" name="CDNamesComboBox.cpp" compile="1" resource="0"
+              file="Source/CDNamesComboBox.cpp"/>
+        <FILE id="ujMKeJ" name="CDNamesComboBox.h" compile="0" resource="0"
+              file="Source/CDNamesComboBox.h"/>
+        <FILE id="V9p2DL" name="CDPlayer.cpp" compile="1" resource="0" file="Source/CDPlayer.cpp"/>
+        <FILE id="MBBSuh" name="CDPlayer.h" compile="0" resource="0" file="Source/CDPlayer.h"/>
+        <FILE id="DDSUx7" name="CDTracksModel.cpp" compile="1" resource="0"
+              file="Source/CDTracksModel.cpp"/>
+        <FILE id="mDSjx1" name="CDTracksModel.h" compile="0" resource="0" file="Source/CDTracksModel.h"/>
+        <FILE id="RfGrRW" name="CDTracksTable.cpp" compile="1" resource="0"
+              file="Source/CDTracksTable.cpp"/>
+        <FILE id="HjbSwb" name="CDTracksTable.h" compile="0" resource="0" file="Source/CDTracksTable.h"/>
+      </GROUP>
       <FILE id="eaHRtp" name="MyMultiDocumentPanel.cpp" compile="1" resource="0"
             file="Source/MyMultiDocumentPanel.cpp"/>
       <FILE id="XgATCp" name="MyMultiDocumentPanel.h" compile="0" resource="0"
@@ -243,7 +258,7 @@
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>
-  <JUCEOPTIONS JUCE_ASIO="enabled"/>
+  <JUCEOPTIONS JUCE_ASIO="enabled" JUCE_USE_CDREADER="enabled"/>
   <LIVE_SETTINGS>
     <WINDOWS/>
   </LIVE_SETTINGS>

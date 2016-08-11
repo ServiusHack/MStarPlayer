@@ -80,7 +80,7 @@
 #endif
 
 #ifndef    JUCE_USE_CDREADER
- //#define JUCE_USE_CDREADER
+ #define   JUCE_USE_CDREADER 1
 #endif
 
 #ifndef    JUCE_USE_CDBURNER
