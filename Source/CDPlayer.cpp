@@ -193,12 +193,14 @@ void CDPlayer::mouseDown(const MouseEvent & event)
 
 void CDPlayer::setGain(float gain)
 {
+    m_gain = gain;
+    updateGain();
     std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));
 }
 
 float CDPlayer::getGain() const
 {
-    return 0.0f;
+    return m_gain;
 }
 
 void CDPlayer::setPan(float /*pan*/)
