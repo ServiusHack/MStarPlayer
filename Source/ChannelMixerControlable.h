@@ -12,7 +12,9 @@ class ChannelMixerControlable : public MixerControlable
 {
 public:
 
-	ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource);
+	ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource, const String& name = String());
+
+	void setChannel(int channel);
 
 	virtual void setGain(float gain) override;
 
@@ -41,4 +43,5 @@ public:
 private:
 	int channelNumber;
 	ChannelVolumeAudioSource* m_channelVolumeAudioSource;
+	String m_name;
 };

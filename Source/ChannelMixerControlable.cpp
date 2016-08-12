@@ -1,9 +1,15 @@
 #include "ChannelMixerControlable.h"
 
-ChannelMixerControlable::ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource)
+ChannelMixerControlable::ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource, const String& name)
 	: channelNumber(channel)
 	, m_channelVolumeAudioSource(audioSource)
+	, m_name(name)
 {
+}
+
+void ChannelMixerControlable::setChannel(int channel)
+{
+	channelNumber = channel;
 }
 
 void ChannelMixerControlable::setGain(float gain)
@@ -65,6 +71,6 @@ float ChannelMixerControlable::getVolume() const
 
 String ChannelMixerControlable::getName() const
 {
-	// not actually used, see MixerComponent implementing OutputChannelNamesListener
-	return String();
+	// not actually used in MixerComponent implementing OutputChannelNamesListener
+	return m_name;
 }
