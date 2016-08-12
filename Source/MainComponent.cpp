@@ -491,30 +491,39 @@ void MainContentComponent::readProjectFile()
 				using namespace InterPlayerCommunication;
 
 				XmlElement* player = players->getChildElement(i);
-				if (player->getTagName() != "Player") {
+				if (player->getTagName() == "Player") {
+					const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
+					const bool solo = player->getBoolAttribute("solo");
+					const bool mute = player->getBoolAttribute("mute");
+					PlayerType playerType = PlayerType::Playlist;
+					String type = player->getStringAttribute("type", "");
+					if (type == "jingle") {
+						playerType = PlayerType::Jingle;
+					}
+					else if (type == "multitrack") {
+						playerType = PlayerType::Multitrack;
+					}
+					else if (type != "playlist") {
+						loadWarnings.add("Unknown player type '" + type + "'.");
+						continue;
+					}
+					Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
+					window->addChangeListener(this);
+					m_multiDocumentPanel->addDocument(window, Colours::white, true);
+					window->restoreFromXml(*player, m_projectFile.getParentDirectory());
+				}
+				else if (player->getTagName() == "CDPlayer") {
+					const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
+					const bool solo = player->getBoolAttribute("solo");
+					const bool mute = player->getBoolAttribute("mute");
+					CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_timeSliceThread, gain, solo, mute);
+					window->addChangeListener(this);
+					m_multiDocumentPanel->addDocument(window, Colours::white, true);
+					window->restoreFromXml(*player, m_projectFile.getParentDirectory());
+				}
+				else {
 					loadWarnings.add("Unknown tag '" + player->getTagName() + "' in players list.");
-					continue;
 				}
-
-				const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
-				const bool solo = player->getBoolAttribute("solo");
-				const bool mute = player->getBoolAttribute("mute");
-				PlayerType playerType = PlayerType::Playlist;
-				String type = player->getStringAttribute("type", "");
-				if (type == "jingle") {
-					playerType = PlayerType::Jingle;
-				}
-				else if (type == "multitrack") {
-					playerType = PlayerType::Multitrack;
-				}
-				else if (type != "playlist") {
-					loadWarnings.add("Unknown player type '" + type + "'.");
-					continue;
-				}
-				Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
-				window->addChangeListener(this);
-				m_multiDocumentPanel->addDocument(window, Colours::white, true);
-				window->restoreFromXml(*player, m_projectFile.getParentDirectory());
 			}
 
 			// update soloMute for all players

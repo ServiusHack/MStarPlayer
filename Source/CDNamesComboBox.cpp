@@ -1,6 +1,18 @@
 #include "CDNamesComboBox.h"
 
+void CDNamesComboBox::selectDrive(String title)
+{
+    setItems();
+    setText(title);
+}
+
 void CDNamesComboBox::showPopup()
+{
+    setItems();
+    ComboBox::showPopup();
+}
+
+void CDNamesComboBox::setItems()
 {
     clear();
 
@@ -13,6 +25,4 @@ void CDNamesComboBox::showPopup()
         ScopedPointer<AudioCDReader> reader(AudioCDReader::createReaderForCD(i));
         setItemEnabled(itemId, reader && reader->isCDStillPresent());
     }
-
-    ComboBox::showPopup();
 }

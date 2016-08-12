@@ -304,6 +304,10 @@ XmlElement* CDPlayer::saveToXml(const File& /*projectDirectory*/) const
     nameXml->addTextElement(Component::getName());
     element->addChildElement(nameXml);
 
+    XmlElement* driveXml = new XmlElement("Drive");
+    driveXml->addTextElement(m_availableCDsComboBox->getText());
+    element->addChildElement(driveXml);
+
     return element;
 }
 
@@ -322,6 +326,9 @@ void CDPlayer::restoreFromXml (const XmlElement& element, const File& /*projectD
 
     XmlElement* nameXml = element.getChildByName("Name");
     setName(nameXml->getAllSubText().trim());
+
+    XmlElement* driveXml = element.getChildByName("Drive");
+    m_availableCDsComboBox->selectDrive(driveXml->getAllSubText().trim());
 }
 
 std::vector<MixerControlable*> CDPlayer::getSubMixerControlables() const
