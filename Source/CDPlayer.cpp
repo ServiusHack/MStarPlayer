@@ -227,6 +227,7 @@ void CDPlayer::setSolo(bool solo)
 {
     m_solo = solo;
     updateGain();
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
 }
 
 bool CDPlayer::getSolo() const
