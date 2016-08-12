@@ -256,6 +256,7 @@ String CDPlayer::getName() const
 void CDPlayer::setName(const String& newName)
 {
     Component::setName(newName);
+	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
 }
 
 void CDPlayer::SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& /*callback*/)
