@@ -516,14 +516,7 @@ void MainContentComponent::readProjectFile()
 			}
 
 			// update soloMute for all players
-			bool anySolo = false;
-			for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
-				anySolo = static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->getSolo();
-				if (anySolo)
-					break;
-			}
-			for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
-				static_cast<Player*>(m_multiDocumentPanel->getDocument(i))->setSoloMute(anySolo);
+			soloChanged(false);
 		}
 
 
