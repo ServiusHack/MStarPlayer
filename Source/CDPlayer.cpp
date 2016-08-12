@@ -414,6 +414,8 @@ void CDPlayer::buttonClicked(Button* button)
     }
     else if (button == m_ejectButton)
     {
+        m_transportSource.stop();
+        stopTimer();
         m_reader->ejectDisk();
     }
     else if (button == m_skipBackwardButton)
