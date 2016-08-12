@@ -278,7 +278,7 @@ void CDPlayer::setColor(const Colour& color)
 
     m_mixer->updatePlayerColor(this, m_color);
     m_tracksTable->setColour(ListBox::backgroundColourId, m_color);
-    m_digitalDisplay->setColour(Label::textColourId, m_color.contrasting());
+    m_digitalDisplay->setColour(Label::textColourId, m_color.isTransparent() ? Colours::black : m_color.contrasting());
     m_availableCDsComboBox->setColour(Label::backgroundColourId, m_color);
     repaint();
 }

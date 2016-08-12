@@ -232,7 +232,7 @@ void PlaylistPlayerWindow::setColor(const Colour& color)
 {
 	m_color = color;
 	m_tableListBox->setColour(ListBox::backgroundColourId, m_color);
-	m_digitalDisplay->setColour(Label::textColourId, m_color.contrasting());
+	m_digitalDisplay->setColour(Label::textColourId, m_color.isTransparent() ? Colours::black : m_color.contrasting());
 	repaint();
 }
 
