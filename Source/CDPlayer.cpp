@@ -121,7 +121,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames
 
     // playlist
     CDTracksTable::TrackChangedCallback playlistCallback = [&](int trackIndex) {
-        m_transportSource.setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
+        setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
         m_transportSource.start();
         startTimer(50);
     };
@@ -383,6 +383,12 @@ void CDPlayer::configureChannels()
 
 }
 
+void CDPlayer::setNextReadPosition(int64 sampleInCDSampleRate)
+{
+    int64 sampleInPlaybackSampleRate = (int64)(sampleInCDSampleRate * m_remappingAudioSource.getSampleRate() / m_reader->sampleRate);
+    m_transportSource.setNextReadPosition(sampleInPlaybackSampleRate);
+}
+
 bool CDPlayer::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
 {
     if (key == KeyPress::spaceKey)
@@ -476,14 +482,14 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 
 void CDPlayer::sliderValueChanged(Slider* sliderThatWasMoved)
 {
-    m_transportSource.setNextReadPosition(sliderThatWasMoved->getValue());
+    setNextReadPosition(sliderThatWasMoved->getValue());
 }
 
 void CDPlayer::timerCallback()
 {
     m_digitalDisplay->setText(Utils::formatSeconds(m_transportSource.getCurrentPosition()), sendNotification);
 
-    int currentSample = m_transportSource.getNextReadPosition();
+    int currentSample = m_source->getNextReadPosition();
 
     const Array<int>& offsets = m_reader->getTrackOffsets();
     // offsets[0] != 0 is possible, there might be a track before the first.

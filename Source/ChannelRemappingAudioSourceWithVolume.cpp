@@ -24,6 +24,7 @@ void ChannelRemappingAudioSourceWithVolume::prepareToPlay(int samplesPerBlockExp
 	auto numberOfChannels = m_volumes.size();
 	m_volumes.clear();
 	m_volumes.resize(numberOfChannels, VolumeAnalyzer(m_bufferSize));
+	m_sampleRate = sampleRate;
 }
 
 void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
@@ -43,4 +44,9 @@ float ChannelRemappingAudioSourceWithVolume::getVolume() const
 		maxVolume = std::max(maxVolume, volume.getVolume());
 
 	return maxVolume;
+}
+
+double ChannelRemappingAudioSourceWithVolume::getSampleRate() const
+{
+	return m_sampleRate;
 }

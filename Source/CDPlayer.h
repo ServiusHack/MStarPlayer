@@ -96,6 +96,8 @@ private:
     std::vector<std::pair<char, int>> createMapping();
     void configureChannels();
 
+    void setNextReadPosition(int64 sampleInCDSampleRate);
+
     MixerComponent* m_mixer;
     OutputChannelNames* m_outputChannelNames;
 

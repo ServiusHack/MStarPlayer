@@ -16,10 +16,13 @@ public:
 public:
 	float getVolume() const;
 
+	double getSampleRate() const;
+
 private:
 	std::vector<VolumeAnalyzer> m_volumes;
 	CriticalSection lock;
 	size_t m_bufferSize;
+	double m_sampleRate;
 
 // ChannelRemappingAudioSource
 public:
