@@ -22,6 +22,7 @@ class CDPlayer
     , public KeyListener
     , public Button::Listener
     , public ComboBox::Listener
+    , public Slider::Listener
     , private Timer
 {
 
@@ -77,6 +78,10 @@ public:
 public:
     virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
+// Slider::Listener
+public:
+    void sliderValueChanged(Slider* sliderThatWasMoved) override;
+
 // Timer
 private:
     void timerCallback() override;
@@ -112,6 +117,7 @@ private:
     ScopedPointer<ImageButton> m_configureButton;
     ScopedPointer<Label>       m_digitalDisplay;
     ScopedPointer<CDNamesComboBox> m_availableCDsComboBox;
+    ScopedPointer<Slider> m_slider;
     OptionalScopedPointer<AudioCDReader> m_reader;
     OptionalScopedPointer<AudioFormatReaderSource> m_source;
     OptionalScopedPointer<CDTracksModel> m_model;
@@ -121,6 +127,8 @@ private:
 
     OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
     OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
+
+    int m_currentTrack = -1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CDPlayer)
 };

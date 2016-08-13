@@ -115,6 +115,10 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames
     m_availableCDsComboBox->addListener(this);
     addAndMakeVisible(m_availableCDsComboBox);
 
+    addAndMakeVisible(m_slider = new Slider(Slider::LinearHorizontal, Slider::NoTextBox));
+    m_slider->addListener(this);
+    m_slider->setEnabled(false);
+
     // playlist
     CDTracksTable::TrackChangedCallback playlistCallback = [&](int trackIndex) {
         m_transportSource.setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
@@ -167,7 +171,8 @@ void CDPlayer::resized()
     m_digitalDisplay->setBounds(7 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
     m_availableCDsComboBox->setBounds(10 * buttonWidth + 3, 3, getWidth() - (10 * buttonWidth + 3), buttonHeight - 6);
 
-    m_tracksTable->setBounds(0, buttonHeight, getWidth(), getHeight() - buttonHeight);
+    m_slider->setBounds(0, buttonHeight, getWidth(), buttonHeight);
+    m_tracksTable->setBounds(0, buttonHeight * 2, getWidth(), getHeight() - buttonHeight * 2);
 }
 
 void CDPlayer::mouseDown(const MouseEvent & event)
@@ -227,7 +232,7 @@ void CDPlayer::setSolo(bool solo)
 {
     m_solo = solo;
     updateGain();
-	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
+    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
 }
 
 bool CDPlayer::getSolo() const
@@ -259,7 +264,7 @@ String CDPlayer::getName() const
 void CDPlayer::setName(const String& newName)
 {
     Component::setName(newName);
-	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
+    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
 }
 
 void CDPlayer::SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& /*callback*/)
@@ -469,7 +474,109 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     }
 }
 
+void CDPlayer::sliderValueChanged(Slider* sliderThatWasMoved)
+{
+    m_transportSource.setNextReadPosition(sliderThatWasMoved->getValue());
+}
+
 void CDPlayer::timerCallback()
 {
     m_digitalDisplay->setText(Utils::formatSeconds(m_transportSource.getCurrentPosition()), sendNotification);
+
+    int currentSample = m_transportSource.getNextReadPosition();
+
+    const Array<int>& offsets = m_reader->getTrackOffsets();
+    // offsets[0] != 0 is possible, there might be a track before the first.
+    // offsets.getLast() is not the start of the last track but the end sample of the CD.
+
+    if (currentSample < offsets[0])
+    {
+        // We are before the first track.
+        m_slider->setEnabled(false);
+        m_slider->setValue(m_slider->getMinimum(), juce::dontSendNotification);
+        m_currentTrack = -1;
+        SparseSet<int> rows;
+        m_tracksTable->setSelectedRows(rows, juce::dontSendNotification);
+        return;
+    }
+
+    if (m_currentTrack == -1)
+    {
+        // We have now entered the first track.
+        m_slider->setEnabled(true);
+        m_slider->setRange(offsets[0], offsets[1]);
+        m_slider->setValue(currentSample, juce::dontSendNotification);
+        m_currentTrack = 0;
+        SparseSet<int> rows;
+        rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
+        m_tracksTable->setSelectedRows(rows, juce::dontSendNotification);
+        return;
+    }
+
+    jassert(m_currentTrack + 1 < offsets.size());
+
+    if (currentSample >= offsets[m_currentTrack] && currentSample < offsets[m_currentTrack + 1])
+    {
+        // We are still within the current track (usual case).
+        m_slider->setValue(currentSample, juce::dontSendNotification);
+        return;
+    }
+
+    // We are within another track.
+
+    int firstSample = -1;
+    int lastSample = -1;
+
+    if (currentSample < offsets[m_currentTrack])
+    {
+        // We are before the curren track. Search backward to find the track our sample position now lies within.
+
+        // Assume our current track is the immediately preceeding track.
+        jassert(m_currentTrack - 1 >= 0);
+        firstSample = -1;
+        lastSample = offsets[m_currentTrack];
+
+        for (int probeTrack = m_currentTrack - 1; probeTrack >= 0; --probeTrack)
+        {
+            if (currentSample >= offsets[probeTrack])
+            {
+                m_currentTrack = probeTrack;
+                firstSample = offsets[probeTrack];
+                break; // We are at the previous track.
+            }
+
+            lastSample = offsets[probeTrack];
+        }
+    }
+
+    if (currentSample >= offsets[m_currentTrack + 1])
+    {
+        // We are after the curren track. Search forward to find the track our sample position now lies within.
+
+        // Assume our current track is the immediately following track.
+        jassert(m_currentTrack + 2 < offsets.size());
+        firstSample = offsets[m_currentTrack + 1];
+        lastSample = -1;
+
+        for (int probeTrack = m_currentTrack + 2; probeTrack < offsets.size(); ++probeTrack)
+        {
+            if (offsets[probeTrack] > currentSample)
+            {
+                m_currentTrack = probeTrack - 1;
+                lastSample = offsets[probeTrack];
+                break; // We are at the next track.
+            }
+
+            firstSample = offsets[probeTrack];
+        }
+    }
+
+    jassert(currentSample >= firstSample);
+    jassert(currentSample < lastSample);
+
+    m_slider->setRange(firstSample, lastSample);
+    m_slider->setValue(currentSample, juce::dontSendNotification);
+    SparseSet<int> rows;
+    rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
+    m_tracksTable->setSelectedRows(rows, juce::dontSendNotification);
 }
