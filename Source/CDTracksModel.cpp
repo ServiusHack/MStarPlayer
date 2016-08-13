@@ -32,6 +32,10 @@ void CDTracksModel::paintCell(Graphics& g,
         if (columnId == 1) {
             g.drawText(String(rowNumber + 1), 2, 0, width - 4, height, Justification::centredLeft, true);
         }
+        else if (columnId == 2) {
+            const String formattedDuration = Utils::formatSeconds((m_reader.getPositionOfTrackStart(rowNumber + 1) - m_reader.getPositionOfTrackStart(rowNumber)) / m_reader.sampleRate);
+            g.drawText(formattedDuration, 2, 0, width - 4, height, Justification::centredLeft, true);
+        }
     }
 
     g.setColour(Colours::black.withAlpha(0.2f));

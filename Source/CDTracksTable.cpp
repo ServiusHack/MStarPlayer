@@ -10,6 +10,7 @@ CDTracksTable::CDTracksTable(const TrackChangedCallback& callback)
 
     // set the table header columns
     getHeader().addColumn("Track", 1, 25, 25, -1, TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn("Duration", 2, 100, 25, 100, TableHeaderComponent::notResizableOrSortable);
     getHeader().setStretchToFitActive(true);
 
     updateContent();
