@@ -40,7 +40,9 @@
 #endif
 
 #ifndef JUCE_SUPPORTS_AUv3
- #if JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES && defined (MAC_OS_X_VERSION_MIN_REQUIRED) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_8) && __OBJC2__
+ #if JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES && __OBJC2__  \
+      &&  ((defined (MAC_OS_X_VERSION_MIN_REQUIRED)    && defined (MAC_OS_X_VERSION_10_11) && (MAC_OS_X_VERSION_MIN_REQUIRED    >= MAC_OS_X_VERSION_10_11)) \
+       ||  (defined (__IPHONE_OS_VERSION_MIN_REQUIRED) && defined (__IPHONE_9_0)           && (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_9_0)))
   #define JUCE_SUPPORTS_AUv3 1
  #else
   #define JUCE_SUPPORTS_AUv3 0
@@ -340,48 +342,53 @@ public:
         jassert (AudioUnitFormatHelpers::insideCallback.get() == 0);
        #endif
 
-      #if JUCE_MAC
-        if (eventListenerRef != 0)
-        {
-            AUListenerDispose (eventListenerRef);
-            eventListenerRef = 0;
-        }
-      #endif
-
         if (audioUnit != nullptr)
         {
-            if (prepared)
-                releaseResources();
-
             struct AUDeleter : public CallbackMessage
             {
-                AUDeleter (AudioComponentInstance& inInstance, WaitableEvent& inEvent)
+                AUDeleter (AudioUnitPluginInstance& inInstance, WaitableEvent& inEvent)
                     : auInstance (inInstance), completionSignal (inEvent)
                 {}
 
                 void messageCallback() override
                 {
-                    AudioComponentInstanceDispose (auInstance);
-                    auInstance = nullptr;
+                    auInstance.cleanup();
                     completionSignal.signal();
                 }
 
-                AudioComponentInstance& auInstance;
+                AudioUnitPluginInstance& auInstance;
                 WaitableEvent& completionSignal;
             };
 
             if (MessageManager::getInstance()->isThisTheMessageThread())
             {
-                AudioComponentInstanceDispose (audioUnit);
-                audioUnit = nullptr;
+                cleanup();
             }
             else
             {
                 WaitableEvent completionEvent;
-                (new AUDeleter (audioUnit, completionEvent))->post();
+                (new AUDeleter (*this, completionEvent))->post();
                 completionEvent.wait();
             }
         }
+    }
+
+    // called from the destructer above
+    void cleanup()
+    {
+       #if JUCE_MAC
+        if (eventListenerRef != 0)
+        {
+            AUListenerDispose (eventListenerRef);
+            eventListenerRef = 0;
+        }
+       #endif
+
+        if (prepared)
+            releaseResources();
+
+        AudioComponentInstanceDispose (audioUnit);
+        audioUnit = nullptr;
     }
 
     bool initialise (double rate, int blockSize)

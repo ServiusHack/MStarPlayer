@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="4.2.1"
+              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="4.2.3"
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
