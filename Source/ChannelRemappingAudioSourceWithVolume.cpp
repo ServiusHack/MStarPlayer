@@ -31,7 +31,7 @@ int ChannelRemappingAudioSourceWithVolume::getRemappedOutputChannel (const int o
     const ScopedLock sl (lock);
 
     if (outputChannelIndex >= 0 && outputChannelIndex < remappedOutputs.size())
-        return remappedOutputs[outputChannelIndex];
+        return remappedOutputs[outputChannelIndex].first;
 
     return -1;
 }
@@ -84,6 +84,19 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 
             }
         }
+
+        {
+            int remappedChan = -1;
+            if (i >= 0 && i < remappedOutputs.size())
+                remappedChan = remappedOutputs[i].second;
+
+            if (remappedChan >= 0 && remappedChan < numChans)
+            {
+                bufferToFill.buffer->addFrom (remappedChan, bufferToFill.startSample,
+                                              buffer, i, 0, bufferToFill.numSamples);
+
+            }
+        }
     }
 
     for (size_t i = 0; i < m_volumes.size(); ++i) {
@@ -99,7 +112,7 @@ XmlElement* ChannelRemappingAudioSourceWithVolume::createXml() const
     const ScopedLock sl (lock);
 
     for (int i = 0; i < remappedOutputs.size(); ++i)
-        outs << remappedOutputs[i] << ' ';
+        outs << remappedOutputs[i].first << ' ';
 
     e->setAttribute ("outputs", outs.trimEnd());
 
@@ -118,7 +131,7 @@ void ChannelRemappingAudioSourceWithVolume::restoreFromXml (const XmlElement& e)
         outs.addTokens (e.getStringAttribute ("outputs"), false);
 
         for (int i = 0; i < outs.size(); ++i)
-            remappedOutputs.add (outs[i].getIntValue());
+            remappedOutputs.add (std::pair<int, int>(outs[i].getIntValue(), -1));
     }
 }
 
@@ -139,13 +152,14 @@ double ChannelRemappingAudioSourceWithVolume::getSampleRate() const
 
 void ChannelRemappingAudioSourceWithVolume::setOutputChannelMapping(int sourceChannelIndex, int destChannelIndex)
 {
-    const ScopedLock sl (lock);    setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex);
+    const ScopedLock sl (lock);
+    setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex);
 }
 
 void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(const int sourceIndex, const int destIndex)
 {
     while (remappedOutputs.size() < sourceIndex+1)
-        remappedOutputs.add(-1);
+        remappedOutputs.add(std::pair<int,int>(-1,-1));
 
-    remappedOutputs.set(sourceIndex, destIndex);
+    remappedOutputs.getReference(sourceIndex).first = destIndex;
 }

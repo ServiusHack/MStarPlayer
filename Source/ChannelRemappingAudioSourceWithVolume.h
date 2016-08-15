@@ -77,7 +77,7 @@ public:
 
 private:
     OptionalScopedPointer<AudioSource> source;
-    Array<int> remappedOutputs;
+    Array<std::pair<int,int>> remappedOutputs;
     int requiredNumberOfChannels;
 
     AudioSampleBuffer buffer;
