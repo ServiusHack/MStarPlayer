@@ -20,10 +20,10 @@ public:
     */
     ChannelVolumeAudioSource(AudioSource* source);
 
+	void setChannelCount(int channelCount);
 	int channelCount() const;
 
 private:
-	void expandListsTo(size_t channelIndex);
 	AudioSource* m_source;
     CriticalSection m_lock;
     

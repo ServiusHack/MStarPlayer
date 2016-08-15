@@ -29,6 +29,7 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputCha
 		addChannelSlider();
 		m_channelSliders.at(i)->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
 	}
+	m_channelVolumeAudioSource.setChannelCount(deviceSetup.outputChannels.countNumberOfSetBits());
 
     setSize(100,112);
 	startTimer(1000/LevelMeter::refreshRate);
@@ -130,6 +131,8 @@ void MixerComponent::addChannelSlider()
 void MixerComponent::changeListenerCallback (ChangeBroadcaster * /*source*/)
 {
 	size_t numberOfChannels = m_outputChannelNames->getNumberOfChannels();
+
+	m_channelVolumeAudioSource.setChannelCount(numberOfChannels);
 
     // remove sliders until there are not too many
 	while (numberOfChannels < m_channelSliders.size()) {

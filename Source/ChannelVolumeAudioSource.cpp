@@ -18,8 +18,6 @@ void ChannelVolumeAudioSource::setChannelVolume(size_t channelIndex, float gain)
 {
     const ScopedLock sl(m_lock);
 
-	expandListsTo(channelIndex);
-
 	m_setVolumes[channelIndex] = gain;
 
 	updateGain(channelIndex);
@@ -38,8 +36,6 @@ float ChannelVolumeAudioSource::getChannelVolume(size_t channelIndex) const
 void ChannelVolumeAudioSource::setChannelSolo(size_t channelIndex, bool solo)
 {
 	const ScopedLock sl(m_lock);
-
-	expandListsTo(channelIndex);
 
 	m_setSolos[channelIndex] = solo;
 
@@ -72,8 +68,6 @@ bool ChannelVolumeAudioSource::getChannelSolo(size_t channelIndex) const
 void ChannelVolumeAudioSource::setChannelMute(size_t channelIndex, bool mute)
 {
 	const ScopedLock sl(m_lock);
-
-	expandListsTo(channelIndex);
 
 	m_setMutes[channelIndex] = mute;
 
@@ -115,19 +109,19 @@ void ChannelVolumeAudioSource::releaseResources()
     m_source->releaseResources();
 }
 
-void ChannelVolumeAudioSource::expandListsTo(size_t channelIndex)
+void ChannelVolumeAudioSource::setChannelCount(int channelCount)
 {
-	channelIndex += 1;
-	if (channelIndex > m_setVolumes.size())
-		m_setVolumes.resize(channelIndex, 1.0);
-	if (channelIndex > m_setSolos.size())
-		m_setSolos.resize(channelIndex, false);
-	if (channelIndex > m_setMutes.size())
-		m_setMutes.resize(channelIndex, false);
-	if (channelIndex > m_actualVolumes.size())
-		m_actualVolumes.resize(channelIndex, VolumeAnalyzer(m_bufferSize));
-	if (channelIndex > m_appliedGains.size())
-		m_appliedGains.resize(channelIndex, 0.0f);
+	channelCount += 1;
+	if (channelCount > m_setVolumes.size())
+		m_setVolumes.resize(channelCount, 1.0);
+	if (channelCount > m_setSolos.size())
+		m_setSolos.resize(channelCount, false);
+	if (channelCount > m_setMutes.size())
+		m_setMutes.resize(channelCount, false);
+	if (channelCount > m_actualVolumes.size())
+		m_actualVolumes.resize(channelCount, VolumeAnalyzer(m_bufferSize));
+	if (channelCount > m_appliedGains.size())
+		m_appliedGains.resize(channelCount, 1.0f);
 }
 
 int ChannelVolumeAudioSource::channelCount() const
