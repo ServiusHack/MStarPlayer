@@ -6,6 +6,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "OutputChannelNames.h"
+#include "SoloBusSettings.h"
 
 typedef std::function<void(int, int)> ChangeMappingCallback;
 typedef std::function<void()> CloseCallback;
@@ -36,7 +37,7 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-	ChannelMapping(OutputChannelNames* outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
+	ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
 
     /** Get the output channel for a table row.
 
@@ -72,6 +73,7 @@ public:
 
 private:
     OutputChannelNames* m_outputChannelNames;
+    SoloBusSettings& m_soloBusSettings;
 	std::vector<std::pair<char, int>> m_mapping;
 	const ChangeMappingCallback m_callback;
 
@@ -86,7 +88,7 @@ class ChannelMappingComponent
 	, public ButtonListener
 {
 public:
-	ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback);
+	ChannelMappingComponent(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback);
 
 	void setMapping(const std::vector<std::pair<char,int>>& mapping);
 
@@ -100,6 +102,7 @@ public:
 
 private:
 	OutputChannelNames* m_outputChannelNames;
+	SoloBusSettings& m_soloBusSettings;
 	const ChangeMappingCallback m_changeCallback;
 	const CloseCallback m_closeCallback;
 	ScopedPointer<TableListBox> m_tableListBox;
@@ -121,7 +124,7 @@ public:
 
         @see ChannelMapping
     */
-	ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char,int>> mapping, const ChangeMappingCallback& callback, const CloseCallback& closeCallback);
+	ChannelMappingWindow(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char,int>> mapping, const ChangeMappingCallback& callback, const CloseCallback& closeCallback);
 
 	void setMapping(const std::vector<std::pair<char, int>>& mapping);
 

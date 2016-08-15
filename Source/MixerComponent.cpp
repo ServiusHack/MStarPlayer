@@ -3,12 +3,13 @@
 #include "MixerComponent.h"
 #include "ChannelMixerFader.h"
 
-MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames)
+MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings)
 	: m_mixerAudioSource()
 	, m_channelVolumeAudioSource(&m_mixerAudioSource)
 	, m_audioDeviceManager(audioDeviceManager)
 	, m_outputChannelNames(outputChannelNames)
 	, m_sliderScrollBar(false)
+	, m_soloBusSettings(soloBusSettings)
 {
 	addAndMakeVisible(m_slidersContainer);
 	addAndMakeVisible(m_sliderScrollBar);
@@ -33,6 +34,8 @@ MixerComponent::MixerComponent(AudioDeviceManager *audioDeviceManager, OutputCha
 
     setSize(100,112);
 	startTimer(1000/LevelMeter::refreshRate);
+
+	m_soloBusSettings.addListener(this);
 }
 
 MixerComponent::~MixerComponent()
@@ -46,6 +49,7 @@ MixerComponent::~MixerComponent()
 	m_outputChannelNames->removeChangeListener(this);
 	m_audioDeviceManager->removeAudioCallback(&m_audioSourcePlayer);
 	m_audioSourcePlayer.setSource(nullptr);
+	m_soloBusSettings.removeListener(this);
 }
 
 void MixerComponent::registerPlayer(SubchannelPlayer* player) {
@@ -75,7 +79,7 @@ void MixerComponent::resized()
 	// Determine width of all sliders.
 	int width = 0;
 	auto sumWidths = [&width](const MixerFader* fader) {
-		width += fader->getBounds().getWidth();
+		width += fader->isVisible() ? fader->getBounds().getWidth() : 0;
 	};
 
 	std::for_each(m_playerSliders.begin(), m_playerSliders.end(), sumWidths);
@@ -89,6 +93,8 @@ void MixerComponent::resized()
     int x = 0;
 
 	auto updateBounds = [&x, sliderHeight](MixerFader* fader) {
+		if (!fader->isVisible())
+			return;
 		Rectangle<int> bounds = fader->getBounds();
 		bounds.setX(x);
 		bounds.setHeight(sliderHeight);
@@ -159,6 +165,11 @@ MixerAudioSource& MixerComponent::getMixerAudioSource()
 	return m_mixerAudioSource;
 }
 
+ChannelVolumeAudioSource& MixerComponent::getChannelVolumeAudioSource()
+{
+	return m_channelVolumeAudioSource;
+}
+
 void MixerComponent::saveToXml(XmlElement* element) const
 {
 	for (int i = 0; i < m_channelVolumeAudioSource.channelCount(); i++) {
@@ -186,6 +197,16 @@ void MixerComponent::outputChannelNamesReset()
 void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
 {
 	m_channelSliders.at(activeChannelIndex)->setLabel(text);
+}
+
+void MixerComponent::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+{
+	ignoreUnused(channel);
+
+	if (previousOutputChannel != -1)
+		m_channelSliders[previousOutputChannel]->setVisible(true);
+	m_channelSliders[outputChannel]->setVisible(false);
+	resized();
 }
 
 void MixerComponent::scrollBarMoved(ScrollBar* /*scrollBarThatHasMoved*/, double newRangeStart)

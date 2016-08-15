@@ -2,6 +2,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "SoloBusSettings.h"
 #include "VolumeAnalyzer.h"
 
 /**
@@ -9,9 +10,11 @@
 */
 class ChannelRemappingAudioSourceWithVolume
 	: public AudioSource
+	, public SoloBusSettingsListener
 {
 public:
-    ChannelRemappingAudioSourceWithVolume(AudioSource* source, bool deleteSourceWhenDeleted);
+    ChannelRemappingAudioSourceWithVolume(AudioSource* source, SoloBusSettings& soloBusSettings, bool deleteSourceWhenDeleted);
+    ~ChannelRemappingAudioSourceWithVolume();
 
 // Channel volume
 public:
@@ -52,7 +55,7 @@ public:
     void setOutputChannelMapping (int sourceChannelIndex,
                                   int destChannelIndex);
 
-	void setOutputChannelMappingInternal(const int sourceIndex, const int destIndex);
+	void setOutputChannelMappingInternal(const int sourceIndex, const int destIndex, const bool solo);
 
     /** Returns the output channel to which channel outputChannelIndex of our input audio
         source will be sent to.
@@ -75,6 +78,8 @@ public:
     */
     void restoreFromXml (const XmlElement&);
 
+	void setSolo(bool solo);
+
 private:
     OptionalScopedPointer<AudioSource> source;
     Array<std::pair<int,int>> remappedOutputs;
@@ -83,4 +88,15 @@ private:
     AudioSampleBuffer buffer;
     AudioSourceChannelInfo remappedInfo;
     CriticalSection lock;
+
+	int m_soloLeftChannel = -1;
+	int m_soloRightChannel = -1;
+	bool m_solo{ false };
+	SoloBusSettings& m_soloBusSettings;
+
+// SoloBusSettingsListener
+public:
+	void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
+
+
 };

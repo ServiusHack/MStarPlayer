@@ -26,10 +26,10 @@ private:
 	int m_row;
 };
 
-AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames)
+AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
 	: DialogWindow("Configure Audio", Colours::lightgrey, true, true)
 {
-	setContentOwned(new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames), true);
+	setContentOwned(new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames, soloBusSettings), true);
 	centreWithSize(getWidth(), getHeight());
 	setVisible(true);
 	setResizable(true, true);
@@ -102,9 +102,10 @@ void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
 	m_outputChannelName.setInternalOutputChannelName(channelNameTextEditor.getRow(), channelNameTextEditor.getText());
 }
 
-AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName)
+AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName, SoloBusSettings& soloBusSettings)
 	: m_channelNames(new ChannelNames(outputChannelName))
 	, m_outputChannelName(outputChannelName)
+	, m_soloBusComponent(new SoloBusComponent(outputChannelName, soloBusSettings))
 {
 	m_outputChannelName.addChangeListener(this);
 
@@ -122,6 +123,8 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 	// set the table header columns
 	m_tableListBox->getHeader().addColumn("Device Channel", 1, 200, 50, 400, TableHeaderComponent::defaultFlags);
 	m_tableListBox->getHeader().addColumn("Channel Name", 2, 200, 50, 400, TableHeaderComponent::defaultFlags);
+
+	m_tabbedComponent->addTab("Solo Bus", Colour(0xffffffff), m_soloBusComponent, true);
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));
 	m_closeButton->setButtonText(TRANS("Close"));

@@ -5,15 +5,16 @@
 
 using namespace InterPlayerCommunication;
 
-Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, float gain, bool solo, bool mute)
+Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, float gain, bool solo, bool mute)
 	: m_mixer(mixer)
 	, m_outputChannelNames(outputChannelNames)
+	, m_soloBusSettings(soloBusSettings)
 	, m_gain(1.0f)
 	, m_solo(solo)
 	, m_soloMute(false)
 	, m_mute(mute)
 	, m_type(type)
-	, m_tracksContainer(mixer, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), audioThumbnailCache, thread)
+	, m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), audioThumbnailCache, thread)
 	, m_playlistPlayer(&m_tracksContainer, type == PlayerType::Playlist, 
 		std::bind(&Player::showEditDialog,this),
 		std::bind(&Player::configureChannels, this),
@@ -42,11 +43,14 @@ Player::Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, Pl
 
 	addKeyListener(this);
 	setBounds(0, 0, 600, 300);
+
+	m_soloBusSettings.addListener(this);
 }
 
 Player::~Player()
 {
 	m_mixer->unregisterPlayer(this);
+	m_soloBusSettings.removeListener(this);
 }
 
 void Player::resized()
@@ -102,6 +106,7 @@ void Player::setSolo(bool solo)
 	m_solo = solo;
 	updateGain();
 	std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
+	m_tracksContainer.setSolo(m_solo);
 }
 
 bool Player::getSolo() const
@@ -142,7 +147,7 @@ void Player::setName(const String& newName)
 
 void Player::updateGain()
 {
-	m_tracksContainer.setMute(m_mute || (m_soloMute && !m_solo));
+	m_tracksContainer.setMute(m_mute || (!m_soloBusSettings.isConfigured() && m_soloMute && !m_solo));
 }
 
 void Player::setOutputChannels(int outputChannels)
@@ -281,7 +286,7 @@ void Player::showEditDialog()
 void Player::configureChannels()
 {
 	if (m_channelMappingWindow.get() == nullptr) {
-		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_tracksContainer.createMapping(), [&](int source, int target) {
+		m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_soloBusSettings, m_tracksContainer.createMapping(), [&](int source, int target) {
 			for (size_t i = 0; i < m_tracksContainer.size(); ++i) {
 				if (source - m_tracksContainer[i].getNumChannels() < 0) {
 					m_tracksContainer[i].setOutputChannelMapping(source, target);
@@ -310,6 +315,12 @@ bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/
 	}
 
 	return false;
+}
+
+void Player::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+{
+	ignoreUnused(channel, outputChannel, previousOutputChannel);
+	updateGain();
 }
 
 void Player::trackConfigChanged()

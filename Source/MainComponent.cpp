@@ -33,10 +33,14 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 
 	// output channel names
 	m_outputChannelNames = new OutputChannelNames(*m_audioDeviceManager);
-    
+
     // mixer control
-	m_mixerComponent = new MixerComponent(m_audioDeviceManager, m_outputChannelNames);
+	m_mixerComponent = new MixerComponent(m_audioDeviceManager, m_outputChannelNames, m_soloBusSettings);
 	addAndMakeVisible(m_mixerComponent);
+
+	// solo bus control
+	m_soloComponent = new SoloBusMixer(m_soloBusSettings, m_mixerComponent->getChannelVolumeAudioSource());
+	addAndMakeVisible(m_soloComponent);
 
     // player MDI area
 	m_multiDocumentPanel = new MyMultiDocumentPanel();
@@ -51,10 +55,13 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 	m_timeSliceThread.startThread(3);
 
     setSize(700, 600);
+
+	m_soloBusSettings.addListener(this);
 }
 
 MainContentComponent::~MainContentComponent()
 {
+	m_soloBusSettings.removeListener(this);
 	delete m_multiDocumentPanel.release();
 	delete m_mixerComponent.release();
 	m_applicationProperties.closeFiles();
@@ -62,8 +69,10 @@ MainContentComponent::~MainContentComponent()
 
 void MainContentComponent::resized()
 {
+	const int soloComponentWidth = m_soloBusSettings.isConfigured() ? 100 : 0;
 	m_mixerComponent->setBounds(0, getHeight() - m_mixerComponent->getHeight(), getWidth(), m_mixerComponent->getHeight());
-	m_multiDocumentPanel->setBounds(0, 0, getWidth(), getHeight() - m_mixerComponent->getHeight());
+	m_multiDocumentPanel->setBounds(0, 0, getWidth() - soloComponentWidth, getHeight() - m_mixerComponent->getHeight());
+	m_soloComponent->setBounds(getWidth() - soloComponentWidth, 0, soloComponentWidth, getHeight() - m_mixerComponent->getHeight());
 }
 
 StringArray MainContentComponent::getMenuBarNames()
@@ -244,7 +253,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addJinglePlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
             player->setName("Jingle Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -253,7 +262,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addMultitrackPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
             player->setName("Multitrack Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -262,7 +271,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addPlaylistPlayer:
         {
-			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
+			Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
             player->setName("Playlist Player");
 			player->addChangeListener(this);
 			m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -271,7 +280,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
         break;
     case addCDPlayer:
         {
-            CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_timeSliceThread);
+            CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread);
             player->setName("CD Player");
             player->addChangeListener(this);
             m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -286,7 +295,7 @@ bool MainContentComponent::perform (const InvocationInfo& info)
 		break;
 
     case configureAudio:
-		m_audioConfigurationWindow = new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames);
+		m_audioConfigurationWindow = new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames, m_soloBusSettings);
 		break;
     case editSettings:
 		m_editSettingsWindow = new EditSettingsWindow(m_applicationProperties);
@@ -473,6 +482,22 @@ void MainContentComponent::readProjectFile()
 			m_outputChannelNames->restoreFromXml(*channelNames);
 		}
 
+		XmlElement* soloBusSettings = root->getChildByName("SoloBusSettings");
+		if (soloBusSettings == nullptr)
+			loadWarnings.add("No solo bus settings found, using no solo bus.");
+		else
+		{
+			m_soloBusSettings.restoreFromXml(*soloBusSettings);
+		}
+
+		XmlElement* soloMixer = root->getChildByName("SoloBusMixer");
+		if (soloMixer == nullptr)
+			loadWarnings.add("No solo mixer settings found, using default volumes.");
+		else
+		{
+			m_soloComponent->restoreFromXml(*soloMixer);
+		}
+
 		XmlElement* mixer = root->getChildByName("Mixer");
 
 		if (mixer == nullptr)
@@ -507,7 +532,7 @@ void MainContentComponent::readProjectFile()
 						loadWarnings.add("Unknown player type '" + type + "'.");
 						continue;
 					}
-					Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
+					Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
 					window->addChangeListener(this);
 					m_multiDocumentPanel->addDocument(window, Colours::white, true);
 					window->restoreFromXml(*player, m_projectFile.getParentDirectory());
@@ -516,7 +541,7 @@ void MainContentComponent::readProjectFile()
 					const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
 					const bool solo = player->getBoolAttribute("solo");
 					const bool mute = player->getBoolAttribute("mute");
-					CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_timeSliceThread, gain, solo, mute);
+					CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, gain, solo, mute);
 					window->addChangeListener(this);
 					m_multiDocumentPanel->addDocument(window, Colours::white, true);
 					window->restoreFromXml(*player, m_projectFile.getParentDirectory());
@@ -577,6 +602,11 @@ void MainContentComponent::writeProjectFile()
 	root->addChildElement(audio);
 
 	root->addChildElement(m_outputChannelNames->saveToXml());
+	root->addChildElement(m_soloBusSettings.saveToXml());
+
+	XmlElement* soloBusMixer = new XmlElement("SoloBusMixer");
+	m_soloComponent->saveToXml(soloBusMixer);
+	root->addChildElement(soloBusMixer);
 
     XmlElement* mixer = new XmlElement("Mixer");
 	m_mixerComponent->saveToXml(mixer);
@@ -616,6 +646,9 @@ void MainContentComponent::writeProjectFile()
 
 void MainContentComponent::soloChanged(bool /*solo*/)
 {
+	if (m_soloBusSettings.isConfigured())
+		return;
+
 	bool soloMute = false;
 	for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i) {
 		if (Player* player = dynamic_cast<Player*>(m_multiDocumentPanel->getDocument(i)))
@@ -637,4 +670,11 @@ void MainContentComponent::soloChanged(bool /*solo*/)
 		else
 			assert(false && "Unknown player in multiDocumentPanel");
 	}
+}
+
+void MainContentComponent::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+{
+	ignoreUnused(channel, outputChannel, previousOutputChannel);
+
+	resized();
 }

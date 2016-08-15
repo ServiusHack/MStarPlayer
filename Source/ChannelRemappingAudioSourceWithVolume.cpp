@@ -3,13 +3,21 @@
 #include <algorithm>
 
 ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(AudioSource* const source_,
+                                                            SoloBusSettings& soloBusSettings,
                                                           const bool deleteSourceWhenDeleted)
    : source (source_, deleteSourceWhenDeleted)
    ,  requiredNumberOfChannels (2)
     , m_bufferSize(1)
+    , m_soloBusSettings(soloBusSettings)
 {
+	m_soloBusSettings.addListener(this);
     remappedInfo.buffer = &buffer;
     remappedInfo.startSample = 0;
+}
+
+ChannelRemappingAudioSourceWithVolume::~ChannelRemappingAudioSourceWithVolume()
+{
+    m_soloBusSettings.removeListener(this);
 }
 
 void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int requiredNumberOfChannels_)
@@ -100,6 +108,8 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
     }
 
     for (size_t i = 0; i < m_volumes.size(); ++i) {
+        if (i == m_soloLeftChannel || i == m_soloRightChannel)
+            continue;
         m_volumes[i].update(bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
     }
 }
@@ -115,6 +125,9 @@ XmlElement* ChannelRemappingAudioSourceWithVolume::createXml() const
         outs << remappedOutputs[i].first << ' ';
 
     e->setAttribute ("outputs", outs.trimEnd());
+
+    e->setAttribute("soloLeft", m_soloLeftChannel);
+    e->setAttribute("soloRight", m_soloRightChannel);
 
     return e;
 }
@@ -132,6 +145,9 @@ void ChannelRemappingAudioSourceWithVolume::restoreFromXml (const XmlElement& e)
 
         for (int i = 0; i < outs.size(); ++i)
             remappedOutputs.add (std::pair<int, int>(outs[i].getIntValue(), -1));
+
+        m_soloLeftChannel = e.getIntAttribute("soloLeft", -1);
+        m_soloRightChannel = e.getIntAttribute("soloRight", -1);
     }
 }
 
@@ -153,13 +169,65 @@ double ChannelRemappingAudioSourceWithVolume::getSampleRate() const
 void ChannelRemappingAudioSourceWithVolume::setOutputChannelMapping(int sourceChannelIndex, int destChannelIndex)
 {
     const ScopedLock sl (lock);
-    setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex);
+    setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex, false);
 }
 
-void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(const int sourceIndex, const int destIndex)
+void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(const int sourceIndex, const int destIndex, const bool solo)
 {
     while (remappedOutputs.size() < sourceIndex+1)
         remappedOutputs.add(std::pair<int,int>(-1,-1));
 
-    remappedOutputs.getReference(sourceIndex).first = destIndex;
+    if (solo)
+        remappedOutputs.getReference(sourceIndex).second = destIndex;
+    else
+        remappedOutputs.getReference(sourceIndex).first = destIndex;
+}
+
+void ChannelRemappingAudioSourceWithVolume::setSolo(bool solo)
+{
+    const ScopedLock sl (lock);
+
+    m_solo = solo;
+    if (solo)
+    {
+        setOutputChannelMappingInternal(0, m_soloLeftChannel, true);
+        setOutputChannelMappingInternal(1, m_soloRightChannel, true);
+    }
+    else
+    {
+        setOutputChannelMappingInternal(0, -1, true);
+        setOutputChannelMappingInternal(1, -1, true);
+    }
+}
+
+void ChannelRemappingAudioSourceWithVolume::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+{
+    ignoreUnused(previousOutputChannel);
+    const ScopedLock sl (lock);
+
+    switch (channel)
+    {
+    case SoloBusChannel::Left:
+        m_soloLeftChannel = outputChannel;
+        if (m_solo)
+        {
+            setOutputChannelMappingInternal(0, m_soloLeftChannel, true);
+        }
+        break;
+    case SoloBusChannel::Right:
+        m_soloRightChannel = outputChannel;
+        if (m_solo)
+        {
+            setOutputChannelMappingInternal(1, m_soloRightChannel, true);
+        }
+        break;
+    }
+
+    for (auto&& output : remappedOutputs)
+    {
+        while (output.first == m_soloLeftChannel || output.first == m_soloRightChannel)
+        {
+            ++output.first;
+        }
+    }
 }

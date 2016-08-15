@@ -31,6 +31,9 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="tVQNwC" name="SoloBusMixer.cpp" compile="1" resource="0"
+            file="Source/SoloBusMixer.cpp"/>
+      <FILE id="ls59QB" name="SoloBusMixer.h" compile="0" resource="0" file="Source/SoloBusMixer.h"/>
       <GROUP id="{00619D02-2581-F8AF-E7D7-DDC6F0F1531D}" name="CDPlayer">
         <FILE id="CAFkeS" name="CDNamesComboBox.cpp" compile="1" resource="0"
               file="Source/CDNamesComboBox.cpp"/>
@@ -129,6 +132,14 @@
               file="Source/ChannelVolumeAudioSource.h"/>
       </GROUP>
       <GROUP id="{C32E5421-1F74-3D58-5005-19705CCF9AF8}" name="AudioConfiguration">
+        <FILE id="j8jD3J" name="SoloBusSettings.cpp" compile="1" resource="0"
+              file="Source/SoloBusSettings.cpp"/>
+        <FILE id="SpM6dM" name="SoloBusSettings.h" compile="0" resource="0"
+              file="Source/SoloBusSettings.h"/>
+        <FILE id="RR9IZk" name="SoloBusComponent.cpp" compile="1" resource="0"
+              file="Source/SoloBusComponent.cpp"/>
+        <FILE id="HTpzrV" name="SoloBusComponent.h" compile="0" resource="0"
+              file="Source/SoloBusComponent.h"/>
         <FILE id="EU77EN" name="OutputChannelNames.cpp" compile="1" resource="0"
               file="Source/OutputChannelNames.cpp"/>
         <FILE id="o8Orct" name="OutputChannelNames.h" compile="0" resource="0"

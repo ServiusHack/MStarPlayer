@@ -6,11 +6,13 @@
 #include "PlaylistPlayerWindow.h"
 #include "MixerComponent.h"
 #include "OutputChannelNames.h"
+#include "SoloBusSettings.h"
 #include "DarkLookAndFeel.h"
 #include "AudioConfiguration.h"
 #include "DefaultLookAndFeel.h"
 #include "EditSettingsDialog.h"
 #include "MyMultiDocumentPanel.h"
+#include "SoloBusMixer.h"
 
 /** Main component of the Audio Player application.
 
@@ -22,6 +24,7 @@ class MainContentComponent
 	, public MenuBarModel
 	, public ApplicationCommandTarget
 	, public MixerControlableChangeListener
+	, public SoloBusSettingsListener
 {
 public:
 	MainContentComponent(ApplicationCommandManager* commandManager);
@@ -33,11 +36,13 @@ private:
 
 	TimeSliceThread m_timeSliceThread;
 
+	SoloBusSettings m_soloBusSettings;
     ApplicationCommandManager* m_commandManager;
 	ScopedPointer<MixerComponent> m_mixerComponent;
 	ScopedPointer<MyMultiDocumentPanel> m_multiDocumentPanel;
 	ScopedPointer<AudioDeviceManager> m_audioDeviceManager;
 	ScopedPointer<OutputChannelNames> m_outputChannelNames;
+	ScopedPointer<SoloBusMixer> m_soloComponent;
 	ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
 	ScopedPointer<EditSettingsWindow> m_editSettingsWindow;
 
@@ -69,6 +74,10 @@ public:
 // MixerControlableChangeListener overrides
 public:
 	virtual void soloChanged(bool solo) override;
+
+// SoloBusSettingsListener
+public:
+	void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 
 // Commands for menu
 public:

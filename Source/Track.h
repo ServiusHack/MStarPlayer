@@ -14,6 +14,7 @@
 */
 class Track
 	: public MixerControlable
+	, public SoloBusSettingsListener
 	, private Timer
 {
 public:
@@ -25,7 +26,7 @@ public:
 	typedef std::function<void(bool)> PlayingStateChangedCallback;
 	typedef std::function<void()> TrackConfigChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+	Track(MixerAudioSource &tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
 	~Track();
 
 	void play();
@@ -74,6 +75,12 @@ public:
 	void setPlayerGain(float gain);
 private:
 	float m_playerGain;
+
+// player mute
+public:
+	void setPlayerSolo(bool solo);
+private:
+	bool m_playerSolo;
 
 // player mute
 public:
@@ -143,6 +150,10 @@ private:
 	AudioThumbnailCache& m_audioThumbnailCache;
 	AudioThumbnail m_audioThumbnail;
 
+// SoloBusListener
+public:
+	void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
+
 private:
 	void updateGain();
 
@@ -151,6 +162,7 @@ private:
 	TimeSliceThread& m_thread;
 	ScopedPointer<AudioFormatReaderSource> m_currentAudioFileSource;
 	AudioTransportSource m_transportSource;
+	SoloBusSettings& m_soloBusSettings;
 	ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
 	double m_duration;

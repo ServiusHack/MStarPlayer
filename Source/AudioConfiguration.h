@@ -3,6 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "OutputChannelNames.h"
+#include "SoloBusComponent.h"
 
 /**
     Window wrapper for the AudioDeviceSelectorComponent.
@@ -14,7 +15,7 @@ class AudioConfigurationWindow
 	, public ButtonListener
 {
 public:
-    AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames);
+    AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings);
     
 // DialogWindow
 	virtual void closeButtonPressed() override;
@@ -62,7 +63,7 @@ class AudioConfigurationComponent
 	, public ChangeListener
 {
 public:
-	AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames);
+	AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings);
 	~AudioConfigurationComponent();
 
 // Component
@@ -77,6 +78,7 @@ private:
 	ScopedPointer<ChannelNames> m_channelNames;
 	ScopedPointer<TableListBox> m_tableListBox;
 	OutputChannelNames& m_outputChannelName;
+	ScopedPointer<SoloBusComponent> m_soloBusComponent;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioConfigurationComponent)
 };

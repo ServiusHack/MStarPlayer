@@ -3,15 +3,16 @@
 #include "Track.h"
 #include "Utils.h"
 
-CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, TimeSliceThread& thread, float gain, bool solo, bool mute)
+CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
+    , m_soloBusSettings(soloBusSettings)
     , m_gain(1.0f)
 	, m_solo(solo)
     , m_soloMute(false)
     , m_mute(mute)
     , m_thread(thread)
-    , m_remappingAudioSource(&m_transportSource, false)
+    , m_remappingAudioSource(&m_transportSource, soloBusSettings, false)
 {
     // play button
     m_playButton = new ImageButton("Play");
@@ -139,12 +140,15 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames
 
     addKeyListener(this);
     setBounds(0, 0, 600, 300);
+
+	m_soloBusSettings.addListener(this);
 }
 
 CDPlayer::~CDPlayer()
 {
     m_mixer->getMixerAudioSource().removeInputSource(&m_remappingAudioSource);
     m_mixer->unregisterPlayer(this);
+	m_soloBusSettings.removeListener(this);
 }
 
 void CDPlayer::paint(Graphics& g)
@@ -231,6 +235,9 @@ bool CDPlayer::getSoloMute() const
 void CDPlayer::setSolo(bool solo)
 {
     m_solo = solo;
+	if (m_soloBusSettings.isConfigured())
+		m_remappingAudioSource.setSolo(solo);
+	else
 		updateGain();
     std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
 }
@@ -273,7 +280,7 @@ void CDPlayer::SetChannelCountChangedCallback(const Track::ChannelCountChangedCa
 
 void CDPlayer::updateGain()
 {
-    bool mute =  m_mute || (m_soloMute && !m_solo);
+    bool mute =  m_mute || (!m_soloBusSettings.isConfigured() && m_soloMute && !m_solo);
     m_transportSource.setGain(mute ? 0.0f : m_gain);
 }
 
@@ -371,7 +378,7 @@ std::vector<std::pair<char, int>> CDPlayer::createMapping()
 void CDPlayer::configureChannels()
 {
     if (m_channelMappingWindow.get() == nullptr) {
-        m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, createMapping(), [&](int source, int target) {
+        m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_soloBusSettings, createMapping(), [&](int source, int target) {
             m_remappingAudioSource.setOutputChannelMapping(source, target);
         }, [&]() {
             // clear is not working
@@ -482,8 +489,14 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 
 void CDPlayer::sliderValueChanged(Slider* sliderThatWasMoved)
 {
-    // Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
+	// Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
     setNextReadPosition(static_cast<int64>(sliderThatWasMoved->getValue()));
+}
+
+void CDPlayer::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+{
+	ignoreUnused(channel, outputChannel, previousOutputChannel);
+	updateGain();
 }
 
 void CDPlayer::timerCallback()

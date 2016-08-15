@@ -23,10 +23,11 @@ class Player
 	: public Component
 	, public SubchannelPlayer
 	, public KeyListener
+	, public SoloBusSettingsListener
 {
 
 public:
-	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
+	Player(MixerComponent* mixer, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
 	~Player();
 
 	void setType(InterPlayerCommunication::PlayerType type);
@@ -69,6 +70,10 @@ public:
 public:
 	virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
 
+// SoloBusListener
+public:
+	void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
+
 public:
     /** Set the number of output channels.
 
@@ -90,6 +95,7 @@ private:
 
 	MixerComponent* m_mixer;
 	OutputChannelNames* m_outputChannelNames;
+	SoloBusSettings& m_soloBusSettings;
 
 	PlaylistModel playlistModel;
 	TracksContainer m_tracksContainer;

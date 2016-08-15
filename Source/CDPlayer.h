@@ -9,6 +9,7 @@
 #include "CDNamesComboBox.h"
 #include "CDTracksModel.h"
 #include "CDTracksTable.h"
+#include "SoloBusSettings.h"
 
 #include "ChannelMappingDialog.h"
 #include "PlayerEditDialog.h"
@@ -23,11 +24,12 @@ class CDPlayer
     , public Button::Listener
     , public ComboBox::Listener
     , public Slider::Listener
+    , public SoloBusSettingsListener
     , private Timer
 {
 
 public:
-    CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
+    CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
     ~CDPlayer();
 
 // XML serialization
@@ -82,6 +84,10 @@ public:
 public:
     void sliderValueChanged(Slider* sliderThatWasMoved) override;
 
+// SoloBusListener
+public:
+    void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
+
 // Timer
 private:
     void timerCallback() override;
@@ -100,6 +106,7 @@ private:
 
     MixerComponent* m_mixer;
     OutputChannelNames* m_outputChannelNames;
+    SoloBusSettings& m_soloBusSettings;
 
     float m_gain;
     bool m_soloMute;

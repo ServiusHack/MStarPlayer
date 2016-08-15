@@ -19,7 +19,7 @@ public:
 	typedef std::function<void()> TracksClearedCallback;
 	typedef std::function<void(int)> TrackRemovedCallback;
 
-	TracksContainer(MixerComponent* mixer, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+	TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
 	~TracksContainer();
 
 // Playback
@@ -33,6 +33,7 @@ public:
 private:
 	MixerComponent* m_mixer;
 	MixerAudioSource m_tracksMixer;
+	SoloBusSettings& m_soloBusSettings;
 
 // Tracks
 public:
@@ -59,6 +60,7 @@ public:
 	void setOutputChannels(int outputChannels);
 	void setGain(float gain);
 	float getGain() const;
+	void setSolo(bool solo);
 	void setMute(bool mute);
 	bool getMute() const;
 	std::vector<std::pair<char, int>> createMapping();

@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
+Track::Track(MixerAudioSource &tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback,bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
 	: m_trackIndex(trackIndex)
 	, m_stereo(stereo)
 	, m_tracksMixer(tracksMixer)
@@ -19,8 +19,10 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	, m_trackConfigChangedCallback(trackConfigChangedCallback)
 	, m_mute(false)
 	, m_solo(false)
+	, m_playerSolo(false)
 	, m_audioThumbnailCache(audioThumbnailCache)
-	, m_remappingAudioSource(&m_transportSource, false)
+	, m_soloBusSettings(soloBusSettings)
+	, m_remappingAudioSource(&m_transportSource, soloBusSettings, false)
 	, m_audioThumbnail(1000, m_formatManager, m_audioThumbnailCache)
 	, m_loadingTrackConfig(false)
 {
@@ -33,11 +35,13 @@ Track::Track(MixerAudioSource &tracksMixer, int trackIndex, bool stereo, int out
 	m_remappingAudioSource.setOutputChannelMapping(1, 1);
 
 	m_tracksMixer.addInputSource(&m_remappingAudioSource, false);
+	m_soloBusSettings.addListener(this);
 }
 
 Track::~Track()
 {
 	m_tracksMixer.removeInputSource(&m_remappingAudioSource);
+	m_soloBusSettings.removeListener(this);
 }
 
 void Track::setName(String name)
@@ -64,6 +68,15 @@ void Track::setGain(float gain)
 	updateGain();
 	for (MixerControlableChangeListener* listener : m_listeners)
 		listener->gainChanged(gain);
+}
+
+void Track::setPlayerSolo(bool solo)
+{
+	m_playerSolo = solo;
+	if (m_soloBusSettings.isConfigured())
+		m_remappingAudioSource.setSolo(m_solo || m_playerSolo);
+	else
+		updateGain();
 }
 
 void Track::setPlayerMute(bool mute)
@@ -95,7 +108,10 @@ void Track::setSolo(bool solo)
 	m_solo = solo;
 	for (MixerControlableChangeListener* listener : m_listeners)
 		listener->soloChanged(solo);
-	m_soloChangedCallback();
+	if (m_soloBusSettings.isConfigured())
+		m_remappingAudioSource.setSolo(m_solo || m_playerSolo);
+	else
+		m_soloChangedCallback();
 }
 
 float Track::getVolume() const
@@ -218,7 +234,7 @@ bool Track::isPlaying()
 
 void Track::updateGain()
 {
-	bool mute = m_playerMute || m_mute || (m_soloMute && !m_solo);
+	bool mute = m_playerMute || m_mute || (!m_soloBusSettings.isConfigured() && m_soloMute && !m_solo);
 	m_transportSource.setGain(mute ? 0.0f : (m_playerGain * m_trackGain));
 }
 
@@ -356,4 +372,10 @@ void Track::setTrackIndex(int index)
 AudioThumbnail& Track::getAudioThumbnail()
 {
 	return m_audioThumbnail;
+}
+
+void Track::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+{
+	ignoreUnused(channel, outputChannel, previousOutputChannel);
+	setSolo(m_solo);
 }

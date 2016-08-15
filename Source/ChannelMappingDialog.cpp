@@ -29,8 +29,9 @@ private:
 	int m_row;
 };
 
-ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback)
+ChannelMapping::ChannelMapping(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback)
 	: m_outputChannelNames(outputChannelNames)
+	, m_soloBusSettings(soloBusSettings)
 	, m_mapping(mapping)
 	, m_callback(callback)
 {
@@ -91,6 +92,15 @@ Component* ChannelMapping::refreshComponentForCell (int rowNumber, int columnId,
 		comboBox->clear();
 		comboBox->addItemList(m_outputChannelNames->getAllDeviceOutputChannelNames(), 1);
 
+		int leftSoloChannel = m_soloBusSettings.getChannel(SoloBusChannel::Left);
+		int rightSoloChannel = m_soloBusSettings.getChannel(SoloBusChannel::Right);
+
+		if (leftSoloChannel != -1)
+			comboBox->setItemEnabled(1 + leftSoloChannel, false);
+
+		if (rightSoloChannel != -1)
+			comboBox->setItemEnabled(1 + rightSoloChannel, false);
+
 		comboBox->setRow(rowNumber);
 		comboBox->setSelectedId(getOutputChannel(rowNumber), dontSendNotification);
 
@@ -119,11 +129,11 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 	m_callback(row, outputChannel - 1);
 }
 
-ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
 	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
-	m_component = new ChannelMappingComponent(outputChannelNames, mapping, changeCallback, closeCallback);
+	m_component = new ChannelMappingComponent(outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback);
 	setContentOwned(m_component, true);
 	centreWithSize(getWidth(), getHeight());
     setVisible(true);
@@ -140,12 +150,13 @@ void ChannelMappingWindow::setMapping(const std::vector<std::pair<char,int>>& ma
 	m_component->setMapping(mapping);
 }
 
-ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
+ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
 	: m_outputChannelNames(outputChannelNames)
+	, m_soloBusSettings(soloBusSettings)
 	, m_changeCallback(changeCallback)
 	, m_closeCallback(closeCallback)
 	, m_tableListBox(new TableListBox())
-	, m_channelMapping(new ChannelMapping(m_outputChannelNames, mapping, m_changeCallback))
+	, m_channelMapping(new ChannelMapping(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
 {
 	addAndMakeVisible(m_tableListBox);
 
@@ -169,7 +180,7 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChann
 
 void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>& mapping)
 {
-	m_channelMapping = new ChannelMapping(m_outputChannelNames, mapping, m_changeCallback);
+	m_channelMapping = new ChannelMapping(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
 	m_tableListBox->setModel(m_channelMapping);
 }
 

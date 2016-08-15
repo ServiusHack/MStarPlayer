@@ -23,6 +23,7 @@ class MixerComponent
 	: public Component
 	, public ChangeListener
 	, public OutputChannelNamesListener
+	, public SoloBusSettingsListener
 	, public ScrollBar::Listener
 	, public Timer
 {
@@ -31,11 +32,12 @@ public:
 
         @param audioDeviceManager The AudioDeviceManager used throughout the application.
     */
-    MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames);
+    MixerComponent(AudioDeviceManager *audioDeviceManager, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings);
     ~MixerComponent();
 
 	/** Returns the MixerAudioSource into which all Players mix their audio stream. */
 	MixerAudioSource& getMixerAudioSource();
+	ChannelVolumeAudioSource& getChannelVolumeAudioSource();
 
 	void updatePlayerColor(SubchannelPlayer* player, Colour color);
 
@@ -83,6 +85,10 @@ public:
 	virtual void outputChannelNamesReset() override;
 	virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
 
+// SoloBusSettingsListener
+public:
+	virtual void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
+
 // ScrollBar::Listener
 public:
 	virtual void scrollBarMoved(ScrollBar *scrollBarThatHasMoved, double newRangeStart) override;
@@ -99,6 +105,7 @@ private:
     AudioSourcePlayer m_audioSourcePlayer;
 	AudioDeviceManager *m_audioDeviceManager;
 	OutputChannelNames *m_outputChannelNames;
+	SoloBusSettings& m_soloBusSettings;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerComponent)
 };
