@@ -7,7 +7,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_gain(1.0f)
-    , m_solo(solo)
+	, m_solo(solo)
     , m_soloMute(false)
     , m_mute(mute)
     , m_thread(thread)
@@ -231,7 +231,7 @@ bool CDPlayer::getSoloMute() const
 void CDPlayer::setSolo(bool solo)
 {
     m_solo = solo;
-    updateGain();
+		updateGain();
     std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
 }
 
@@ -482,14 +482,15 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 
 void CDPlayer::sliderValueChanged(Slider* sliderThatWasMoved)
 {
-    setNextReadPosition(sliderThatWasMoved->getValue());
+    // Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
+    setNextReadPosition(static_cast<int64>(sliderThatWasMoved->getValue()));
 }
 
 void CDPlayer::timerCallback()
 {
     m_digitalDisplay->setText(Utils::formatSeconds(m_transportSource.getCurrentPosition()), sendNotification);
 
-    int currentSample = m_source->getNextReadPosition();
+    int64 currentSample = m_source->getNextReadPosition();
 
     const Array<int>& offsets = m_reader->getTrackOffsets();
     // offsets[0] != 0 is possible, there might be a track before the first.
@@ -511,7 +512,8 @@ void CDPlayer::timerCallback()
         // We have now entered the first track.
         m_slider->setEnabled(true);
         m_slider->setRange(offsets[0], offsets[1]);
-        m_slider->setValue(currentSample, juce::dontSendNotification);
+        // Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
+        m_slider->setValue(static_cast<double>(currentSample), juce::dontSendNotification);
         m_currentTrack = 0;
         SparseSet<int> rows;
         rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
@@ -524,14 +526,15 @@ void CDPlayer::timerCallback()
     if (currentSample >= offsets[m_currentTrack] && currentSample < offsets[m_currentTrack + 1])
     {
         // We are still within the current track (usual case).
-        m_slider->setValue(currentSample, juce::dontSendNotification);
+        // Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
+        m_slider->setValue(static_cast<double>(currentSample), juce::dontSendNotification);
         return;
     }
 
     // We are within another track.
 
-    int firstSample = -1;
-    int lastSample = -1;
+    int64 firstSample = -1;
+    int64 lastSample = -1;
 
     if (currentSample < offsets[m_currentTrack])
     {
@@ -580,8 +583,9 @@ void CDPlayer::timerCallback()
     jassert(currentSample >= firstSample);
     jassert(currentSample < lastSample);
 
-    m_slider->setRange(firstSample, lastSample);
-    m_slider->setValue(currentSample, juce::dontSendNotification);
+    // Possible loss of precision is acceptable for very large values because user can't select specific value that precise.
+    m_slider->setRange(static_cast<double>(firstSample), static_cast<double>(lastSample));
+    m_slider->setValue(static_cast<double>(currentSample), juce::dontSendNotification);
     SparseSet<int> rows;
     rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
     m_tracksTable->setSelectedRows(rows, juce::dontSendNotification);
