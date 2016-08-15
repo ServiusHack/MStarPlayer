@@ -31,10 +31,10 @@ public:
 	typedef std::function<void(bool)> SoloChangedCallback;
 	typedef std::function<void()> ResizeCallback;
 
-	MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
+	MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled = true, bool muteEnabled = true);
 	~MixerFader();
 
-	float getValue();
+	float getValue() const;
 	void setValue(float value);
 
 	void setMute(bool mute);
