@@ -121,7 +121,7 @@ void OutputChannelNames::addListener(OutputChannelNamesListener* listener)
 
 void OutputChannelNames::removeListener(OutputChannelNamesListener* listener)
 {
-	m_listeners.remove(listener);
+	m_listeners.erase(std::find(m_listeners.begin(), m_listeners.end(), listener));
 }
 
 void OutputChannelNames::saveToXml(XmlElement* element) const

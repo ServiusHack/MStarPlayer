@@ -1,7 +1,5 @@
 #pragma once
 
-#include <list>
-
 #include "../JuceLibraryCode/JuceHeader.h"
 
 /**
@@ -74,7 +72,7 @@ public:
 	void removeListener(OutputChannelNamesListener* listener);
 
 private:
-	std::list<OutputChannelNamesListener*> m_listeners;
+	std::vector<OutputChannelNamesListener*> m_listeners;
 
 // ChangeListener
 public:

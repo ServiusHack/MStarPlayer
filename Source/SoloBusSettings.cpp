@@ -74,6 +74,6 @@ void SoloBusSettings::addListener(SoloBusSettingsListener* listener)
 
 void SoloBusSettings::removeListener(SoloBusSettingsListener* listener)
 {
-	m_listeners.remove(listener);
+	m_listeners.erase(std::find(m_listeners.begin(), m_listeners.end(), listener));
 }
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <list>
-
 #include "../JuceLibraryCode/JuceHeader.h"
 
 enum class SoloBusChannel
@@ -52,5 +50,5 @@ public:
 	void removeListener(SoloBusSettingsListener* listener);
 
 private:
-	std::list<SoloBusSettingsListener*> m_listeners;
+	std::vector<SoloBusSettingsListener*> m_listeners;
 };
