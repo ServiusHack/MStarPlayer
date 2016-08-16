@@ -34,6 +34,7 @@ private:
 class EditSettingsComponent
 	: public Component
 	, public FilenameComponentListener
+	, public ComboBoxListener
 {
 public:
 	EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties);
@@ -41,6 +42,8 @@ public:
 private:
 	ScopedPointer<Label> m_nameLabel;
 	ScopedPointer<FilenameComponent> m_audioEditorFilenameComponent;
+	Label m_languageLabel;
+	ComboBox m_languageComboBox;
 	ScopedPointer<TextButton> m_closeButton;
 
 	ApplicationProperties& m_applicationProperties;
@@ -52,6 +55,10 @@ public:
 // FilenameComponentListener
 public:
 	virtual void filenameComponentChanged(FilenameComponent* fileComponentThatHasChanged) override;
+
+// ComboBoxListener
+public:
+	virtual void comboBoxChanged(ComboBox * comboBoxThatHasChanged) override;
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditSettingsComponent)

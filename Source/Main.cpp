@@ -24,7 +24,15 @@ public:
 		options.filenameSuffix = ".settings";
 		m_applicationProperties.setStorageParameters(options);
 
-		if (SystemStats::getUserLanguage() == "de")
+		if (m_applicationProperties.getUserSettings()->getValue("language") == "de")
+		{
+			LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
+		}
+		else if (m_applicationProperties.getUserSettings()->getValue("language") == "en")
+		{
+			// Default is English.
+		}
+		else if (SystemStats::getUserLanguage() == "de")
 		{
 			LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
 		}
