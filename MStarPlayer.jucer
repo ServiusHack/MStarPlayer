@@ -31,6 +31,9 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="OIlPcI" name="Translations.cpp" compile="1" resource="0"
+            file="Source/Translations.cpp"/>
+      <FILE id="logqzn" name="Translations.h" compile="0" resource="0" file="Source/Translations.h"/>
       <FILE id="tVQNwC" name="SoloBusMixer.cpp" compile="1" resource="0"
             file="Source/SoloBusMixer.cpp"/>
       <FILE id="ls59QB" name="SoloBusMixer.h" compile="0" resource="0" file="Source/SoloBusMixer.h"/>

@@ -27,11 +27,11 @@ class MainContentComponent
 	, public SoloBusSettingsListener
 {
 public:
-	MainContentComponent(ApplicationCommandManager* commandManager);
+	MainContentComponent(ApplicationProperties& applicationProperties, ApplicationCommandManager* commandManager);
 	~MainContentComponent();
 
 private:
-	ApplicationProperties m_applicationProperties;
+	ApplicationProperties& m_applicationProperties;
 	AudioThumbnailCache m_audioThumbnailCache;
 
 	TimeSliceThread m_timeSliceThread;

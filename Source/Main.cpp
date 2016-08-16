@@ -2,6 +2,7 @@
 #include "MainComponent.h"
 
 #include "CrashDumper.h"
+#include "Translations.h"
 
 class MStarPlayerApplication : public JUCEApplication
 {
@@ -17,9 +18,20 @@ public:
 #ifdef _WIN32
 		CrashDumper::init();
 #endif
+
+		PropertiesFile::Options options;
+		options.applicationName = "MStarPlayer";
+		options.filenameSuffix = ".settings";
+		m_applicationProperties.setStorageParameters(options);
+
+		if (SystemStats::getUserLanguage() == "de")
+		{
+			LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
+		}
+
 		MainContentComponent::initLookAndFeel();
 		LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
-		m_mainWindow = new MainWindow();
+		m_mainWindow = new MainWindow(m_applicationProperties);
     }
 
     void shutdown()
@@ -48,11 +60,11 @@ public:
         // the command manager object used to dispatch command events
         ApplicationCommandManager commandManager;
 
-        MainWindow() : DocumentWindow ("M*Player",
+        MainWindow(ApplicationProperties& properties) : DocumentWindow ("M*Player",
                                         Colours::lightgrey,
                                         DocumentWindow::allButtons)
         {
-            MainContentComponent* main = new MainContentComponent(&commandManager);
+            MainContentComponent* main = new MainContentComponent(properties, &commandManager);
             
             commandManager.registerAllCommandsForTarget(main);
             commandManager.registerAllCommandsForTarget(JUCEApplication::getInstance());
@@ -87,6 +99,7 @@ public:
 
 private:
 	ScopedPointer<MainWindow> m_mainWindow;
+	ApplicationProperties m_applicationProperties;
 };
 
 // This macro generates the main() routine that launches the app.

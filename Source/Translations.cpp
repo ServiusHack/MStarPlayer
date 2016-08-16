@@ -1,0 +1,208 @@
+﻿#include "Translations.h"
+
+
+const String Translations::German = CharPointer_UTF8(u8R"-|-(
+language: German
+countries:de
+
+// AudioConfiguration
+
+"Configure Audio" = "Audio konfigurieren"
+"Audio Device" = "Audiogerät"
+"Channel Names" = "Kanalnamen"
+"Device Channel" = "Gerätekanal"
+"Channel Name" = "Kanalname"
+"Solo Bus" = "Solo Bus"
+
+# AudioDeviceSelector (Juce)
+"none" = "(keine)"
+"Show advanced settings..." = "Erweiterte Einstellungen anzeigen ..."
+"Error when trying to open audio device!" = "Fehler beim Öffnen des Audiogeräts!"
+"(no audio output channels found)" = "(Kein Ausgabekanal gefunden)"
+"Active output channels:" = "Aktive Ausgabekanäle:"
+"Control panel" = "Bedienfeld"
+"Opens the device's own control panel" = "Das Bedienfeld des Geräts öffnen"
+"Reset device" = "Gerät zurücksetzen"
+"Resets the audio interface - sometimes needed after changing a device's properties in its custom control panel" = "Setzt das Audiogerät zurück - manchmal nötig, nachdem Eigenschaften im Bedienfeld des Geräts verändert wurden"
+"Output:" = "Ausgabe:"
+"Device:" = "Gerät:"
+"Test" = "Test"
+"Plays a test tone" = "Einen Testton wiedergeben"
+"Sample rate:" = "Samplerate:"
+"Audio buffer size:" = "Größe des Audiobuffers:"
+"Audio device type:" = "Typ des Audiogeräts:"
+
+// General
+"Close" = "Schließen"
+
+// Player
+
+"configure channels" = "Kanäle konfigurieren"
+"configure appearance" = "Ausssehen konfigurieren"
+"load file" = "Datei öffnen"
+"Jingle Mode" = "Jingle-Modus"
+"Multitrack Mode" = "Mehrspur-Modus"
+"Playlist Mode" = "Playlist-Modus"
+
+"Track" = "Spur"
+"Duration" = "Dauer"
+
+" (mono)" = " (mono)"
+" (left)" = " (links)"
+" (right)" = " (rechts)"
+
+// ChannelMappingDialog
+"Configure Channels" = "Kanäle konfigurieren"
+
+"Player Channel" = "Player Kanal"
+"Output Channel" = "Ausgabekanal"
+
+// CrashDumper
+"Application crashed.\n\nWriting crash dump ..." = "Die Anwendung ist abgestürzt. Ein Fehlerabzug wird geschrieben ..."
+
+// EditSettingsDialog
+"Edit Settings" = "Einstellungen bearbeiten"
+"Audio editor" = "Programm zur Audiobearbeitung"
+"Language" = "Sprache"
+"Restart required" = "Neustart nötig"
+"Changing the language requires a restart." = "Die geänderte Sprache wird erst nach einem Neustart übernommen."
+
+
+// JinglePlayerWindow
+"Please select the audio file you want to load ..." = "Bitte die Audiodatei zum Öffnen auswählen ..."
+
+// MainComponent
+"Project" = "Projekt"
+"Player" = "Player"
+"View" = "Ansicht"
+"Options" = "Optionen"
+
+"Style" = "Farbstil"
+
+"New" = "Neu"
+"Create a new project" = "Neues Projekt erstellen"
+"Open" = "Öffnen"
+"Open an existing project" = "Ein vorhandenes Projekt öffnen"
+"Save" = "Speichern"
+"Save the current project" = "Das aktuelle Projekt speichern"
+"Save as ..." = "Speichern unter"
+"Save the current project under ..." = "Das aktuelle Projekt speichern unter ..."
+"Quit" = "Beenden"
+"Add Jingle Player" = "Jingle-Player hinzufügen"
+"Add a simple player" = "Einen einfachen Player hinzufügen"
+"Add Multitrack Player" = "Mehrspur-Player hinzufügen"
+"Add a player with multiple tracks" = "Einen Player mit mehreren Spuren hinzufügen"
+"Add Playlist Player" = "Playlist-Player hinzufügen"
+"Add a player with a playlist" = "Einen Player mit einer Playlist hinzufügen"
+"Add CD Player" = "CD-Player hinzufügen"
+"Add a player for audio CDs" = "Einen Player für Audio-CDs hinzufügen"
+"Windows" = "Fenster"
+"Players are floating windows" = "Player sind schwebende Fenster"
+"Tabs" = "Tabs"
+"Players are tabs" = "Player sind Tabs"
+"Configure Audio" = "Audio konfigurieren"
+"Configure the audio device to use" = "Das zu verwendende Audiogerät konfigurieren"
+"Edit Settings" = "Einstellungen bearbeiten"
+"Edit the application settings" = "Die Einstellungen der Anwendung bearbeiten"
+"Standard" = "Standard"
+"Use the default look and feel" = "Das Standardaussehen verwenden"
+"Dark" = "Dunkel"
+"Use a dark look and feel" = "Ein dunkles Aussehen verwenden"
+"Please select the project file you want to load ..." = "Bitte die zu öffnende Projektdatei auswählen ..."
+"Save project?" = "Projekt speichern?"
+"Do you want to save the current project?" = "Möchten Sie das aktuelle Projekt speichern?"
+"Yes" = "Ja"
+"No" = "Nein"
+"Cancel" = " Abbrechen"
+"Please select the project file you want to save ..." = "Bitte die Projektdatei zum Speichern auswählen ..."
+"Unable to open audio thumbnail cache file." = "Die Datei der zwischengespeicherten Wellenformen des konnte nicht geöffnet werden."
+"Unable to load audio thumbnails." = "Die Vorschaubilder der Wellenformen konnten nicht geöffnet werden."
+"Failed to open project file" = "Die Projektdatei konnte nicht geöffnet werden"
+"No view settings found, using default." = "Keine Einstellungen zur Ansicht gefunden, der Standard wird verwendet."
+"No layout mode settings found, using default." = "Keine Einstellungen des Layout gefunden, der Standard wird verwendet."
+"Unknown view layout, using default." = "Unbekanntes Layout, das Standardlayout wird verwendet."
+"No style settings found, using default." = "Keine Einstellungen des Aussehens gefunden, der Standard wird verwendet."
+"Unknown style, using default." = "Unbekanntes Aussehen gefunden, der Standard wird verwendet."
+"No audio settings found, using current." = "Keine Audioeinstellungen gefunden, die aktuellen werden beibehalten."
+"No channel names found, using device defaults." = "Keine Kanalnamen gefunden, die Standardnamen des Geräts werden verwendet."
+"No solo bus settings found, using no solo bus." = "Keine Einstellungen des Solo-Bus gefunden, Solo-Bus ist deaktiviert."
+"No solo mixer settings found, using default volumes." = "Keine Einstellungen des Solo-Bus-Mischers gefunden, Standardpegel werden verwendet."
+"No mixer settings found, using current." = "Keine Einstellungen des Mischers gefunden, aktuelle Pegel werden beibehalten."
+"No players found. None will be loaded." = "Keine Player gefunden. Es werden keine geladen."
+"Unknown player type '%s'." = "Unbekannter Player-Typ '%s'."
+"Unknown tag '%s' in players list." = "Unbekannter XML-Tag '%s' in der Liste der Player."
+"Problems while opening the project" = "Probleme beim öffnen des Projekts"
+"Failed opening the project" = "Projekt konnte nicht geöffnet werden"
+"Failed to save project file" = "Projektdatei konnte nicht gespeichert werden"
+"Failed to save project file." = "Projektdatei konnte nicht gespeichert werdens"
+"Failed to save project" = "Projekt konnte nicht gespeichert werden"
+"Failed to open audio thumbnail cache file." = "Die Datei der zwischengespeicherten Wellenformen des konnte nicht geöffnet werden."
+
+// MixerFader
+"Solo" = "Solo"
+"Mute" = "Stumm"
+
+// PlayerEditDialog
+"Rename player" = "Player umbenennen"
+"Name of the player:" = "Name des Players:"
+"Choose color" = "Farbe wählen"
+"Choose image" = "Bild wählen"
+"Reeset image" = "Bild zurücksetzen"
+"color chooser" = "Farbwähler"
+
+// PlaylistEntryDialog
+"Edit playlist entry" = "Playlisteintrag bearbeiten"
+"Name of the entry:" = "Name des Eintrags:"
+
+// PlaylistModel
+"append" = "anhängen"
+"insert" = "einfügen"
+"edit" = "bearbeiten"
+"delete" = "löschen"
+
+// PlaylistPlayerWindow
+"add stereo track" = "Stereospur hinzufügen"
+"add mono track" = "Monospur hinzufügen"
+
+// PlaylistTable
+"#" = "#"
+"Name" = "Name"
+"Duration" = "Dauer"
+
+// SoloBusComponent
+"left channel / mono:" = "linker Kanal / Mono:"
+"right channel:" = "rechter Kanal"
+"(no choices)" = "(keine Auswahl)"
+
+// SoloBusMixer
+"Solo L" = "Solo L"
+"Solo R" = "Solo R"
+
+// TrackEditDialog
+"Edit track" = "Spur bearbeiten"
+"Name of the track:" = "Name der Spur:"
+
+// TrackUi
+"edit track" = "Spur bearbeiten"
+"delete track" = "Spur löschen"
+"open file" = "Datei öffnen"
+"edit file" = "Datei bearbeiten"
+"remove file" = "Datei entfernen"
+"No audio editor" = "Kein Audiobearbeitungsprogramm"
+"No audio editor was configured." = "Es wurde kein Programm zur Audiobearbeitung konfiguriert."
+"Failed launch audio editor" = "Audiobearbeitungsprogramm nicht startbar"
+"Failed to start the audio editor." = "Das Audiobearbeitungsprogram konnte nicht gestartet werden."
+"Audio editor launched" = "Audiobearbeitungsprogramm gestartet"
+"Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again." = "Bearbeiten Sie die Datei mit dem gestarteten Programm. Wählen sie 'OK' nachdem die Datei gespeichert wurde um sie hier neu zu laden."
+"ok" = "ok"
+"Confirm" = "Bestätigen"
+"Do you really want to remove the audio file from this track?" = "Wollen Sie wirklich die Audiodatei von dieser Spur entfernen?"
+"St" = "St"
+"Mo" = "Mo"
+"Please select the audio file you want to load ..." = "Bitte die Audiodatei zum Öffnen auswählen ..."
+"MStarPlayer" = "MStarPlayer"
+"The selected file has more than two channels. This is not supported." = "Die gewählte Audiodatei hat mehr als zwei Spuren. Das wird nicht unterstützt."
+"The selected file has %d channels but this is a mono track." = "Die gewählte Audiodatei hat %d Kanäle aber dies ist eine Mono-Spur."
+"The selected file has %d channel(s) but this is a stereo track." = "Die gewählte Audiodatei hat %d Kanal/Kanäle aber dies ist eine Stereo-Spur."
+
+)-|-");

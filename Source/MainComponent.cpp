@@ -21,11 +21,12 @@ void MainContentComponent::destroyLookAndFeel()
 	delete s_darkLookAndFeel;
 }
 
-MainContentComponent::MainContentComponent(ApplicationCommandManager* commandManager)
+MainContentComponent::MainContentComponent(ApplicationProperties& applicationPropeties, ApplicationCommandManager* commandManager)
 	: m_timeSliceThread("read ahead")
 	, m_commandManager(commandManager)
 	, m_projectModified(false)
 	, m_audioThumbnailCache(1000)
+	, m_applicationProperties(applicationPropeties)
 {
     // audio setup
 	m_audioDeviceManager = new AudioDeviceManager();
@@ -46,11 +47,6 @@ MainContentComponent::MainContentComponent(ApplicationCommandManager* commandMan
 	m_multiDocumentPanel = new MyMultiDocumentPanel();
 	addAndMakeVisible(m_multiDocumentPanel);
 	m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
-
-	PropertiesFile::Options options;
-	options.applicationName = "MStarPlayer";
-	options.filenameSuffix = ".settings";
-	m_applicationProperties.setStorageParameters(options);
 
 	m_timeSliceThread.startThread(3);
 
