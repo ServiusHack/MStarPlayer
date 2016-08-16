@@ -172,7 +172,7 @@ void Player::setUserImage(const File& file)
 
 XmlElement* Player::saveToXml(const File& projectDirectory) const
 {
-    XmlElement* element = new XmlElement("Player");
+	XmlElement* element = new XmlElement("Player");
 	switch (m_type)
 	{
 	case PlayerType::Jingle:
@@ -215,7 +215,11 @@ XmlElement* Player::saveToXml(const File& projectDirectory) const
 
 	XmlElement* tracksXml = new XmlElement("Tracks");
 	for (size_t i = 0; i < m_tracksContainer.size(); ++i)
-		tracksXml->addChildElement(m_tracksContainer[i].saveToXml());
+	{
+		XmlElement* element = new XmlElement("Track");
+		m_tracksContainer[i].saveToXml(element);
+		tracksXml->addChildElement(element);
+	}
 	element->addChildElement(tracksXml);
 
 	element->addChildElement(playlistModel.saveToXml(projectDirectory));

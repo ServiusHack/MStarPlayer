@@ -39,10 +39,8 @@ bool SoloBusSettings::isConfigured() const
 	return m_leftChannel != -1 || m_rightChannel != -1;
 }
 
-XmlElement* SoloBusSettings::saveToXml() const
+void SoloBusSettings::saveToXml(XmlElement* element) const
 {
-	XmlElement* element = new XmlElement("SoloBusSettings");
-
 	XmlElement* leftChannelElement = new XmlElement("Left");
 	leftChannelElement->addTextElement(String(m_leftChannel));
 	element->addChildElement(leftChannelElement);
@@ -50,8 +48,6 @@ XmlElement* SoloBusSettings::saveToXml() const
 	XmlElement* rightChannelElement = new XmlElement("Right");
 	rightChannelElement->addTextElement(String(m_rightChannel));
 	element->addChildElement(rightChannelElement);
-
-	return element;
 }
 
 void SoloBusSettings::restoreFromXml(const XmlElement &element)

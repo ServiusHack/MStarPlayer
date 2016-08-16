@@ -37,7 +37,7 @@ private:
 
 // XML serialization
 public:
-	XmlElement* saveToXml() const;
+	void saveToXml(XmlElement* element) const;
 	void restoreFromXml(const XmlElement &element);
 
 // SoloBusSettingsListener management

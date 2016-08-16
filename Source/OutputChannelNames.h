@@ -59,7 +59,7 @@ private:
 
 // XML serialization
 public:
-	XmlElement* saveToXml();
+	void saveToXml(XmlElement* element) const;
 	void restoreFromXml(const XmlElement &element);
 
 // OutputChannelNamesListener management

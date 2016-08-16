@@ -601,8 +601,13 @@ void MainContentComponent::writeProjectFile()
 	audio->addChildElement(m_audioDeviceManager->createStateXml());
 	root->addChildElement(audio);
 
-	root->addChildElement(m_outputChannelNames->saveToXml());
-	root->addChildElement(m_soloBusSettings.saveToXml());
+	XmlElement* channelNames = new XmlElement("ChannelNames");
+	m_outputChannelNames->saveToXml(channelNames);
+	root->addChildElement(channelNames);
+
+	XmlElement* soloBusSettings = new XmlElement("SoloBusSettings");
+	m_soloBusSettings.saveToXml(soloBusSettings);
+	root->addChildElement(soloBusSettings);
 
 	XmlElement* soloBusMixer = new XmlElement("SoloBusMixer");
 	m_soloComponent->saveToXml(soloBusMixer);

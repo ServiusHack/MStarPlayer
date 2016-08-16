@@ -307,10 +307,8 @@ void Track::callPositionCallbacks(double position)
 		callback(position, m_transportSource.hasStreamFinished());
 }
 
-XmlElement* Track::saveToXml() const
+void Track::saveToXml(XmlElement* element) const
 {
-	XmlElement* element = new XmlElement("Track");
-
 	element->setAttribute("stereo", m_stereo ? "true" : "false");
 	element->setAttribute("mute", m_mute ? "true" : "false");
 	element->setAttribute("solo", m_solo ? "true" : "false");
@@ -322,8 +320,6 @@ XmlElement* Track::saveToXml() const
 	element->addChildElement(nameXml);
 
 	element->addChildElement(m_remappingAudioSource.createXml());
-
-	return element;
 }
 
 void Track::restoreFromXml(const XmlElement& element)

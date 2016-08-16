@@ -55,7 +55,7 @@ public:
 	void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
 	void setFileChangedCallback(FileChangedCallback fileChangedCallback);
 
-	XmlElement* saveToXml() const;
+	void saveToXml(XmlElement* element) const;
 	void restoreFromXml(const XmlElement& element);
 
 	void loadTrackConfig(const TrackConfig& config);

@@ -124,18 +124,14 @@ void OutputChannelNames::removeListener(OutputChannelNamesListener* listener)
 	m_listeners.remove(listener);
 }
 
-XmlElement* OutputChannelNames::saveToXml()
+void OutputChannelNames::saveToXml(XmlElement* element) const
 {
-	XmlElement* element = new XmlElement("ChannelNames");
-
 	for (int i = 0; i < m_internalOutputChannelNames.size(); ++i)
 	{
 		XmlElement* channelElement = new XmlElement("Name");
 		channelElement->addTextElement(m_internalOutputChannelNames[i]);
 		element->addChildElement(channelElement);
 	}
-
-	return element;
 }
 
 void OutputChannelNames::restoreFromXml(const XmlElement &element)
