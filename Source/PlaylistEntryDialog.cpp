@@ -1,7 +1,7 @@
 #include "PlaylistEntryDialog.h"
 
 PlaylistEntryDialogWindow::PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback)
-	: DialogWindow("Edit playlist entry", Colours::lightgrey, true, true)
+	: DialogWindow(TRANS("Edit playlist entry"), Colours::lightgrey, true, true)
 {
 	PlaylistEntryDialogComponent* component = new PlaylistEntryDialogComponent(name, changedCallback, this);
 	setContentOwned(component, true);

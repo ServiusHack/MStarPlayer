@@ -1,7 +1,7 @@
 #include "PlayerEditDialog.h"
 
 PlayerEditDialogWindow::PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath, const StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback)
-	: DialogWindow("Rename player", Colours::lightgrey, true, false)
+	: DialogWindow(TRANS("Rename player"), Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
 	PlayerEditDialogComponent* component = new PlayerEditDialogComponent(playerName, color, imagePath, stringCallback, colourCallback, closeCallback, imageCallback);
@@ -159,7 +159,7 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 	else if (buttonThatWasClicked == m_colorButton)
 	{
 		ColourSelector* selector =new ColourSelector(ColourSelector::showColourspace);
-		selector->setName("color chooser");
+		selector->setName(TRANS("color chooser"));
 		selector->setCurrentColour(m_color);
 		selector->setColour(ColourSelector::backgroundColourId, Colours::transparentBlack);
 		selector->setSize(300, 400);

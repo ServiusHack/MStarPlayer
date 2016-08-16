@@ -12,7 +12,7 @@ LONG CALLBACK unhandledExceptionFilter(EXCEPTION_POINTERS* e)
 }
 
 CrashDumper::CrashDumper(EXCEPTION_POINTERS* e)
-	: ThreadWithProgressWindow("Application crashed.\n\nWriting crash dump ...", true, false)
+	: ThreadWithProgressWindow(TRANS("Application crashed.\n\nWriting crash dump ..."), true, false)
 	, e(e)
 {
 	setProgress(-1.0);

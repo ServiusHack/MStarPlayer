@@ -176,14 +176,14 @@ void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
 		return;
 
 	PopupMenu m;
-	m.addItem (1, "add stereo track");
-	m.addItem (2, "add mono track");
-	m.addItem (3, "configure channels");
-	m.addItem (4, "configure appearance");
+	m.addItem (1, TRANS("add stereo track"));
+	m.addItem (2, TRANS("add mono track"));
+	m.addItem (3, TRANS("configure channels"));
+	m.addItem (4, TRANS("configure appearance"));
 	m.addSeparator();
-	m.addItem(5, "Jingle Mode");
-	m.addItem(6, "Multitrack Mode", true, !m_tableListBox->isVisible());
-	m.addItem(7, "Playlist Mode", true, m_tableListBox->isVisible());
+	m.addItem(5, TRANS("Jingle Mode"));
+	m.addItem(6, TRANS("Multitrack Mode"), true, !m_tableListBox->isVisible());
+	m.addItem(7, TRANS("Playlist Mode"), true, m_tableListBox->isVisible());
 	const int result = m.show();
 
 	switch (result) {

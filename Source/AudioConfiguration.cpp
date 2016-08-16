@@ -27,7 +27,7 @@ private:
 };
 
 AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
-	: DialogWindow("Configure Audio", Colours::lightgrey, true, true)
+	: DialogWindow(TRANS("Configure Audio"), Colours::lightgrey, true, true)
 {
 	setContentOwned(new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames, soloBusSettings), true);
 	centreWithSize(getWidth(), getHeight());
@@ -112,19 +112,19 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 	addAndMakeVisible(m_tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop));
 
 	AudioDeviceSelectorComponent* selector = new AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
-	m_tabbedComponent->addTab("Audio Device", Colour(0xffffffff), selector, true);
+	m_tabbedComponent->addTab(TRANS("Audio Device"), Colour(0xffffffff), selector, true);
 	
 	m_tableListBox = new TableListBox();
-	m_tabbedComponent->addTab("Channel Names", Colour(0xffffffff), m_tableListBox, true);
+	m_tabbedComponent->addTab(TRANS("Channel Names"), Colour(0xffffffff), m_tableListBox, true);
 	m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
 	m_tableListBox->setOutlineThickness(1);
 	m_tableListBox->setModel(m_channelNames);
 
 	// set the table header columns
-	m_tableListBox->getHeader().addColumn("Device Channel", 1, 200, 50, 400, TableHeaderComponent::defaultFlags);
-	m_tableListBox->getHeader().addColumn("Channel Name", 2, 200, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn(TRANS("Device Channel"), 1, 200, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn(TRANS("Channel Name"), 2, 200, 50, 400, TableHeaderComponent::defaultFlags);
 
-	m_tabbedComponent->addTab("Solo Bus", Colour(0xffffffff), m_soloBusComponent, true);
+	m_tabbedComponent->addTab(TRANS("Solo Bus"), Colour(0xffffffff), m_soloBusComponent, true);
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));
 	m_closeButton->setButtonText(TRANS("Close"));

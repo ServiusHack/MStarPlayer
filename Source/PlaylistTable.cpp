@@ -11,9 +11,9 @@ PlaylistTable::PlaylistTable(const PlaylistEntryChangedCallback& callback, Playl
 	getHeader().setPopupMenuActive(false);
 
 	// set the table header columns
-	getHeader().addColumn("#", 1, 25, 25, 50, TableHeaderComponent::notResizableOrSortable);
-	getHeader().addColumn("Name", 2, 200, 50, -1, TableHeaderComponent::notResizableOrSortable);
-	getHeader().addColumn("Duration", 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
+	getHeader().addColumn(TRANS("#"), 1, 25, 25, 50, TableHeaderComponent::notResizableOrSortable);
+	getHeader().addColumn(TRANS("Name"), 2, 200, 50, -1, TableHeaderComponent::notResizableOrSortable);
+	getHeader().addColumn(TRANS("Duration"), 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
 	getHeader().addColumn("", 4, 25, 25, 25, TableHeaderComponent::notResizableOrSortable);
 
 	m_model.addChangeListener(this);

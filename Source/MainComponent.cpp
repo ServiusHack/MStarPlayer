@@ -77,8 +77,8 @@ void MainContentComponent::resized()
 
 StringArray MainContentComponent::getMenuBarNames()
 {
-	static const char* const menuBarNames[] = { "Project", "Player", "View", "Options", nullptr };
-    return StringArray(menuBarNames);
+	static const String menuBarNames[] = { TRANS("Project"), TRANS("Player"), TRANS("View"), TRANS("Options") };
+    return StringArray(menuBarNames, 4);
 }
 
 PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*menuName*/)
@@ -166,69 +166,69 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     switch (commandID)
     {
     case projectNew:
-        result.setInfo ("New", "Create a new project", projectCategory, 0);
+        result.setInfo (TRANS("New"), TRANS("Create a new project"), projectCategory, 0);
         result.addDefaultKeypress ('N', ModifierKeys::commandModifier);
         break;
 
     case projectOpen:
-        result.setInfo ("Open", "Open an existing project", projectCategory, 0);
+        result.setInfo (TRANS("Open"), TRANS("Open an existing project"), projectCategory, 0);
         result.addDefaultKeypress ('O', ModifierKeys::commandModifier);
         break;
 
     case projectSave:
-        result.setInfo ("Save", "Save the current project", projectCategory, 0);
+        result.setInfo (TRANS("Save"), TRANS("Save the current project"), projectCategory, 0);
         result.addDefaultKeypress ('S', ModifierKeys::commandModifier);
         break;
 
     case projectSaveAs:
-        result.setInfo ("Save as ...", "Save the current project under ...", projectCategory, 0);
+        result.setInfo (TRANS("Save as ..."), TRANS("Save the current project under ..."), projectCategory, 0);
         break;
 
     case addJinglePlayer:
-        result.setInfo ("Add Jingle Player", "Add a simple player", playerCategory, 0);
+        result.setInfo (TRANS("Add Jingle Player"), TRANS("Add a simple player"), playerCategory, 0);
         result.addDefaultKeypress ('J', ModifierKeys::commandModifier);
         break;
 
     case addMultitrackPlayer:
-        result.setInfo ("Add Multitrack Player", "Add a player with multiple tracks", playerCategory, 0);
+        result.setInfo (TRANS("Add Multitrack Player"), TRANS("Add a player with multiple tracks"), playerCategory, 0);
         result.addDefaultKeypress ('M', ModifierKeys::commandModifier);
         break;
 
     case addPlaylistPlayer:
-        result.setInfo ("Add Playlist Player", "Add a player with a playlist", playerCategory, 0);
+        result.setInfo (TRANS("Add Playlist Player"), TRANS("Add a player with a playlist"), playerCategory, 0);
         result.addDefaultKeypress ('P', ModifierKeys::commandModifier);
         break;
 
     case addCDPlayer:
-        result.setInfo ("Add CD Player", "Add a player for audio CDs", playerCategory, 0);
+        result.setInfo (TRANS("Add CD Player"), TRANS("Add a player for audio CDs"), playerCategory, 0);
         result.addDefaultKeypress ('A', ModifierKeys::commandModifier);
         break;
 
 	case layoutModeFloating:
-		result.setInfo("Windows", "Players are floating windows", viewCategory, 0);
+		result.setInfo(TRANS("Windows"), TRANS("Players are floating windows"), viewCategory, 0);
 		result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::FloatingWindows);
 		break;
 
 	case layoutModeTabs:
-		result.setInfo("Tabs", "Players are tabs", viewCategory, 0);
+		result.setInfo(TRANS("Tabs"), TRANS("Players are tabs"), viewCategory, 0);
 		result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::MaximisedWindowsWithTabs);
 		break;
 
     case configureAudio:
-        result.setInfo ("Configure Audio", "Configure the audio device to use", optionsCategory, 0);
+        result.setInfo (TRANS("Configure Audio"), TRANS("Configure the audio device to use"), optionsCategory, 0);
         break;
 
 	case editSettings:
-		result.setInfo("Edit Settings", "Edit the application settings", optionsCategory, 0);
+		result.setInfo(TRANS("Edit Settings"), TRANS("Edit the application settings"), optionsCategory, 0);
 		break;
 
 	case lookAndFeelDefault:
-		result.setInfo("Standard", "Use the default look and feel", viewCategory, 0);
+		result.setInfo(TRANS("Standard"), TRANS("Use the default look and feel"), viewCategory, 0);
 		result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel);
 		break;
 
 	case lookAndFeelDark:
-		result.setInfo("Dark", "Use a dark look and feel", viewCategory, 0);
+		result.setInfo(TRANS("Dark"), TRANS("Use a dark look and feel"), viewCategory, 0);
 		result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel);
 		break;
     };
@@ -332,7 +332,7 @@ void MainContentComponent::openProject() {
     if (!askSaveProject())
         return;
 
-    FileChooser myChooser ("Please select the project file you want to load ...",
+    FileChooser myChooser (TRANS("Please select the project file you want to load ..."),
             File::nonexistent,
             "*.aupp");
     if (myChooser.browseForFileToOpen())
@@ -349,11 +349,11 @@ bool MainContentComponent::askSaveProject()
         return true;
 
     switch (AlertWindow::showYesNoCancelBox (AlertWindow::QuestionIcon,
-            "Save project?",
-            "Do you want to save the current project?",
-            "Yes",
-            "No",
-            "Cancel",
+            TRANS("Save project?"),
+            TRANS("Do you want to save the current project?"),
+            TRANS("Yes"),
+            TRANS("No"),
+            TRANS("Cancel"),
             this)) {
     case 1:
         return saveProject();
@@ -375,7 +375,7 @@ bool MainContentComponent::saveProject()
 
 bool MainContentComponent::saveAsProject()
 {
-    FileChooser myChooser ("Please select the project file you want to save ...",
+    FileChooser myChooser (TRANS("Please select the project file you want to save ..."),
             File::nonexistent,
             "*.aupp");
 	if (!myChooser.browseForFileToSave(true))
@@ -397,12 +397,12 @@ void MainContentComponent::readProjectFile()
 	FileInputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension()+".aupc"));
 	if (stream.failedToOpen())
 	{
-		loadWarnings.add("Unable to open audio thumbnail cache file.");
+		loadWarnings.add(TRANS("Unable to open audio thumbnail cache file."));
 	}
 	m_audioThumbnailCache.readFromStream(stream);
 	if (stream.getStatus().failed())
 	{
-		loadWarnings.add("Unable to load audio thumbnails.");
+		loadWarnings.add(TRANS("Unable to load audio thumbnails."));
 	}
 
 	try {
@@ -414,17 +414,17 @@ void MainContentComponent::readProjectFile()
 		if (!root)
 		{
 			String error = document.getLastParseError();
-			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to open project file", error);
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to open project file"), error);
 			return;
 		}
 
 		XmlElement* view = root->getChildByName("View");
 		if (view == nullptr)
-			loadWarnings.add("No view settings found, using default.");
+			loadWarnings.add(TRANS("No view settings found, using default."));
 		else {
 			XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
 			if (layoutModeElement == nullptr)
-				loadWarnings.add("No layout mode settings found, using default.");
+				loadWarnings.add(TRANS("No layout mode settings found, using default."));
 			else
 			{
 				String layoutMode = layoutModeElement->getAllSubText().trim();
@@ -433,12 +433,12 @@ void MainContentComponent::readProjectFile()
 				else if (layoutMode == "tabs")
 					m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::MaximisedWindowsWithTabs);
 				else
-					loadWarnings.add("Unknown view layout, using default.");
+					loadWarnings.add(TRANS("Unknown view layout, using default."));
 			}
 
 			XmlElement* styleElement = view->getChildByName("Style");
 			if (styleElement == nullptr)
-				loadWarnings.add("No style settings found, using default.");
+				loadWarnings.add(TRANS("No style settings found, using default."));
 			else
 			{
 				String style = styleElement->getAllSubText().trim();
@@ -447,13 +447,13 @@ void MainContentComponent::readProjectFile()
 				else if (style == "dark")
 					perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
 				else
-					loadWarnings.add("Unknown style, using default.");
+					loadWarnings.add(TRANS("Unknown style, using default."));
 			}
 		}
 
 		XmlElement* audio = root->getChildByName("Audio");
 		if (audio == nullptr)
-			loadWarnings.add("No audio settings found, using current.");
+			loadWarnings.add(TRANS("No audio settings found, using current."));
 		else
 		{
 			if (audio->getNumChildElements() > 0)
@@ -476,7 +476,7 @@ void MainContentComponent::readProjectFile()
 
 		XmlElement* channelNames = root->getChildByName("ChannelNames");
 		if (channelNames == nullptr)
-			loadWarnings.add("No channel names found, using device defaults.");
+			loadWarnings.add(TRANS("No channel names found, using device defaults."));
 		else
 		{
 			m_outputChannelNames->restoreFromXml(*channelNames);
@@ -484,7 +484,7 @@ void MainContentComponent::readProjectFile()
 
 		XmlElement* soloBusSettings = root->getChildByName("SoloBusSettings");
 		if (soloBusSettings == nullptr)
-			loadWarnings.add("No solo bus settings found, using no solo bus.");
+			loadWarnings.add(TRANS("No solo bus settings found, using no solo bus."));
 		else
 		{
 			m_soloBusSettings.restoreFromXml(*soloBusSettings);
@@ -492,7 +492,7 @@ void MainContentComponent::readProjectFile()
 
 		XmlElement* soloMixer = root->getChildByName("SoloBusMixer");
 		if (soloMixer == nullptr)
-			loadWarnings.add("No solo mixer settings found, using default volumes.");
+			loadWarnings.add(TRANS("No solo mixer settings found, using default volumes."));
 		else
 		{
 			m_soloComponent->restoreFromXml(*soloMixer);
@@ -501,14 +501,14 @@ void MainContentComponent::readProjectFile()
 		XmlElement* mixer = root->getChildByName("Mixer");
 
 		if (mixer == nullptr)
-			loadWarnings.add("No mixer settings found, using current.");
+			loadWarnings.add(TRANS("No mixer settings found, using current."));
 		else
 			m_mixerComponent->restoreFromXml(*mixer);
 
 		XmlElement* players = root->getChildByName("Players");
 
 		if (players == nullptr)
-			loadWarnings.add("No players found. None will be loaded.");
+			loadWarnings.add(TRANS("No players found. None will be loaded."));
 		else {
 
 			for (int i = 0; i < players->getNumChildElements(); i++)
@@ -529,7 +529,7 @@ void MainContentComponent::readProjectFile()
 						playerType = PlayerType::Multitrack;
 					}
 					else if (type != "playlist") {
-						loadWarnings.add("Unknown player type '" + type + "'.");
+						loadWarnings.add(String::formatted(TRANS("Unknown player type '%s'."), type));
 						continue;
 					}
 					Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
@@ -547,7 +547,7 @@ void MainContentComponent::readProjectFile()
 					window->restoreFromXml(*player, m_projectFile.getParentDirectory());
 				}
 				else {
-					loadWarnings.add("Unknown tag '" + player->getTagName() + "' in players list.");
+					loadWarnings.add(String::formatted(TRANS("Unknown tag '%s' in players list."), player->getTagName()));
 				}
 			}
 
@@ -559,11 +559,11 @@ void MainContentComponent::readProjectFile()
 		m_projectModified = false;
 
 		if (loadWarnings.size() > 0)
-			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Problems while opening the project", loadWarnings.joinIntoString("\n"));
+			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Problems while opening the project"), loadWarnings.joinIntoString("\n"));
 	}
 	catch (const std::exception& e)
 	{
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed opening the project", String::fromUTF8(e.what()));
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed opening the project"), String::fromUTF8(e.what()));
 		m_projectModified = false;
 		m_multiDocumentPanel->closeAllDocuments(false);
 	}
@@ -632,20 +632,20 @@ void MainContentComponent::writeProjectFile()
     root->addChildElement(players);
 
 	if (!root->writeToFile(m_projectFile, ""))
-        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project file", "Failed to save project file.");
+        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to save project file"), TRANS("Failed to save project file."));
     else
 		m_projectModified = false;
 
 	FileOutputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension()+".aupc"));
 	if (stream.failedToOpen())
 	{
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project", "Failed to open audio thumbnail cache file.");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to save project"), TRANS("Failed to open audio thumbnail cache file."));
 		return;
 	}
 	m_audioThumbnailCache.writeToStream(stream);
 	if (stream.getStatus().failed())
 	{
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Failed to save project", "Failed to save audio thumbnails.");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to save project"), TRANS("Failed to save audio thumbnails."));
 	}
 }
 

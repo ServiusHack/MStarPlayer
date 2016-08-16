@@ -106,11 +106,11 @@ void TrackUi::buttonClicked(Button *button)
 	}
 	else if (button == m_editButton) {
 		PopupMenu m;
-		m.addItem (1, "edit track");
-		m.addItem (5, "delete track", !m_trackHasFilesCallback(m_track.getTrackIndex()));
-		m.addItem (2, "open file");
-		m.addItem (3, "edit file", m_track.getTrackConfig().file != File::nonexistent);
-		m.addItem (4, "remove file", m_track.getTrackConfig().file != File::nonexistent);
+		m.addItem (1, TRANS("edit track"));
+		m.addItem (5, TRANS("delete track"), !m_trackHasFilesCallback(m_track.getTrackIndex()));
+		m.addItem (2, TRANS("open file"));
+		m.addItem (3, TRANS("edit file"), m_track.getTrackConfig().file != File::nonexistent);
+		m.addItem (4, TRANS("remove file"), m_track.getTrackConfig().file != File::nonexistent);
 		m.addSeparator();
 		const int result = m.show();
 
@@ -141,8 +141,8 @@ void TrackUi::buttonClicked(Button *button)
 
 			File file(m_track.getTrackConfig().file);
 			m_track.unloadFile();
-			AlertWindow blockDialog("Audio editor launched", "Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again.", AlertWindow::NoIcon);
-			blockDialog.addButton("ok", 1);
+			AlertWindow blockDialog(TRANS("Audio editor launched"), TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again."), AlertWindow::NoIcon);
+			blockDialog.addButton(TRANS("ok"), 1);
 			blockDialog.runModalLoop();
 			m_track.loadFileIntoTransport(file);
 			break;
@@ -178,7 +178,7 @@ void TrackUi::updateIdText()
 	std::stringstream stream;
 	stream << m_track.getTrackIndex();
 	stream << " ";
-	stream << (m_track.isStereo() ? "St" : "Mo");
+	stream << (m_track.isStereo() ? TRANS("St") : TRANS("Mo"));
 	m_idLabel->setText(stream.str(), sendNotification);
 }
 
@@ -239,7 +239,7 @@ void TrackUi::positionChanged(double position)
 
 void TrackUi::loadFile()
 {
-	FileChooser myChooser ("Please select the audio file you want to load ...",
+	FileChooser myChooser (TRANS("Please select the audio file you want to load ..."),
 			File::nonexistent,
 			m_track.getAudioFormatManager().getWildcardForAllFormats());
 	if (!myChooser.browseForFileToOpen())
@@ -255,16 +255,16 @@ void TrackUi::loadFile(const File& audioFile)
 	if (reader != nullptr) {
 		if (reader->numChannels > 2) {
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-				"MStarPlayer",
-				"The selected file has more than two channels. This is not supported."
+				TRANS("MStarPlayer"),
+				TRANS("The selected file has more than two channels. This is not supported.")
 				);
 			return;
 		}
 
 		if (!m_track.isStereo() && reader->numChannels != 1) {
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-				"MStarPlayer",
-				String::formatted("The selected file has %d channels but this is a mono track.", reader->numChannels)
+				TRANS("MStarPlayer"),
+				String::formatted(TRANS("The selected file has %d channels but this is a mono track."), reader->numChannels)
 				);
 			return;
 		}
@@ -272,7 +272,7 @@ void TrackUi::loadFile(const File& audioFile)
 		if (m_track.isStereo() && reader->numChannels != 2) {
 			AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
 				"MStarPlayer",
-				String::formatted("The selected file has %d channel(s) but this is a stereo track.", reader->numChannels)
+				String::formatted(TRANS("The selected file has %d channel(s) but this is a stereo track."), reader->numChannels)
 				);
 			return;
 		}

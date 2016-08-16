@@ -58,13 +58,13 @@ void ChannelMapping::paintCell (Graphics& g,
 		String text = String(rowNumber + 1);
 		switch (m_mapping[rowNumber].first) {
 		case 'm':
-			text += " (mono)";
+			text += TRANS(" (mono)");
 			break;
 		case 'l':
-			text += " (left)";
+			text += TRANS(" (left)");
 			break;
 		case 'r':
-			text += " (right)";
+			text += TRANS(" (right)");
 			break;
 		}
         g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
@@ -130,7 +130,7 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 }
 
 ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
-	: DialogWindow("Configure Channels", Colours::lightgrey, true, false)
+	: DialogWindow(TRANS("Configure Channels"), Colours::lightgrey, true, false)
 	, m_closeCallback(closeCallback)
 {
 	m_component = new ChannelMappingComponent(outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback);
@@ -167,8 +167,8 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames *outputChann
 	m_tableListBox->setOutlineThickness(1);
 
 	// set the table header columns
-	m_tableListBox->getHeader().addColumn("Player Channel", 1, 120, 50, 400, TableHeaderComponent::defaultFlags);
-	m_tableListBox->getHeader().addColumn("Output Channel", 2, 220, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn(TRANS("Player Channel"), 1, 120, 50, 400, TableHeaderComponent::defaultFlags);
+	m_tableListBox->getHeader().addColumn(TRANS("Output Channel"), 2, 220, 50, 400, TableHeaderComponent::defaultFlags);
 
 	addAndMakeVisible(m_closeButton = new TextButton("close"));
 	m_closeButton->setButtonText(TRANS("Close"));

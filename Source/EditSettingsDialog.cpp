@@ -4,7 +4,7 @@
 
 
 EditSettingsWindow::EditSettingsWindow(ApplicationProperties& applicationProperties)
-	: DialogWindow ("Edit Settings", Colours::lightgrey, true, true)
+	: DialogWindow (TRANS("Edit Settings"), Colours::lightgrey, true, true)
 {
 	setContentOwned(new EditSettingsComponent(this, applicationProperties), true);
 	centreWithSize(getWidth(), getHeight());

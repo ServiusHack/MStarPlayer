@@ -4,8 +4,8 @@
 
 SoloBusMixer::SoloBusMixer(SoloBusSettings& soloBusSettings, ChannelVolumeAudioSource& channelVolumeAudioSource)
 	: m_soloBusSettings(soloBusSettings)
-	, m_leftMixer(-1, &channelVolumeAudioSource, "Solo L")
-	, m_rightMixer(-1, &channelVolumeAudioSource, "Solo R")
+	, m_leftMixer(-1, &channelVolumeAudioSource, TRANS("Solo L"))
+	, m_rightMixer(-1, &channelVolumeAudioSource, TRANS("Solo R"))
 	, m_leftFader(&m_leftMixer, {}, false, MixerFader::ResizeCallback(), false, false)
 	, m_rightFader(&m_rightMixer, {}, false, MixerFader::ResizeCallback(), false, false)
 {

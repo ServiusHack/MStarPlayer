@@ -185,8 +185,8 @@ void CDPlayer::mouseDown(const MouseEvent & event)
         return;
 
     PopupMenu m;
-    m.addItem (1, "configure channels");
-    m.addItem (2, "configure appearance");
+    m.addItem (1, TRANS("configure channels"));
+    m.addItem (2, TRANS("configure appearance"));
     const int result = m.show();
 
     switch (result) {

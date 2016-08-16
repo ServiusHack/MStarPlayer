@@ -144,10 +144,10 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 {
 
 	PopupMenu popup;
-	popup.addItem(1, "append");
-	popup.addItem(2, "insert", enableInsert);
-	popup.addItem(3, "edit", enableInsert);
-	popup.addItem(4, "delete", enableDelete);
+	popup.addItem(1, TRANS("append"));
+	popup.addItem(2, TRANS("insert"), enableInsert);
+	popup.addItem(3, TRANS("edit"), enableInsert);
+	popup.addItem(4, TRANS("delete"), enableDelete);
 
 	switch (popup.show()) {
 	case 1:

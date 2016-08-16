@@ -2,7 +2,7 @@
 
 
 TrackEditDialogWindow::TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
-	: DialogWindow("Edit track", Colours::lightgrey, true, true)
+	: DialogWindow(TRANS("Edit track"), Colours::lightgrey, true, true)
 {
 	TrackEditDialogComponent* component = new TrackEditDialogComponent(name, trackGain, settingsChangedCallback, volumeChangedCallback, this);
 	setContentOwned(component, true);

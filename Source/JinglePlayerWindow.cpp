@@ -199,13 +199,13 @@ void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 	if (event.eventComponent == m_configureButton)
 	{
 		PopupMenu m;
-		m.addItem (1, "load file");
-		m.addItem(2, "configure channels");
-		m.addItem(3, "configure appearance");
+		m.addItem(1, TRANS("load file"));
+		m.addItem(2, TRANS("configure channels"));
+		m.addItem(3, TRANS("configure appearance"));
 		m.addSeparator();
-		m.addItem(4, "Jingle Mode", true, true);
-		m.addItem(5, "Multitrack Mode");
-		m.addItem(6, "Playlist Mode");
+		m.addItem(4, TRANS("Jingle Mode"), true, true);
+		m.addItem(5, TRANS("Multitrack Mode"));
+		m.addItem(6, TRANS("Playlist Mode"));
 
 		const int result = m.show();
 
@@ -234,7 +234,7 @@ void JinglePlayerWindow::mouseDown (const MouseEvent & event)
 
 void JinglePlayerWindow::loadFile()
 {
-	FileChooser myChooser ("Please select the audio file you want to load ...",
+	FileChooser myChooser (TRANS("Please select the audio file you want to load ..."),
 			File::nonexistent,
 			m_formatManager.getWildcardForAllFormats());
 	
