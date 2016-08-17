@@ -2,8 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "SubchannelPlayer.h"
 #include "MixerFader.h"
+#include "SubchannelPlayer.h"
 
 /**
 	MixerFader for a player.
@@ -11,12 +11,12 @@
 class PlayerMixerFader : public MixerFader
 {
 public:
-	PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
+    PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
 
-	SubchannelPlayer* getPlayer() const;
+    SubchannelPlayer* getPlayer() const;
 
 private:
-	SubchannelPlayer* player;
+    SubchannelPlayer* player;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerMixerFader)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerMixerFader)
 };

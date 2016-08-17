@@ -5,10 +5,10 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "ChangeableArrowButton.h"
+#include "LevelMeter.h"
 #include "MixerControlable.h"
 #include "VolumeSlider.h"
-#include "LevelMeter.h"
-#include "ChangeableArrowButton.h"
 
 /**
 	A set of controls for an player channel or output channel.
@@ -21,76 +21,75 @@
 	- pan slider (not fully implemented yet)
 */
 class MixerFader
-	: public Component
-	, public ButtonListener
-	, public juce::Slider::Listener
-	, public MixerControlableChangeListener
+    : public Component
+    , public ButtonListener
+    , public juce::Slider::Listener
+    , public MixerControlableChangeListener
 {
 public:
+    typedef std::function<void(bool)> SoloChangedCallback;
+    typedef std::function<void()> ResizeCallback;
 
-	typedef std::function<void(bool)> SoloChangedCallback;
-	typedef std::function<void()> ResizeCallback;
+    MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled = true, bool muteEnabled = true);
+    ~MixerFader();
 
-	MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled = true, bool muteEnabled = true);
-	~MixerFader();
+    float getValue() const;
+    void setValue(float value);
 
-	float getValue() const;
-	void setValue(float value);
+    void setMute(bool mute);
+    void setSolo(bool solo);
 
-	void setMute(bool mute);
-	void setSolo(bool solo);
+    void setColor(const Colour& color);
 
-	void setColor(const Colour& color);
+    void setLabel(const String& text);
 
-	void setLabel(const String& text);
+    void setMixSettings(std::vector<MixerControlable*> mixSettings);
 
-	void setMixSettings(std::vector<MixerControlable*> mixSettings);
-
-	void updateLevel();
+    void updateLevel();
 
 // Component
 public:
-	virtual void paint(Graphics&) override;
-	virtual void resized() override;
+    virtual void paint(Graphics&) override;
+    virtual void resized() override;
 
 // ButtonListener
 public:
-	virtual void buttonClicked(Button* buttonThatWasClicked) override;
+    virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 // Slider::Listener
 public:
-	virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
+    virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
 
 // MixerControlableChangeListener
 public:
-	virtual void gainChanged(float gain) override;
+    virtual void gainChanged(float gain) override;
 
-	virtual void panChanged(float pan) override;
+    virtual void panChanged(float pan) override;
 
-	virtual void soloChanged(bool solo) override;
+    virtual void soloChanged(bool solo) override;
 
-	virtual void muteChanged(bool mute) override;
+    virtual void muteChanged(bool mute) override;
 
-	virtual void nameChanged(const String& name) override;
+    virtual void nameChanged(const String& name) override;
 
 protected:
-	ScopedPointer<VolumeSlider> m_volumeSlider;
+    ScopedPointer<VolumeSlider> m_volumeSlider;
 
 private:
-	ScopedPointer<Label> m_label;
-	ScopedPointer<TextButton> m_soloButton;
-	ScopedPointer<TextButton> m_muteButton;
-	ScopedPointer<ChangeableArrowButton> m_expandButton;
-	ScopedPointer<Slider> m_panSlider;
-	ScopedPointer<LevelMeter> m_levelMeter;
+    ScopedPointer<Label> m_label;
+    ScopedPointer<TextButton> m_soloButton;
+    ScopedPointer<TextButton> m_muteButton;
+    ScopedPointer<ChangeableArrowButton> m_expandButton;
+    ScopedPointer<Slider> m_panSlider;
+    ScopedPointer<LevelMeter> m_levelMeter;
 
-	ResizeCallback m_resizeCallback;
+    ResizeCallback m_resizeCallback;
 
-	std::vector<std::unique_ptr<MixerFader>> m_subfaders;
+    std::vector<std::unique_ptr<MixerFader>> m_subfaders;
 
-	MixerControlable* m_mixerControlable;
+    MixerControlable* m_mixerControlable;
 
-	Colour m_color;
+    Colour m_color;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerFader)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerFader)
 };

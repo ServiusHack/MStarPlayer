@@ -10,5 +10,5 @@
 class DarkLookAndFeel : public DefaultLookAndFeel
 {
 public:
-	DarkLookAndFeel();
+    DarkLookAndFeel();
 };

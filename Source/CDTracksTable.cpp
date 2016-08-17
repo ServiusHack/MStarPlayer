@@ -40,10 +40,12 @@ void CDTracksTable::previous()
 
 void CDTracksTable::next()
 {
-    if (getSelectedRow() + 1 < static_cast<CDTracksModel*>(getModel())->getNumRows()) {
+    if (getSelectedRow() + 1 < static_cast<CDTracksModel*>(getModel())->getNumRows())
+    {
         forceSelectRow(getSelectedRow() + 1);
     }
-    else {
+    else
+    {
         forceSelectRow(0);
     }
 }
@@ -54,5 +56,4 @@ void CDTracksTable::forceSelectRow(int rowIndex)
         selectRow(rowIndex);
     else
         selectedRowsChanged(rowIndex);
-
 }

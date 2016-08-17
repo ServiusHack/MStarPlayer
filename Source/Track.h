@@ -5,177 +5,188 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "MixerControlable.h"
 #include "ChannelRemappingAudioSourceWithVolume.h"
+#include "MixerControlable.h"
 #include "PlaylistEntry.h"
 
 /**
 	Actual logic for the playback of a track.
 */
 class Track
-	: public MixerControlable
-	, public SoloBusSettingsListener
-	, private Timer
+    : public MixerControlable
+    , public SoloBusSettingsListener
+    , private Timer
 {
 public:
-	typedef std::function<void()> DurationChangedCallback;
-	typedef std::function<void(double, bool)> PositionCallback;
-	typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
-	typedef std::function<void()> ChannelCountChangedCallback;
-	typedef std::function<void(const File&, bool)> FileChangedCallback;
-	typedef std::function<void(bool)> PlayingStateChangedCallback;
-	typedef std::function<void()> TrackConfigChangedCallback;
+    typedef std::function<void()> DurationChangedCallback;
+    typedef std::function<void(double, bool)> PositionCallback;
+    typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
+    typedef std::function<void()> ChannelCountChangedCallback;
+    typedef std::function<void(const File&, bool)> FileChangedCallback;
+    typedef std::function<void(bool)> PlayingStateChangedCallback;
+    typedef std::function<void()> TrackConfigChangedCallback;
 
-	Track(MixerAudioSource &tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
-	~Track();
+    Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+    ~Track();
 
-	void play();
-	void pause();
-	void stop();
+    void play();
+    void pause();
+    void stop();
 
-	double getDuration();
+    double getDuration();
 
-	void setPosition(double position);
+    void setPosition(double position);
 
-	int getNumChannels();
+    int getNumChannels();
 
-	void setOutputChannels(int outputChannels);
+    void setOutputChannels(int outputChannels);
 
-	void setOutputChannelMapping(int source, int target);
-	std::vector<int> getMapping();
+    void setOutputChannelMapping(int source, int target);
+    std::vector<int> getMapping();
 
-	void timerCallback() override;
-	void callPositionCallbacks(double position);
+    void timerCallback() override;
+    void callPositionCallbacks(double position);
 
-	void loadFileIntoTransport(const File& audioFile);
-	void reloadFile();
-	void unloadFile();
+    void loadFileIntoTransport(const File& audioFile);
+    void reloadFile();
+    void unloadFile();
 
-	PositionCallbackRegistrationToken addPositionCallback(PositionCallback callback = PositionCallback());
-	void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
-	void setFileChangedCallback(FileChangedCallback fileChangedCallback);
+    PositionCallbackRegistrationToken addPositionCallback(PositionCallback callback = PositionCallback());
+    void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
+    void setFileChangedCallback(FileChangedCallback fileChangedCallback);
 
-	void saveToXml(XmlElement* element) const;
-	void restoreFromXml(const XmlElement& element);
+    void saveToXml(XmlElement* element) const;
+    void restoreFromXml(const XmlElement& element);
 
-	void loadTrackConfig(const TrackConfig& config);
-	TrackConfig getTrackConfig();
+    void loadTrackConfig(const TrackConfig& config);
+    TrackConfig getTrackConfig();
 
-	bool isPlaying();
-	
+    bool isPlaying();
+
 // Solo mute: Track should be muted because other track(s) are in solo mode.
 public:
-	virtual void setSoloMute(bool mute) override;
-	virtual bool getSoloMute() const override;
+    virtual void setSoloMute(bool mute) override;
+    virtual bool getSoloMute() const override;
+
 private:
-	bool m_soloMute;
+    bool m_soloMute;
 
 // player gain
 public:
-	void setPlayerGain(float gain);
+    void setPlayerGain(float gain);
+
 private:
-	float m_playerGain;
+    float m_playerGain;
 
 // player mute
 public:
-	void setPlayerSolo(bool solo);
+    void setPlayerSolo(bool solo);
+
 private:
-	bool m_playerSolo;
+    bool m_playerSolo;
 
 // player mute
 public:
-	void setPlayerMute(bool mute);
+    void setPlayerMute(bool mute);
+
 private:
-	bool m_playerMute;
+    bool m_playerMute;
 
 // MixerControlable gain
 public:
-	virtual void setGain(float gain) override;
-	virtual float getGain() const override;
+    virtual void setGain(float gain) override;
+    virtual float getGain() const override;
+
 private:
-	float m_trackGain;
+    float m_trackGain;
 
 // MixerControlable mute
 public:
-	virtual void setMute(bool mute) override;
-	virtual bool getMute() const override;
+    virtual void setMute(bool mute) override;
+    virtual bool getMute() const override;
+
 private:
-	bool m_mute;
+    bool m_mute;
 
 // MixerControlable solo
 public:
-	virtual void setSolo(bool solo) override;
-	virtual bool getSolo() const override;
+    virtual void setSolo(bool solo) override;
+    virtual bool getSolo() const override;
+
 private:
-	bool m_solo;
+    bool m_solo;
 
 // MixerControlable pan
 public:
-	virtual void setPan(float) override {};
-	virtual float getPan() const override { return 0; };
-
-	virtual float getVolume() const override;
+    virtual void setPan(float) override{};
+    virtual float getPan() const override { return 0; };
+    virtual float getVolume() const override;
 
 // MixerControlable name
 public:
-	void setName(String name);
-	String getName() const override;
+    void setName(String name);
+    String getName() const override;
+
 private:
-	String m_name;
+    String m_name;
 
 // AudioFormat
 public:
-	AudioFormatManager& getAudioFormatManager();
+    AudioFormatManager& getAudioFormatManager();
+
 private:
-	AudioFormatManager m_formatManager;
+    AudioFormatManager m_formatManager;
 
 // stereo
 public:
-	bool isStereo() const;
-	void setStereo(bool stereo);
+    bool isStereo() const;
+    void setStereo(bool stereo);
+
 private:
-	bool m_stereo;
+    bool m_stereo;
 
 // track ID
 public:
-	int getTrackIndex() const;
-	void setTrackIndex(int index);
+    int getTrackIndex() const;
+    void setTrackIndex(int index);
+
 private:
-	int m_trackIndex;
+    int m_trackIndex;
 
 // Audio Thumbnail
 public:
-	AudioThumbnail& getAudioThumbnail();
+    AudioThumbnail& getAudioThumbnail();
+
 private:
-	AudioThumbnailCache& m_audioThumbnailCache;
-	AudioThumbnail m_audioThumbnail;
+    AudioThumbnailCache& m_audioThumbnailCache;
+    AudioThumbnail m_audioThumbnail;
 
 // SoloBusListener
 public:
-	void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
+    void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 
 private:
-	void updateGain();
+    void updateGain();
 
-	File m_audioFile;
-	MixerAudioSource &m_tracksMixer;
-	TimeSliceThread& m_thread;
-	ScopedPointer<AudioFormatReaderSource> m_currentAudioFileSource;
-	AudioTransportSource m_transportSource;
-	SoloBusSettings& m_soloBusSettings;
-	ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
+    File m_audioFile;
+    MixerAudioSource& m_tracksMixer;
+    TimeSliceThread& m_thread;
+    ScopedPointer<AudioFormatReaderSource> m_currentAudioFileSource;
+    AudioTransportSource m_transportSource;
+    SoloBusSettings& m_soloBusSettings;
+    ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
-	double m_duration;
+    double m_duration;
 
-	DurationChangedCallback m_durationChangedCallback;
-	DurationChangedCallback m_soloChangedCallback;
-	std::list<PositionCallback> m_positionCallbacks;
-	ChannelCountChangedCallback m_channelCountChangedCallback;
-	FileChangedCallback m_fileChangedCallback;
-	PlayingStateChangedCallback m_playingStateChangedCallback;
-	TrackConfigChangedCallback m_trackConfigChangedCallback;
+    DurationChangedCallback m_durationChangedCallback;
+    DurationChangedCallback m_soloChangedCallback;
+    std::list<PositionCallback> m_positionCallbacks;
+    ChannelCountChangedCallback m_channelCountChangedCallback;
+    FileChangedCallback m_fileChangedCallback;
+    PlayingStateChangedCallback m_playingStateChangedCallback;
+    TrackConfigChangedCallback m_trackConfigChangedCallback;
 
-	bool m_loadingTrackConfig;
+    bool m_loadingTrackConfig;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Track)
 };

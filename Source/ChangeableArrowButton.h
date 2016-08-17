@@ -18,12 +18,12 @@ public:
 
     /** @internal */
     void paintButton(Graphics&, bool isMouseOverButton, bool isButtonDown) override;
-    
+
     void setArrowDirection(float arrowDirection);
 
 private:
     Colour colour;
     Path path;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChangeableArrowButton)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChangeableArrowButton)
 };

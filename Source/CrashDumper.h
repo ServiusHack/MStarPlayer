@@ -13,16 +13,16 @@
 class CrashDumper : public ThreadWithProgressWindow
 {
 public:
-	CrashDumper(EXCEPTION_POINTERS* e);
+    CrashDumper(EXCEPTION_POINTERS* e);
 
-	static void init();
+    static void init();
 
 // ThreadWithProgressWindow
 public:
-	virtual void run() override;
+    virtual void run() override;
 
 private:
-	EXCEPTION_POINTERS* e;
+    EXCEPTION_POINTERS* e;
 };
 
 #endif

@@ -4,8 +4,8 @@
 #include "OutputChannelNames.h"
 #include "SoloBusSettings.h"
 
-class SoloBusComponent  : public Component,
-                          public ComboBoxListener
+class SoloBusComponent : public Component,
+                         public ComboBoxListener
 {
 public:
     SoloBusComponent(OutputChannelNames& outputChannelNames, SoloBusSettings& settings);
@@ -13,17 +13,17 @@ public:
 
 // Component
 public:
-    void paint (Graphics& g) override;
+    void paint(Graphics& g) override;
     void resized() override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 private:
-	SoloBusSettings& soloBusSettings;
+    SoloBusSettings& soloBusSettings;
 
     ScopedPointer<Label> label;
     ScopedPointer<Label> label2;
     ScopedPointer<ComboBox> comboBox;
     ScopedPointer<ComboBox> comboBox2;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SoloBusComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SoloBusComponent)
 };

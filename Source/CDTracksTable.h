@@ -27,7 +27,7 @@ public:
 
 // ChangeListener
 public:
-    virtual void changeListenerCallback(ChangeBroadcaster *source) override;
+    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
     void forceSelectRow(int rowIndex);

@@ -1,6 +1,5 @@
 ﻿#include "Translations.h"
 
-
 const String Translations::German = CharPointer_UTF8(u8R"-|-(
 language: German
 countries:de

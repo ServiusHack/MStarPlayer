@@ -8,8 +8,7 @@
 class Utils
 {
 public:
-	/* Return seconds in the common mm:ss:zzz format.
+    /* Return seconds in the common mm:ss:zzz format.
 	 */
-	static String formatSeconds(double totalSeconds);
+    static String formatSeconds(double totalSeconds);
 };
-

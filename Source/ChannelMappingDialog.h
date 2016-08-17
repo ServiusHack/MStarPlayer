@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <functional>
+#include <vector>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -22,8 +22,8 @@ typedef std::function<void()> CloseCallback;
     for the combo box component.
 */
 class ChannelMapping
-	: public TableListBoxModel
-	, public ComboBoxListener
+    : public TableListBoxModel
+    , public ComboBoxListener
 {
 public:
     /** A component to view and edit the channel mapping.
@@ -37,7 +37,7 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-	ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
+    ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
 
     /** Get the output channel for a table row.
 
@@ -60,22 +60,22 @@ public:
     */
     void setChannelMapping(int row, int outputChannel);
 
-// TableListBoxModel overrides
+    // TableListBoxModel overrides
 public:
-	virtual int getNumRows() override;
-    virtual void paintRowBackground (Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
-    virtual void paintCell (Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-	virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+    virtual int getNumRows() override;
+    virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
+    virtual void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+    virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
-//ComboBoxListener overrides
+    //ComboBoxListener overrides
 public:
-	virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 private:
     OutputChannelNames* m_outputChannelNames;
     SoloBusSettings& m_soloBusSettings;
-	std::vector<std::pair<char, int>> m_mapping;
-	const ChangeMappingCallback m_callback;
+    std::vector<std::pair<char, int>> m_mapping;
+    const ChangeMappingCallback m_callback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMapping)
 };
@@ -84,32 +84,32 @@ private:
 	The actual component containing controls to change the mapping from playback channels to output channels.
 */
 class ChannelMappingComponent
-	: public Component
-	, public ButtonListener
+    : public Component,
+      public ButtonListener
 {
 public:
-	ChannelMappingComponent(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback);
+    ChannelMappingComponent(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback);
 
-	void setMapping(const std::vector<std::pair<char,int>>& mapping);
+    void setMapping(const std::vector<std::pair<char, int>>& mapping);
 
-// Component overrides
+    // Component overrides
 public:
-	virtual void resized() override;
+    virtual void resized() override;
 
-// ButtonListener
+    // ButtonListener
 public:
-	void buttonClicked(Button* buttonThatWasClicked);
+    void buttonClicked(Button* buttonThatWasClicked);
 
 private:
-	OutputChannelNames* m_outputChannelNames;
-	SoloBusSettings& m_soloBusSettings;
-	const ChangeMappingCallback m_changeCallback;
-	const CloseCallback m_closeCallback;
-	ScopedPointer<TableListBox> m_tableListBox;
-	ScopedPointer<ChannelMapping> m_channelMapping;
-	ScopedPointer<TextButton> m_closeButton;
+    OutputChannelNames* m_outputChannelNames;
+    SoloBusSettings& m_soloBusSettings;
+    const ChangeMappingCallback m_changeCallback;
+    const CloseCallback m_closeCallback;
+    ScopedPointer<TableListBox> m_tableListBox;
+    ScopedPointer<ChannelMapping> m_channelMapping;
+    ScopedPointer<TextButton> m_closeButton;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
 };
 
 /**
@@ -124,20 +124,20 @@ public:
 
         @see ChannelMapping
     */
-	ChannelMappingWindow(OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char,int>> mapping, const ChangeMappingCallback& callback, const CloseCallback& closeCallback);
+    ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback, const CloseCallback& closeCallback);
 
-	void setMapping(const std::vector<std::pair<char, int>>& mapping);
+    void setMapping(const std::vector<std::pair<char, int>>& mapping);
 
-// DialogWindow
+    // DialogWindow
 public:
     /** Delete (and thus close) the window when requested by the user.
     */
     virtual void closeButtonPressed() override;
 
 private:
-	const CloseCallback m_closeCallback;
+    const CloseCallback m_closeCallback;
 
-	ChannelMappingComponent* m_component;
+    ChannelMappingComponent* m_component;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingWindow)
 };

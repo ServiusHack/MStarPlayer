@@ -7,18 +7,18 @@
 */
 class LevelMeter : public Component
 {
-  public:
-	  static const int refreshRate = 20; // Updates per second.
+public:
+    static const int refreshRate = 20; // Updates per second.
 
-	  LevelMeter();
+    LevelMeter();
 
-	  void setVolume(float volume);
+    void setVolume(float volume);
 
-	  virtual void paint(Graphics& g) override;
+    virtual void paint(Graphics& g) override;
 
 private:
-	const AffineTransform m_rotationTransformation;
-	float m_volume;
-	float m_peak;
-	int m_peakDurationLeft;
+    const AffineTransform m_rotationTransformation;
+    float m_volume;
+    float m_peak;
+    int m_peakDurationLeft;
 };

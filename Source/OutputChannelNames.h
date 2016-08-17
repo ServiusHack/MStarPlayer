@@ -8,8 +8,8 @@
 class OutputChannelNamesListener
 {
 public:
-	virtual void outputChannelNamesReset() = 0;
-	virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) = 0;
+    virtual void outputChannelNamesReset() = 0;
+    virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) = 0;
 };
 
 /**
@@ -21,60 +21,60 @@ public:
 */
 struct DeviceIdentification
 {
-	String deviceTypeName;
-	String deviceName;
+    String deviceTypeName;
+    String deviceName;
 
-	inline bool operator!=(const DeviceIdentification& other);
+    inline bool operator!=(const DeviceIdentification& other);
 };
 
 /**
 	Maintains the user defined output channel names.
 */
 class OutputChannelNames
-	: public ChangeListener
-	, public ChangeBroadcaster
+    : public ChangeListener
+    , public ChangeBroadcaster
 {
 public:
-	OutputChannelNames(AudioDeviceManager& deviceManager);
+    OutputChannelNames(AudioDeviceManager& deviceManager);
 
-	int getNumberOfChannels();
+    int getNumberOfChannels();
 
 private:
-	DeviceIdentification ExtractDeviceIdentification(AudioIODevice* audioDevice);
-	AudioIODevice* m_audioDevice;
-	DeviceIdentification m_deviceIdentification;
+    DeviceIdentification ExtractDeviceIdentification(AudioIODevice* audioDevice);
+    AudioIODevice* m_audioDevice;
+    DeviceIdentification m_deviceIdentification;
 
 // output device names and their internal names
 public:
-	String getDeviceOutputChannelName(int activeChannelIndex);
-	StringArray getAllDeviceOutputChannelNames();
-	String getInternalOutputChannelName(int activeChannelIndex);
-	void setInternalOutputChannelName(int activeChannelIndex, const String& text);
+    String getDeviceOutputChannelName(int activeChannelIndex);
+    StringArray getAllDeviceOutputChannelNames();
+    String getInternalOutputChannelName(int activeChannelIndex);
+    void setInternalOutputChannelName(int activeChannelIndex, const String& text);
 
 private:
-	StringArray m_deviceOutputChannelNames;
-	StringArray m_internalOutputChannelNames;
+    StringArray m_deviceOutputChannelNames;
+    StringArray m_internalOutputChannelNames;
 
 // XML serialization
 public:
-	void saveToXml(XmlElement* element) const;
-	void restoreFromXml(const XmlElement &element);
+    void saveToXml(XmlElement* element) const;
+    void restoreFromXml(const XmlElement& element);
 
 // OutputChannelNamesListener management
 public:
-	/**
+    /**
 		Add a listener which will be notified when a channel name changes or all names are reset.
 
 		The ownership will not be transfered, it is the caller's responsibility to remove and destroy the listener later.
 	*/
-	void addListener(OutputChannelNamesListener* listener);
+    void addListener(OutputChannelNamesListener* listener);
 
-	void removeListener(OutputChannelNamesListener* listener);
+    void removeListener(OutputChannelNamesListener* listener);
 
 private:
-	std::vector<OutputChannelNamesListener*> m_listeners;
+    std::vector<OutputChannelNamesListener*> m_listeners;
 
 // ChangeListener
 public:
-	virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 };

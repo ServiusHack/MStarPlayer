@@ -2,7 +2,7 @@
 
 DarkLookAndFeel::DarkLookAndFeel()
 {
-	setColour(ResizableWindow::backgroundColourId, Colours::grey);
-	setColour(PopupMenu::backgroundColourId, Colours::grey);
-	setColour(AlertWindow::backgroundColourId, Colours::grey);
+    setColour(ResizableWindow::backgroundColourId, Colours::grey);
+    setColour(PopupMenu::backgroundColourId, Colours::grey);
+    setColour(AlertWindow::backgroundColourId, Colours::grey);
 }

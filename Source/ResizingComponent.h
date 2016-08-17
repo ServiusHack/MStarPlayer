@@ -5,5 +5,5 @@
 class ResizingComponent : public Component
 {
 public:
-	virtual void childBoundsChanged(Component *child) override;
+    virtual void childBoundsChanged(Component* child) override;
 };

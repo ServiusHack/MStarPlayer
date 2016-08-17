@@ -20,13 +20,13 @@ public:
     */
     ChannelVolumeAudioSource(AudioSource* source);
 
-	void setChannelCount(int channelCount);
-	int channelCount() const;
+    void setChannelCount(int channelCount);
+    int channelCount() const;
 
 private:
-	AudioSource* m_source;
+    AudioSource* m_source;
     CriticalSection m_lock;
-    
+
 // volume
 public:
     /** Resets all volumes.
@@ -48,46 +48,46 @@ public:
 
     /** Returns the volume from a channel.
     */
-	float getChannelVolume(size_t channelIndex) const;
+    float getChannelVolume(size_t channelIndex) const;
 
 private:
     std::vector<float> m_setVolumes;
 
 // solo
 public:
-	void setChannelSolo(size_t channelIndex, bool solo);
-	bool getChannelSolo(size_t channelIndex) const;
+    void setChannelSolo(size_t channelIndex, bool solo);
+    bool getChannelSolo(size_t channelIndex) const;
 
 private:
-	std::vector<bool> m_setSolos;
-	bool m_anySolo;
+    std::vector<bool> m_setSolos;
+    bool m_anySolo;
 
-	// mute
+    // mute
 public:
-	void setChannelMute(size_t channelIndex, bool mute);
-	bool getChannelMute(size_t channelIndex) const;
+    void setChannelMute(size_t channelIndex, bool mute);
+    bool getChannelMute(size_t channelIndex) const;
 
 private:
-	std::vector<bool> m_setMutes;
+    std::vector<bool> m_setMutes;
 
 // actual output volume
 public:
-	float getActualVolume(size_t channelIndex) const;
+    float getActualVolume(size_t channelIndex) const;
 
 private:
-	std::vector<VolumeAnalyzer> m_actualVolumes;
-	size_t m_bufferSize;
+    std::vector<VolumeAnalyzer> m_actualVolumes;
+    size_t m_bufferSize;
 
 // gain to apply
 private:
-	void updateGain(size_t channelIndex);
-	std::vector<float> m_appliedGains;
+    void updateGain(size_t channelIndex);
+    std::vector<float> m_appliedGains;
 
 // AudioSource
 public:
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
-	virtual void releaseResources() override;
-	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    virtual void releaseResources() override;
+    virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelVolumeAudioSource)

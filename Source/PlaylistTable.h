@@ -10,33 +10,33 @@
 	The playlist table component.
 */
 class PlaylistTable
-	: public TableListBox
-	, public ChangeListener
+    : public TableListBox
+    , public ChangeListener
 {
 public:
-	typedef std::function<void(const std::vector<TrackConfig>& trackConfigs,bool)> PlaylistEntryChangedCallback;
+    typedef std::function<void(const std::vector<TrackConfig>& trackConfigs, bool)> PlaylistEntryChangedCallback;
 
-	PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel);
+    PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel);
 
-	void setCurrentDuration(double duration);
+    void setCurrentDuration(double duration);
 
-	void previous();
-	void next(bool onlyIfEntrySaysSo = false);
+    void previous();
+    void next(bool onlyIfEntrySaysSo = false);
 
 // TableListBox
 public:
-	virtual void selectedRowsChanged(int lastRowSelected) override;
-	virtual void resized() override;
+    virtual void selectedRowsChanged(int lastRowSelected) override;
+    virtual void resized() override;
 
 // ChangeListener
 public:
-	virtual void changeListenerCallback(ChangeBroadcaster *source) override;
+    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-	void forceSelectRow(int rowIndex);
+    void forceSelectRow(int rowIndex);
 
-	PlaylistEntryChangedCallback m_callback;
-	PlaylistModel& m_model;
+    PlaylistEntryChangedCallback m_callback;
+    PlaylistModel& m_model;
 
-	bool m_playNext;
+    bool m_playNext;
 };

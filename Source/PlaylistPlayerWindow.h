@@ -2,18 +2,18 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "TracksComponent.h"
 #include "ChannelMappingDialog.h"
-#include "Utils.h"
+#include "InterPlayerCommunication.h"
 #include "PlayerEditDialog.h"
 #include "PlaylistTable.h"
-#include "InterPlayerCommunication.h"
+#include "TracksComponent.h"
+#include "Utils.h"
 
 /**
 	User interface with an optional playlist and a list of tracks.
 */
 class PlaylistPlayerWindow
-	: public Component
+    : public Component
     , public Button::Listener
 {
 public:
@@ -24,52 +24,52 @@ public:
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-	PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
+    PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
 
-	void setColor(const Colour& color);
+    void setColor(const Colour& color);
 
-	void setShowPlaylist(bool showPlaylist);
+    void setShowPlaylist(bool showPlaylist);
 
-	int getSelectedRow() const;
+    int getSelectedRow() const;
 
-	int getResizerBarPosition() const;
+    int getResizerBarPosition() const;
 
-	void setResizerBarPosition(int position);
+    void setResizerBarPosition(int position);
 
 // Component overrides
 public:
-	virtual void paint(Graphics&) override;
-	virtual void resized() override;
-	virtual void mouseDown(const MouseEvent & event) override;
+    virtual void paint(Graphics&) override;
+    virtual void resized() override;
+    virtual void mouseDown(const MouseEvent& event) override;
 
 // Button::Listener
 public:
-	virtual void buttonClicked(Button* /*button*/) override;
+    virtual void buttonClicked(Button* /*button*/) override;
 
 private:
-	void fileLoaded(const String& filename);
+    void fileLoaded(const String& filename);
 
-	ScopedPointer<ImageButton> m_playButton;
-	ScopedPointer<ImageButton> m_pauseButton;
-	ScopedPointer<ImageButton> m_stopButton;
-	ScopedPointer<ImageButton> m_skipBackwardButton;
-	ScopedPointer<ImageButton> m_skipForwardButton;
-	ScopedPointer<ImageButton> m_configureButton;
-	ScopedPointer<Label>       m_digitalDisplay;
-	ScopedPointer<TracksComponent> m_tracks;
-	ScopedPointer<Viewport>    m_tracksViewport;
-	ScopedPointer<PlaylistTable> m_tableListBox;
-	ScopedPointer<StretchableLayoutResizerBar> m_resizeBar;
+    ScopedPointer<ImageButton> m_playButton;
+    ScopedPointer<ImageButton> m_pauseButton;
+    ScopedPointer<ImageButton> m_stopButton;
+    ScopedPointer<ImageButton> m_skipBackwardButton;
+    ScopedPointer<ImageButton> m_skipForwardButton;
+    ScopedPointer<ImageButton> m_configureButton;
+    ScopedPointer<Label> m_digitalDisplay;
+    ScopedPointer<TracksComponent> m_tracks;
+    ScopedPointer<Viewport> m_tracksViewport;
+    ScopedPointer<PlaylistTable> m_tableListBox;
+    ScopedPointer<StretchableLayoutResizerBar> m_resizeBar;
 
-	TracksContainer* m_tracksContainer;
+    TracksContainer* m_tracksContainer;
 
-	Colour m_color;
+    Colour m_color;
 
-	InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
-	InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;
-	InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
+    InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
+    InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;
+    InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
 
-	StretchableLayoutManager m_layout;
+    StretchableLayoutManager m_layout;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };

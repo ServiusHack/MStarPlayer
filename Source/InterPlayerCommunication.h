@@ -7,14 +7,15 @@
 */
 namespace InterPlayerCommunication
 {
-	enum class PlayerType {
-		Jingle,
-		Multitrack,
-		Playlist
-	};
+    enum class PlayerType
+    {
+        Jingle,
+        Multitrack,
+        Playlist
+    };
 
-	typedef std::function<void()> ShowEditDialogCallback;
-	typedef std::function<void()> ConfigureChannelsCallback;
-	typedef std::function<void(PlayerType)> ChangePlayerTypeCallback;
-	typedef std::function<void(String)> SetUserImageCallback;
+    typedef std::function<void()> ShowEditDialogCallback;
+    typedef std::function<void()> ConfigureChannelsCallback;
+    typedef std::function<void(PlayerType)> ChangePlayerTypeCallback;
+    typedef std::function<void(String)> SetUserImageCallback;
 }

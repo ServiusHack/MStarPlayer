@@ -2,45 +2,47 @@
 
 XmlElement* PlaylistEntry::saveToXml(const File& projectDirectory) const
 {
-	XmlElement* entryXml = new XmlElement("Entry");
-	
-	XmlElement* nameXml = new XmlElement("Name");
-	nameXml->addTextElement(name);
-	entryXml->addChildElement(nameXml);
+    XmlElement* entryXml = new XmlElement("Entry");
 
-	entryXml->setAttribute("playNext", playNext);
+    XmlElement* nameXml = new XmlElement("Name");
+    nameXml->addTextElement(name);
+    entryXml->addChildElement(nameXml);
 
-	XmlElement* trackConfigsXml = new XmlElement("TrackConfigs");
+    entryXml->setAttribute("playNext", playNext);
 
-	for (size_t i = 0; i < trackConfigs.size(); ++i) {
-		XmlElement* trackConfigXml = new XmlElement("TrackConfig");
-		XmlElement* fileXml = new XmlElement("File");
-		if (trackConfigs[i].file.isAChildOf(projectDirectory))
-			fileXml->addTextElement(trackConfigs[i].file.getRelativePathFrom(projectDirectory));
-		else
-			fileXml->addTextElement(trackConfigs[i].file.getFullPathName());
-		trackConfigXml->addChildElement(fileXml);
-		trackConfigsXml->addChildElement(trackConfigXml);
-	}
+    XmlElement* trackConfigsXml = new XmlElement("TrackConfigs");
 
-	entryXml->addChildElement(trackConfigsXml);
+    for (size_t i = 0; i < trackConfigs.size(); ++i)
+    {
+        XmlElement* trackConfigXml = new XmlElement("TrackConfig");
+        XmlElement* fileXml = new XmlElement("File");
+        if (trackConfigs[i].file.isAChildOf(projectDirectory))
+            fileXml->addTextElement(trackConfigs[i].file.getRelativePathFrom(projectDirectory));
+        else
+            fileXml->addTextElement(trackConfigs[i].file.getFullPathName());
+        trackConfigXml->addChildElement(fileXml);
+        trackConfigsXml->addChildElement(trackConfigXml);
+    }
 
-	return entryXml;
+    entryXml->addChildElement(trackConfigsXml);
+
+    return entryXml;
 }
 PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element, const File& projectDirectory)
 {
-	PlaylistEntry entry;
+    PlaylistEntry entry;
 
-	entry.name = element.getChildByName("Name")->getAllSubText().trim();
-	entry.playNext = element.getBoolAttribute("playNext");
+    entry.name = element.getChildByName("Name")->getAllSubText().trim();
+    entry.playNext = element.getBoolAttribute("playNext");
 
-	XmlElement* trackConfigsXml = element.getChildByName("TrackConfigs");
+    XmlElement* trackConfigsXml = element.getChildByName("TrackConfigs");
 
-	for (int i = 0; i < trackConfigsXml->getNumChildElements(); ++i) {
-		TrackConfig config;
-		config.file = File(projectDirectory.getChildFile(trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim()));
-		entry.trackConfigs.push_back(config);
-	}
+    for (int i = 0; i < trackConfigsXml->getNumChildElements(); ++i)
+    {
+        TrackConfig config;
+        config.file = File(projectDirectory.getChildFile(trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim()));
+        entry.trackConfigs.push_back(config);
+    }
 
-	return entry;
+    return entry;
 }

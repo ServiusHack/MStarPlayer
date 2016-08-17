@@ -2,7 +2,6 @@
 
 #include "Utils.h"
 
-
 CDTracksModel::CDTracksModel(AudioCDReader& reader)
     : m_reader(reader)
 {
@@ -20,19 +19,22 @@ void CDTracksModel::paintRowBackground(Graphics& g, int /*rowNumber*/, int /*wid
 }
 
 void CDTracksModel::paintCell(Graphics& g,
-    int rowNumber,
-    int columnId,
-    int width, int height,
-    bool /*rowIsSelected*/)
+                              int rowNumber,
+                              int columnId,
+                              int width,
+                              int height,
+                              bool /*rowIsSelected*/)
 {
     g.setColour(Colours::black);
 
     if (rowNumber >= 0 && rowNumber < m_reader.getNumTracks())
     {
-        if (columnId == 1) {
+        if (columnId == 1)
+        {
             g.drawText(String(rowNumber + 1), 2, 0, width - 4, height, Justification::centredLeft, true);
         }
-        else if (columnId == 2) {
+        else if (columnId == 2)
+        {
             const String formattedDuration = Utils::formatSeconds((m_reader.getPositionOfTrackStart(rowNumber + 1) - m_reader.getPositionOfTrackStart(rowNumber)) / m_reader.sampleRate);
             g.drawText(formattedDuration, 2, 0, width - 4, height, Justification::centredLeft, true);
         }

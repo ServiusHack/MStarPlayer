@@ -14,7 +14,6 @@
 
 class MyMultiDocumentPanel;
 
-
 //==============================================================================
 /**
     This is a derivative of DocumentWindow that is used inside a MyMultiDocumentPanel
@@ -25,13 +24,13 @@ class MyMultiDocumentPanel;
 
     @see MyMultiDocumentPanel
 */
-class JUCE_API  MyMultiDocumentPanelWindow  : public DocumentWindow
+class JUCE_API MyMultiDocumentPanelWindow : public DocumentWindow
 {
 public:
     //==============================================================================
     /**
     */
-    MyMultiDocumentPanelWindow (Colour backgroundColour);
+    MyMultiDocumentPanelWindow(Colour backgroundColour);
 
     /** Destructor. */
     ~MyMultiDocumentPanelWindow();
@@ -51,9 +50,8 @@ private:
     void updateOrder();
     MyMultiDocumentPanel* getOwner() const noexcept;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MyMultiDocumentPanelWindow)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MyMultiDocumentPanelWindow)
 };
-
 
 //==============================================================================
 /**
@@ -67,7 +65,7 @@ private:
     panel - never use any of the Component methods to access the panel's child
     components directly, as these are managed internally.
 */
-class JUCE_API  MyMultiDocumentPanel  : public Component,
+class JUCE_API MyMultiDocumentPanel : public Component,
                                       private ComponentListener
 {
 public:
@@ -101,7 +99,7 @@ public:
 
         @see closeDocument
     */
-    bool closeAllDocuments (bool checkItsOkToCloseFirst);
+    bool closeAllDocuments(bool checkItsOkToCloseFirst);
 
     /** Adds a document component to the panel.
 
@@ -120,9 +118,9 @@ public:
                                     or closeAllDocuments(), then it will be deleted. If false, then
                                     the caller must handle the component's deletion
     */
-    bool addDocument (Component* component,
-                      Colour backgroundColour,
-                      bool deleteWhenRemoved);
+    bool addDocument(Component* component,
+                     Colour backgroundColour,
+                     bool deleteWhenRemoved);
 
     /** Closes one of the documents.
 
@@ -138,8 +136,8 @@ public:
 
         @see addDocument, closeAllDocuments
     */
-    bool closeDocument (Component* component,
-                        bool checkItsOkToCloseFirst);
+    bool closeDocument(Component* component,
+                       bool checkItsOkToCloseFirst);
 
     /** Returns the number of open document windows.
 
@@ -154,7 +152,7 @@ public:
 
         @see getNumDocuments
     */
-    Component* getDocument (int index) const noexcept;
+    Component* getDocument(int index) const noexcept;
 
     /** Returns the document component that is currently focused or on top.
 
@@ -171,7 +169,7 @@ public:
 
         @see getActiveDocument
     */
-    void setActiveDocument (Component* component);
+    void setActiveDocument(Component* component);
 
     /** Callback which gets invoked when the currently-active document changes. */
     virtual void activeDocumentChanged();
@@ -181,7 +179,7 @@ public:
         If this is zero or less there's no limit (the default). addDocument() will fail
         if this number is exceeded.
     */
-    void setMaximumNumDocuments (int maximumNumDocuments);
+    void setMaximumNumDocuments(int maximumNumDocuments);
 
     /** Sets an option to make the document fullscreen if there's only one document open.
 
@@ -190,7 +188,7 @@ public:
         will always be shown, even if there's only one document. If there's more than
         one document open, then this option makes no difference.
     */
-    void useFullscreenWhenOneDocument (bool shouldUseTabs);
+    void useFullscreenWhenOneDocument(bool shouldUseTabs);
 
     /** Returns the result of the last time useFullscreenWhenOneDocument() was called.
     */
@@ -200,35 +198,32 @@ public:
     /** The different layout modes available. */
     enum LayoutMode
     {
-        FloatingWindows,            /**< In this mode, there are overlapping DocumentWindow components for each document. */
-        MaximisedWindowsWithTabs    /**< In this mode, a TabbedComponent is used to show one document at a time. */
+        FloatingWindows,         /**< In this mode, there are overlapping DocumentWindow components for each document. */
+        MaximisedWindowsWithTabs /**< In this mode, a TabbedComponent is used to show one document at a time. */
     };
 
     /** Changes the panel's mode.
 
         @see LayoutMode, getLayoutMode
     */
-    void setLayoutMode (LayoutMode newLayoutMode);
+    void setLayoutMode(LayoutMode newLayoutMode);
 
     /** Returns the current layout mode. */
-    LayoutMode getLayoutMode() const noexcept                           { return mode; }
-
+    LayoutMode getLayoutMode() const noexcept { return mode; }
     /** Sets the background colour for the whole panel.
 
         Each document has its own background colour, but this is the one used to fill the areas
         behind them.
     */
-    void setBackgroundColour (Colour newBackgroundColour);
+    void setBackgroundColour(Colour newBackgroundColour);
 
     /** Returns the current background colour.
 
         @see setBackgroundColour
     */
-    Colour getBackgroundColour() const noexcept                         { return backgroundColour; }
-
+    Colour getBackgroundColour() const noexcept { return backgroundColour; }
     /** If the panel is being used in tabbed mode, this returns the TabbedComponent that's involved. */
-    TabbedComponent* getCurrentTabbedComponent() const noexcept         { return tabComponent; }
-
+    TabbedComponent* getCurrentTabbedComponent() const noexcept { return tabComponent; }
     //==============================================================================
     /** A subclass must override this to say whether its currently ok for a document
         to be closed.
@@ -251,7 +246,7 @@ public:
 
         @see closeDocument, FileBasedDocument::saveIfNeededAndUserAgrees()
     */
-    virtual bool tryToCloseDocument (Component* component);
+    virtual bool tryToCloseDocument(Component* component);
 
     /** Creates a new window to be used for a document.
 
@@ -262,16 +257,16 @@ public:
 
     //==============================================================================
     /** @internal */
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     /** @internal */
     void resized() override;
     /** @internal */
-    void componentNameChanged (Component&) override;
+    void componentNameChanged(Component&) override;
 
 private:
     //==============================================================================
     LayoutMode mode;
-    Array <Component*> components;
+    Array<Component*> components;
     ScopedPointer<TabbedComponent> tabComponent;
     Colour backgroundColour;
     int maximumNumDocuments, numDocsBeforeTabsUsed;
@@ -282,9 +277,9 @@ private:
     friend class MyMultiDocumentPanelWindow;
     friend class TabbedComponentInternal;
 
-    Component* getContainerComp (Component*) const;
+    Component* getContainerComp(Component*) const;
     void updateOrder();
-    void addWindow (Component*);
+    void addWindow(Component*);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MyMultiDocumentPanel)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MyMultiDocumentPanel)
 };

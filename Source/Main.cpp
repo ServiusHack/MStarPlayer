@@ -8,44 +8,42 @@ class MStarPlayerApplication : public JUCEApplication
 {
 public:
     MStarPlayerApplication() {}
-
     const String getApplicationName()       { return ProjectInfo::projectName; }
     const String getApplicationVersion()    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed()       { return true; }
-
-    void initialise (const String& /*commandLine*/)
-	{
+    void initialise(const String& /*commandLine*/)
+    {
 #ifdef _WIN32
-		CrashDumper::init();
+        CrashDumper::init();
 #endif
 
-		PropertiesFile::Options options;
-		options.applicationName = "MStarPlayer";
-		options.filenameSuffix = ".settings";
-		m_applicationProperties.setStorageParameters(options);
+        PropertiesFile::Options options;
+        options.applicationName = "MStarPlayer";
+        options.filenameSuffix = ".settings";
+        m_applicationProperties.setStorageParameters(options);
 
-		if (m_applicationProperties.getUserSettings()->getValue("language") == "de")
-		{
-			LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
-		}
-		else if (m_applicationProperties.getUserSettings()->getValue("language") == "en")
-		{
-			// Default is English.
-		}
-		else if (SystemStats::getUserLanguage() == "de")
-		{
-			LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
-		}
+        if (m_applicationProperties.getUserSettings()->getValue("language") == "de")
+        {
+            LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
+        }
+        else if (m_applicationProperties.getUserSettings()->getValue("language") == "en")
+        {
+            // Default is English.
+        }
+        else if (SystemStats::getUserLanguage() == "de")
+        {
+            LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
+        }
 
-		MainContentComponent::initLookAndFeel();
-		LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
-		m_mainWindow = new MainWindow(m_applicationProperties);
+        MainContentComponent::initLookAndFeel();
+        LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
+        m_mainWindow = new MainWindow(m_applicationProperties);
     }
 
     void shutdown()
     {
-		m_mainWindow = nullptr; // (deletes our window)
-		MainContentComponent::destroyLookAndFeel();
+        m_mainWindow = nullptr; // (deletes our window)
+        MainContentComponent::destroyLookAndFeel();
     }
 
     void systemRequestedQuit()
@@ -64,16 +62,16 @@ public:
     class MainWindow : public DocumentWindow
     {
     public:
-
         // the command manager object used to dispatch command events
         ApplicationCommandManager commandManager;
 
-        MainWindow(ApplicationProperties& properties) : DocumentWindow ("M*Player",
-                                        Colours::lightgrey,
-                                        DocumentWindow::allButtons)
+        MainWindow(ApplicationProperties& properties)
+            : DocumentWindow("M*Player",
+                             Colours::lightgrey,
+                             DocumentWindow::allButtons)
         {
             MainContentComponent* main = new MainContentComponent(properties, &commandManager);
-            
+
             commandManager.registerAllCommandsForTarget(main);
             commandManager.registerAllCommandsForTarget(JUCEApplication::getInstance());
 
@@ -106,8 +104,8 @@ public:
     };
 
 private:
-	ScopedPointer<MainWindow> m_mainWindow;
-	ApplicationProperties m_applicationProperties;
+    ScopedPointer<MainWindow> m_mainWindow;
+    ApplicationProperties m_applicationProperties;
 };
 
 // This macro generates the main() routine that launches the app.

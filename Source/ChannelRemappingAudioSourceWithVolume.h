@@ -9,8 +9,8 @@
 	Audio source which remaps channels and tracks the current volume of each channel.
 */
 class ChannelRemappingAudioSourceWithVolume
-	: public AudioSource
-	, public SoloBusSettingsListener
+    : public AudioSource
+    , public SoloBusSettingsListener
 {
 public:
     ChannelRemappingAudioSourceWithVolume(AudioSource* source, SoloBusSettings& soloBusSettings, bool deleteSourceWhenDeleted);
@@ -18,14 +18,14 @@ public:
 
 // Channel volume
 public:
-	float getVolume() const;
+    float getVolume() const;
 
-	double getSampleRate() const;
+    double getSampleRate() const;
 
 private:
-	std::vector<VolumeAnalyzer> m_volumes;
-	size_t m_bufferSize;
-	double m_sampleRate;
+    std::vector<VolumeAnalyzer> m_volumes;
+    size_t m_bufferSize;
+    double m_sampleRate;
 
 // ChannelRemappingAudioSource
 public:
@@ -33,7 +33,7 @@ public:
     /** Specifies a number of channels that this audio source must produce from its
         getNextAudioBlock() callback.
     */
-	void setNumberOfChannelsToProduce(int requiredNumberOfChannels);
+    void setNumberOfChannelsToProduce(int requiredNumberOfChannels);
 
     /** Clears any mapped channels.
 
@@ -52,20 +52,20 @@ public:
         @param destChannelIndex     the index of the output channel in the incoming audio data buffer
                                     during our getNextAudioBlock() callback
     */
-    void setOutputChannelMapping (int sourceChannelIndex,
-                                  int destChannelIndex);
+    void setOutputChannelMapping(int sourceChannelIndex,
+                                 int destChannelIndex);
 
-	void setOutputChannelMappingInternal(const int sourceIndex, const int destIndex, const bool solo);
+    void setOutputChannelMappingInternal(const int sourceIndex, const int destIndex, const bool solo);
 
     /** Returns the output channel to which channel outputChannelIndex of our input audio
         source will be sent to.
     */
-    int getRemappedOutputChannel (int outputChannelIndex) const;
+    int getRemappedOutputChannel(int outputChannelIndex) const;
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void releaseResources() override;
-	virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
 
     //==============================================================================
     /** Returns an XML object to encapsulate the state of the mappings.
@@ -76,27 +76,25 @@ public:
     /** Restores the mappings from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml (const XmlElement&);
+    void restoreFromXml(const XmlElement&);
 
-	void setSolo(bool solo);
+    void setSolo(bool solo);
 
 private:
     OptionalScopedPointer<AudioSource> source;
-    Array<std::pair<int,int>> remappedOutputs;
+    Array<std::pair<int, int>> remappedOutputs;
     int requiredNumberOfChannels;
 
     AudioSampleBuffer buffer;
     AudioSourceChannelInfo remappedInfo;
     CriticalSection lock;
 
-	int m_soloLeftChannel = -1;
-	int m_soloRightChannel = -1;
-	bool m_solo{ false };
-	SoloBusSettings& m_soloBusSettings;
+    int m_soloLeftChannel = -1;
+    int m_soloRightChannel = -1;
+    bool m_solo{false};
+    SoloBusSettings& m_soloBusSettings;
 
 // SoloBusSettingsListener
 public:
-	void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
-
-
+    void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 };

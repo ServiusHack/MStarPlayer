@@ -5,11 +5,11 @@
 #include "MixerComponent.h"
 #include "MixerControlable.h"
 
-#include "SubchannelPlayer.h"
 #include "CDNamesComboBox.h"
 #include "CDTracksModel.h"
 #include "CDTracksTable.h"
 #include "SoloBusSettings.h"
+#include "SubchannelPlayer.h"
 
 #include "ChannelMappingDialog.h"
 #include "PlayerEditDialog.h"
@@ -27,9 +27,8 @@ class CDPlayer
     , public SoloBusSettingsListener
     , private Timer
 {
-
 public:
-    CDPlayer(MixerComponent* mixer, OutputChannelNames *outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
+    CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
     ~CDPlayer();
 
 // XML serialization
@@ -48,7 +47,7 @@ public:
 public:
     virtual void paint(Graphics&) override;
     virtual void resized() override;
-    virtual void mouseDown(const MouseEvent & event) override;
+    virtual void mouseDown(const MouseEvent& event) override;
 
 // SubchannelPlayer
 public:
@@ -64,13 +63,13 @@ public:
     virtual bool getMute() const override;
     virtual float getVolume() const override;
     virtual String getName() const override;
-    virtual void setName (const String& newName) override;
+    virtual void setName(const String& newName) override;
     virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;
     virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
 // KeyListener
 public:
-    virtual bool keyPressed(const KeyPress &key, Component *originatingComponent) override;
+    virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
 // Button::Listener
 public:
@@ -78,7 +77,7 @@ public:
 
 // ComboBox::Listener
 public:
-    virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 // Slider::Listener
 public:
@@ -124,7 +123,7 @@ private:
     ScopedPointer<ImageButton> m_skipForwardButton;
     ScopedPointer<ImageButton> m_ejectButton;
     ScopedPointer<ImageButton> m_configureButton;
-    ScopedPointer<Label>       m_digitalDisplay;
+    ScopedPointer<Label> m_digitalDisplay;
     ScopedPointer<CDNamesComboBox> m_availableCDsComboBox;
     ScopedPointer<Slider> m_slider;
     OptionalScopedPointer<AudioCDReader> m_reader;
