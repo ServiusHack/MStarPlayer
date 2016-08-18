@@ -18,7 +18,7 @@ void PlayerEditDialogWindow::closeButtonPressed()
 
 String PlayerEditDialogWindow::getPlayerName() const
 {
-    return static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor->getText();
+    return static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor.getText();
 }
 
 bool PlayerEditDialogWindow::keyPressed(const KeyPress& key)
@@ -34,7 +34,7 @@ bool PlayerEditDialogWindow::keyPressed(const KeyPress& key)
 
 void PlayerEditDialogWindow::focusGained(FocusChangeType /*cause*/)
 {
-    static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor->grabKeyboardFocus();
+    static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor.grabKeyboardFocus();
 }
 
 PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, const Colour& color, const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const PlayerEditDialogWindow::CloseCallback& closeCallback, const PlayerEditDialogWindow::ImageChangedCallback& imageCallback)
@@ -44,31 +44,34 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
     , m_closeCallback(closeCallback)
     , m_imageCallback(imageCallback)
     , m_imageFile(imagePath == "" ? File::nonexistent : File(imagePath))
+    , m_label("new label", TRANS("Name of the player:"))
+    , m_textEditor("new text editor")
+    , m_colorButton("color")
+    , m_closeButton("close")
 {
-    addAndMakeVisible(m_label = new Label("new label",
-                                          TRANS("Name of the player:")));
-    m_label->setFont(Font(15.00f, Font::plain));
-    m_label->setJustificationType(Justification::centredLeft);
-    m_label->setEditable(false, false, false);
-    m_label->setColour(TextEditor::textColourId, Colours::black);
-    m_label->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    addAndMakeVisible(m_label);
+    m_label.setFont(Font(15.00f, Font::plain));
+    m_label.setJustificationType(Justification::centredLeft);
+    m_label.setEditable(false, false, false);
+    m_label.setColour(TextEditor::textColourId, Colours::black);
+    m_label.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
 
-    addAndMakeVisible(m_textEditor = new TextEditor("new text editor"));
-    m_textEditor->setMultiLine(false);
-    m_textEditor->setReturnKeyStartsNewLine(false);
-    m_textEditor->setReadOnly(false);
-    m_textEditor->setScrollbarsShown(true);
-    m_textEditor->setCaretVisible(true);
-    m_textEditor->setPopupMenuEnabled(true);
-    m_textEditor->setEscapeAndReturnKeysConsumed(false);
-    m_textEditor->setText(playerName);
-    m_textEditor->selectAll();
-    m_textEditor->addListener(this);
+    addAndMakeVisible(m_textEditor);
+    m_textEditor.setMultiLine(false);
+    m_textEditor.setReturnKeyStartsNewLine(false);
+    m_textEditor.setReadOnly(false);
+    m_textEditor.setScrollbarsShown(true);
+    m_textEditor.setCaretVisible(true);
+    m_textEditor.setPopupMenuEnabled(true);
+    m_textEditor.setEscapeAndReturnKeysConsumed(false);
+    m_textEditor.setText(playerName);
+    m_textEditor.selectAll();
+    m_textEditor.addListener(this);
 
-    addAndMakeVisible(m_colorButton = new TextButton("color"));
-    m_colorButton->setButtonText(TRANS("Choose color"));
-    m_colorButton->addListener(this);
-    m_colorButton->setWantsKeyboardFocus(false);
+    addAndMakeVisible(m_colorButton);
+    m_colorButton.setButtonText(TRANS("Choose color"));
+    m_colorButton.addListener(this);
+    m_colorButton.setWantsKeyboardFocus(false);
 
     if (imageCallback)
     {
@@ -88,21 +91,14 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
         m_imageResetButton->setEnabled(m_imageFile != File::nonexistent);
     }
 
-    addAndMakeVisible(m_closeButton = new TextButton("close"));
-    m_closeButton->setButtonText(TRANS("Close"));
-    m_closeButton->addListener(this);
-    m_closeButton->setWantsKeyboardFocus(false);
+    addAndMakeVisible(m_closeButton);
+    m_closeButton.setButtonText(TRANS("Close"));
+    m_closeButton.addListener(this);
+    m_closeButton.setWantsKeyboardFocus(false);
 
     setWantsKeyboardFocus(false);
 
     setSize(200, 200);
-}
-
-PlayerEditDialogComponent::~PlayerEditDialogComponent()
-{
-    m_label = nullptr;
-    m_textEditor = nullptr;
-    m_closeButton = nullptr;
 }
 
 void PlayerEditDialogComponent::resized()
@@ -112,10 +108,10 @@ void PlayerEditDialogComponent::resized()
     const static int buttonWidth = 80;
     const static int buttonHeight = 24;
 
-    m_label->setBounds(padding, padding, getWidth(), rowHeight);
-    m_textEditor->setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
+    m_label.setBounds(padding, padding, getWidth(), rowHeight);
+    m_textEditor.setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
 
-    m_colorButton->setBounds(padding, 2 * (padding + rowHeight), getWidth() - 2 * padding, rowHeight);
+    m_colorButton.setBounds(padding, 2 * (padding + rowHeight), getWidth() - 2 * padding, rowHeight);
 
     int rowIndex = 2;
     if (m_imageSelectorButton)
@@ -126,7 +122,7 @@ void PlayerEditDialogComponent::resized()
         m_imageResetButton->setBounds(padding + halfWidth, rowIndex * (padding + rowHeight), halfWidth, rowHeight);
     }
 
-    m_closeButton->setBounds(
+    m_closeButton.setBounds(
         (getWidth() - buttonWidth) / 2,
         getHeight() - rowIndex * (buttonHeight - padding),
         buttonWidth,
@@ -135,7 +131,7 @@ void PlayerEditDialogComponent::resized()
 
 void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 {
-    if (buttonThatWasClicked == m_closeButton)
+    if (buttonThatWasClicked == &m_closeButton)
         m_closeCallback();
     else if (buttonThatWasClicked == m_imageSelectorButton.get())
     {
@@ -158,7 +154,7 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 
         m_imageResetButton->setEnabled(m_imageFile != File::nonexistent);
     }
-    else if (buttonThatWasClicked == m_colorButton)
+    else if (buttonThatWasClicked == &m_colorButton)
     {
         ColourSelector* selector = new ColourSelector(ColourSelector::showColourspace);
         selector->setName(TRANS("color chooser"));
@@ -167,7 +163,7 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
         selector->setSize(300, 400);
         selector->addChangeListener(this);
 
-        CallOutBox::launchAsynchronously(selector, m_colorButton->getScreenBounds(), nullptr);
+        CallOutBox::launchAsynchronously(selector, m_colorButton.getScreenBounds(), nullptr);
     }
 }
 
@@ -180,5 +176,5 @@ void PlayerEditDialogComponent::changeListenerCallback(ChangeBroadcaster* source
 
 void PlayerEditDialogComponent::textEditorTextChanged(TextEditor&)
 {
-    m_stringCallback(m_textEditor->getText());
+    m_stringCallback(m_textEditor.getText());
 }

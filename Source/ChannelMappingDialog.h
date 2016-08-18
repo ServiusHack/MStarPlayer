@@ -105,9 +105,9 @@ private:
     SoloBusSettings& m_soloBusSettings;
     const ChangeMappingCallback m_changeCallback;
     const CloseCallback m_closeCallback;
-    ScopedPointer<TableListBox> m_tableListBox;
+    TableListBox m_tableListBox;
     ScopedPointer<ChannelMapping> m_channelMapping;
-    ScopedPointer<TextButton> m_closeButton;
+    TextButton m_closeButton;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
 };

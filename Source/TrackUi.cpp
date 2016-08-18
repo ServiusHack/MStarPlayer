@@ -12,56 +12,53 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
     , m_removeTrackCallback(removeTrackCallback)
     , m_trackHasFilesCallback(trackHasFilesCallback)
     , m_fileLoadedCallback(fileLoadedCallback)
+    , m_editButton("edit")
+    , m_soloButton("solo")
+    , m_muteButton("mute")
+    , m_fileNameLabel("filename label")
 {
-    m_idLabel = new Label();
     addAndMakeVisible(m_idLabel);
     updateIdText();
 
-    m_descriptionLabel = new Label();
     addAndMakeVisible(m_descriptionLabel);
-    m_descriptionLabel->setText(getName(), sendNotification);
-    m_descriptionLabel->setJustificationType(Justification::topLeft);
+    m_descriptionLabel.setText(getName(), sendNotification);
+    m_descriptionLabel.setJustificationType(Justification::topLeft);
 
-    m_volumeSlider = new VolumeSlider();
     addAndMakeVisible(m_volumeSlider);
-    m_volumeSlider->setValue(1.0);
-    m_volumeSlider->addListener(this);
+    m_volumeSlider.setValue(1.0);
+    m_volumeSlider.addListener(this);
 
-    m_editButton = new ImageButton("edit");
     Image editImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
-    m_editButton->setImages(true, true, true,
+    m_editButton.setImages(true, true, true,
                             editImage, 0.7f, Colours::transparentBlack,
                             editImage, 1.0f, Colours::transparentBlack,
                             editImage, 1.0f, Colours::transparentBlack,
                             0.0f);
     addAndMakeVisible(m_editButton);
-    m_editButton->addListener(this);
+    m_editButton.addListener(this);
 
-    m_soloButton = new ImageButton("solo");
     Image soloImage = ImageFileFormat::loadFrom(BinaryData::audioheadphones_png, BinaryData::audioheadphones_pngSize);
-    m_soloButton->setClickingTogglesState(true);
-    m_soloButton->addListener(this);
-    m_soloButton->setImages(true, true, true,
+    m_soloButton.setClickingTogglesState(true);
+    m_soloButton.addListener(this);
+    m_soloButton.setImages(true, true, true,
                             soloImage, 0.7f, Colours::transparentBlack,
                             soloImage, 1.0f, Colours::transparentBlack,
                             soloImage, 1.0f, Colours::red.withAlpha(0.5f),
                             0.0f);
     addAndMakeVisible(m_soloButton);
 
-    m_muteButton = new ImageButton("mute");
     Image muteedImage = ImageFileFormat::loadFrom(BinaryData::audiovolumemuted_png, BinaryData::audiovolumemuted_pngSize);
     Image unmutedImage = ImageFileFormat::loadFrom(BinaryData::audiovolumemedium_png, BinaryData::audiovolumemedium_pngSize);
-    m_muteButton->setImages(true, true, true,
+    m_muteButton.setImages(true, true, true,
                             unmutedImage, 0.7f, Colours::transparentBlack,
                             unmutedImage, 1.0f, Colours::transparentBlack,
                             muteedImage, 1.0f, Colours::transparentBlack,
                             0.0f);
-    m_muteButton->setClickingTogglesState(true);
-    m_muteButton->addListener(this);
+    m_muteButton.setClickingTogglesState(true);
+    m_muteButton.addListener(this);
     addAndMakeVisible(m_muteButton);
 
-    m_fileNameLabel = new Label("filename label");
-    m_fileNameLabel->setColour(Label::backgroundColourId, Colour(0xccffffff));
+    m_fileNameLabel.setColour(Label::backgroundColourId, Colour(0xccffffff));
     addAndMakeVisible(m_fileNameLabel);
 
     m_track.addChangeListener(this);
@@ -73,40 +70,40 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
 TrackUi::~TrackUi()
 {
     m_track.removeChangeListener(this);
-    m_volumeSlider->removeListener(this);
+    m_volumeSlider.removeListener(this);
 }
 
 void TrackUi::gainChanged(float gain)
 {
-    m_volumeSlider->setValue(gain);
+    m_volumeSlider.setValue(gain);
 }
 
 void TrackUi::muteChanged(bool mute)
 {
-    m_muteButton->setToggleState(mute, sendNotification);
+    m_muteButton.setToggleState(mute, sendNotification);
 }
 
 void TrackUi::soloChanged(bool solo)
 {
-    m_soloButton->setToggleState(solo, sendNotification);
+    m_soloButton.setToggleState(solo, sendNotification);
 }
 
 void TrackUi::nameChanged(const String& name)
 {
-    m_descriptionLabel->setText(name, sendNotification);
+    m_descriptionLabel.setText(name, sendNotification);
 }
 
 void TrackUi::buttonClicked(Button* button)
 {
-    if (button == m_muteButton)
+    if (button == &m_muteButton)
     {
-        m_track.setMute(m_muteButton->getToggleState());
+        m_track.setMute(m_muteButton.getToggleState());
     }
-    else if (button == m_soloButton)
+    else if (button == &m_soloButton)
     {
-        m_track.setSolo(m_soloButton->getToggleState());
+        m_track.setSolo(m_soloButton.getToggleState());
     }
-    else if (button == m_editButton)
+    else if (button == &m_editButton)
     {
         PopupMenu m;
         m.addItem(1, TRANS("edit track"));
@@ -175,7 +172,7 @@ void TrackUi::buttonClicked(Button* button)
 
 void TrackUi::sliderValueChanged(Slider* /*slider*/)
 {
-    m_track.setGain(static_cast<float>(m_volumeSlider->getValue()));
+    m_track.setGain(static_cast<float>(m_volumeSlider.getValue()));
 }
 
 void TrackUi::updateIdText()
@@ -184,14 +181,14 @@ void TrackUi::updateIdText()
     stream << m_track.getTrackIndex();
     stream << " ";
     stream << (m_track.isStereo() ? TRANS("St") : TRANS("Mo"));
-    m_idLabel->setText(stream.str(), sendNotification);
+    m_idLabel.setText(stream.str(), sendNotification);
 }
 
 void TrackUi::fileChanged(const File& file, bool updatePlaylist)
 {
-    m_fileNameLabel->setText(file.getFileName(), sendNotification);
-    int textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
-    m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
+    m_fileNameLabel.setText(file.getFileName(), sendNotification);
+    int textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText()) + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
+    m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 
     if (updatePlaylist)
     {
@@ -309,19 +306,19 @@ void TrackUi::paint(Graphics& g)
 
 void TrackUi::resized()
 {
-    m_idLabel->setBounds(0, 0, 100, 20);
-    m_descriptionLabel->setBounds(0, 20, 100, getHeight() - 20);
+    m_idLabel.setBounds(0, 0, 100, 20);
+    m_descriptionLabel.setBounds(0, 20, 100, getHeight() - 20);
 
     static const int buttonWidth = 40;
 
-    m_volumeSlider->setBounds(100 + 3, 3, 20, getHeight() - 6);
+    m_volumeSlider.setBounds(100 + 3, 3, 20, getHeight() - 6);
 
-    m_editButton->setBounds(100 + 20 + 3, 3, buttonWidth - 6, getHeight() / 3 - 6);
-    m_soloButton->setBounds(100 + 20 + 3, 3 + getHeight() / 3, buttonWidth - 6, getHeight() / 3 - 6);
-    m_muteButton->setBounds(100 + 20 + 3, 3 + getHeight() * 2 / 3, buttonWidth - 6, getHeight() / 3 - 6);
+    m_editButton.setBounds(100 + 20 + 3, 3, buttonWidth - 6, getHeight() / 3 - 6);
+    m_soloButton.setBounds(100 + 20 + 3, 3 + getHeight() / 3, buttonWidth - 6, getHeight() / 3 - 6);
+    m_muteButton.setBounds(100 + 20 + 3, 3 + getHeight() * 2 / 3, buttonWidth - 6, getHeight() / 3 - 6);
 
     int textWidth = 0;
-    if (m_fileNameLabel->getText() != "")
-        textWidth = m_fileNameLabel->getFont().getStringWidth(m_fileNameLabel->getText()) + m_fileNameLabel->getBorderSize().getLeft() + m_fileNameLabel->getBorderSize().getRight();
-    m_fileNameLabel->setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
+    if (m_fileNameLabel.getText() != "")
+        textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText()) + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
+    m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 }

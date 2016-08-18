@@ -43,7 +43,6 @@ class PlaylistEntryDialogComponent
 
 public:
     PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent);
-    ~PlaylistEntryDialogComponent();
 
 // Component
 public:
@@ -54,9 +53,9 @@ public:
     virtual void textEditorTextChanged(TextEditor&) override;
 
 private:
-    ScopedPointer<Label> m_nameLabel;
-    ScopedPointer<TextEditor> m_nameEditor;
-    ScopedPointer<TextButton> m_closeButton;
+    Label m_nameLabel;
+    TextEditor m_nameEditor;
+    TextButton m_closeButton;
 
     PlaylistEntrySettingsChangedCallback m_changedCallback;
 

@@ -47,7 +47,6 @@ class PlayerEditDialogComponent
 
 public:
     PlayerEditDialogComponent(const String& playerName, const Colour& color, const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const PlayerEditDialogWindow::CloseCallback& closeCallback, const PlayerEditDialogWindow::ImageChangedCallback& imageCallback);
-    ~PlayerEditDialogComponent();
 
 // Component overrides
 public:
@@ -66,11 +65,11 @@ public:
     virtual void textEditorTextChanged(TextEditor&) override;
 
 private:
-    ScopedPointer<Label> m_label;
-    ScopedPointer<TextEditor> m_textEditor;
-    ScopedPointer<TextButton> m_closeButton;
+    Label m_label;
+    TextEditor m_textEditor;
+    TextButton m_closeButton;
 
-    ScopedPointer<TextButton> m_colorButton;
+    TextButton m_colorButton;
     OptionalScopedPointer<TextButton> m_imageSelectorButton;
     OptionalScopedPointer<TextButton> m_imageResetButton;
 

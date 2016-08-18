@@ -9,7 +9,6 @@ class SoloBusComponent : public Component,
 {
 public:
     SoloBusComponent(OutputChannelNames& outputChannelNames, SoloBusSettings& settings);
-    ~SoloBusComponent();
 
 // Component
 public:
@@ -20,10 +19,10 @@ public:
 private:
     SoloBusSettings& soloBusSettings;
 
-    ScopedPointer<Label> label;
-    ScopedPointer<Label> label2;
-    ScopedPointer<ComboBox> comboBox;
-    ScopedPointer<ComboBox> comboBox2;
+    Label label;
+    Label label2;
+    ComboBox comboBox;
+    ComboBox comboBox2;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SoloBusComponent)
 };

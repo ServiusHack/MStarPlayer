@@ -47,7 +47,6 @@ class TrackEditDialogComponent
 
 public:
     TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
-    ~TrackEditDialogComponent();
 
 // Component overrides
 public:
@@ -62,10 +61,10 @@ public:
     virtual void textEditorTextChanged(TextEditor&) override;
 
 private:
-    ScopedPointer<Label> m_nameLabel;
-    ScopedPointer<TextEditor> m_nameEditor;
-    ScopedPointer<TextButton> m_closeButton;
-    ScopedPointer<VolumeSlider> m_volumeSlider;
+    Label m_nameLabel;
+    TextEditor m_nameEditor;
+    TextButton m_closeButton;
+    VolumeSlider m_volumeSlider;
 
     TrackSettingsChangedCallback m_settingsChangedCallback;
     VolumeChangedCallback m_volumeChangedCallback;

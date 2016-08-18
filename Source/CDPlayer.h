@@ -116,20 +116,20 @@ private:
 
     TimeSliceThread& m_thread;
 
-    ScopedPointer<ImageButton> m_playButton;
-    ScopedPointer<ImageButton> m_pauseButton;
-    ScopedPointer<ImageButton> m_stopButton;
-    ScopedPointer<ImageButton> m_skipBackwardButton;
-    ScopedPointer<ImageButton> m_skipForwardButton;
-    ScopedPointer<ImageButton> m_ejectButton;
-    ScopedPointer<ImageButton> m_configureButton;
-    ScopedPointer<Label> m_digitalDisplay;
-    ScopedPointer<CDNamesComboBox> m_availableCDsComboBox;
-    ScopedPointer<Slider> m_slider;
+    ImageButton m_playButton;
+    ImageButton m_pauseButton;
+    ImageButton m_stopButton;
+    ImageButton m_skipBackwardButton;
+    ImageButton m_skipForwardButton;
+    ImageButton m_ejectButton;
+    ImageButton m_configureButton;
+    Label m_digitalDisplay;
+    CDNamesComboBox m_availableCDsComboBox;
+    Slider m_slider;
     OptionalScopedPointer<AudioCDReader> m_reader;
     OptionalScopedPointer<AudioFormatReaderSource> m_source;
     OptionalScopedPointer<CDTracksModel> m_model;
-    ScopedPointer<CDTracksTable> m_tracksTable;
+    CDTracksTable m_tracksTable;
     AudioTransportSource m_transportSource;
     ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 

@@ -24,18 +24,20 @@ void EditSettingsWindow::buttonClicked(Button*)
 EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties)
     : m_applicationProperties(applicationProperties)
     , m_languageLabel("language", TRANS("Language"))
+    , m_nameLabel("audio editor label", TRANS("Audio editor"))
+    , m_audioEditorFilenameComponent("audio editor", File(m_applicationProperties.getUserSettings()->getValue("audioEditor")), true, false, false, "*.exe", ".exe", "")
+    , m_closeButton("close")
 {
-    addAndMakeVisible(m_nameLabel = new Label("audio editor label",
-                                              TRANS("Audio editor")));
-    m_nameLabel->setFont(Font(15.00f, Font::plain));
-    m_nameLabel->setJustificationType(Justification::centredLeft);
-    m_nameLabel->setEditable(false, false, false);
-    m_nameLabel->setColour(TextEditor::textColourId, Colours::black);
-    m_nameLabel->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    addAndMakeVisible(m_nameLabel);
+    m_nameLabel.setFont(Font(15.00f, Font::plain));
+    m_nameLabel.setJustificationType(Justification::centredLeft);
+    m_nameLabel.setEditable(false, false, false);
+    m_nameLabel.setColour(TextEditor::textColourId, Colours::black);
+    m_nameLabel.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
 
-    addAndMakeVisible(m_audioEditorFilenameComponent = new FilenameComponent("audio editor", File(m_applicationProperties.getUserSettings()->getValue("audioEditor")), true, false, false, "*.exe", ".exe", ""));
-    m_audioEditorFilenameComponent->setDefaultBrowseTarget(File::getSpecialLocation(File::globalApplicationsDirectory));
-    m_audioEditorFilenameComponent->addListener(this);
+    addAndMakeVisible(m_audioEditorFilenameComponent);
+    m_audioEditorFilenameComponent.setDefaultBrowseTarget(File::getSpecialLocation(File::globalApplicationsDirectory));
+    m_audioEditorFilenameComponent.addListener(this);
 
     m_languageLabel.setFont(Font(15.00f, Font::plain));
     m_languageLabel.setJustificationType(Justification::centredLeft);
@@ -54,10 +56,10 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, Applica
     addAndMakeVisible(m_languageComboBox);
     m_languageComboBox.addListener(this);
 
-    addAndMakeVisible(m_closeButton = new TextButton("close"));
-    m_closeButton->setButtonText(TRANS("Close"));
-    m_closeButton->addListener(parent);
-    m_closeButton->setWantsKeyboardFocus(false);
+    addAndMakeVisible(m_closeButton);
+    m_closeButton.setButtonText(TRANS("Close"));
+    m_closeButton.addListener(parent);
+    m_closeButton.setWantsKeyboardFocus(false);
 
     setSize(500, 150);
 }
@@ -68,13 +70,13 @@ void EditSettingsComponent::resized()
     const static int rowHeight = 24;
     const static int padding = 10;
 
-    m_nameLabel->setBounds(padding, padding, getWidth() - 2 * padding, rowHeight);
-    m_audioEditorFilenameComponent->setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
+    m_nameLabel.setBounds(padding, padding, getWidth() - 2 * padding, rowHeight);
+    m_audioEditorFilenameComponent.setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
 
     m_languageLabel.setBounds(padding, padding + rowHeight * 2, getWidth() - 2 * padding, rowHeight);
     m_languageComboBox.setBounds(padding, padding + rowHeight * 3, getWidth() - 2 * padding, rowHeight);
 
-    m_closeButton->setBounds(
+    m_closeButton.setBounds(
         (getWidth() - buttonWidth) / 2,
         getHeight() - 2 * (rowHeight - padding),
         buttonWidth,
@@ -83,7 +85,7 @@ void EditSettingsComponent::resized()
 
 void EditSettingsComponent::filenameComponentChanged(FilenameComponent* /*fileComponentThatHasChanged*/)
 {
-    m_applicationProperties.getUserSettings()->setValue("audioEditor", m_audioEditorFilenameComponent->getCurrentFileText());
+    m_applicationProperties.getUserSettings()->setValue("audioEditor", m_audioEditorFilenameComponent.getCurrentFileText());
 }
 
 void EditSettingsComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)

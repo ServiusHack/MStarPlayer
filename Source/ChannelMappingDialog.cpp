@@ -162,25 +162,25 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
     , m_soloBusSettings(soloBusSettings)
     , m_changeCallback(changeCallback)
     , m_closeCallback(closeCallback)
-    , m_tableListBox(new TableListBox())
     , m_channelMapping(new ChannelMapping(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
+    , m_closeButton("close")
 {
     addAndMakeVisible(m_tableListBox);
 
-    m_tableListBox->setModel(m_channelMapping);
+    m_tableListBox.setModel(m_channelMapping);
 
     // m_tableListBox the table component a border
-    m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
-    m_tableListBox->setOutlineThickness(1);
+    m_tableListBox.setColour(ListBox::outlineColourId, Colours::grey);
+    m_tableListBox.setOutlineThickness(1);
 
     // set the table header columns
-    m_tableListBox->getHeader().addColumn(TRANS("Player Channel"), 1, 120, 50, 400, TableHeaderComponent::defaultFlags);
-    m_tableListBox->getHeader().addColumn(TRANS("Output Channel"), 2, 220, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox.getHeader().addColumn(TRANS("Player Channel"), 1, 120, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox.getHeader().addColumn(TRANS("Output Channel"), 2, 220, 50, 400, TableHeaderComponent::defaultFlags);
 
-    addAndMakeVisible(m_closeButton = new TextButton("close"));
-    m_closeButton->setButtonText(TRANS("Close"));
-    m_closeButton->addListener(this);
-    m_closeButton->setWantsKeyboardFocus(false);
+    addAndMakeVisible(m_closeButton);
+    m_closeButton.setButtonText(TRANS("Close"));
+    m_closeButton.addListener(this);
+    m_closeButton.setWantsKeyboardFocus(false);
 
     setSize(400, 400);
 }
@@ -188,7 +188,7 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
 void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>& mapping)
 {
     m_channelMapping = new ChannelMapping(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
-    m_tableListBox->setModel(m_channelMapping);
+    m_tableListBox.setModel(m_channelMapping);
 }
 
 void ChannelMappingComponent::buttonClicked(Button* /*buttonThatWasClicked*/)
@@ -202,8 +202,8 @@ void ChannelMappingComponent::resized()
     const static int buttonHeight = 24;
     const static int padding = 10;
 
-    m_tableListBox->setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
-    m_closeButton->setBounds(
+    m_tableListBox.setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
+    m_closeButton.setBounds(
         (getWidth() - buttonWidth) / 2,
         getHeight() - buttonHeight - padding,
         buttonWidth,

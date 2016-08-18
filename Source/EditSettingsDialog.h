@@ -40,11 +40,11 @@ public:
     EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties);
 
 private:
-    ScopedPointer<Label> m_nameLabel;
-    ScopedPointer<FilenameComponent> m_audioEditorFilenameComponent;
+    Label m_nameLabel;
+    FilenameComponent m_audioEditorFilenameComponent;
     Label m_languageLabel;
     ComboBox m_languageComboBox;
-    ScopedPointer<TextButton> m_closeButton;
+    TextButton m_closeButton;
 
     ApplicationProperties& m_applicationProperties;
 

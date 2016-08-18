@@ -59,14 +59,14 @@ private:
     double m_totalLength;
 
     // ui components
-    ScopedPointer<ProgressBar> m_progressBar;
-    ScopedPointer<Label> m_totalDurationText;
-    ScopedPointer<DrawableButton> m_playButton;
-    ScopedPointer<ImageButton> m_configureButton;
+    ProgressBar m_progressBar;
+    Label m_totalDurationText;
+    DrawableButton m_playButton;
+    ImageButton m_configureButton;
     ScopedPointer<Drawable> m_playImage;
     ScopedPointer<Drawable> m_stopImage;
     OptionalScopedPointer<Drawable> m_userImage;
-    ScopedPointer<Label> m_fileNameLabel;
+    Label m_fileNameLabel;
 
     // configuration menu actions
     void loadFile();

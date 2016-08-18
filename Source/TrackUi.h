@@ -39,13 +39,13 @@ private:
 
     Track& m_track;
 
-    ScopedPointer<Label> m_idLabel;
-    ScopedPointer<Label> m_descriptionLabel;
-    ScopedPointer<ImageButton> m_editButton;
-    ScopedPointer<ImageButton> m_soloButton;
-    ScopedPointer<ImageButton> m_muteButton;
-    ScopedPointer<VolumeSlider> m_volumeSlider;
-    ScopedPointer<Label> m_fileNameLabel;
+    Label m_idLabel;
+    Label m_descriptionLabel;
+    ImageButton m_editButton;
+    ImageButton m_soloButton;
+    ImageButton m_muteButton;
+    VolumeSlider m_volumeSlider;
+    Label m_fileNameLabel;
 
     ScopedPointer<TrackEditDialogWindow> m_editDialog;
 

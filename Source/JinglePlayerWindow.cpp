@@ -50,45 +50,44 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEdi
     , m_setUserImageCallback(setUserImageCallback)
     , m_totalLength(0)
     , m_progress(0)
+    , m_progressBar(m_progress)
+    , m_playButton("Play", DrawableButton::ImageFitted)
+    , m_configureButton("Configure")
+    , m_fileNameLabel("filename label")
 {
     m_formatManager.registerBasicFormats();
 
     // progress bar
-    m_progressBar = new ProgressBar(m_progress);
-    m_progressBar->setPercentageDisplay(false);
-    m_progressBar->setTextToDisplay("00:00:000");
-    m_progressBar->addMouseListener(this, false);
-    m_progressBar->setColour(ProgressBar::backgroundColourId, Colours::transparentBlack);
+    m_progressBar.setPercentageDisplay(false);
+    m_progressBar.setTextToDisplay("00:00:000");
+    m_progressBar.addMouseListener(this, false);
+    m_progressBar.setColour(ProgressBar::backgroundColourId, Colours::transparentBlack);
     addAndMakeVisible(m_progressBar);
 
     // total duration text
-    m_totalDurationText = new Label();
     addAndMakeVisible(m_totalDurationText);
-    m_totalDurationText->setJustificationType(Justification::centredRight);
-    m_totalDurationText->setText("00:00:000", sendNotification);
+    m_totalDurationText.setJustificationType(Justification::centredRight);
+    m_totalDurationText.setText("00:00:000", sendNotification);
 
     // play button
-    m_playButton = new DrawableButton("Play", DrawableButton::ImageFitted);
     addAndMakeVisible(m_playButton);
-    m_playButton->setImages(m_playImage);
-    m_playButton->addListener(this);
-    m_playButton->setEdgeIndent(30);
+    m_playButton.setImages(m_playImage);
+    m_playButton.addListener(this);
+    m_playButton.setEdgeIndent(30);
 
     // configuration button
-    m_configureButton = new ImageButton("Configure");
     Image normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
-    m_configureButton->setImages(true, true, true,
+    m_configureButton.setImages(true, true, true,
                                  normalImage, 0.7f, Colours::transparentBlack,
                                  normalImage, 1.0f, Colours::transparentBlack,
                                  normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
                                  0.0f);
     addAndMakeVisible(m_configureButton);
-    m_configureButton->addMouseListener(this, false);
+    m_configureButton.addMouseListener(this, false);
 
     // filename label
-    m_fileNameLabel = new Label("filename label");
-    m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
-    m_fileNameLabel->setJustificationType(Justification::centred);
+    m_fileNameLabel.setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
+    m_fileNameLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(m_fileNameLabel);
 
     Track::PositionCallback positionCallback = [&](double position, bool finished) {
@@ -96,8 +95,8 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEdi
 
         m_progress = finished ? 0.0 : position / m_totalLength;
 
-        m_progressBar->setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
-        m_totalDurationText->setText(Utils::formatSeconds(m_totalLength), sendNotification);
+        m_progressBar.setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
+        m_totalDurationText.setText(Utils::formatSeconds(m_totalLength), sendNotification);
 
         if (remainingTime < 10)
         {
@@ -112,19 +111,19 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEdi
         }
 
         if (finished)
-            m_playButton->setImages(m_playImage);
+            m_playButton.setImages(m_playImage);
 
     };
     m_tracksContainer->addPositionCallback(positionCallback);
 
     TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
-        m_totalDurationText->setText(Utils::formatSeconds(duration), sendNotification);
+        m_totalDurationText.setText(Utils::formatSeconds(duration), sendNotification);
         m_totalLength = duration;
     };
     m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 
     Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
-        m_playButton->setImages(isPlaying ? m_stopImage : m_playImage);
+        m_playButton.setImages(isPlaying ? m_stopImage : m_playImage);
     };
     m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
 }
@@ -170,11 +169,11 @@ void JinglePlayerWindow::filesDropped(const StringArray& files, int /*x*/, int /
 
 void JinglePlayerWindow::resized()
 {
-    m_configureButton->setBounds(0, getHeight() - ProgressBarHeight, ProgressBarHeight, ProgressBarHeight);
-    m_progressBar->setBounds(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight);
-    m_totalDurationText->setBounds(getWidth() - TotalDurationTextWidth, getHeight() - ProgressBarHeight, TotalDurationTextWidth, ProgressBarHeight);
-    m_playButton->setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
-    m_fileNameLabel->setBounds(0, getHeight() - ProgressBarHeight - ProgressBarHeight, getWidth(), ProgressBarHeight);
+    m_configureButton.setBounds(0, getHeight() - ProgressBarHeight, ProgressBarHeight, ProgressBarHeight);
+    m_progressBar.setBounds(m_configureButton.getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth, ProgressBarHeight);
+    m_totalDurationText.setBounds(getWidth() - TotalDurationTextWidth, getHeight() - ProgressBarHeight, TotalDurationTextWidth, ProgressBarHeight);
+    m_playButton.setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
+    m_fileNameLabel.setBounds(0, getHeight() - ProgressBarHeight - ProgressBarHeight, getWidth(), ProgressBarHeight);
 }
 
 void JinglePlayerWindow::paint(Graphics& g)
@@ -187,18 +186,18 @@ void JinglePlayerWindow::paint(Graphics& g)
     g.setColour(Colour(0x55000000));
 
     AudioThumbnail& audioThumbnail = (*m_tracksContainer)[0].getAudioThumbnail();
-    audioThumbnail.drawChannels(g, Rectangle<int>(m_configureButton->getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton->getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, audioThumbnail.getTotalLength(), 1.0f);
+    audioThumbnail.drawChannels(g, Rectangle<int>(m_configureButton.getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, audioThumbnail.getTotalLength(), 1.0f);
 
     Component::paint(g);
 }
 
 void JinglePlayerWindow::mouseDown(const MouseEvent& event)
 {
-    if (event.eventComponent == m_progressBar)
+    if (event.eventComponent == &m_progressBar)
     {
         m_showRemainingTime = !m_showRemainingTime;
     }
-    if (event.eventComponent == m_configureButton)
+    if (event.eventComponent == &m_configureButton)
     {
         PopupMenu m;
         m.addItem(1, TRANS("load file"));
@@ -252,12 +251,12 @@ void JinglePlayerWindow::buttonClicked(Button* /*button*/)
 {
     if (m_tracksContainer->isPlaying())
     {
-        m_playButton->setImages(m_playImage);
+        m_playButton.setImages(m_playImage);
         m_tracksContainer->stop();
     }
     else
     {
-        m_playButton->setImages(m_stopImage);
+        m_playButton.setImages(m_stopImage);
         m_tracksContainer->play();
     }
 }
@@ -266,7 +265,7 @@ void JinglePlayerWindow::updatePointColor()
 {
     m_paintColor = m_blink ? m_color.contrasting(0.5f) : m_color;
 
-    m_fileNameLabel->setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
+    m_fileNameLabel.setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
 }
 
 void JinglePlayerWindow::setColor(const Colour& color)
