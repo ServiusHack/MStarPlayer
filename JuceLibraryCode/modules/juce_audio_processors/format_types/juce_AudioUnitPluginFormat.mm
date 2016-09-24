@@ -399,18 +399,7 @@ public:
                               (int) (numOutputBusChannels * numOutputBusses),
                               rate, blockSize);
         setLatencySamples (0);
-
-        if (parameters.size() == 0)
-        {
-            // some plugins crash if initialiseAudioUnit() is called too soon (sigh..), so we'll
-            // only call it here if it seems like they it's one of the awkward plugins that can
-            // only create their parameters after it has been initialised.
-            if (! initialiseAudioUnit())
-                return false;
-
-            refreshParameterList();
-        }
-
+        refreshParameterList();
         setPluginCallbacks();
         return true;
     }
@@ -532,7 +521,7 @@ public:
             resetBusses();
 
             jassert (! prepared);
-            initialiseAudioUnit();
+            prepared = (AudioUnitInitialize (audioUnit) == noErr);
         }
     }
 
@@ -550,14 +539,6 @@ public:
         }
 
         incomingMidi.clear();
-    }
-
-    bool initialiseAudioUnit()
-    {
-        if (! prepared)
-            prepared = (AudioUnitInitialize (audioUnit) == noErr);
-
-        return prepared;
     }
 
     void resetBusses()
@@ -873,8 +854,6 @@ public:
 
         if (propertyList != 0)
         {
-            initialiseAudioUnit();
-
             AudioUnitSetProperty (audioUnit, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global,
                                   0, &propertyList, sizeof (propertyList));
 
@@ -1072,7 +1051,6 @@ private:
         event.mEventType = kAudioUnitEvent_PropertyChange;
         event.mArgument.mProperty.mPropertyID = type;
         event.mArgument.mProperty.mAudioUnit = audioUnit;
-        event.mArgument.mProperty.mPropertyID = kAudioUnitProperty_PresentPreset;
         event.mArgument.mProperty.mScope = kAudioUnitScope_Global;
         event.mArgument.mProperty.mElement = 0;
         AUEventListenerAddEventType (eventListenerRef, nullptr, &event);
@@ -1080,28 +1058,39 @@ private:
 
     void eventCallback (const AudioUnitEvent& event, AudioUnitParameterValue newValue)
     {
+        int paramIndex = -1;
+
+        if (event.mEventType == kAudioUnitEvent_ParameterValueChange
+         || event.mEventType == kAudioUnitEvent_BeginParameterChangeGesture
+         || event.mEventType == kAudioUnitEvent_EndParameterChangeGesture)
+        {
+            for (paramIndex = 0; paramIndex < parameters.size(); ++paramIndex)
+            {
+                const ParamInfo& p = *parameters.getUnchecked(paramIndex);
+
+                if (p.paramID == event.mArgument.mParameter.mParameterID)
+                    break;
+            }
+
+            if (! isPositiveAndBelow (paramIndex, parameters.size()))
+                return;
+        }
+
         switch (event.mEventType)
         {
             case kAudioUnitEvent_ParameterValueChange:
-                for (int i = 0; i < parameters.size(); ++i)
                 {
-                    const ParamInfo& p = *parameters.getUnchecked(i);
-
-                    if (p.paramID == event.mArgument.mParameter.mParameterID)
-                    {
-                        sendParamChangeMessageToListeners (i, (newValue - p.minValue) / (p.maxValue - p.minValue));
-                        break;
-                    }
+                    const ParamInfo& p = *parameters.getUnchecked(paramIndex);
+                    sendParamChangeMessageToListeners (paramIndex, (newValue - p.minValue) / (p.maxValue - p.minValue));
                 }
-
                 break;
 
             case kAudioUnitEvent_BeginParameterChangeGesture:
-                beginParameterChangeGesture ((int) event.mArgument.mParameter.mParameterID);
+                beginParameterChangeGesture (paramIndex);
                 break;
 
             case kAudioUnitEvent_EndParameterChangeGesture:
-                endParameterChangeGesture ((int) event.mArgument.mParameter.mParameterID);
+                endParameterChangeGesture (paramIndex);
                 break;
 
             default:
@@ -1535,9 +1524,6 @@ private:
 
     bool createView (const bool createGenericViewIfNeeded)
     {
-        if (! plugin.initialiseAudioUnit())
-            return false;
-
         JUCE_IOS_MAC_VIEW* pluginView = nil;
         UInt32 dataSize = 0;
         Boolean isWritable = false;
