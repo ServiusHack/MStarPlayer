@@ -40,13 +40,12 @@ public:
     EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties);
 
 private:
+    ApplicationProperties& m_applicationProperties;
     Label m_nameLabel;
     FilenameComponent m_audioEditorFilenameComponent;
     Label m_languageLabel;
     ComboBox m_languageComboBox;
     TextButton m_closeButton;
-
-    ApplicationProperties& m_applicationProperties;
 
 // Component overrides
 public:
