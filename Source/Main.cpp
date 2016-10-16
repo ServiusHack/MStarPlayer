@@ -2,7 +2,6 @@
 #include "MainComponent.h"
 
 #include "CrashDumper.h"
-#include "Translations.h"
 
 class MStarPlayerApplication : public JUCEApplication
 {
@@ -24,7 +23,7 @@ public:
 
         if (m_applicationProperties.getUserSettings()->getValue("language") == "de")
         {
-            LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
+            LocalisedStrings::setCurrentMappings(new LocalisedStrings(CharPointer_UTF8(BinaryData::German_txt), false));
         }
         else if (m_applicationProperties.getUserSettings()->getValue("language") == "en")
         {
@@ -32,7 +31,7 @@ public:
         }
         else if (SystemStats::getUserLanguage() == "de")
         {
-            LocalisedStrings::setCurrentMappings(new LocalisedStrings(Translations::German, false));
+            LocalisedStrings::setCurrentMappings(new LocalisedStrings(CharPointer_UTF8(BinaryData::German_txt), false));
         }
 
         MainContentComponent::initLookAndFeel();

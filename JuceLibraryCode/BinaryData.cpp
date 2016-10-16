@@ -7,8 +7,216 @@
 namespace BinaryData
 {
 
-//================== media-eject.png ==================
+//================== German.txt ==================
 static const unsigned char temp_binary_data_0[] =
+"language: German\r\n"
+"countries:de\r\n"
+"\r\n"
+"// AudioConfiguration\r\n"
+"\r\n"
+"\"Configure Audio\" = \"Audio konfigurieren\"\r\n"
+"\"Audio Device\" = \"Audioger\xc3\xa4t\"\r\n"
+"\"Channel Names\" = \"Kanalnamen\"\r\n"
+"\"Device Channel\" = \"Ger\xc3\xa4tekanal\"\r\n"
+"\"Channel Name\" = \"Kanalname\"\r\n"
+"\"Solo Bus\" = \"Solo Bus\"\r\n"
+"\r\n"
+"# AudioDeviceSelector (Juce)\r\n"
+"\"none\" = \"(keine)\"\r\n"
+"\"Show advanced settings...\" = \"Erweiterte Einstellungen anzeigen ...\"\r\n"
+"\"Error when trying to open audio device!\" = \"Fehler beim \xc3\x96""ffnen des Audioger\xc3\xa4ts!\"\r\n"
+"\"(no audio output channels found)\" = \"(Kein Ausgabekanal gefunden)\"\r\n"
+"\"Active output channels:\" = \"Aktive Ausgabekan\xc3\xa4le:\"\r\n"
+"\"Control panel\" = \"Bedienfeld\"\r\n"
+"\"Opens the device's own control panel\" = \"Das Bedienfeld des Ger\xc3\xa4ts \xc3\xb6""ffnen\"\r\n"
+"\"Reset device\" = \"Ger\xc3\xa4t zur\xc3\xbc""cksetzen\"\r\n"
+"\"Resets the audio interface - sometimes needed after changing a device's properties in its custom control panel\" = \"Setzt das Audioger\xc3\xa4t zur\xc3\xbc""ck - manchmal n\xc3\xb6tig, nachdem Eigenschaften im Bedienfeld des Ger\xc3\xa4ts ver\xc3\xa4"
+"ndert wurden\"\r\n"
+"\"Output:\" = \"Ausgabe:\"\r\n"
+"\"Device:\" = \"Ger\xc3\xa4t:\"\r\n"
+"\"Test\" = \"Test\"\r\n"
+"\"Plays a test tone\" = \"Einen Testton wiedergeben\"\r\n"
+"\"Sample rate:\" = \"Samplerate:\"\r\n"
+"\"Audio buffer size:\" = \"Gr\xc3\xb6\xc3\x9f""e des Audiobuffers:\"\r\n"
+"\"Audio device type:\" = \"Typ des Audioger\xc3\xa4ts:\"\r\n"
+"\r\n"
+"// General\r\n"
+"\"Close\" = \"Schlie\xc3\x9f""en\"\r\n"
+"\r\n"
+"// Player\r\n"
+"\r\n"
+"\"configure channels\" = \"Kan\xc3\xa4le konfigurieren\"\r\n"
+"\"configure appearance\" = \"Ausssehen konfigurieren\"\r\n"
+"\"load file\" = \"Datei \xc3\xb6""ffnen\"\r\n"
+"\"Jingle Mode\" = \"Jingle-Modus\"\r\n"
+"\"Multitrack Mode\" = \"Mehrspur-Modus\"\r\n"
+"\"Playlist Mode\" = \"Playlist-Modus\"\r\n"
+"\r\n"
+"\"Track\" = \"Spur\"\r\n"
+"\"Duration\" = \"Dauer\"\r\n"
+"\r\n"
+"\" (mono)\" = \" (mono)\"\r\n"
+"\" (left)\" = \" (links)\"\r\n"
+"\" (right)\" = \" (rechts)\"\r\n"
+"\r\n"
+"// ChannelMappingDialog\r\n"
+"\"Configure Channels\" = \"Kan\xc3\xa4le konfigurieren\"\r\n"
+"\r\n"
+"\"Player Channel\" = \"Player Kanal\"\r\n"
+"\"Output Channel\" = \"Ausgabekanal\"\r\n"
+"\r\n"
+"// CrashDumper\r\n"
+"\"Application crashed.\\n\\nWriting crash dump ...\" = \"Die Anwendung ist abgest\xc3\xbcrzt. Ein Fehlerabzug wird geschrieben ...\"\r\n"
+"\r\n"
+"// EditSettingsDialog\r\n"
+"\"Edit Settings\" = \"Einstellungen bearbeiten\"\r\n"
+"\"Audio editor\" = \"Programm zur Audiobearbeitung\"\r\n"
+"\"Language\" = \"Sprache\"\r\n"
+"\"Restart required\" = \"Neustart n\xc3\xb6tig\"\r\n"
+"\"Changing the language requires a restart.\" = \"Die ge\xc3\xa4nderte Sprache wird erst nach einem Neustart \xc3\xbc""bernommen.\"\r\n"
+"\r\n"
+"\r\n"
+"// JinglePlayerWindow\r\n"
+"\"Please select the audio file you want to load ...\" = \"Bitte die Audiodatei zum \xc3\x96""ffnen ausw\xc3\xa4hlen ...\"\r\n"
+"\r\n"
+"// MainComponent\r\n"
+"\"Project\" = \"Projekt\"\r\n"
+"\"Player\" = \"Player\"\r\n"
+"\"View\" = \"Ansicht\"\r\n"
+"\"Options\" = \"Optionen\"\r\n"
+"\r\n"
+"\"Style\" = \"Farbstil\"\r\n"
+"\r\n"
+"\"New\" = \"Neu\"\r\n"
+"\"Create a new project\" = \"Neues Projekt erstellen\"\r\n"
+"\"Open\" = \"\xc3\x96""ffnen\"\r\n"
+"\"Open an existing project\" = \"Ein vorhandenes Projekt \xc3\xb6""ffnen\"\r\n"
+"\"Save\" = \"Speichern\"\r\n"
+"\"Save the current project\" = \"Das aktuelle Projekt speichern\"\r\n"
+"\"Save as ...\" = \"Speichern unter\"\r\n"
+"\"Save the current project under ...\" = \"Das aktuelle Projekt speichern unter ...\"\r\n"
+"\"Quit\" = \"Beenden\"\r\n"
+"\"Add Jingle Player\" = \"Jingle-Player hinzuf\xc3\xbcgen\"\r\n"
+"\"Add a simple player\" = \"Einen einfachen Player hinzuf\xc3\xbcgen\"\r\n"
+"\"Add Multitrack Player\" = \"Mehrspur-Player hinzuf\xc3\xbcgen\"\r\n"
+"\"Add a player with multiple tracks\" = \"Einen Player mit mehreren Spuren hinzuf\xc3\xbcgen\"\r\n"
+"\"Add Playlist Player\" = \"Playlist-Player hinzuf\xc3\xbcgen\"\r\n"
+"\"Add a player with a playlist\" = \"Einen Player mit einer Playlist hinzuf\xc3\xbcgen\"\r\n"
+"\"Add CD Player\" = \"CD-Player hinzuf\xc3\xbcgen\"\r\n"
+"\"Add a player for audio CDs\" = \"Einen Player f\xc3\xbcr Audio-CDs hinzuf\xc3\xbcgen\"\r\n"
+"\"Windows\" = \"Fenster\"\r\n"
+"\"Players are floating windows\" = \"Player sind schwebende Fenster\"\r\n"
+"\"Tabs\" = \"Tabs\"\r\n"
+"\"Players are tabs\" = \"Player sind Tabs\"\r\n"
+"\"Configure Audio\" = \"Audio konfigurieren\"\r\n"
+"\"Configure the audio device to use\" = \"Das zu verwendende Audioger\xc3\xa4t konfigurieren\"\r\n"
+"\"Edit Settings\" = \"Einstellungen bearbeiten\"\r\n"
+"\"Edit the application settings\" = \"Die Einstellungen der Anwendung bearbeiten\"\r\n"
+"\"Standard\" = \"Standard\"\r\n"
+"\"Use the default look and feel\" = \"Das Standardaussehen verwenden\"\r\n"
+"\"Dark\" = \"Dunkel\"\r\n"
+"\"Use a dark look and feel\" = \"Ein dunkles Aussehen verwenden\"\r\n"
+"\"Please select the project file you want to load ...\" = \"Bitte die zu \xc3\xb6""ffnende Projektdatei ausw\xc3\xa4hlen ...\"\r\n"
+"\"Save project?\" = \"Projekt speichern?\"\r\n"
+"\"Do you want to save the current project?\" = \"M\xc3\xb6""chten Sie das aktuelle Projekt speichern?\"\r\n"
+"\"Yes\" = \"Ja\"\r\n"
+"\"No\" = \"Nein\"\r\n"
+"\"Cancel\" = \" Abbrechen\"\r\n"
+"\"Please select the project file you want to save ...\" = \"Bitte die Projektdatei zum Speichern ausw\xc3\xa4hlen ...\"\r\n"
+"\"Unable to open audio thumbnail cache file.\" = \"Die Datei der zwischengespeicherten Wellenformen des konnte nicht ge\xc3\xb6""ffnet werden.\"\r\n"
+"\"Unable to load audio thumbnails.\" = \"Die Vorschaubilder der Wellenformen konnten nicht ge\xc3\xb6""ffnet werden.\"\r\n"
+"\"Failed to open project file\" = \"Die Projektdatei konnte nicht ge\xc3\xb6""ffnet werden\"\r\n"
+"\"No view settings found, using default.\" = \"Keine Einstellungen zur Ansicht gefunden, der Standard wird verwendet.\"\r\n"
+"\"No layout mode settings found, using default.\" = \"Keine Einstellungen des Layout gefunden, der Standard wird verwendet.\"\r\n"
+"\"Unknown view layout, using default.\" = \"Unbekanntes Layout, das Standardlayout wird verwendet.\"\r\n"
+"\"No style settings found, using default.\" = \"Keine Einstellungen des Aussehens gefunden, der Standard wird verwendet.\"\r\n"
+"\"Unknown style, using default.\" = \"Unbekanntes Aussehen gefunden, der Standard wird verwendet.\"\r\n"
+"\"No audio settings found, using current.\" = \"Keine Audioeinstellungen gefunden, die aktuellen werden beibehalten.\"\r\n"
+"\"No channel names found, using device defaults.\" = \"Keine Kanalnamen gefunden, die Standardnamen des Ger\xc3\xa4ts werden verwendet.\"\r\n"
+"\"No solo bus settings found, using no solo bus.\" = \"Keine Einstellungen des Solo-Bus gefunden, Solo-Bus ist deaktiviert.\"\r\n"
+"\"No solo mixer settings found, using default volumes.\" = \"Keine Einstellungen des Solo-Bus-Mischers gefunden, Standardpegel werden verwendet.\"\r\n"
+"\"No mixer settings found, using current.\" = \"Keine Einstellungen des Mischers gefunden, aktuelle Pegel werden beibehalten.\"\r\n"
+"\"No players found. None will be loaded.\" = \"Keine Player gefunden. Es werden keine geladen.\"\r\n"
+"\"Unknown player type '%s'.\" = \"Unbekannter Player-Typ '%s'.\"\r\n"
+"\"Unknown tag '%s' in players list.\" = \"Unbekannter XML-Tag '%s' in der Liste der Player.\"\r\n"
+"\"Problems while opening the project\" = \"Probleme beim \xc3\xb6""ffnen des Projekts\"\r\n"
+"\"Failed opening the project\" = \"Projekt konnte nicht ge\xc3\xb6""ffnet werden\"\r\n"
+"\"Failed to save project file\" = \"Projektdatei konnte nicht gespeichert werden\"\r\n"
+"\"Failed to save project file.\" = \"Projektdatei konnte nicht gespeichert werdens\"\r\n"
+"\"Failed to save project\" = \"Projekt konnte nicht gespeichert werden\"\r\n"
+"\"Failed to open audio thumbnail cache file.\" = \"Die Datei der zwischengespeicherten Wellenformen des konnte nicht ge\xc3\xb6""ffnet werden.\"\r\n"
+"\r\n"
+"// MixerFader\r\n"
+"\"Solo\" = \"Solo\"\r\n"
+"\"Mute\" = \"Stumm\"\r\n"
+"\r\n"
+"// PlayerEditDialog\r\n"
+"\"Rename player\" = \"Player umbenennen\"\r\n"
+"\"Name of the player:\" = \"Name des Players:\"\r\n"
+"\"Choose color\" = \"Farbe w\xc3\xa4hlen\"\r\n"
+"\"Choose image\" = \"Bild w\xc3\xa4hlen\"\r\n"
+"\"Reeset image\" = \"Bild zur\xc3\xbc""cksetzen\"\r\n"
+"\"color chooser\" = \"Farbw\xc3\xa4hler\"\r\n"
+"\r\n"
+"// PlaylistEntryDialog\r\n"
+"\"Edit playlist entry\" = \"Playlisteintrag bearbeiten\"\r\n"
+"\"Name of the entry:\" = \"Name des Eintrags:\"\r\n"
+"\r\n"
+"// PlaylistModel\r\n"
+"\"append\" = \"anh\xc3\xa4ngen\"\r\n"
+"\"insert\" = \"einf\xc3\xbcgen\"\r\n"
+"\"edit\" = \"bearbeiten\"\r\n"
+"\"delete\" = \"l\xc3\xb6schen\"\r\n"
+"\r\n"
+"// PlaylistPlayerWindow\r\n"
+"\"add stereo track\" = \"Stereospur hinzuf\xc3\xbcgen\"\r\n"
+"\"add mono track\" = \"Monospur hinzuf\xc3\xbcgen\"\r\n"
+"\r\n"
+"// PlaylistTable\r\n"
+"\"#\" = \"#\"\r\n"
+"\"Name\" = \"Name\"\r\n"
+"\"Duration\" = \"Dauer\"\r\n"
+"\r\n"
+"// SoloBusComponent\r\n"
+"\"left channel / mono:\" = \"linker Kanal / Mono:\"\r\n"
+"\"right channel:\" = \"rechter Kanal\"\r\n"
+"\"(no choices)\" = \"(keine Auswahl)\"\r\n"
+"\r\n"
+"// SoloBusMixer\r\n"
+"\"Solo L\" = \"Solo L\"\r\n"
+"\"Solo R\" = \"Solo R\"\r\n"
+"\r\n"
+"// TrackEditDialog\r\n"
+"\"Edit track\" = \"Spur bearbeiten\"\r\n"
+"\"Name of the track:\" = \"Name der Spur:\"\r\n"
+"\r\n"
+"// TrackUi\r\n"
+"\"edit track\" = \"Spur bearbeiten\"\r\n"
+"\"delete track\" = \"Spur l\xc3\xb6schen\"\r\n"
+"\"open file\" = \"Datei \xc3\xb6""ffnen\"\r\n"
+"\"edit file\" = \"Datei bearbeiten\"\r\n"
+"\"remove file\" = \"Datei entfernen\"\r\n"
+"\"No audio editor\" = \"Kein Audiobearbeitungsprogramm\"\r\n"
+"\"No audio editor was configured.\" = \"Es wurde kein Programm zur Audiobearbeitung konfiguriert.\"\r\n"
+"\"Failed launch audio editor\" = \"Audiobearbeitungsprogramm nicht startbar\"\r\n"
+"\"Failed to start the audio editor.\" = \"Das Audiobearbeitungsprogram konnte nicht gestartet werden.\"\r\n"
+"\"Audio editor launched\" = \"Audiobearbeitungsprogramm gestartet\"\r\n"
+"\"Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again.\" = \"Bearbeiten Sie die Datei mit dem gestarteten Programm. W\xc3\xa4hlen sie 'OK' nachdem die Datei gespeichert wurde um sie hier neu zu laden.\"\r\n"
+"\"ok\" = \"ok\"\r\n"
+"\"Confirm\" = \"Best\xc3\xa4tigen\"\r\n"
+"\"Do you really want to remove the audio file from this track?\" = \"Wollen Sie wirklich die Audiodatei von dieser Spur entfernen?\"\r\n"
+"\"St\" = \"St\"\r\n"
+"\"Mo\" = \"Mo\"\r\n"
+"\"Please select the audio file you want to load ...\" = \"Bitte die Audiodatei zum \xc3\x96""ffnen ausw\xc3\xa4hlen ...\"\r\n"
+"\"MStarPlayer\" = \"MStarPlayer\"\r\n"
+"\"The selected file has more than two channels. This is not supported.\" = \"Die gew\xc3\xa4hlte Audiodatei hat mehr als zwei Spuren. Das wird nicht unterst\xc3\xbctzt.\"\r\n"
+"\"The selected file has %d channels but this is a mono track.\" = \"Die gew\xc3\xa4hlte Audiodatei hat %d Kan\xc3\xa4le aber dies ist eine Mono-Spur.\"\r\n"
+"\"The selected file has %d channel(s) but this is a stereo track.\" = \"Die gew\xc3\xa4hlte Audiodatei hat %d Kanal/Kan\xc3\xa4le aber dies ist eine Stereo-Spur.\"";
+
+const char* German_txt = (const char*) temp_binary_data_0;
+
+//================== media-eject.png ==================
+static const unsigned char temp_binary_data_1[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,4,0,0,0,217,115,178,127,0,0,0,2,115,66,73,84,8,8,85,236,70,4,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,119,
 119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,4,44,73,68,65,84,120,218,125,149,79,104,92,85,20,198,127,247,189,201,76,102,146,137,38,138,36,144,182,10,74,13,234,66,161,142,32,98,105,179,234,34,45,8,254,169,184,214,109,113,33,74,
 136,24,130,214,133,198,133,110,42,174,52,154,84,20,91,164,6,109,75,117,33,132,130,84,74,136,139,20,255,85,38,80,73,211,36,78,102,50,239,221,235,199,121,15,75,25,201,251,184,243,222,157,123,206,119,190,247,238,61,231,184,64,231,245,86,201,31,116,99,140,
@@ -27,10 +235,10 @@ static const unsigned char temp_binary_data_0[] =
 210,203,253,208,236,229,142,198,242,204,32,106,44,222,132,246,40,93,31,224,46,238,144,203,117,69,94,20,54,173,224,137,114,129,35,115,157,141,197,40,172,181,133,138,125,50,59,220,33,47,35,86,232,4,103,173,109,174,185,67,115,125,218,154,107,168,6,115,54,
 2,27,130,53,215,147,59,52,215,155,36,165,112,144,49,55,18,242,246,238,234,202,152,211,238,220,201,86,167,237,191,87,8,0,54,255,86,237,76,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* mediaeject_png = (const char*) temp_binary_data_0;
+const char* mediaeject_png = (const char*) temp_binary_data_1;
 
 //================== arrow-right-double.png ==================
-static const unsigned char temp_binary_data_1[] =
+static const unsigned char temp_binary_data_2[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,115,122,122,244,0,0,0,4,115,66,73,84,8,8,8,8,124,8,100,136,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,
 119,119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,4,243,73,68,65,84,120,218,237,87,91,111,84,85,24,93,223,222,231,204,153,118,166,148,114,27,46,74,45,141,9,21,212,73,140,128,15,222,72,21,210,72,25,72,74,121,48,168,240,32,9,79,
 60,169,49,17,141,15,144,244,85,241,7,152,24,175,17,49,49,81,31,228,9,225,65,44,209,152,70,42,129,112,75,67,167,115,61,51,115,230,92,62,247,236,115,146,153,166,23,185,76,162,15,174,211,149,239,236,189,166,89,235,124,223,158,201,12,49,51,254,77,8,197,255,
@@ -52,10 +260,10 @@ static const unsigned char temp_binary_data_1[] =
 168,251,34,159,102,103,150,30,223,136,252,116,217,205,23,114,99,252,150,187,67,235,45,184,247,17,152,40,148,253,210,165,236,210,27,61,181,107,149,195,252,166,247,213,28,157,149,94,81,122,73,233,239,40,253,62,49,231,199,41,41,240,236,205,249,245,54,225,
 255,95,199,127,3,27,208,77,172,75,39,220,12,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* arrowrightdouble_png = (const char*) temp_binary_data_1;
+const char* arrowrightdouble_png = (const char*) temp_binary_data_2;
 
 //================== audio-volume-medium.png ==================
-static const unsigned char temp_binary_data_2[] =
+static const unsigned char temp_binary_data_3[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,3,0,0,0,68,164,138,198,0,0,0,1,115,82,71,66,0,174,206,28,233,0,0,0,9,112,72,89,115,0,0,13,215,0,0,13,215,1,66,40,155,120,0,0,0,7,116,73,77,69,7,216,12,30,13,37,17,205,20,154,9,0,0,2,97,
 80,76,84,69,0,0,0,78,78,78,153,230,0,74,74,74,71,71,71,72,72,72,114,222,0,67,67,67,68,68,68,136,228,0,64,64,64,64,64,64,60,60,60,20,196,0,60,60,60,72,212,0,57,57,57,110,222,0,59,207,0,49,205,0,135,229,0,17,195,0,77,212,0,96,218,0,14,195,0,81,81,81,164,
 237,0,86,86,86,160,236,0,82,214,0,13,194,0,77,77,77,123,226,0,73,73,73,166,237,0,51,205,0,38,201,0,69,69,69,85,85,85,88,88,88,130,129,127,85,85,85,185,123,1,65,65,65,64,64,64,61,61,61,44,203,0,85,215,0,84,84,84,91,216,0,57,57,57,53,53,53,53,53,53,157,
@@ -76,10 +284,10 @@ static const unsigned char temp_binary_data_2[] =
 1,162,79,237,115,121,200,234,182,124,230,218,34,1,203,0,52,46,38,74,215,165,179,227,10,13,177,154,159,73,117,226,186,119,132,134,76,47,72,117,124,108,155,98,10,118,186,0,32,60,118,10,181,169,134,5,171,183,89,250,111,245,46,95,127,1,13,159,192,8,79,30,
 107,237,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* audiovolumemedium_png = (const char*) temp_binary_data_2;
+const char* audiovolumemedium_png = (const char*) temp_binary_data_3;
 
 //================== configure.png ==================
-static const unsigned char temp_binary_data_3[] =
+static const unsigned char temp_binary_data_4[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,115,122,122,244,0,0,0,1,115,82,71,66,0,174,206,28,233,0,0,0,9,112,72,89,115,0,0,27,175,0,0,27,175,1,94,26,145,28,0,0,0,7,116,73,77,69,7,217,1,4,3,41,37,70,227,172,85,0,0,0,6,98,
 75,71,68,0,255,0,255,0,255,160,189,167,147,0,0,5,42,73,68,65,84,120,218,189,86,91,80,83,87,20,53,128,165,130,104,171,157,34,168,136,128,160,98,21,101,52,128,34,50,69,167,66,0,67,120,4,8,193,130,16,8,34,168,16,197,168,33,228,33,134,135,4,131,111,109,109,
 149,168,20,21,196,218,86,177,165,85,167,58,45,168,168,88,69,90,148,142,4,169,124,216,150,135,194,234,190,41,159,253,204,237,158,89,63,231,174,51,107,159,125,206,93,123,143,97,35,92,93,103,88,43,149,133,177,151,190,186,84,215,120,181,241,241,229,43,223,
@@ -102,10 +310,10 @@ static const unsigned char temp_binary_data_3[] =
 175,210,20,54,81,2,67,115,230,120,85,209,218,251,4,86,99,50,245,247,186,189,85,21,35,21,250,178,91,101,123,116,29,74,245,206,65,55,183,153,71,71,255,117,214,131,67,88,48,119,238,28,99,120,36,175,253,195,144,224,150,9,19,38,236,164,53,103,243,55,150,227,
 31,11,187,141,104,71,205,111,48,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* configure_png = (const char*) temp_binary_data_3;
+const char* configure_png = (const char*) temp_binary_data_4;
 
 //================== audio-headphones.png ==================
-static const unsigned char temp_binary_data_4[] =
+static const unsigned char temp_binary_data_5[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,115,122,122,244,0,0,0,1,115,82,71,66,0,174,206,28,233,0,0,0,6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,0,0,0,9,112,72,89,115,0,0,27,175,0,0,27,175,1,94,26,145,28,0,0,0,7,116,
 73,77,69,7,215,1,19,14,4,16,207,102,175,156,0,0,4,32,73,68,65,84,88,195,237,151,93,76,28,85,20,199,127,115,151,18,22,11,65,48,52,233,71,68,164,43,209,214,152,208,180,180,110,77,26,77,136,209,82,177,145,46,4,82,218,68,31,120,147,34,165,125,32,166,125,
 82,124,233,67,49,62,84,19,91,173,177,20,18,41,109,163,69,30,88,196,166,137,15,178,104,192,143,90,186,187,226,50,179,236,215,204,178,187,179,59,62,48,139,88,91,5,59,237,139,222,228,230,222,220,57,255,115,254,247,220,115,207,185,3,255,245,102,187,27,240,
@@ -124,10 +332,10 @@ static const unsigned char temp_binary_data_4[] =
 3,199,196,18,161,205,37,37,37,135,53,77,19,66,216,178,49,48,111,17,129,56,128,158,210,83,170,170,73,69,69,69,175,3,143,223,86,114,91,245,182,19,59,159,121,90,51,35,247,121,139,8,212,3,233,77,79,62,145,112,58,157,119,174,47,14,135,227,190,252,15,150,151,
 151,243,127,203,182,223,1,229,172,219,83,18,180,56,117,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* audioheadphones_png = (const char*) temp_binary_data_4;
+const char* audioheadphones_png = (const char*) temp_binary_data_5;
 
 //================== audio-volume-muted.png ==================
-static const unsigned char temp_binary_data_5[] =
+static const unsigned char temp_binary_data_6[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,6,0,0,0,115,122,122,244,0,0,0,1,115,82,71,66,0,174,206,28,233,0,0,0,9,112,72,89,115,0,0,13,215,0,0,13,215,1,66,40,155,120,0,0,0,7,116,73,77,69,7,216,12,30,13,37,29,196,162,214,34,0,0,0,
 6,98,75,71,68,0,255,0,255,0,255,160,189,167,147,0,0,6,13,73,68,65,84,120,218,237,151,105,76,149,71,20,134,7,173,92,42,155,38,86,41,214,198,31,154,216,24,26,171,193,150,138,22,10,8,88,4,169,236,8,200,42,139,80,160,6,144,173,64,82,4,74,89,148,196,13,20,
 26,43,86,80,32,82,172,66,17,9,160,184,32,133,43,92,111,47,139,44,37,20,35,202,106,65,120,59,51,201,247,133,70,147,6,132,164,63,250,38,79,62,102,230,134,115,230,204,204,57,51,228,127,205,86,122,122,122,27,116,117,117,123,244,245,245,97,97,97,1,91,91,91,
@@ -153,10 +361,10 @@ static const unsigned char temp_binary_data_5[] =
 235,241,179,155,61,100,81,161,112,89,166,249,187,35,51,62,67,246,212,9,23,13,245,71,29,9,145,248,197,201,6,241,132,28,139,99,181,96,190,20,71,137,94,167,125,52,84,69,185,217,139,144,247,200,107,116,96,209,34,237,2,93,221,166,36,21,149,116,110,252,191,
 162,191,1,11,63,88,188,187,130,210,250,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* audiovolumemuted_png = (const char*) temp_binary_data_5;
+const char* audiovolumemuted_png = (const char*) temp_binary_data_6;
 
 //================== media-playback-pause.png ==================
-static const unsigned char temp_binary_data_6[] =
+static const unsigned char temp_binary_data_7[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,4,0,0,0,217,115,178,127,0,0,0,2,115,66,73,84,8,8,85,236,70,4,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,119,
 119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,3,248,73,68,65,84,120,218,125,149,79,104,92,85,20,198,127,247,205,100,38,51,201,164,154,170,100,96,82,255,32,216,32,110,132,58,130,136,181,205,170,139,180,32,248,23,247,186,16,44,46,
 196,18,35,134,160,184,144,184,83,236,194,149,154,86,16,219,69,55,154,80,93,8,33,11,17,41,1,137,184,48,56,161,161,127,210,153,76,102,38,243,238,245,243,112,153,16,71,114,62,14,111,14,239,156,239,124,239,206,123,231,184,64,191,125,152,247,39,221,20,19,
@@ -174,10 +382,10 @@ static const unsigned char temp_binary_data_6[] =
 164,32,106,250,145,111,112,118,196,42,63,181,176,111,172,155,189,48,134,22,139,55,161,67,28,229,81,238,227,48,142,91,234,124,77,104,216,192,19,229,50,103,46,244,47,22,163,176,213,22,138,118,100,246,70,4,136,99,100,0,59,19,91,109,23,90,7,44,215,231,109,
 185,134,210,222,199,229,204,5,91,174,23,15,90,174,61,146,124,56,201,148,155,8,113,189,187,90,88,229,178,91,188,216,166,207,254,1,4,168,229,241,240,194,232,138,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* mediaplaybackpause_png = (const char*) temp_binary_data_6;
+const char* mediaplaybackpause_png = (const char*) temp_binary_data_7;
 
 //================== media-playback-start.png ==================
-static const unsigned char temp_binary_data_7[] =
+static const unsigned char temp_binary_data_8[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,4,0,0,0,217,115,178,127,0,0,0,2,115,66,73,84,8,8,85,236,70,4,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,119,
 119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,4,24,73,68,65,84,120,218,125,149,205,107,156,85,20,198,127,247,125,167,51,147,73,166,77,107,145,12,76,91,21,165,13,226,66,161,70,43,213,210,102,85,52,45,8,126,80,92,137,127,128,186,
 144,74,72,105,8,22,193,54,40,184,177,75,19,77,91,20,219,69,17,106,107,237,66,141,17,68,164,68,164,197,69,139,19,137,212,54,31,51,243,78,230,189,215,135,195,48,67,136,228,254,184,36,47,156,231,185,231,36,231,158,235,2,107,215,137,156,63,224,134,232,167,
@@ -196,10 +404,10 @@ static const unsigned char temp_binary_data_7[] =
 172,39,101,57,205,225,51,107,31,22,179,176,167,45,20,236,79,214,238,8,39,145,13,58,225,236,105,59,83,95,231,113,125,201,30,215,80,236,92,46,103,91,216,227,122,118,157,199,181,99,146,11,7,24,114,253,161,245,188,187,74,152,229,130,187,124,54,97,205,250,
 15,203,22,244,57,195,159,209,138,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* mediaplaybackstart_png = (const char*) temp_binary_data_7;
+const char* mediaplaybackstart_png = (const char*) temp_binary_data_8;
 
 //================== media-playback-stop.png ==================
-static const unsigned char temp_binary_data_8[] =
+static const unsigned char temp_binary_data_9[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,4,0,0,0,217,115,178,127,0,0,0,2,115,66,73,84,8,8,85,236,70,4,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,119,
 119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,4,12,73,68,65,84,120,218,125,85,77,104,92,85,20,254,238,125,111,254,94,50,81,227,15,51,48,86,5,65,7,117,35,212,17,68,172,109,86,93,164,5,193,95,220,119,227,66,92,136,50,68,12,81,113,
 161,217,43,184,50,152,86,20,219,69,55,154,80,187,16,66,54,74,41,179,137,184,176,240,2,241,175,206,100,230,189,153,247,238,241,243,188,75,66,29,201,251,56,204,189,115,207,249,206,119,255,206,53,130,233,239,131,138,59,101,22,209,70,147,0,98,162,39,151,
@@ -218,10 +426,10 @@ static const unsigned char temp_binary_data_8[] =
 81,10,125,218,36,42,150,44,43,118,194,151,145,82,177,38,250,180,157,79,142,120,92,159,215,199,85,234,135,151,203,168,17,250,184,94,56,226,113,61,36,169,200,41,44,154,182,248,231,221,196,210,195,37,179,113,33,157,246,253,7,67,12,242,63,75,249,96,13,0,
 0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* mediaplaybackstop_png = (const char*) temp_binary_data_8;
+const char* mediaplaybackstop_png = (const char*) temp_binary_data_9;
 
 //================== media-skip-backward.png ==================
-static const unsigned char temp_binary_data_9[] =
+static const unsigned char temp_binary_data_10[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,4,0,0,0,217,115,178,127,0,0,0,2,115,66,73,84,8,8,85,236,70,4,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,119,
 119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,4,58,73,68,65,84,120,218,125,149,77,104,92,85,24,134,159,115,103,146,249,73,38,209,86,37,3,99,253,65,177,65,220,40,49,1,17,107,27,16,10,182,21,65,171,226,190,46,4,75,23,162,196,84,
 67,80,68,75,86,226,79,186,18,172,109,21,177,93,100,161,182,180,69,132,24,55,165,150,32,164,186,104,101,42,65,219,100,146,201,252,220,123,62,95,15,151,16,29,233,247,112,38,231,204,124,239,251,221,115,114,249,142,51,58,227,157,156,223,225,118,49,72,89,
@@ -240,10 +448,10 @@ static const unsigned char temp_binary_data_9[] =
 139,105,87,114,88,250,76,103,249,2,23,142,88,242,157,71,47,116,92,44,207,14,160,139,197,135,7,237,97,43,247,115,27,155,113,92,83,229,139,98,37,52,60,89,206,178,231,88,231,197,18,44,194,213,102,197,112,100,225,229,182,244,102,204,210,69,56,147,112,181,
 29,107,220,224,114,125,38,92,174,86,50,12,82,3,52,68,184,92,143,223,232,114,93,55,201,217,14,118,185,65,75,175,119,87,181,121,78,186,83,199,155,116,196,223,218,222,235,221,217,190,91,168,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* mediaskipbackward_png = (const char*) temp_binary_data_9;
+const char* mediaskipbackward_png = (const char*) temp_binary_data_10;
 
 //================== media-skip-forward.png ==================
-static const unsigned char temp_binary_data_10[] =
+static const unsigned char temp_binary_data_11[] =
 { 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,32,0,0,0,32,8,4,0,0,0,217,115,178,127,0,0,0,2,115,66,73,84,8,8,85,236,70,4,0,0,0,9,112,72,89,115,0,0,3,118,0,0,3,118,1,125,213,130,204,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,119,119,
 119,46,105,110,107,115,99,97,112,101,46,111,114,103,155,238,60,26,0,0,4,56,73,68,65,84,120,218,125,149,77,104,92,85,20,199,127,247,205,76,102,50,147,73,218,88,37,129,212,15,80,108,80,23,42,49,98,41,214,182,110,138,182,85,193,79,4,55,162,27,23,234,66,
 43,33,98,12,138,136,196,149,139,86,16,193,104,63,176,216,46,10,162,45,213,133,52,100,161,82,67,54,17,23,45,76,160,165,109,50,211,201,155,201,123,247,248,231,242,72,12,145,220,63,103,50,115,57,231,119,255,188,119,115,142,51,214,175,143,139,126,183,219,
@@ -262,23 +470,23 @@ static const unsigned char temp_binary_data_10[] =
 114,88,230,233,23,142,227,194,63,189,202,247,30,89,219,214,1,158,235,67,131,197,7,163,21,182,113,15,183,112,19,142,107,58,121,70,106,132,187,41,228,20,7,142,174,31,44,1,17,70,155,149,195,35,35,201,222,132,35,10,23,60,60,147,48,218,142,198,27,12,215,103,
 195,112,181,170,97,144,1,80,72,97,184,30,219,96,184,174,66,138,182,155,125,110,208,178,241,238,106,54,203,41,119,230,88,139,117,235,95,102,87,250,6,185,165,182,186,0,0,0,0,73,69,78,68,174,66,96,130,0,0 };
 
-const char* mediaskipforward_png = (const char*) temp_binary_data_10;
+const char* mediaskipforward_png = (const char*) temp_binary_data_11;
 
 //================== stop.svg ==================
-static const unsigned char temp_binary_data_11[] =
+static const unsigned char temp_binary_data_12[] =
 "<?xml version=\"1.0\" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg height=\"512px\" id=\"Layer_1\" style=\"enable-background:new 0 0 512 512;\" version=\"1.1\" viewBox=\"0 0 512 512\" widt"
 "h=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><path d=\"M437.4,64H74.6C68.7,64,64,68.7,64,74.6v362.8c0,5.9,4.7,10.6,10.6,10.6h362.8c5.8,0,10.6-4.7,10.6-10.6V74.6  C448,68.7,443.2,"
 "64,437.4,64z\"/></svg>";
 
-const char* stop_svg = (const char*) temp_binary_data_11;
+const char* stop_svg = (const char*) temp_binary_data_12;
 
 //================== play.svg ==================
-static const unsigned char temp_binary_data_12[] =
+static const unsigned char temp_binary_data_13[] =
 "<?xml version=\"1.0\" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg height=\"512px\" id=\"Layer_1\" style=\"enable-background:new 0 0 512 512;\" version=\"1.1\" viewBox=\"0 0 512 512\" widt"
 "h=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><path d=\"M405.2,232.9L126.8,67.2c-3.4-2-6.9-3.2-10.9-3.2c-10.9,0-19.8,9-19.8,20H96v344h0.1c0,11,8.9,20,19.8,20  c4.1,0,7.5-1.4,11.2-"
 "3.4l278.1-165.5c6.6-5.5,10.8-13.8,10.8-23.1C416,246.7,411.8,238.5,405.2,232.9z\"/></svg>";
 
-const char* play_svg = (const char*) temp_binary_data_12;
+const char* play_svg = (const char*) temp_binary_data_13;
 
 
 const char* getNamedResource (const char*, int&) throw();
@@ -291,6 +499,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
 
     switch (hash)
     {
+        case 0xb36c8057:  numBytes = 9232; return German_txt;
         case 0xf8b73e57:  numBytes = 1197; return mediaeject_png;
         case 0x1c3eb4ae:  numBytes = 1398; return arrowrightdouble_png;
         case 0x69242ccf:  numBytes = 1317; return audiovolumemedium_png;
@@ -313,6 +522,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
 
 const char* namedResourceList[] =
 {
+    "German_txt",
     "mediaeject_png",
     "arrowrightdouble_png",
     "audiovolumemedium_png",

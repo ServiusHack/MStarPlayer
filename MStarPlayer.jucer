@@ -4,6 +4,9 @@
               bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="4.2.4"
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
+    <GROUP id="{B276C2F9-F254-0001-8915-10D8D4444FD2}" name="Translations">
+      <FILE id="ogLyug" name="German.txt" compile="0" resource="1" file="Translations/German.txt"/>
+    </GROUP>
     <GROUP id="{47EAB945-752A-FC20-8BBD-B7C65EF0FA43}" name="Icons">
       <GROUP id="{D237656F-512F-DB00-8A88-AF061CED5A4A}" name="oxygen">
         <FILE id="EXOXNf" name="media-eject.png" compile="0" resource="1" file="Icons/oxygen/media-eject.png"/>
@@ -31,9 +34,6 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
-      <FILE id="OIlPcI" name="Translations.cpp" compile="1" resource="0"
-            file="Source/Translations.cpp"/>
-      <FILE id="logqzn" name="Translations.h" compile="0" resource="0" file="Source/Translations.h"/>
       <FILE id="tVQNwC" name="SoloBusMixer.cpp" compile="1" resource="0"
             file="Source/SoloBusMixer.cpp"/>
       <FILE id="ls59QB" name="SoloBusMixer.h" compile="0" resource="0" file="Source/SoloBusMixer.h"/>
