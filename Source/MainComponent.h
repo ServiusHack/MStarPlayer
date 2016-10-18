@@ -104,10 +104,11 @@ public:
     };
 
 // Project file related methods and fields
+public:
+    bool askSaveProject();
 private:
     void newProject();
     void openProject();
-    bool askSaveProject();
     bool saveProject();
     bool saveAsProject();
 

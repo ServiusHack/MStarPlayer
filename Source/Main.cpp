@@ -95,6 +95,9 @@ public:
 
         void closeButtonPressed()
         {
+            if (!static_cast<MainContentComponent*>(getContentComponent())->askSaveProject())
+                return;
+
             JUCEApplication::getInstance()->systemRequestedQuit();
         }
 
