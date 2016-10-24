@@ -627,8 +627,8 @@ void MainContentComponent::writeProjectFile()
     {
         if (Player* player = dynamic_cast<Player*>(m_multiDocumentPanel->getDocument(i)))
             players->addChildElement(player->saveToXml(m_projectFile.getParentDirectory()));
-        else if (CDPlayer* player = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
-            players->addChildElement(player->saveToXml(m_projectFile.getParentDirectory()));
+        else if (CDPlayer* cdPlayer = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
+            players->addChildElement(cdPlayer->saveToXml(m_projectFile.getParentDirectory()));
         else
             assert(false && "Unknown player in multiDocumentPanel");
     }
@@ -663,8 +663,8 @@ void MainContentComponent::soloChanged(bool /*solo*/)
     {
         if (Player* player = dynamic_cast<Player*>(m_multiDocumentPanel->getDocument(i)))
             soloMute = player->getSolo();
-        else if (CDPlayer* player = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
-            soloMute = player->getSolo();
+        else if (CDPlayer* cdPlayer = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
+            soloMute = cdPlayer->getSolo();
         else
             assert(false && "Unknown player in multiDocumentPanel");
 
@@ -676,8 +676,8 @@ void MainContentComponent::soloChanged(bool /*solo*/)
     {
         if (Player* player = dynamic_cast<Player*>(m_multiDocumentPanel->getDocument(i)))
             player->setSoloMute(soloMute);
-        else if (CDPlayer* player = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
-            player->setSoloMute(soloMute);
+        else if (CDPlayer* cdPlayer = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
+            cdPlayer->setSoloMute(soloMute);
         else
             assert(false && "Unknown player in multiDocumentPanel");
     }

@@ -217,9 +217,9 @@ XmlElement* Player::saveToXml(const File& projectDirectory) const
     XmlElement* tracksXml = new XmlElement("Tracks");
     for (size_t i = 0; i < m_tracksContainer.size(); ++i)
     {
-        XmlElement* element = new XmlElement("Track");
-        m_tracksContainer[i].saveToXml(element);
-        tracksXml->addChildElement(element);
+        XmlElement* trackElement = new XmlElement("Track");
+        m_tracksContainer[i].saveToXml(trackElement);
+        tracksXml->addChildElement(trackElement);
     }
     element->addChildElement(tracksXml);
 
