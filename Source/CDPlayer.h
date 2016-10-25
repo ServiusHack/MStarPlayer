@@ -10,6 +10,7 @@
 #include "CDTracksTable.h"
 #include "SoloBusSettings.h"
 #include "SubchannelPlayer.h"
+#include "MyMultiDocumentPanel.h"
 
 #include "ChannelMappingDialog.h"
 #include "PlayerEditDialog.h"
@@ -36,7 +37,7 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    XmlElement* saveToXml(const File& projectDirectory) const;
+    XmlElement* saveToXml(const File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml

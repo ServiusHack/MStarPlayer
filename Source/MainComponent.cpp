@@ -536,6 +536,7 @@ void MainContentComponent::readProjectFile()
                     }
                     Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
                     window->addChangeListener(this);
+                    window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);
                     window->restoreFromXml(*player, m_projectFile.getParentDirectory());
                 }
@@ -546,6 +547,7 @@ void MainContentComponent::readProjectFile()
                     const bool mute = player->getBoolAttribute("mute");
                     CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, gain, solo, mute);
                     window->addChangeListener(this);
+                    window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);
                     window->restoreFromXml(*player, m_projectFile.getParentDirectory());
                 }
@@ -626,9 +628,9 @@ void MainContentComponent::writeProjectFile()
     for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
     {
         if (Player* player = dynamic_cast<Player*>(m_multiDocumentPanel->getDocument(i)))
-            players->addChildElement(player->saveToXml(m_projectFile.getParentDirectory()));
+            players->addChildElement(player->saveToXml(m_projectFile.getParentDirectory(), m_multiDocumentPanel->getLayoutMode()));
         else if (CDPlayer* cdPlayer = dynamic_cast<CDPlayer*>(m_multiDocumentPanel->getDocument(i)))
-            players->addChildElement(cdPlayer->saveToXml(m_projectFile.getParentDirectory()));
+            players->addChildElement(cdPlayer->saveToXml(m_projectFile.getParentDirectory(), m_multiDocumentPanel->getLayoutMode()));
         else
             assert(false && "Unknown player in multiDocumentPanel");
     }

@@ -170,7 +170,7 @@ void Player::setUserImage(const File& file)
     m_jinglePlayer.setUserImage(file);
 }
 
-XmlElement* Player::saveToXml(const File& projectDirectory) const
+XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const
 {
     XmlElement* element = new XmlElement("Player");
     switch (m_type)
@@ -197,14 +197,27 @@ XmlElement* Player::saveToXml(const File& projectDirectory) const
             element->setAttribute("userImage", m_userImage.getFullPathName());
     }
 
-    Rectangle<int> parentBounds = getParentComponent()->getBounds();
-
-    XmlElement* boundsXml = new XmlElement("Bounds");
-    boundsXml->setAttribute("x", parentBounds.getX());
-    boundsXml->setAttribute("y", parentBounds.getY());
-    boundsXml->setAttribute("width", parentBounds.getWidth());
-    boundsXml->setAttribute("height", parentBounds.getHeight());
-    element->addChildElement(boundsXml);
+    switch (layoutMode)
+    {
+    case MyMultiDocumentPanel::FloatingWindows:
+        {
+            Rectangle<int> parentBounds = getParentComponent()->getBounds();
+            XmlElement* boundsXml = new XmlElement("Bounds");
+            boundsXml->setAttribute("x", parentBounds.getX());
+            boundsXml->setAttribute("y", parentBounds.getY());
+            boundsXml->setAttribute("width", parentBounds.getWidth());
+            boundsXml->setAttribute("height", parentBounds.getHeight());
+            element->addChildElement(boundsXml);
+        }
+        break;
+    case MyMultiDocumentPanel::MaximisedWindowsWithTabs:
+        {
+            XmlElement* mdiDocumentPosXml = new XmlElement("MdiDocumentPos");
+            mdiDocumentPosXml->addTextElement(getProperties()["mdiDocumentPos_"]);
+            element->addChildElement(mdiDocumentPosXml);
+        }
+        break;
+    }
 
     XmlElement* viewXml = new XmlElement("View");
     viewXml->setAttribute("playlistResizerPosition", m_playlistPlayer.getResizerBarPosition());
@@ -237,11 +250,22 @@ void Player::restoreFromXml(const XmlElement& element, const File& projectDirect
 
     XmlElement* boundsXml = element.getChildByName("Bounds");
 
-    String x = boundsXml->getStringAttribute("x", "0");
-    String y = boundsXml->getStringAttribute("y", "0");
-    String width = boundsXml->getStringAttribute("width", "150");
-    String height = boundsXml->getStringAttribute("height", "150");
-    getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
+    if (boundsXml)
+    {
+        String x = boundsXml->getStringAttribute("x", "0");
+        String y = boundsXml->getStringAttribute("y", "0");
+        String width = boundsXml->getStringAttribute("width", "150");
+        String height = boundsXml->getStringAttribute("height", "150");
+        getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
+    }
+    else
+    {
+        XmlElement* mdiDocumentPosXml = element.getChildByName("MdiDocumentPos");
+        if (mdiDocumentPosXml->getNumChildElements() > 0 && mdiDocumentPosXml->getFirstChildElement()->isTextElement())
+        {
+            getProperties().set("mdiDocumentPos_", mdiDocumentPosXml->getFirstChildElement()->getText());
+        }
+    }
 
     XmlElement* viewXml = element.getChildByName("View");
     String playlistResizerPosition = viewXml->getStringAttribute("playlistResizerPosition", "100");

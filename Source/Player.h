@@ -12,6 +12,7 @@
 #include "PlaylistModel.h"
 #include "PlaylistPlayerWindow.h"
 #include "SubchannelPlayer.h"
+#include "MyMultiDocumentPanel.h"
 
 /**
 	A player with a playlist and tracks to play audio files.
@@ -36,7 +37,7 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    XmlElement* saveToXml(const File& projectDirectory) const;
+    XmlElement* saveToXml(const File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
