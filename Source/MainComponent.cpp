@@ -5,6 +5,11 @@
 #include "CDPlayer.h"
 #include "Player.h"
 
+namespace
+{
+    const int MaxRecentlyUsedFiles = 5;
+}
+
 DefaultLookAndFeel* MainContentComponent::s_defaultLookAndFeel;
 DarkLookAndFeel* MainContentComponent::s_darkLookAndFeel;
 
@@ -52,6 +57,9 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
     setSize(700, 600);
 
     m_soloBusSettings.addListener(this);
+
+    m_recentlyOpenedFiles.setMaxNumberOfItems(MaxRecentlyUsedFiles);
+    m_recentlyOpenedFiles.restoreFromString(m_applicationProperties.getUserSettings()->getValue("recentlyUsed"));
 }
 
 MainContentComponent::~MainContentComponent()
@@ -87,6 +95,11 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         menu.addCommandItem(m_commandManager, projectOpen);
         menu.addCommandItem(m_commandManager, projectSave);
         menu.addCommandItem(m_commandManager, projectSaveAs);
+        if (m_recentlyOpenedFiles.getNumFiles() > 0)
+        {
+            menu.addSeparator();
+            m_recentlyOpenedFiles.createPopupMenuItems(menu, projectRecentlyUsedFiles, false, false);
+        }
         menu.addSeparator();
         menu.addCommandItem(m_commandManager, StandardApplicationCommandIDs::quit);
         break;
@@ -114,6 +127,17 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
     }
 
     return menu;
+}
+
+void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex)
+{
+    if (menuItemID >= projectRecentlyUsedFiles && menuItemID < projectRecentlyUsedFiles + MaxRecentlyUsedFiles)
+    {
+        m_projectFile = m_recentlyOpenedFiles.getFile(menuItemID - projectRecentlyUsedFiles);
+        m_recentlyOpenedFiles.addFile(m_projectFile);
+        m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
+        readProjectFile();
+    }
 }
 
 // The following methods implement the ApplicationCommandTarget interface, allowing
@@ -334,6 +358,8 @@ void MainContentComponent::openProject()
     if (myChooser.browseForFileToOpen())
     {
         m_projectFile = File(myChooser.getResult());
+        m_recentlyOpenedFiles.addFile(m_projectFile);
+        m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
         readProjectFile();
     }
 }
@@ -378,6 +404,8 @@ bool MainContentComponent::saveAsProject()
         return false;
 
     m_projectFile = File(myChooser.getResult());
+    m_recentlyOpenedFiles.addFile(m_projectFile);
+    m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
     writeProjectFile();
     return true;
 }

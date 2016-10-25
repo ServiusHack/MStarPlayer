@@ -62,7 +62,7 @@ public:
 public:
     virtual StringArray getMenuBarNames() override;
     virtual PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;
-    virtual void menuItemSelected(int /*menuItemID*/, int /*topLevelMenuIndex*/) override{};
+    virtual void menuItemSelected(int menuItemID, int topLevelMenuIndex) override;
 
 // ApplicationCommandTarget overrides
 public:
@@ -87,6 +87,7 @@ public:
         projectOpen = 0x2001,
         projectSave = 0x2002,
         projectSaveAs = 0x2003,
+        projectRecentlyUsedFiles = 0x2004,
 
         addJinglePlayer = 0x3000,
         addMultitrackPlayer = 0x3001,
@@ -117,6 +118,8 @@ private:
 
     File m_projectFile;
     bool m_projectModified;
+
+    RecentlyOpenedFilesList m_recentlyOpenedFiles;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent)
