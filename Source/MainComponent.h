@@ -13,6 +13,7 @@
 #include "PlaylistPlayerWindow.h"
 #include "SoloBusMixer.h"
 #include "SoloBusSettings.h"
+#include "TestToneGeneratorComponent.h"
 
 /** Main component of the Audio Player application.
 
@@ -45,6 +46,8 @@ private:
     ScopedPointer<SoloBusMixer> m_soloComponent;
     ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
     ScopedPointer<EditSettingsWindow> m_editSettingsWindow;
+    ScopedPointer<TestToneGeneratorComponent> m_testToneGenerator;
+    ScopedPointer<DialogWindow> m_testToneGeneratorWindow;
 
 // look and feels
 public:
@@ -93,6 +96,7 @@ public:
         addMultitrackPlayer = 0x3001,
         addPlaylistPlayer = 0x3002,
         addCDPlayer = 0x3003,
+        showTestToneGenerator = 0x3004,
 
         layoutModeFloating = 0x4000,
         layoutModeTabs = 0x4001,

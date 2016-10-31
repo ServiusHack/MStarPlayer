@@ -9,6 +9,16 @@ VolumeSlider::VolumeSlider()
     setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 }
 
+VolumeSlider::VolumeSlider(const String& componentName)
+    : Slider(componentName)
+    , m_snapDistance(0.2)
+{
+    setRange(0.0, Decibels::decibelsToGain(10.0), 0.001);
+    setSkewFactor(0.3);
+    setSliderStyle(Slider::LinearVertical);
+    setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+}
+
 void VolumeSlider::paint(Graphics& g)
 {
     const int indent = LookAndFeel::getDefaultLookAndFeel().getSliderThumbRadius(*this);

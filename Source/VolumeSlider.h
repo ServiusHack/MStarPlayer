@@ -11,6 +11,7 @@ class VolumeSlider : public Slider
 {
 public:
     VolumeSlider();
+    explicit VolumeSlider (const String& componentName);
 
 protected:
     // Distance in gain from 0 when to snap to 0.

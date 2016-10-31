@@ -35,6 +35,20 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <GROUP id="{0069317A-E327-5190-2E93-9745795F2724}" name="TestToneGenerator">
+        <FILE id="i3BaYS" name="TestToneGeneratorAudioSource.cpp" compile="1"
+              resource="0" file="Source/TestToneGeneratorAudioSource.cpp"/>
+        <FILE id="V30KdA" name="TestToneGeneratorAudioSource.h" compile="0"
+              resource="0" file="Source/TestToneGeneratorAudioSource.h"/>
+        <FILE id="zUyySK" name="TestToneGeneratorOutputChannelsModel.cpp" compile="1"
+              resource="0" file="Source/TestToneGeneratorOutputChannelsModel.cpp"/>
+        <FILE id="TUzTSM" name="TestToneGeneratorOutputChannelsModel.h" compile="0"
+              resource="0" file="Source/TestToneGeneratorOutputChannelsModel.h"/>
+        <FILE id="INVpMl" name="TestToneGeneratorComponent.cpp" compile="1"
+              resource="0" file="Source/TestToneGeneratorComponent.cpp"/>
+        <FILE id="bmvhnJ" name="TestToneGeneratorComponent.h" compile="0" resource="0"
+              file="Source/TestToneGeneratorComponent.h"/>
+      </GROUP>
       <FILE id="tVQNwC" name="SoloBusMixer.cpp" compile="1" resource="0"
             file="Source/SoloBusMixer.cpp"/>
       <FILE id="ls59QB" name="SoloBusMixer.h" compile="0" resource="0" file="Source/SoloBusMixer.h"/>

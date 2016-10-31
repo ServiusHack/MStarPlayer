@@ -43,6 +43,8 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
     m_mixerComponent = new MixerComponent(m_audioDeviceManager, m_outputChannelNames, m_soloBusSettings);
     addAndMakeVisible(m_mixerComponent);
 
+    m_testToneGenerator = new TestToneGeneratorComponent(m_mixerComponent, m_outputChannelNames);
+
     // solo bus control
     m_soloComponent = new SoloBusMixer(m_soloBusSettings, m_mixerComponent->getChannelVolumeAudioSource());
     addAndMakeVisible(m_soloComponent);
@@ -122,6 +124,8 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         menu.addCommandItem(m_commandManager, addMultitrackPlayer);
         menu.addCommandItem(m_commandManager, addPlaylistPlayer);
         menu.addCommandItem(m_commandManager, addCDPlayer);
+        menu.addSeparator();
+        menu.addCommandItem(m_commandManager, showTestToneGenerator);
         break;
     case 2:
     {
@@ -179,6 +183,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
         addMultitrackPlayer,
         addPlaylistPlayer,
         addCDPlayer,
+        showTestToneGenerator,
         layoutModeFloating,
         layoutModeTabs,
         showMixer,
@@ -238,6 +243,11 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     case addCDPlayer:
         result.setInfo(TRANS("Add CD Player"), TRANS("Add a player for audio CDs"), playerCategory, 0);
         result.addDefaultKeypress('A', ModifierKeys::commandModifier);
+        break;
+
+    case showTestToneGenerator:
+        result.setInfo(TRANS("Show Test Tone Generator"), TRANS("Show a window from which test tones can be generated on the output channels"), playerCategory, 0);
+        result.addDefaultKeypress('T', ModifierKeys::commandModifier);
         break;
 
     case layoutModeFloating:
@@ -328,6 +338,21 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         m_projectModified = true;
     }
     break;
+    case showTestToneGenerator:
+    {
+        if (!m_testToneGeneratorWindow)
+        {
+            DialogWindow::LaunchOptions options;
+            options.dialogTitle = TRANS("Test Tone Generator");
+            options.resizable = false;
+            options.content.setNonOwned(m_testToneGenerator);
+            options.componentToCentreAround = this;
+            options.useNativeTitleBar = false;
+            m_testToneGeneratorWindow = options.create();
+        }
+        m_testToneGeneratorWindow->setVisible(true);
+    }
+        break;
     case layoutModeFloating:
         m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
         break;
