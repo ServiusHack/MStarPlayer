@@ -24,20 +24,25 @@ SoloBusComponent::SoloBusComponent(OutputChannelNames& outputChannelNames, SoloB
     comboBox.setJustificationType(Justification::centredLeft);
     comboBox.setTextWhenNothingSelected(String());
     comboBox.setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
-    comboBox.addListener(this);
 
     addAndMakeVisible(comboBox2);
     comboBox2.setEditableText(false);
     comboBox2.setJustificationType(Justification::centredLeft);
     comboBox2.setTextWhenNothingSelected(String());
     comboBox2.setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
+
+    comboBox.addItem(TRANS("none"), 1);
+    comboBox.addItemList(outputChannelNames.getAllDeviceOutputChannelNames(), 2);
+    comboBox.setSelectedItemIndex(0);
+    comboBox2.addItem(TRANS("none"), 1);
+    comboBox2.addItemList(outputChannelNames.getAllDeviceOutputChannelNames(), 2);
+    comboBox2.setSelectedItemIndex(0);
+
+    comboBox.addListener(this);
     comboBox2.addListener(this);
 
-    comboBox.addItemList(outputChannelNames.getAllDeviceOutputChannelNames(), 1);
-    comboBox2.addItemList(outputChannelNames.getAllDeviceOutputChannelNames(), 1);
-
-    comboBox.setSelectedItemIndex(settings.getChannel(SoloBusChannel::Left), juce::dontSendNotification);
-    comboBox2.setSelectedItemIndex(settings.getChannel(SoloBusChannel::Right), juce::dontSendNotification);
+    comboBox.setSelectedItemIndex(settings.getChannel(SoloBusChannel::Left) + 1, juce::dontSendNotification);
+    comboBox2.setSelectedItemIndex(settings.getChannel(SoloBusChannel::Right) + 1, juce::dontSendNotification);
 }
 
 //==============================================================================
@@ -58,10 +63,10 @@ void SoloBusComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == &comboBox)
     {
-        soloBusSettings.setChannel(SoloBusChannel::Left, comboBoxThatHasChanged->getSelectedItemIndex());
+        soloBusSettings.setChannel(SoloBusChannel::Left, comboBoxThatHasChanged->getSelectedItemIndex() - 1);
     }
     else if (comboBoxThatHasChanged == &comboBox2)
     {
-        soloBusSettings.setChannel(SoloBusChannel::Right, comboBoxThatHasChanged->getSelectedItemIndex());
+        soloBusSettings.setChannel(SoloBusChannel::Right, comboBoxThatHasChanged->getSelectedItemIndex() - 1);
     }
 }

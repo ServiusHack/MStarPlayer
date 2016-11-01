@@ -64,11 +64,11 @@ void SoloBusMixer::soloBusChannelChanged(SoloBusChannel channel, int outputChann
     {
     case SoloBusChannel::Left:
         m_leftMixer.setChannel(outputChannel);
-        m_leftFader.setEnabled(true);
+        m_leftFader.setEnabled(outputChannel != -1);
         break;
     case SoloBusChannel::Right:
         m_rightMixer.setChannel(outputChannel);
-        m_rightFader.setEnabled(true);
+        m_rightFader.setEnabled(outputChannel != -1);
         break;
     }
 

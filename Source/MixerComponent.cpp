@@ -212,7 +212,8 @@ void MixerComponent::soloBusChannelChanged(SoloBusChannel channel, int outputCha
 
     if (previousOutputChannel != -1)
         m_channelSliders[previousOutputChannel]->setVisible(true);
-    m_channelSliders[outputChannel]->setVisible(false);
+    if (outputChannel != -1)
+        m_channelSliders[outputChannel]->setVisible(false);
     resized();
 }
 

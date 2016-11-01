@@ -60,10 +60,8 @@ void SoloBusSettings::restoreFromXml(const XmlElement& element)
 
     for (SoloBusSettingsListener* listener : m_listeners)
     {
-        if (m_leftChannel != -1)
-            listener->soloBusChannelChanged(SoloBusChannel::Left, m_leftChannel, -1);
-        if (m_rightChannel != -1)
-            listener->soloBusChannelChanged(SoloBusChannel::Right, m_rightChannel, -1);
+        listener->soloBusChannelChanged(SoloBusChannel::Left, m_leftChannel, -1);
+        listener->soloBusChannelChanged(SoloBusChannel::Right, m_rightChannel, -1);
     }
 }
 
