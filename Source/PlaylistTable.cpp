@@ -68,13 +68,13 @@ void PlaylistTable::next(bool onlyIfEntrySaysSo)
 {
     if (getSelectedRow() + 1 < m_model.getNumRows())
     {
-        m_playNext = onlyIfEntrySaysSo && m_model.doPlayNext(getSelectedRow());
+        m_playNext = !onlyIfEntrySaysSo || m_model.doPlayNext(getSelectedRow());
         forceSelectRow(getSelectedRow() + 1);
         m_playNext = false;
     }
     else
     {
-        m_playNext = onlyIfEntrySaysSo && m_model.doPlayNext(getSelectedRow());
+        m_playNext = !onlyIfEntrySaysSo || m_model.doPlayNext(getSelectedRow());
         forceSelectRow(0);
         m_playNext = false;
     }
