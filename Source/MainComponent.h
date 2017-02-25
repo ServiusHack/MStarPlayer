@@ -96,6 +96,7 @@ public:
 
         layoutModeFloating = 0x4000,
         layoutModeTabs = 0x4001,
+        showMixer = 0x4002,
 
         configureAudio = 0x5000,
         editSettings = 0x5001,

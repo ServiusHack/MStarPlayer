@@ -74,7 +74,10 @@ void MainContentComponent::resized()
 {
     auto bounds = getLocalBounds();
 
-    m_mixerComponent->setBounds(bounds.removeFromBottom(m_mixerComponent->getHeight()));
+    if (m_mixerComponent->isVisible())
+    {
+        m_mixerComponent->setBounds(bounds.removeFromBottom(m_mixerComponent->getHeight()));
+    }
 
     if (m_soloBusSettings.isConfigured())
     {
@@ -129,6 +132,8 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDefault);
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDark);
         menu.addSubMenu(TRANS("Style"), stylePopupMenu);
+
+        menu.addCommandItem(m_commandManager, showMixer);
     }
     break;
     case 3:
@@ -176,6 +181,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
         addCDPlayer,
         layoutModeFloating,
         layoutModeTabs,
+        showMixer,
         configureAudio,
         editSettings,
         lookAndFeelDefault,
@@ -242,6 +248,11 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     case layoutModeTabs:
         result.setInfo(TRANS("Tabs"), TRANS("Players are tabs"), viewCategory, 0);
         result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::MaximisedWindowsWithTabs);
+        break;
+
+    case showMixer:
+        result.setInfo(TRANS("Show Mixer"), TRANS("Show the mixer"), viewCategory, 0);
+        result.setTicked(m_mixerComponent->isVisible());
         break;
 
     case configureAudio:
@@ -322,6 +333,10 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         break;
     case layoutModeTabs:
         m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::MaximisedWindowsWithTabs);
+        break;
+    case showMixer:
+        m_mixerComponent->setVisible(!m_mixerComponent->isVisible());
+        resized();
         break;
 
     case configureAudio:
