@@ -72,10 +72,21 @@ MainContentComponent::~MainContentComponent()
 
 void MainContentComponent::resized()
 {
-    const int soloComponentWidth = m_soloBusSettings.isConfigured() ? 100 : 0;
-    m_mixerComponent->setBounds(0, getHeight() - m_mixerComponent->getHeight(), getWidth(), m_mixerComponent->getHeight());
-    m_multiDocumentPanel->setBounds(0, 0, getWidth() - soloComponentWidth, getHeight() - m_mixerComponent->getHeight());
-    m_soloComponent->setBounds(getWidth() - soloComponentWidth, 0, soloComponentWidth, getHeight() - m_mixerComponent->getHeight());
+    auto bounds = getLocalBounds();
+
+    m_mixerComponent->setBounds(bounds.removeFromBottom(m_mixerComponent->getHeight()));
+
+    if (m_soloBusSettings.isConfigured())
+    {
+        const int soloComponentWidth = 100;
+        m_soloComponent->setBounds(bounds.removeFromRight(soloComponentWidth));
+    }
+    else
+    {
+        m_soloComponent->setBounds(0, 0, 0, 0);
+    }
+
+    m_multiDocumentPanel->setBounds(bounds);
 }
 
 StringArray MainContentComponent::getMenuBarNames()
