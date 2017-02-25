@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="4.2.4"
+              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="4.3.1"
               includeBinaryInAppConfig="1">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{B276C2F9-F254-0001-8915-10D8D4444FD2}" name="Translations">
