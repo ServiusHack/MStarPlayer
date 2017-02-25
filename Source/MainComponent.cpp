@@ -261,7 +261,7 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
         break;
 
     case showMixer:
-        result.setInfo(TRANS("Show Mixer"), TRANS("Show the mixer"), viewCategory, 0);
+        result.setInfo(TRANS("Show Mixer"), TRANS("Show the mixer in the lower area"), viewCategory, 0);
         result.setTicked(m_mixerComponent->isVisible());
         break;
 

@@ -108,6 +108,8 @@ static const unsigned char temp_binary_data_0[] =
 "\"Players are floating windows\" = \"Player sind schwebende Fenster\"\r\n"
 "\"Tabs\" = \"Tabs\"\r\n"
 "\"Players are tabs\" = \"Player sind Tabs\"\r\n"
+"\"Show Mixer\" = \"Mischer anzeigen\"\r\n"
+"\"Show the mixer in the lower area\" = \"Mischer am unteren Rand anzeigen\"\r\n"
 "\"Configure Audio\" = \"Audio konfigurieren\"\r\n"
 "\"Configure the audio device to use\" = \"Das zu verwendende Audioger\xc3\xa4t konfigurieren\"\r\n"
 "\"Edit Settings\" = \"Einstellungen bearbeiten\"\r\n"
@@ -211,7 +213,7 @@ static const unsigned char temp_binary_data_0[] =
 "\"MStarPlayer\" = \"MStarPlayer\"\r\n"
 "\"The selected file has more than two channels. This is not supported.\" = \"Die gew\xc3\xa4hlte Audiodatei hat mehr als zwei Spuren. Das wird nicht unterst\xc3\xbctzt.\"\r\n"
 "\"The selected file has %d channels but this is a mono track.\" = \"Die gew\xc3\xa4hlte Audiodatei hat %d Kan\xc3\xa4le aber dies ist eine Mono-Spur.\"\r\n"
-"\"The selected file has %d channel(s) but this is a stereo track.\" = \"Die gew\xc3\xa4hlte Audiodatei hat %d Kanal/Kan\xc3\xa4le aber dies ist eine Stereo-Spur.\"";
+"\"The selected file has %d channel(s) but this is a stereo track.\" = \"Die gew\xc3\xa4hlte Audiodatei hat %d Kanal/Kan\xc3\xa4le aber dies ist eine Stereo-Spur.\"\r\n";
 
 const char* German_txt = (const char*) temp_binary_data_0;
 
@@ -499,7 +501,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
 
     switch (hash)
     {
-        case 0xb36c8057:  numBytes = 9232; return German_txt;
+        case 0xb36c8057:  numBytes = 9342; return German_txt;
         case 0xf8b73e57:  numBytes = 1197; return mediaeject_png;
         case 0x1c3eb4ae:  numBytes = 1398; return arrowrightdouble_png;
         case 0x69242ccf:  numBytes = 1317; return audiovolumemedium_png;

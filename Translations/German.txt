@@ -96,6 +96,8 @@ countries:de
 "Players are floating windows" = "Player sind schwebende Fenster"
 "Tabs" = "Tabs"
 "Players are tabs" = "Player sind Tabs"
+"Show Mixer" = "Mischer anzeigen"
+"Show the mixer in the lower area" = "Mischer am unteren Rand anzeigen"
 "Configure Audio" = "Audio konfigurieren"
 "Configure the audio device to use" = "Das zu verwendende Audiogerät konfigurieren"
 "Edit Settings" = "Einstellungen bearbeiten"
