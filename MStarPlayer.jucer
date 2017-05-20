@@ -223,7 +223,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
   <EXPORTFORMATS>
-    <VS2015 targetFolder="Builds/VisualStudio2015" toolset="v140_xp">
+    <VS2017 targetFolder="Builds/VisualStudio2017" toolset="v141_xp">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"/>
@@ -247,7 +247,7 @@
         <MODULEPATH id="juce_audio_devices" path="JuceLibraryCode/modules"/>
         <MODULEPATH id="juce_audio_basics" path="JuceLibraryCode/modules"/>
       </MODULEPATHS>
-    </VS2015>
+    </VS2017>
     <LINUX_MAKE targetFolder="Builds/Linux">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
