@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Test your packages in a test environment: https://github.com/chocolatey/chocolatey-test-environment -->
+
+<!-- Do not remove this test for UTF-8: if “?” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <!-- == PACKAGE SPECIFIC SECTION == -->
+    <id>mstarplayer</id>
+    <!-- version should MATCH as closely as possible with the underlying software -->
+    <!-- Is the version a prerelease of a version? https://docs.nuget.org/create/versioning#creating-prerelease-packages -->
+    <!-- Note that unstable versions like 0.0.1 can be considered a released version, but it's possible that one can release a 0.0.1-beta before you release a 0.0.1 version. If the version number is final, that is considered a released version and not a prerelease. -->
+    <version>0.0</version>
+
+    <!-- == SOFTWARE SPECIFIC SECTION == -->
+    <title>M*Player</title>
+    <authors>Severin Leonhardt</authors>
+    <projectUrl>https://github.com/ServiusHack/MStarPlayer</projectUrl>
+    <licenseUrl>https://cdn.rawgit.com/ServiusHack/MStarPlayer/d8e6b5c289b4ac47d5a89b6894ab9a0b9767674c/LICENSE.txt</licenseUrl>
+    <tags>mstarplayer audio mp3 media</tags>
+    <summary>Multi-channel, multi-track, multi-player player for audio files.</summary>
+    <description>
+# Features
+
+* Supports basic audio file types like WAV and MP3
+* Output to ASIO devices
+* Freely configure output channels
+* Play multi-track recordings consisting of one file per track
+</description>
+  </metadata>
+
+  <files>
+    <file src="Builds\VisualStudio2017\Win32\Release\App\MStarPlayer.exe" target="MStarPlayer.exe" />
+  </files>
+</package>
