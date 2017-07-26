@@ -217,7 +217,12 @@ void TestToneGeneratorComponent::buttonClicked (Button* buttonThatWasClicked)
 void TestToneGeneratorComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
     size_t numberOfChannels = m_outputChannelNames->getNumberOfChannels();
+    int oldSize = m_listBoxModel.getNumRows();
     m_listBoxModel.resizeTo(numberOfChannels);
+    for (int i = oldSize; i < numberOfChannels; ++i)
+    {
+        m_listBoxModel.setChannelName(i, m_outputChannelNames->getInternalOutputChannelName(i));
+    }
     m_audioSource.setNumChannels(m_outputChannelNames->getNumberOfChannels());
     component->updateContent();
 }
