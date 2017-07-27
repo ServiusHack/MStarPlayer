@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.2.4
+  Created with Projucer version: 5.0.1
 
   ------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent (MixerComponent* mixerCom
 
     addAndMakeVisible (label = new Label ("new label",
                                           TRANS("Tone:")));
-    label->setFont (Font (15.00f, Font::plain));
+    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
     label->setJustificationType (Justification::centredLeft);
     label->setEditable (false, false, false);
     label->setColour (TextEditor::textColourId, Colours::black);
@@ -73,6 +73,13 @@ TestToneGeneratorComponent::TestToneGeneratorComponent (MixerComponent* mixerCom
     textButton2->setConnectedEdges (Button::ConnectedOnLeft);
     textButton2->addListener (this);
 
+    addAndMakeVisible (dbLabel = new Label ("new label",
+                                            TRANS("0 dB")));
+    dbLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+    dbLabel->setJustificationType (Justification::centredLeft);
+    dbLabel->setEditable (false, false, false);
+    dbLabel->setColour (TextEditor::textColourId, Colours::black);
+    dbLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     //[UserPreSize]
     toggleButton->setEnabled(false);
@@ -118,6 +125,7 @@ TestToneGeneratorComponent::~TestToneGeneratorComponent()
     slider = nullptr;
     textButton = nullptr;
     textButton2 = nullptr;
+    dbLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -143,11 +151,12 @@ void TestToneGeneratorComponent::resized()
 
     comboBox->setBounds (64, 16, 112, 24);
     toggleButton->setBounds (200, 16, 86, 24);
-    component->setBounds (56, 56, getWidth() - 64, getHeight() - 104);
+    component->setBounds (56, 56, getWidth() - 64, getHeight() - 144);
     label->setBounds (8, 16, 64, 24);
-    slider->setBounds (8, 56, 40, 336);
-    textButton->setBounds (56, 360, 112, 24);
-    textButton2->setBounds (168, 360, 118, 24);
+    slider->setBounds (8, 56, 40, 296);
+    textButton->setBounds (56, 320, 112, 24);
+    textButton2->setBounds (168, 320, 118, 24);
+    dbLabel->setBounds (8, 360, 280, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -247,6 +256,7 @@ void TestToneGeneratorComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_slider] -- add your slider handling code here..
         m_audioSource.setVolume(sliderThatWasMoved->getValue());
+        dbLabel->setText(Decibels::toString(Decibels::gainToDecibels(sliderThatWasMoved->getValue())), juce::sendNotification);
         //[/UserSliderCode_slider]
     }
 
@@ -279,23 +289,28 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="200 16 86 24" buttonText="play"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="new component" id="96544753efa6c8c1" memberName="component"
-                    virtualName="" explicitFocusOrder="0" pos="56 56 64M 104M" class="ListBox"
+                    virtualName="" explicitFocusOrder="0" pos="56 56 64M 144M" class="ListBox"
                     params=""/>
   <LABEL name="new label" id="fa4fe90b2c777bd9" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="8 16 64 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Tone:" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         bold="0" italic="0" justification="33"/>
+         kerning="0" bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="new slider" id="ee7d514938f90c29" memberName="slider" virtualName="VolumeSlider"
-                    explicitFocusOrder="0" pos="8 56 40 336" class="Component" params=""/>
+                    explicitFocusOrder="0" pos="8 56 40 296" class="Component" params=""/>
   <TEXTBUTTON name="new button" id="710c460e04cff859" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="56 360 112 24" posRelativeW="96544753efa6c8c1"
+              virtualName="" explicitFocusOrder="0" pos="56 320 112 24" posRelativeW="96544753efa6c8c1"
               buttonText="select all" connectedEdges="2" needsCallback="1"
               radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="45ab63c9bc8a398c" memberName="textButton2"
-              virtualName="" explicitFocusOrder="0" pos="168 360 118 24" posRelativeW="96544753efa6c8c1"
+              virtualName="" explicitFocusOrder="0" pos="168 320 118 24" posRelativeW="96544753efa6c8c1"
               buttonText="select none" connectedEdges="1" needsCallback="1"
               radioGroupId="0"/>
+  <LABEL name="new label" id="863c5289d7b6c1d0" memberName="dbLabel" virtualName=""
+         explicitFocusOrder="0" pos="8 360 280 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="0 dB" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
+         kerning="0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
