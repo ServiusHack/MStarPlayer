@@ -925,8 +925,30 @@ extern "C" void* threadEntryProc (void* userData)
     return nullptr;
 }
 
+#if JUCE_ANDROID && JUCE_MODULE_AVAILABLE_juce_audio_devices && (JUCE_USE_ANDROID_OPENSLES || (! defined(JUCE_USE_ANDROID_OPENSLES) && JUCE_ANDROID_API_VERSION > 8))
+#define JUCE_ANDROID_REALTIME_THREAD_AVAILABLE 1
+#endif
+
+#if JUCE_ANDROID_REALTIME_THREAD_AVAILABLE
+extern pthread_t juce_createRealtimeAudioThread (void* (*entry) (void*), void* userPtr);
+#endif
+
 void Thread::launchThread()
 {
+   #if JUCE_ANDROID
+    if (isAndroidRealtimeThread)
+    {
+       #if JUCE_ANDROID_REALTIME_THREAD_AVAILABLE
+        threadHandle = (void*) juce_createRealtimeAudioThread (threadEntryProc, this);
+        threadId = (ThreadID) threadHandle;
+
+        return;
+       #else
+        jassertfalse;
+       #endif
+    }
+   #endif
+
     threadHandle = 0;
     pthread_t handle = 0;
     pthread_attr_t attr;
@@ -1037,10 +1059,12 @@ void JUCE_CALLTYPE Thread::setCurrentThreadAffinityMask (const uint32 affinityMa
 
    #if (! JUCE_ANDROID) && ((! JUCE_LINUX) || ((__GLIBC__ * 1000 + __GLIBC_MINOR__) >= 2004))
     pthread_setaffinity_np (pthread_self(), sizeof (cpu_set_t), &affinity);
+   #elif JUCE_ANDROID
+    sched_setaffinity (gettid(), sizeof (cpu_set_t), &affinity);
    #else
     // NB: this call isn't really correct because it sets the affinity of the process,
-    // not the thread. But it's included here as a fallback for people who are using
-    // ridiculously old versions of glibc
+    // (getpid) not the thread (not gettid). But it's included here as a fallback for
+    // people who are using ridiculously old versions of glibc
     sched_setaffinity (getpid(), sizeof (cpu_set_t), &affinity);
    #endif
 

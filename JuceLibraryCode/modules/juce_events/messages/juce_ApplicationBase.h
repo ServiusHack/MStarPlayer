@@ -189,6 +189,13 @@ public:
                                      int lineNumber) = 0;
 
     //==============================================================================
+    /** Override this method to be informed when the back button is pressed on a device.
+
+        This is currently only implemented on Android devices.
+     */
+    virtual void backButtonPressed() { }
+
+    //==============================================================================
     /** Signals that the main message loop should stop and the application should terminate.
 
         This isn't synchronous, it just posts a quit message to the main queue, and
@@ -249,11 +256,15 @@ public:
    #ifndef DOXYGEN
     // The following methods are for internal use only...
     static int main();
-    static int main (int argc, const char* argv[], void*);
+    static int main (int argc, const char* argv[]);
 
     static void appWillTerminateByForce();
     typedef JUCEApplicationBase* (*CreateInstanceFunction)();
     static CreateInstanceFunction createInstance;
+
+   #if JUCE_IOS
+    static void* iOSCustomDelegate;
+   #endif
 
     virtual bool initialiseApp();
     int shutdownApp();

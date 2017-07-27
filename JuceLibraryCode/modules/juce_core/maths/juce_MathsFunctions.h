@@ -337,15 +337,27 @@ inline int64 abs64 (const int64 n) noexcept
 #endif
 
 //==============================================================================
+
+/** Commonly used mathematical constants */
+template <typename FloatType>
+struct MathConstants
+{
+    /** A predefined value for Pi */
+    static constexpr FloatType pi    = static_cast<FloatType> (3.141592653589793238L);
+
+    /** A predfined value for Euler's number */
+    static constexpr FloatType euler = static_cast<FloatType> (2.71828182845904523536L);
+};
+
 /** A predefined value for Pi, at double-precision.
     @see float_Pi
 */
-const double  double_Pi  = 3.1415926535897932384626433832795;
+const double  double_Pi  = MathConstants<double>::pi;
 
 /** A predefined value for Pi, at single-precision.
     @see double_Pi
 */
-const float   float_Pi   = 3.14159265358979323846f;
+const float   float_Pi   = MathConstants<float>::pi;
 
 
 /** Converts an angle in degrees to radians. */
@@ -484,6 +496,22 @@ inline int roundFloatToInt (float value) noexcept
 }
 
 //==============================================================================
+/** Truncates a positive floating-point number to an unsigned int.
+
+    This is generally faster than static_cast<unsigned int> (std::floor (x))
+    but it only works for positive numbers small enough to be represented as an
+    unsigned int.
+*/
+template <typename FloatType>
+unsigned int truncatePositiveToUnsignedInt (FloatType value) noexcept
+{
+    jassert (value >= static_cast<FloatType> (0));
+    jassert (static_cast<FloatType> (value) <= std::numeric_limits<unsigned int>::max());
+
+    return static_cast<unsigned int> (value);
+}
+
+//==============================================================================
 /** Returns true if the specified integer is a power-of-two. */
 template <typename IntegerType>
 bool isPowerOfTwo (IntegerType value)
@@ -585,10 +613,7 @@ namespace TypeHelpers
 
         Of course, this is only likely to be useful in certain esoteric template situations.
 
-        Because "typename TypeHelpers::ParameterType<SomeClass>::type" is a bit of a mouthful, there's
-        a PARAMETER_TYPE(SomeClass) macro that you can use to get the same effect.
-
-        E.g. "myFunction (PARAMETER_TYPE (int), PARAMETER_TYPE (MyObject))"
+        E.g. "myFunction (typename TypeHelpers::ParameterType<int>::type, typename TypeHelpers::ParameterType<MyObject>::type)"
         would evaluate to "myfunction (int, const MyObject&)", keeping any primitive types as
         pass-by-value, but passing objects as a const reference, to avoid copying.
     */
@@ -612,16 +637,21 @@ namespace TypeHelpers
     template <>              struct ParameterType <double>          { typedef double type; };
    #endif
 
-    /** A helpful macro to simplify the use of the ParameterType template.
-        @see ParameterType
-    */
-    #define PARAMETER_TYPE(a)    typename TypeHelpers::ParameterType<a>::type
-
     /** These templates are designed to take a type, and if it's a double, they return a double
         type; for anything else, they return a float type.
     */
-    template <typename Type> struct SmallestFloatType             { typedef float  type; };
-    template <>              struct SmallestFloatType <double>    { typedef double type; };
+    template <typename Type> struct SmallestFloatType               { typedef float  type; };
+    template <>              struct SmallestFloatType <double>      { typedef double type; };
+
+
+    /** These templates are designed to take an integer type, and return an unsigned int
+        version with the same size.
+    */
+    template <int bytes>     struct UnsignedTypeWithSize            {};
+    template <>              struct UnsignedTypeWithSize<1>         { typedef uint8  type; };
+    template <>              struct UnsignedTypeWithSize<2>         { typedef uint16 type; };
+    template <>              struct UnsignedTypeWithSize<4>         { typedef uint32 type; };
+    template <>              struct UnsignedTypeWithSize<8>         { typedef uint64 type; };
 }
 
 
