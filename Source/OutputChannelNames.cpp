@@ -12,6 +12,8 @@ OutputChannelNames::OutputChannelNames(AudioDeviceManager& deviceManager)
     {
         m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
         m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
+        m_pairingModes.resize(m_audioDevice->getOutputChannelNames().size());
+        m_pairingModes.fill(PairingMode::Mono);
         m_deviceIdentification = ExtractDeviceIdentification(m_audioDevice);
     }
     deviceManager.addChangeListener(this);
@@ -37,12 +39,15 @@ void OutputChannelNames::changeListenerCallback(ChangeBroadcaster* source)
         {
             m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
             m_internalOutputChannelNames = m_audioDevice->getOutputChannelNames();
+            m_pairingModes.resize(m_audioDevice->getOutputChannelNames().size());
+            m_pairingModes.fill(PairingMode::Mono);
             m_deviceIdentification = ExtractDeviceIdentification(m_audioDevice);
         }
         else
         {
             m_deviceOutputChannelNames.clear();
             m_internalOutputChannelNames.clear();
+            m_pairingModes.clear();
             m_deviceIdentification = DeviceIdentification();
         }
 
@@ -59,6 +64,72 @@ int OutputChannelNames::getNumberOfChannels()
         return m_audioDevice->getActiveOutputChannels().countNumberOfSetBits();
     else
         return 0;
+}
+
+bool OutputChannelNames::SetChannelPairing(int activeChannelIndex, PairingMode mode)
+{
+    jassert(activeChannelIndex >= 0 && activeChannelIndex < m_pairingModes.size());
+
+    PairingMode previousMode = m_pairingModes[activeChannelIndex];
+    m_pairingModes.set(activeChannelIndex, mode);
+
+    for (OutputChannelNamesListener* listener : m_listeners)
+        listener->outputChannelPairingModeChanged(activeChannelIndex, mode);
+
+    switch (mode)
+    {
+    case PairingMode::Mono:
+        if (previousMode == PairingMode::Left && activeChannelIndex + 1 < m_pairingModes.size())
+        {
+            m_pairingModes.set(activeChannelIndex + 1, PairingMode::Mono);
+
+            for (OutputChannelNamesListener* listener : m_listeners)
+                listener->outputChannelPairingModeChanged(activeChannelIndex + 1, PairingMode::Mono);
+        }
+        else if (previousMode == PairingMode::Right && activeChannelIndex - 1 >= 0)
+        {
+            m_pairingModes.set(activeChannelIndex - 1, PairingMode::Mono);
+
+            for (OutputChannelNamesListener* listener : m_listeners)
+                listener->outputChannelPairingModeChanged(activeChannelIndex - 1, PairingMode::Mono);
+        }
+        break;
+    case PairingMode::Left:
+        if (activeChannelIndex + 1 < m_pairingModes.size())
+        {
+            m_pairingModes.set(activeChannelIndex + 1, PairingMode::Right);
+
+            for (OutputChannelNamesListener* listener : m_listeners)
+                listener->outputChannelPairingModeChanged(activeChannelIndex + 1, PairingMode::Right);
+        }
+        else
+        {
+
+        }
+        break;
+    case PairingMode::Right:
+        if (activeChannelIndex - 1 >= 0)
+        {
+            m_pairingModes.set(activeChannelIndex - 1, PairingMode::Left);
+
+            for (OutputChannelNamesListener* listener : m_listeners)
+                listener->outputChannelPairingModeChanged(activeChannelIndex - 1, PairingMode::Left);
+        }
+        else
+        {
+
+        }
+        break;
+    }
+
+    return previousMode != mode;
+}
+
+PairingMode OutputChannelNames::GetChannelPairing(int activeChannelIndex)
+{
+    jassert(activeChannelIndex >= 0 && activeChannelIndex < m_pairingModes.size());
+
+    return m_pairingModes[activeChannelIndex];
 }
 
 StringArray OutputChannelNames::getAllDeviceOutputChannelNames()

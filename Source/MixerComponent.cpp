@@ -206,6 +206,22 @@ void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const Stri
     m_channelSliders.at(activeChannelIndex)->setLabel(text);
 }
 
+void MixerComponent::outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode)
+{
+    switch (mode)
+    {
+    case PairingMode::Mono:
+        m_channelSliders[activeChannelIndex]->pairTo(nullptr);
+        break;
+    case PairingMode::Left:
+        m_channelSliders[activeChannelIndex]->pairTo(m_channelSliders[activeChannelIndex + 1]);
+        break;
+    case PairingMode::Right:
+        m_channelSliders[activeChannelIndex]->pairTo(m_channelSliders[activeChannelIndex - 1]);
+        break;
+    }
+}
+
 void MixerComponent::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
     ignoreUnused(channel);

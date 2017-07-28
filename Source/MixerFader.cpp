@@ -207,7 +207,10 @@ void MixerFader::sliderValueChanged(Slider* sliderThatWasMoved)
     }
     else if (sliderThatWasMoved == m_volumeSlider)
     {
-        m_mixerControlable->setGain(static_cast<float>(sliderThatWasMoved->getValue()));
+        const float gain = static_cast<float>(sliderThatWasMoved->getValue());
+        m_mixerControlable->setGain(gain);
+        if (m_pairedFader)
+            m_pairedFader->setValue(gain);
     }
 }
 
@@ -272,4 +275,9 @@ void MixerFader::updateLevel()
     m_levelMeter->setVolume(m_mixerControlable->getVolume());
     for (auto&& fader : m_subfaders)
         fader->updateLevel();
+}
+
+void MixerFader::pairTo(MixerFader* fader)
+{
+    m_pairedFader = fader;
 }

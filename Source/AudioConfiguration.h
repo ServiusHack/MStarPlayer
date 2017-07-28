@@ -33,9 +33,12 @@ private:
 class ChannelNames
     : public TableListBoxModel
     , public TextEditor::Listener
+    , public ComboBox::Listener
 {
 public:
     ChannelNames(OutputChannelNames& outputChannelName);
+
+    std::function<void()> updateCallback;
 
 // TableListBoxModel
 public:
@@ -47,6 +50,9 @@ public:
 // TextEditor::Listener
 public:
     virtual void textEditorTextChanged(TextEditor& textEditor) override;
+
+// ComboBox::Listener
+    virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
 
 private:
     OutputChannelNames& m_outputChannelName;

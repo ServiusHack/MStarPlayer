@@ -247,6 +247,10 @@ void TestToneGeneratorComponent::outputChannelNameChanged(int activeChannelIndex
     component->updateContent();
 }
 
+void TestToneGeneratorComponent::outputChannelPairingModeChanged(int /*activeChannelIndex*/, PairingMode /*mode*/)
+{
+}
+
 void TestToneGeneratorComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]

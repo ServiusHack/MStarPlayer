@@ -83,6 +83,7 @@ public:
 public:
     virtual void outputChannelNamesReset() override;
     virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
+    virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) override;
 
 // SoloBusSettingsListener
 public:

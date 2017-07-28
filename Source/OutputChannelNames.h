@@ -2,6 +2,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+enum class PairingMode
+{
+    Mono = 0,
+    Left,
+    Right
+};
+
 /**
 	Interface to receive changes to the output channel names.
 */
@@ -10,6 +17,7 @@ class OutputChannelNamesListener
 public:
     virtual void outputChannelNamesReset() = 0;
     virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) = 0;
+    virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) = 0;
 };
 
 /**
@@ -43,6 +51,14 @@ private:
     DeviceIdentification ExtractDeviceIdentification(AudioIODevice* audioDevice);
     AudioIODevice* m_audioDevice;
     DeviceIdentification m_deviceIdentification;
+
+// channel pairing
+public:
+    bool SetChannelPairing(int activeChannelIndex, PairingMode mode);
+    PairingMode GetChannelPairing(int activeChannelIndex);
+
+private:
+    Array<PairingMode> m_pairingModes;
 
 // output device names and their internal names
 public:

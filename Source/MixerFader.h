@@ -47,6 +47,8 @@ public:
 
     void updateLevel();
 
+    void pairTo(MixerFader* fader);
+
 // Component
 public:
     virtual void paint(Graphics&) override;
@@ -90,6 +92,8 @@ private:
     MixerControlable* m_mixerControlable;
 
     Colour m_color;
+
+    MixerFader* m_pairedFader{nullptr};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MixerFader)
 };

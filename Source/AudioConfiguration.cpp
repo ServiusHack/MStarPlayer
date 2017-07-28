@@ -26,6 +26,29 @@ private:
     int m_row;
 };
 
+class ChannelNameComboBox
+    : public ComboBox
+{
+public:
+    ChannelNameComboBox()
+        : m_row(0)
+    {
+    }
+
+    void setRow(const int newRow)
+    {
+        m_row = newRow;
+    }
+
+    int getRow() const
+    {
+        return m_row;
+    }
+
+private:
+    int m_row;
+};
+
 AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
     : DialogWindow(TRANS("Configure Audio"), Colours::lightgrey, true, true)
 {
@@ -77,7 +100,33 @@ void ChannelNames::paintCell(Graphics& g,
 
 Component* ChannelNames::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
-    if (columnId == 2)
+    if (columnId == 3)
+    {
+        ChannelNameComboBox* editor = static_cast<ChannelNameComboBox*>(existingComponentToUpdate);
+
+        if (editor == nullptr)
+        {
+            editor = new ChannelNameComboBox();
+            editor->addListener(this);
+        }
+
+        editor->clear();
+        editor->addItem("mono", 1);
+        if (rowNumber < m_outputChannelName.getNumberOfChannels() - 1 
+            && m_outputChannelName.GetChannelPairing(rowNumber) != PairingMode::Right
+            && m_outputChannelName.GetChannelPairing(rowNumber +1) != PairingMode::Left)
+            editor->addItem("left of below", 2);
+        if (rowNumber > 0 
+            && m_outputChannelName.GetChannelPairing(rowNumber) != PairingMode::Left
+            && m_outputChannelName.GetChannelPairing(rowNumber - 1) != PairingMode::Right)
+            editor->addItem("right of above", 3);
+
+        editor->setSelectedId(static_cast<int>(m_outputChannelName.GetChannelPairing(rowNumber)) + 1, juce::dontSendNotification);
+        editor->setRow(rowNumber);
+
+        return editor;
+    }
+    else if (columnId == 2)
     {
         ChannelNameTextEditor* editor = static_cast<ChannelNameTextEditor*>(existingComponentToUpdate);
 
@@ -105,6 +154,14 @@ void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
     m_outputChannelName.setInternalOutputChannelName(channelNameTextEditor.getRow(), channelNameTextEditor.getText());
 }
 
+void ChannelNames::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+{
+    ChannelNameComboBox* channelNameComboBox = static_cast<ChannelNameComboBox*>(comboBoxThatHasChanged);
+    bool changed = m_outputChannelName.SetChannelPairing(channelNameComboBox->getRow(), static_cast<PairingMode>(channelNameComboBox->getSelectedId() - 1));
+    if (changed)
+        updateCallback();
+}
+
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName, SoloBusSettings& soloBusSettings)
     : m_channelNames(new ChannelNames(outputChannelName))
     , m_outputChannelName(outputChannelName)
@@ -122,10 +179,12 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
     m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
     m_tableListBox->setOutlineThickness(1);
     m_tableListBox->setModel(m_channelNames);
+    m_channelNames->updateCallback = std::bind(&TableListBox::updateContent, m_tableListBox.get());
 
     // set the table header columns
-    m_tableListBox->getHeader().addColumn(TRANS("Device Channel"), 1, 200, 50, 400, TableHeaderComponent::defaultFlags);
-    m_tableListBox->getHeader().addColumn(TRANS("Channel Name"), 2, 200, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox->getHeader().addColumn(TRANS("Device Channel"), 1, 170, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox->getHeader().addColumn(TRANS("Channel Name"), 2, 170, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox->getHeader().addColumn(TRANS("Mode"), 3, 120, 50, 400, TableHeaderComponent::defaultFlags);
 
     m_tabbedComponent->addTab(TRANS("Solo Bus"), Colour(0xffffffff), m_soloBusComponent, true);
 
