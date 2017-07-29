@@ -55,6 +55,7 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
     m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 
     m_timeSliceThread.startThread(3);
+    m_audioThumbnailCache.getTimeSliceThread().setPriority(0);
 
     setSize(700, 600);
 
