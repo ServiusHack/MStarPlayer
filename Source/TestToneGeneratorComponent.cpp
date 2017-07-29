@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.0.1
+  Created with Projucer version: 5.1.0
 
   ------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent (MixerComponent* mixerCom
     comboBox->addItem (TRANS("White"), 2);
     comboBox->addListener (this);
 
-    addAndMakeVisible (toggleButton = new ToggleButton ("new toggle button"));
+    addAndMakeVisible (toggleButton = new TextButton ("new button"));
     toggleButton->setButtonText (TRANS("play"));
     toggleButton->addListener (this);
 
@@ -83,6 +83,8 @@ TestToneGeneratorComponent::TestToneGeneratorComponent (MixerComponent* mixerCom
 
     //[UserPreSize]
     toggleButton->setEnabled(false);
+    toggleButton->setWantsKeyboardFocus(false);
+    toggleButton->setClickingTogglesState(true);
     //[/UserPreSize]
 
     setSize (296, 400);
@@ -289,9 +291,9 @@ BEGIN_JUCER_METADATA
   <COMBOBOX name="new combo box" id="2627f0e5c5151fd2" memberName="comboBox"
             virtualName="" explicitFocusOrder="0" pos="64 16 112 24" editable="0"
             layout="33" items="1kHz&#10;White" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
-  <TOGGLEBUTTON name="new toggle button" id="75a724c5faf4e2b1" memberName="toggleButton"
-                virtualName="" explicitFocusOrder="0" pos="200 16 86 24" buttonText="play"
-                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <TEXTBUTTON name="new button" id="75a724c5faf4e2b1" memberName="toggleButton"
+              virtualName="" explicitFocusOrder="0" pos="200 16 86 24" buttonText="play"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <GENERICCOMPONENT name="new component" id="96544753efa6c8c1" memberName="component"
                     virtualName="" explicitFocusOrder="0" pos="56 56 64M 144M" class="ListBox"
                     params=""/>
