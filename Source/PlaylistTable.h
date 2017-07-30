@@ -12,6 +12,7 @@
 class PlaylistTable
     : public TableListBox
     , public ChangeListener
+    , public DragAndDropTarget
 {
 public:
     typedef std::function<void(const std::vector<TrackConfig>& trackConfigs, bool)> PlaylistEntryChangedCallback;
@@ -31,6 +32,11 @@ public:
 // ChangeListener
 public:
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+
+// DragAndDropTarget
+public:
+    virtual bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
+    virtual void itemDropped(const SourceDetails& dragSourceDetails) override;
 
 private:
     void forceSelectRow(int rowIndex);

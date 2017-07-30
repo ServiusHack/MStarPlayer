@@ -21,8 +21,9 @@ public:
 
 // Playlist management
 public:
-    void add(String name, double durationInSeconds);
-    void insert(int rowNumber, const String& name, double durationInSeconds);
+    void add(String name, double durationInSeconds, bool playNext = false, const std::vector<TrackConfig>& trackConfigs = {});
+    void insert(int rowNumber, const String& name, double durationInSeconds, bool playNext = false, const std::vector<TrackConfig>& trackConfigs = {});
+    void move(int sourceRowNumber, int targetRowNumber);
     void remove(int rowNumber);
     void clear();
     void removeTrack(size_t trackIndex);
@@ -50,6 +51,7 @@ public:
     virtual void cellClicked(int rowNumber, int columnId, const MouseEvent&) override;
     virtual void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent&) override;
     virtual void backgroundClicked(const MouseEvent&) override;
+    virtual var getDragSourceDescription(const SparseSet< int > &  currentlySelectedRows) override;
 
 // Button::Listener
 public:

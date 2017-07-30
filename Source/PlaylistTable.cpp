@@ -3,7 +3,8 @@
 #include "PlaylistModel.h"
 
 PlaylistTable::PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel)
-    : m_callback(callback)
+    : TableListBox("PlaylistTable")
+    , m_callback(callback)
     , m_playNext(false)
     , m_model(playlistModel)
 {
@@ -40,6 +41,47 @@ void PlaylistTable::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
     updateContent();
     repaint();
+}
+
+bool PlaylistTable::isInterestedInDragSource(const SourceDetails& dragSourceDetails)
+{
+    return dragSourceDetails.sourceComponent->getName() == getName();
+}
+
+void PlaylistTable::itemDropped(const SourceDetails& dragSourceDetails)
+{
+    int row = getRowContainingPosition(
+        dragSourceDetails.localPosition.x,
+        dragSourceDetails.localPosition.y);
+
+    Array<var> data = *dragSourceDetails.description.getArray();
+
+    if (dragSourceDetails.sourceComponent == this)
+    {
+        if (row == -1)
+            m_model.move(data[0], m_model.getNumRows() - 1);
+        else
+            m_model.move(data[0], row);
+    }
+    else
+    {
+        std::vector<TrackConfig> configs;
+        for (int i = 4; i < data.size(); ++i)
+        {
+            TrackConfig config;
+            config.file = File(data[i].toString());
+            configs.push_back(config);
+        }
+
+        if (row == -1)
+        {
+            m_model.add(data[1], data[2], data[3], configs);
+        }
+        else
+        {
+            m_model.insert(row, data[1], data[2], data[3], configs);
+        }
+    }
 }
 
 void PlaylistTable::setCurrentDuration(double duration)

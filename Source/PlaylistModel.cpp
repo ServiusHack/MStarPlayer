@@ -103,23 +103,45 @@ void PlaylistModel::buttonClicked(Button* button)
     m_playlist[rowNumber].playNext = button->getToggleState();
 }
 
-void PlaylistModel::add(String name, double durationInSeconds)
+void PlaylistModel::add(String name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
 {
     PlaylistEntry entry;
     entry.name = name;
     entry.durationInSeconds = durationInSeconds;
-    entry.playNext = false;
+    entry.playNext = playNext;
+    entry.trackConfigs = trackConfigs;
     m_playlist.push_back(entry);
     sendChangeMessage();
 }
 
-void PlaylistModel::insert(int rowNumber, const String& name, double durationInSeconds)
+void PlaylistModel::insert(int rowNumber, const String& name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
 {
     PlaylistEntry entry;
     entry.name = name;
     entry.durationInSeconds = durationInSeconds;
-    entry.playNext = false;
+    entry.playNext = playNext;
+    entry.trackConfigs = trackConfigs;
     m_playlist.insert(m_playlist.begin() + rowNumber, entry);
+    sendChangeMessage();
+    m_reloadedCallback();
+}
+
+void PlaylistModel::move(int sourceRowNumber, int targetRowNumber)
+{
+    if (sourceRowNumber < targetRowNumber)
+    {
+        std::rotate(
+            std::next(m_playlist.begin(), sourceRowNumber),
+            std::next(m_playlist.begin(), sourceRowNumber + 1),
+            std::next(m_playlist.begin(), targetRowNumber + 1));
+    }
+    else
+    {
+        std::rotate(
+            std::next(m_playlist.begin(), targetRowNumber),
+            std::next(m_playlist.begin(), sourceRowNumber),
+            std::next(m_playlist.begin(), sourceRowNumber + 1));
+    }
     sendChangeMessage();
     m_reloadedCallback();
 }
@@ -143,6 +165,27 @@ void PlaylistModel::backgroundClicked(const MouseEvent& event)
     {
         showPopup(-1, false, false);
     }
+}
+
+var PlaylistModel::getDragSourceDescription(const SparseSet< int > &  currentlySelectedRows)
+{
+    jassert(currentlySelectedRows.size() == 1);
+
+    int start = currentlySelectedRows.getRange(0).getStart();
+
+    Array<var> data;
+
+    data.add(start);
+    data.add(m_playlist[start].name);
+    data.add(m_playlist[start].durationInSeconds);
+    data.add(m_playlist[start].playNext);
+
+    for (const TrackConfig& config : m_playlist[start].trackConfigs)
+    {
+        data.add(config.file.getFullPathName());
+    }
+
+    return data;
 }
 
 void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelete)

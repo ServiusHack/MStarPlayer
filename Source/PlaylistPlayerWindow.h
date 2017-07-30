@@ -15,6 +15,7 @@
 class PlaylistPlayerWindow
     : public Component
     , public Button::Listener
+    , public DragAndDropContainer
 {
 public:
     /** Creates a new PlaylistPlayer.
