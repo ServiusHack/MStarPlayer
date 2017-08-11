@@ -192,6 +192,7 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 {
     PopupMenu popup;
     popup.addItem(1, TRANS("append"));
+    popup.addItem(5, TRANS("append files"));
     popup.addItem(2, TRANS("insert"), enableInsert);
     popup.addItem(3, TRANS("edit"), enableInsert);
     popup.addItem(4, TRANS("delete"), enableDelete);
@@ -212,6 +213,26 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
     case 4:
         remove(rowNumber);
         break;
+    case 5:
+    {
+        AudioFormatManager formatManager;
+        formatManager.registerBasicFormats();
+        FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
+                              File::nonexistent,
+                              formatManager.getWildcardForAllFormats());
+
+        if (!myChooser.browseForMultipleFilesToOpen())
+            return;
+
+        for (const File& file : myChooser.getResults())
+        {
+            std::vector<TrackConfig> trackConfigs;
+            trackConfigs.push_back({ file });
+            AudioFormatReader* reader = formatManager.createReaderFor(trackConfigs[0].file);
+            double duration = reader->lengthInSamples / reader->sampleRate;
+            add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
+        }
+    }
     }
 }
 
