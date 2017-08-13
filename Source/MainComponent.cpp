@@ -68,6 +68,7 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
 MainContentComponent::~MainContentComponent()
 {
     m_soloBusSettings.removeListener(this);
+    delete m_testToneGenerator.release();
     delete m_multiDocumentPanel.release();
     delete m_mixerComponent.release();
     m_applicationProperties.closeFiles();
