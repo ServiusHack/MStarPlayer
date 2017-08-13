@@ -82,6 +82,11 @@ public:
 
             main->setApplicationCommandManagerToWatch(&commandManager);
 
+            if (properties.getUserSettings()->getValue("lookAndFeel") == "dark")
+            {
+                main->switchToDarkLookAndFeel();
+            }
+
             centreWithSize(getWidth(), getHeight());
             setVisible(true);
             setResizable(true, true);

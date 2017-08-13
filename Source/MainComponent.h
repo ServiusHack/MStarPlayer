@@ -57,6 +57,9 @@ public:
     static void initLookAndFeel();
     static void destroyLookAndFeel();
 
+    void switchToDefaultLookAndFeel();
+    void switchToDarkLookAndFeel();
+
 // Component overrides
 public:
     virtual void resized() override;

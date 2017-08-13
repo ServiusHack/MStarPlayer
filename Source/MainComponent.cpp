@@ -25,6 +25,20 @@ void MainContentComponent::destroyLookAndFeel()
     delete s_darkLookAndFeel;
 }
 
+void MainContentComponent::switchToDefaultLookAndFeel()
+{
+    LookAndFeel::setDefaultLookAndFeel(s_defaultLookAndFeel);
+    m_multiDocumentPanel->setBackgroundColour(Colours::lightblue);
+    static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(Colours::lightgrey);
+}
+
+void MainContentComponent::switchToDarkLookAndFeel()
+{
+    LookAndFeel::setDefaultLookAndFeel(s_darkLookAndFeel);
+    m_multiDocumentPanel->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId).darker());
+    static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
+}
+
 MainContentComponent::MainContentComponent(ApplicationProperties& applicationPropeties, ApplicationCommandManager* commandManager)
     : m_timeSliceThread("read ahead")
     , m_commandManager(commandManager)
@@ -374,14 +388,12 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         break;
 
     case lookAndFeelDefault:
-        LookAndFeel::setDefaultLookAndFeel(s_defaultLookAndFeel);
-        m_multiDocumentPanel->setBackgroundColour(Colours::lightblue);
-        static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(Colours::lightgrey);
+        switchToDefaultLookAndFeel();
+        m_applicationProperties.getUserSettings()->setValue("lookAndFeel", "default");
         break;
     case lookAndFeelDark:
-        LookAndFeel::setDefaultLookAndFeel(s_darkLookAndFeel);
-        m_multiDocumentPanel->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId).darker());
-        static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
+        switchToDarkLookAndFeel();
+        m_applicationProperties.getUserSettings()->setValue("lookAndFeel", "dark");
         break;
     default:
         return false;
