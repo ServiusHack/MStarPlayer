@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.0"
+<JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.1"
               bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="5.1.1"
               includeBinaryInAppConfig="1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="11">
