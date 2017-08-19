@@ -17,7 +17,7 @@ Due to the restrictive license of the ASIO SDK I'm bulding this on my own builds
 
 ## Screenshot
 ![Main window with players](http://serviushack.space/MStarPlayer/screenshots/MainWindow.png)
-![Audio configuration dialog](http://serviushack.space/MStarPlayer/screenshots/Configure Audio.png)
+![Audio configuration dialog](http://serviushack.space/MStarPlayer/screenshots/Configure%20Audio.png)
 
 ## Development
 Pull requests are always welcome to improve the current code or add new features.
