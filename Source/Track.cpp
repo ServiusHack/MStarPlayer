@@ -155,7 +155,7 @@ void Track::stop()
 void Track::setPosition(double position)
 {
     m_transportSource.setPosition(position);
-    callPositionCallbacks(position);
+    callPositionCallbacks(position, m_transportSource.hasStreamFinished());
 }
 
 std::vector<int> Track::getMapping()
@@ -293,22 +293,23 @@ void Track::unloadFile()
 
 void Track::timerCallback()
 {
-    callPositionCallbacks(m_transportSource.getCurrentPosition());
+    const bool hasStreamFinished = m_transportSource.hasStreamFinished();
+    callPositionCallbacks(m_transportSource.getCurrentPosition(), hasStreamFinished);
 
-    if (!m_transportSource.isPlaying())
+    if (hasStreamFinished)
     {
         stopTimer();
         m_playingStateChangedCallback(false);
     }
 }
 
-void Track::callPositionCallbacks(double position)
+void Track::callPositionCallbacks(double position, bool hasStreamFinished)
 {
     // Copy list so the callback can remove items and we continue to iterate.
     std::list<PositionCallback> positionCallbacks(m_positionCallbacks);
 
     for (const auto& callback : positionCallbacks)
-        callback(position, m_transportSource.hasStreamFinished());
+        callback(position, hasStreamFinished);
 }
 
 void Track::saveToXml(XmlElement* element) const

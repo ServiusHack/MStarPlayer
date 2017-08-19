@@ -45,7 +45,7 @@ public:
     std::vector<int> getMapping();
 
     void timerCallback() override;
-    void callPositionCallbacks(double position);
+    void callPositionCallbacks(double position, bool hasStreamFinished);
 
     void loadFileIntoTransport(const File& audioFile);
     void reloadFile();
