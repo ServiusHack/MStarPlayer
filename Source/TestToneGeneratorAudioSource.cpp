@@ -52,14 +52,14 @@ void TestToneGeneratorAudioSource::getNextAudioBlock(const AudioSourceChannelInf
 {
     bufferToFill.clearActiveBufferRegion();
     const ScopedLock sl(m_lock);
-    int numberOfChannels = bufferToFill.buffer->getNumChannels();
+    const int numberOfChannels = bufferToFill.buffer->getNumChannels();
 
     switch (mode)
     {
     case Mode::Sine1kHz:
         for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
         {
-            const float currentSample = (float) std::sin (currentAngle);
+            const float currentSample = static_cast<float>(std::sin(currentAngle));
             currentAngle += angleDelta;
             prepared[sample] =  currentSample * level;
         }
@@ -73,7 +73,7 @@ void TestToneGeneratorAudioSource::getNextAudioBlock(const AudioSourceChannelInf
         break;
     }
 
-    for (size_t channel = 0; channel < numberOfChannels; channel++)
+    for (int channel = 0; channel < numberOfChannels; channel++)
     {
         if (channel >= channels.size() || !channels[channel])
 

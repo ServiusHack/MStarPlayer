@@ -259,9 +259,9 @@ void Track::loadFileIntoTransport(const File& audioFile)
 
     if (reader != nullptr)
     {
-        m_currentAudioFileSource = new AudioFormatReaderSource(reader, true);
+        m_currentAudioFileSource = std::make_unique<AudioFormatReaderSource>(reader, true);
         // ..and plug it into our transport source
-        m_transportSource.setSource(m_currentAudioFileSource,
+        m_transportSource.setSource(m_currentAudioFileSource.get(),
                                     32768,     // tells it to buffer this many samples ahead
                                     &m_thread, // this is the background thread to use for reading-ahead
                                     reader->sampleRate);
@@ -269,7 +269,7 @@ void Track::loadFileIntoTransport(const File& audioFile)
     else
     {
         m_transportSource.setSource(nullptr);
-        m_currentAudioFileSource = nullptr;
+        m_currentAudioFileSource.reset();
     }
 
     updateGain();

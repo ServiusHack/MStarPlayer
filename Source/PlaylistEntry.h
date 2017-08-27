@@ -17,8 +17,8 @@ class PlaylistEntry
 {
 public:
     String name;
-    double durationInSeconds;
-    bool playNext;
+    double durationInSeconds{0.0};
+    bool playNext{false};
     std::vector<TrackConfig> trackConfigs;
 
     XmlElement* saveToXml(const File& projectDirectory) const;

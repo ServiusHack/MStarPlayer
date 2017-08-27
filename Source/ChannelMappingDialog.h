@@ -106,7 +106,7 @@ private:
     const ChangeMappingCallback m_changeCallback;
     const CloseCallback m_closeCallback;
     TableListBox m_tableListBox;
-    ScopedPointer<ChannelMapping> m_channelMapping;
+    std::unique_ptr<ChannelMapping> m_channelMapping;
     TextButton m_closeButton;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
@@ -137,7 +137,7 @@ public:
 private:
     const CloseCallback m_closeCallback;
 
-    ChannelMappingComponent* m_component;
+    std::unique_ptr<ChannelMappingComponent> m_component;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingWindow)
 };

@@ -26,7 +26,7 @@ void MTCSender::setDevice(int deviceIndex)
         return;
     }
 
-    m_midiOutput = MidiOutput::openDevice(deviceIndex);
+    m_midiOutput.reset(MidiOutput::openDevice(deviceIndex));
 
     if (!m_midiOutput)
     {
@@ -87,8 +87,8 @@ void MTCSender::hiResTimerCallback()
 
     std::unique_lock<std::mutex> lock_guard(m_mutex);
 
-    int value = getValue(m_piece);
-    auto message = MidiMessage::quarterFrame(
+    const int value = getValue(m_piece);
+    const auto message = MidiMessage::quarterFrame(
         static_cast<int>(m_piece),
         value);
     m_midiOutput->sendMessageNow(message);

@@ -75,14 +75,14 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
 
     if (imageCallback)
     {
-        m_imageSelectorButton.set(new TextButton("imagebutton"), true);
+        m_imageSelectorButton = std::make_unique<TextButton>("imagebutton");
         addAndMakeVisible(m_imageSelectorButton.get());
         m_imageSelectorButton->setButtonText(TRANS("Choose image"));
         m_imageSelectorButton->addListener(this);
         m_imageSelectorButton->setWantsKeyboardFocus(false);
         m_imageSelectorButton->setConnectedEdges(Button::ConnectedOnRight);
 
-        m_imageResetButton.set(new TextButton("imageresetbutton"), true);
+        m_imageResetButton = std::make_unique<TextButton>("imageresetbutton");
         addAndMakeVisible(m_imageResetButton.get());
         m_imageResetButton->setButtonText(TRANS("Reeset image"));
         m_imageResetButton->addListener(this);
@@ -147,7 +147,7 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
 
         m_imageResetButton->setEnabled(m_imageFile != File::nonexistent);
     }
-    else if (buttonThatWasClicked == m_imageResetButton)
+    else if (buttonThatWasClicked == m_imageResetButton.get())
     {
         m_imageFile = File::nonexistent;
         m_imageCallback(File::nonexistent);

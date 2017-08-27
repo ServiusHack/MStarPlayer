@@ -75,15 +75,15 @@ public:
     virtual void nameChanged(const String& name) override;
 
 protected:
-    ScopedPointer<VolumeSlider> m_volumeSlider;
+    std::unique_ptr<VolumeSlider> m_volumeSlider;
 
 private:
-    ScopedPointer<Label> m_label;
-    ScopedPointer<TextButton> m_soloButton;
-    ScopedPointer<TextButton> m_muteButton;
-    ScopedPointer<ChangeableArrowButton> m_expandButton;
-    ScopedPointer<Slider> m_panSlider;
-    ScopedPointer<LevelMeter> m_levelMeter;
+    std::unique_ptr<Label> m_label;
+    std::unique_ptr<TextButton> m_soloButton;
+    std::unique_ptr<TextButton> m_muteButton;
+    std::unique_ptr<ChangeableArrowButton> m_expandButton;
+    std::unique_ptr<Slider> m_panSlider;
+    std::unique_ptr<LevelMeter> m_levelMeter;
 
     ResizeCallback m_resizeCallback;
 

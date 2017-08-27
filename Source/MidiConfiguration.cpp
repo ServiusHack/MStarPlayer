@@ -37,13 +37,14 @@ void MidiConfigurationWindow::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 }
 
 MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* parent, int selectedDevice)
+    : m_outputDevices(std::make_unique<ComboBox>())
+    , m_closeButton(std::make_unique<TextButton>("close"))
 {
-    addAndMakeVisible(m_closeButton = new TextButton("close"));
+    addAndMakeVisible(m_closeButton.get());
     m_closeButton->setButtonText(TRANS("Close"));
     m_closeButton->addListener(parent);
     m_closeButton->setWantsKeyboardFocus(false);
 
-    m_outputDevices = new ComboBox();
     m_outputDevices->addListener(parent);
     m_outputDevices->addItem(TRANS("no MIDI output"),1);
     StringArray deviceNames = MidiOutput::getDevices();
@@ -54,7 +55,7 @@ MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* 
 
     m_outputDevices->setSelectedId(selectedDevice + 2, juce::dontSendNotification);
 
-    addAndMakeVisible(m_outputDevices);
+    addAndMakeVisible(m_outputDevices.get());
 
     setSize(500, 400);
 }

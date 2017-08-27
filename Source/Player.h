@@ -125,9 +125,9 @@ private:
     File m_userImage;
 
     Track::ChannelCountChangedCallback m_channelCountChanged;
-    OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
-    OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
-    OptionalScopedPointer<PlayerMidiDialogWindow> m_PlayerMidiDialog;
+    std::unique_ptr<PlayerEditDialogWindow> m_PlayerEditDialog;
+    std::unique_ptr<ChannelMappingWindow> m_channelMappingWindow;
+    std::unique_ptr<PlayerMidiDialogWindow> m_PlayerMidiDialog;
 
     MTCSender& m_mtcSender;
 

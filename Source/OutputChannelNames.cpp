@@ -19,7 +19,7 @@ OutputChannelNames::OutputChannelNames(AudioDeviceManager& deviceManager)
     deviceManager.addChangeListener(this);
 }
 
-DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(AudioIODevice* audioDevice)
+DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(const AudioIODevice* audioDevice)
 {
     if (audioDevice)
         return DeviceIdentification{audioDevice->getTypeName(), audioDevice->getName()};
@@ -29,7 +29,7 @@ DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(AudioIODevi
 
 void OutputChannelNames::changeListenerCallback(ChangeBroadcaster* source)
 {
-    AudioDeviceManager* manager = static_cast<AudioDeviceManager*>(source);
+    const AudioDeviceManager* manager = static_cast<AudioDeviceManager*>(source);
 
     if (m_deviceIdentification != ExtractDeviceIdentification(manager->getCurrentAudioDevice()))
     {
@@ -70,7 +70,7 @@ bool OutputChannelNames::SetChannelPairing(int activeChannelIndex, PairingMode m
 {
     jassert(activeChannelIndex >= 0 && activeChannelIndex < m_pairingModes.size());
 
-    PairingMode previousMode = m_pairingModes[activeChannelIndex];
+    const PairingMode previousMode = m_pairingModes[activeChannelIndex];
     m_pairingModes.set(activeChannelIndex, mode);
 
     for (OutputChannelNamesListener* listener : m_listeners)

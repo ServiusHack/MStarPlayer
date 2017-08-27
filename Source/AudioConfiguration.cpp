@@ -150,35 +150,37 @@ Component* ChannelNames::refreshComponentForCell(int rowNumber, int columnId, bo
 
 void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
 {
-    ChannelNameTextEditor& channelNameTextEditor = static_cast<ChannelNameTextEditor&>(textEditor);
+    const ChannelNameTextEditor& channelNameTextEditor = static_cast<ChannelNameTextEditor&>(textEditor);
     m_outputChannelName.setInternalOutputChannelName(channelNameTextEditor.getRow(), channelNameTextEditor.getText());
 }
 
 void ChannelNames::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
-    ChannelNameComboBox* channelNameComboBox = static_cast<ChannelNameComboBox*>(comboBoxThatHasChanged);
-    bool changed = m_outputChannelName.SetChannelPairing(channelNameComboBox->getRow(), static_cast<PairingMode>(channelNameComboBox->getSelectedId() - 1));
+    const ChannelNameComboBox* channelNameComboBox = static_cast<ChannelNameComboBox*>(comboBoxThatHasChanged);
+    const bool changed = m_outputChannelName.SetChannelPairing(channelNameComboBox->getRow(), static_cast<PairingMode>(channelNameComboBox->getSelectedId() - 1));
     if (changed)
         updateCallback();
 }
 
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName, SoloBusSettings& soloBusSettings)
-    : m_channelNames(new ChannelNames(outputChannelName))
+    : m_tabbedComponent(std::make_unique<TabbedComponent>(TabbedButtonBar::TabsAtTop))
+    , m_closeButton(std::make_unique<TextButton>("close"))
+    , m_channelNames(std::make_unique<ChannelNames>(outputChannelName))
     , m_outputChannelName(outputChannelName)
-    , m_soloBusComponent(new SoloBusComponent(outputChannelName, soloBusSettings))
+    , m_soloBusComponent(std::make_unique<SoloBusComponent>(outputChannelName, soloBusSettings))
 {
     m_outputChannelName.addChangeListener(this);
 
-    addAndMakeVisible(m_tabbedComponent = new TabbedComponent(TabbedButtonBar::TabsAtTop));
+    addAndMakeVisible(m_tabbedComponent.get());
 
     AudioDeviceSelectorComponent* selector = new AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
     m_tabbedComponent->addTab(TRANS("Audio Device"), Colour(0xffffffff), selector, true);
 
-    m_tableListBox = new TableListBox();
-    m_tabbedComponent->addTab(TRANS("Channel Names"), Colour(0xffffffff), m_tableListBox, true);
+    m_tableListBox = std::make_unique<TableListBox>();
+    m_tabbedComponent->addTab(TRANS("Channel Names"), Colour(0xffffffff), m_tableListBox.get(), false);
     m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
     m_tableListBox->setOutlineThickness(1);
-    m_tableListBox->setModel(m_channelNames);
+    m_tableListBox->setModel(m_channelNames.get());
     m_channelNames->updateCallback = std::bind(&TableListBox::updateContent, m_tableListBox.get());
 
     // set the table header columns
@@ -186,9 +188,9 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
     m_tableListBox->getHeader().addColumn(TRANS("Channel Name"), 2, 170, 50, 400, TableHeaderComponent::defaultFlags);
     m_tableListBox->getHeader().addColumn(TRANS("Mode"), 3, 120, 50, 400, TableHeaderComponent::defaultFlags);
 
-    m_tabbedComponent->addTab(TRANS("Solo Bus"), Colour(0xffffffff), m_soloBusComponent, true);
+    m_tabbedComponent->addTab(TRANS("Solo Bus"), Colour(0xffffffff), m_soloBusComponent.get(), true);
 
-    addAndMakeVisible(m_closeButton = new TextButton("close"));
+    addAndMakeVisible(m_closeButton.get());
     m_closeButton->setButtonText(TRANS("Close"));
     m_closeButton->addListener(parent);
     m_closeButton->setWantsKeyboardFocus(false);

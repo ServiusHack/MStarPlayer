@@ -24,7 +24,9 @@ void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int req
 {
     const ScopedLock sl(lock);
     requiredNumberOfChannels = requiredNumberOfChannels_;
-    m_volumes.resize(requiredNumberOfChannels_, VolumeAnalyzer(m_bufferSize));
+
+    if (requiredNumberOfChannels > m_volumes.size())
+        m_volumes.insertMultiple(m_volumes.size(), VolumeAnalyzer(m_bufferSize), requiredNumberOfChannels_ - m_volumes.size());
 }
 
 void ChannelRemappingAudioSourceWithVolume::clearAllMappings()
@@ -52,7 +54,8 @@ void ChannelRemappingAudioSourceWithVolume::prepareToPlay(int samplesPerBlockExp
     m_bufferSize = static_cast<size_t>(sampleRate / 10);
     auto numberOfChannels = m_volumes.size();
     m_volumes.clear();
-    m_volumes.resize(numberOfChannels, VolumeAnalyzer(m_bufferSize));
+    if (numberOfChannels > m_volumes.size())
+        m_volumes.insertMultiple(m_volumes.size(), VolumeAnalyzer(m_bufferSize), numberOfChannels - m_volumes.size());
     m_sampleRate = sampleRate;
 }
 
@@ -105,11 +108,11 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
         }
     }
 
-    for (size_t i = 0; i < m_volumes.size(); ++i)
+    for (int i = 0; i < m_volumes.size(); ++i)
     {
         if (i == m_soloLeftChannel || i == m_soloRightChannel)
             continue;
-        m_volumes[i].update(bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
+        m_volumes.getUnchecked(i).update(bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
     }
 }
 

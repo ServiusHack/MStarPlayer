@@ -33,7 +33,7 @@ TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperti
     trackAdded(m_container[0]);
     m_container.setTrackAddedCallback(std::bind(&TracksComponent::trackAdded, this, std::placeholders::_1));
     m_container.addLongestDurationChangedCallback([&](double duration) {
-        for (auto& track : m_tracks)
+        for (const auto& track : m_tracks)
             track->setLongestDuration(duration);
     });
     m_container.setTracksClearedCallback(std::bind(&TracksComponent::tracksCleared, this));
@@ -67,7 +67,7 @@ void TracksComponent::filesDropped(const StringArray& files, int x, int y)
     if (component->getName() != "TrackUi")
         return;
 
-    TrackUi* trackUi = static_cast<TrackUi*>(component);
+    const TrackUi* trackUi = static_cast<TrackUi*>(component);
 
     auto trackUiIt = std::find_if(m_tracks.begin(), m_tracks.end(), [trackUi](const std::unique_ptr<TrackUi>& uniquePointer) {
         return uniquePointer.get() == trackUi;
@@ -100,7 +100,7 @@ void TracksComponent::addStereoTrack()
 
 void TracksComponent::trackAdded(Track& track)
 {
-    m_tracks.emplace_back(new TrackUi(track, m_applicationProperties,
+    m_tracks.push_back(std::make_unique<TrackUi>(track, m_applicationProperties,
                                       std::bind(&TracksContainer::setPosition, &m_container, std::placeholders::_1),
                                       std::bind(&TracksContainer::removeTrack, &m_container, std::placeholders::_1),
                                       m_trackHasFilesCallback,

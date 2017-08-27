@@ -65,8 +65,8 @@ private:
 
     void addPlayerSlider(SubchannelPlayer* player);
 
-    std::vector<MixerFader*> m_channelSliders;
-    std::vector<PlayerMixerFader*> m_playerSliders;
+    std::vector<std::unique_ptr<MixerFader>> m_channelSliders;
+    std::vector<std::unique_ptr<PlayerMixerFader>> m_playerSliders;
     Component m_slidersContainer;
     ScrollBar m_sliderScrollBar;
 

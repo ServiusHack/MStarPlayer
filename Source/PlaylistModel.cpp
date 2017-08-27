@@ -9,7 +9,7 @@ public:
     void setRowNumber(int rowNumber) { m_rowNumber = rowNumber; }
     int getRowNumber() { return m_rowNumber; }
 private:
-    int m_rowNumber;
+    int m_rowNumber{0};
 };
 
 PlaylistModel::PlaylistModel()
@@ -228,7 +228,7 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
         {
             std::vector<TrackConfig> trackConfigs;
             trackConfigs.push_back({ file });
-            AudioFormatReader* reader = formatManager.createReaderFor(trackConfigs[0].file);
+            const AudioFormatReader* reader = formatManager.createReaderFor(trackConfigs[0].file);
             double duration = reader->lengthInSamples / reader->sampleRate;
             add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
         }
@@ -242,7 +242,7 @@ void PlaylistModel::showEditDialog(int rowNumber)
         m_playlist[rowNumber].name = name;
         sendChangeMessage();
     };
-    m_editDialog = ScopedPointer<PlaylistEntryDialogWindow>(new PlaylistEntryDialogWindow(m_playlist[rowNumber].name, callback));
+    m_editDialog = std::make_unique<PlaylistEntryDialogWindow>(m_playlist[rowNumber].name, callback);
 }
 
 void PlaylistModel::remove(int rowNumber)

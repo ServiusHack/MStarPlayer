@@ -78,12 +78,12 @@ public:
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-    ScopedPointer<TabbedComponent> m_tabbedComponent;
-    ScopedPointer<TextButton> m_closeButton;
-    ScopedPointer<ChannelNames> m_channelNames;
-    ScopedPointer<TableListBox> m_tableListBox;
+    std::unique_ptr<TabbedComponent> m_tabbedComponent;
+    std::unique_ptr<TextButton> m_closeButton;
+    std::unique_ptr<ChannelNames> m_channelNames;
+    std::unique_ptr<TableListBox> m_tableListBox;
     OutputChannelNames& m_outputChannelName;
-    ScopedPointer<SoloBusComponent> m_soloBusComponent;
+    std::unique_ptr<SoloBusComponent> m_soloBusComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioConfigurationComponent)
 };

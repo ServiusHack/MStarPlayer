@@ -129,15 +129,15 @@ private:
     Label m_digitalDisplay;
     CDNamesComboBox m_availableCDsComboBox;
     Slider m_slider;
-    OptionalScopedPointer<AudioCDReader> m_reader;
-    OptionalScopedPointer<AudioFormatReaderSource> m_source;
-    OptionalScopedPointer<CDTracksModel> m_model;
+    std::unique_ptr<AudioCDReader> m_reader;
+    std::unique_ptr<AudioFormatReaderSource> m_source;
+    std::unique_ptr<CDTracksModel> m_model;
     CDTracksTable m_tracksTable;
     AudioTransportSource m_transportSource;
     ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
-    OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
-    OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
+    std::unique_ptr<PlayerEditDialogWindow> m_PlayerEditDialog;
+    std::unique_ptr<ChannelMappingWindow> m_channelMappingWindow;
 
     int m_currentTrack = -1;
 

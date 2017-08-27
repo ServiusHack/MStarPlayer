@@ -324,17 +324,16 @@ std::vector<MixerControlable*> Player::getSubMixerControlables() const
 
 void Player::showEditDialog()
 {
-    if (m_PlayerEditDialog.get() == nullptr)
+    if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, m_userImage.getFullPathName(),
+        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(), m_color, m_userImage.getFullPathName(),
                                                           std::bind(&Player::setName, this, std::placeholders::_1),
                                                           std::bind(&Player::setColor, this, std::placeholders::_1),
                                                           [&]() {
                                                               // clear is not working
                                                               delete m_PlayerEditDialog.release();
                                                           },
-                                                          std::bind(&Player::setUserImage, this, std::placeholders::_1)),
-                               true);
+                                                          std::bind(&Player::setUserImage, this, std::placeholders::_1));
     }
     m_PlayerEditDialog->addToDesktop();
     m_PlayerEditDialog->toFront(true);
@@ -342,9 +341,9 @@ void Player::showEditDialog()
 
 void Player::configureChannels()
 {
-    if (m_channelMappingWindow.get() == nullptr)
+    if (!m_channelMappingWindow)
     {
-        m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_soloBusSettings, m_tracksContainer.createMapping(), [&](int source, int target) {
+        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(m_outputChannelNames, m_soloBusSettings, m_tracksContainer.createMapping(), [&](int source, int target) {
 			for (size_t i = 0; i < m_tracksContainer.size(); ++i) {
 				if (source - m_tracksContainer[i].getNumChannels() < 0) {
 					m_tracksContainer[i].setOutputChannelMapping(source, target);
@@ -353,7 +352,7 @@ void Player::configureChannels()
 				source -= m_tracksContainer[i].getNumChannels();
 			} }, [&]() {
 			// clear is not working
-			delete m_channelMappingWindow.release(); }), true);
+			delete m_channelMappingWindow.release(); });
     }
     m_channelMappingWindow->addToDesktop();
     m_channelMappingWindow->toFront(true);
@@ -361,15 +360,14 @@ void Player::configureChannels()
 
 void Player::configureMidi()
 {
-    if (m_PlayerMidiDialog.get() == nullptr)
+    if (!m_PlayerMidiDialog)
     {
-        m_PlayerMidiDialog.set(new PlayerMidiDialogWindow(m_tracksContainer.getMtcEnabled(), 
+        m_PlayerMidiDialog = std::make_unique<PlayerMidiDialogWindow>(m_tracksContainer.getMtcEnabled(), 
                                                           std::bind(&TracksContainer::setMtcEnabled, &m_tracksContainer, std::placeholders::_1),
                                                           [&]() {
                                                               // clear is not working
                                                               delete m_PlayerMidiDialog.release();
-                                                          }),
-                               true);
+                                                          });
     }
     m_PlayerMidiDialog->addToDesktop();
     m_PlayerMidiDialog->toFront(true);

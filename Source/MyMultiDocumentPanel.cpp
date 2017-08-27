@@ -79,12 +79,12 @@ MyMultiDocumentPanel::MyMultiDocumentPanel()
     , backgroundColour(Colours::lightblue)
     , maximumNumDocuments(0)
     , numDocsBeforeTabsUsed(0)
-    , viewport(new Viewport())
-    , resizingComponent(new ResizingComponent())
+    , viewport(std::make_unique<Viewport>())
+    , resizingComponent(std::make_unique<ResizingComponent>())
 {
     setOpaque(true);
-    addAndMakeVisible(viewport);
-    viewport->setViewedComponent(resizingComponent, false);
+    addAndMakeVisible(viewport.get());
+    viewport->setViewedComponent(resizingComponent.get(), false);
 }
 
 MyMultiDocumentPanel::~MyMultiDocumentPanel()
@@ -128,7 +128,7 @@ void MyMultiDocumentPanel::addWindow(Component* component)
 
     int x = 4;
 
-    if (Component* const topComp = resizingComponent->getChildComponent(resizingComponent->getNumChildComponents() - 1))
+    if (const Component* const topComp = resizingComponent->getChildComponent(resizingComponent->getNumChildComponents() - 1))
         if (topComp->getX() == x && topComp->getY() == x)
             x += 16;
 
@@ -155,7 +155,7 @@ bool MyMultiDocumentPanel::addDocument(Component* const component,
 
     components.add(component);
     component->getProperties().set("mdiDocumentDelete_", deleteWhenRemoved);
-    component->getProperties().set("mdiDocumentBkg_", (int)docColour.getARGB());
+    component->getProperties().set("mdiDocumentBkg_", static_cast<int>(docColour.getARGB()));
     component->addComponentListener(this);
 
     if (mode == FloatingWindows)
@@ -183,7 +183,8 @@ bool MyMultiDocumentPanel::addDocument(Component* const component,
     {
         if (tabComponent == nullptr && components.size() > numDocsBeforeTabsUsed)
         {
-            addAndMakeVisible(tabComponent = new TabbedComponentInternal());
+            tabComponent = std::make_unique<TabbedComponentInternal>();
+            addAndMakeVisible(tabComponent.get());
 
             Array<Component*> temp(components);
 
@@ -312,7 +313,7 @@ Component* MyMultiDocumentPanel::getActiveDocument() const noexcept
     if (mode == FloatingWindows)
     {
         for (int i = resizingComponent->getNumChildComponents(); --i >= 0;)
-            if (MyMultiDocumentPanelWindow* const dw = dynamic_cast<MyMultiDocumentPanelWindow*>(resizingComponent->getChildComponent(i)))
+            if (const MyMultiDocumentPanelWindow* const dw = dynamic_cast<MyMultiDocumentPanelWindow*>(resizingComponent->getChildComponent(i)))
                 if (dw->isActiveWindow())
                     return dw->getContentComponent();
     }
@@ -480,7 +481,7 @@ void MyMultiDocumentPanel::updateOrder()
         components.clear();
 
         for (int i = 0; i < resizingComponent->getNumChildComponents(); ++i)
-            if (MyMultiDocumentPanelWindow* const dw = dynamic_cast<MyMultiDocumentPanelWindow*>(resizingComponent->getChildComponent(i)))
+            if (const MyMultiDocumentPanelWindow* const dw = dynamic_cast<MyMultiDocumentPanelWindow*>(resizingComponent->getChildComponent(i)))
                 components.add(dw->getContentComponent());
     }
     else

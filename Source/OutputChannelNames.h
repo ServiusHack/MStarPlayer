@@ -48,7 +48,7 @@ public:
     int getNumberOfChannels();
 
 private:
-    DeviceIdentification ExtractDeviceIdentification(AudioIODevice* audioDevice);
+    DeviceIdentification ExtractDeviceIdentification(const AudioIODevice* audioDevice);
     AudioIODevice* m_audioDevice;
     DeviceIdentification m_deviceIdentification;
 

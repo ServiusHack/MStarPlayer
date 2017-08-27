@@ -42,17 +42,17 @@ private:
 
     SoloBusSettings m_soloBusSettings;
     ApplicationCommandManager* m_commandManager;
-    ScopedPointer<MixerComponent> m_mixerComponent;
-    ScopedPointer<MyMultiDocumentPanel> m_multiDocumentPanel;
-    ScopedPointer<AudioDeviceManager> m_audioDeviceManager;
-    ScopedPointer<OutputChannelNames> m_outputChannelNames;
-    ScopedPointer<SoloBusMixer> m_soloComponent;
-    ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
+    std::unique_ptr<MyMultiDocumentPanel> m_multiDocumentPanel;
+    AudioDeviceManager m_audioDeviceManager;
+    std::unique_ptr<OutputChannelNames> m_outputChannelNames;
+    std::unique_ptr<MixerComponent> m_mixerComponent;
+    std::unique_ptr<TestToneGeneratorComponent> m_testToneGenerator;
+    std::unique_ptr<SoloBusMixer> m_soloComponent;
+    std::unique_ptr<AudioConfigurationWindow> m_audioConfigurationWindow;
     MTCSender m_mtcSender;
-    ScopedPointer<MidiConfigurationWindow> m_midiConfigurationWindow;
-    ScopedPointer<EditSettingsWindow> m_editSettingsWindow;
-    ScopedPointer<TestToneGeneratorComponent> m_testToneGenerator;
-    ScopedPointer<DialogWindow> m_testToneGeneratorWindow;
+    std::unique_ptr<MidiConfigurationWindow> m_midiConfigurationWindow;
+    std::unique_ptr<EditSettingsWindow> m_editSettingsWindow;
+    std::unique_ptr<DialogWindow> m_testToneGeneratorWindow;
 
 // look and feels
 public:

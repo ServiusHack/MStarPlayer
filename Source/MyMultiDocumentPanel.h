@@ -223,7 +223,7 @@ public:
     */
     Colour getBackgroundColour() const noexcept { return backgroundColour; }
     /** If the panel is being used in tabbed mode, this returns the TabbedComponent that's involved. */
-    TabbedComponent* getCurrentTabbedComponent() const noexcept { return tabComponent; }
+    TabbedComponent* getCurrentTabbedComponent() const noexcept { return tabComponent.get(); }
     //==============================================================================
     /** A subclass must override this to say whether its currently ok for a document
         to be closed.
@@ -267,11 +267,11 @@ private:
     //==============================================================================
     LayoutMode mode;
     Array<Component*> components;
-    ScopedPointer<TabbedComponent> tabComponent;
+    std::unique_ptr<TabbedComponent> tabComponent;
     Colour backgroundColour;
     int maximumNumDocuments, numDocsBeforeTabsUsed;
-    ScopedPointer<ResizingComponent> resizingComponent;
-    ScopedPointer<Viewport> viewport;
+    std::unique_ptr<Viewport> viewport;
+    std::unique_ptr<ResizingComponent> resizingComponent;
 
     class TabbedComponentInternal;
     friend class MyMultiDocumentPanelWindow;

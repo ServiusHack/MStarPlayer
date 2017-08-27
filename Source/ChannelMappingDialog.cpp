@@ -122,7 +122,7 @@ Component* ChannelMapping::refreshComponentForCell(int rowNumber, int columnId, 
 
 void ChannelMapping::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
-    OutputChannelColumnCustomComponent* outputChannelColumn = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
+    const OutputChannelColumnCustomComponent* outputChannelColumn = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
     setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId());
 }
 
@@ -139,9 +139,9 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
     : DialogWindow(TRANS("Configure Channels"), Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
+    , m_component(std::make_unique<ChannelMappingComponent>(outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback))
 {
-    m_component = new ChannelMappingComponent(outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback);
-    setContentOwned(m_component, true);
+    setContentNonOwned(m_component.get(), true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
     setResizable(true, true);
@@ -162,12 +162,12 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
     , m_soloBusSettings(soloBusSettings)
     , m_changeCallback(changeCallback)
     , m_closeCallback(closeCallback)
-    , m_channelMapping(new ChannelMapping(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
+    , m_channelMapping(std::make_unique<ChannelMapping>(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
     , m_closeButton("close")
 {
     addAndMakeVisible(m_tableListBox);
 
-    m_tableListBox.setModel(m_channelMapping);
+    m_tableListBox.setModel(m_channelMapping.get());
 
     // m_tableListBox the table component a border
     m_tableListBox.setColour(ListBox::outlineColourId, Colours::grey);
@@ -187,8 +187,8 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
 
 void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>& mapping)
 {
-    m_channelMapping = new ChannelMapping(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
-    m_tableListBox.setModel(m_channelMapping);
+    m_channelMapping = std::make_unique<ChannelMapping>(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
+    m_tableListBox.setModel(m_channelMapping.get());
 }
 
 void ChannelMappingComponent::buttonClicked(Button* /*buttonThatWasClicked*/)

@@ -48,40 +48,40 @@ public:
 
     /** Returns the volume from a channel.
     */
-    float getChannelVolume(size_t channelIndex) const;
+    float getChannelVolume(int channelIndex) const;
 
 private:
-    std::vector<float> m_setVolumes;
+    Array<float> m_setVolumes;
 
 // solo
 public:
-    void setChannelSolo(size_t channelIndex, bool solo);
-    bool getChannelSolo(size_t channelIndex) const;
+    void setChannelSolo(int channelIndex, bool solo);
+    bool getChannelSolo(int channelIndex) const;
 
 private:
-    std::vector<bool> m_setSolos;
+    Array<bool> m_setSolos;
     bool m_anySolo;
 
     // mute
 public:
-    void setChannelMute(size_t channelIndex, bool mute);
-    bool getChannelMute(size_t channelIndex) const;
+    void setChannelMute(int channelIndex, bool mute);
+    bool getChannelMute(int channelIndex) const;
 
 private:
-    std::vector<bool> m_setMutes;
+    Array<bool> m_setMutes;
 
 // actual output volume
 public:
-    float getActualVolume(size_t channelIndex) const;
+    float getActualVolume(int channelIndex) const;
 
 private:
-    std::vector<VolumeAnalyzer> m_actualVolumes;
-    size_t m_bufferSize;
+    Array<VolumeAnalyzer> m_actualVolumes;
+    size_t m_bufferSize{0};
 
 // gain to apply
 private:
     void updateGain(size_t channelIndex);
-    std::vector<float> m_appliedGains;
+    Array<float> m_appliedGains;
 
 // AudioSource
 public:

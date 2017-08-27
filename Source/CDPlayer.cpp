@@ -273,7 +273,7 @@ void CDPlayer::SetChannelCountChangedCallback(const Track::ChannelCountChangedCa
 
 void CDPlayer::updateGain()
 {
-    bool mute = m_mute || (!m_soloBusSettings.isConfigured() && m_soloMute && !m_solo);
+    const bool mute = m_mute || (!m_soloBusSettings.isConfigured() && m_soloMute && !m_solo);
     m_transportSource.setGain(mute ? 0.0f : m_gain);
 }
 
@@ -368,17 +368,16 @@ std::vector<MixerControlable*> CDPlayer::getSubMixerControlables() const
 
 void CDPlayer::showEditDialog()
 {
-    if (m_PlayerEditDialog.get() == nullptr)
+    if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog.set(new PlayerEditDialogWindow(getName(), m_color, String(),
+        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(), m_color, String(),
                                                           std::bind(&CDPlayer::setName, this, std::placeholders::_1),
                                                           std::bind(&CDPlayer::setColor, this, std::placeholders::_1),
                                                           [&]() {
                                                               // clear is not working
                                                               delete m_PlayerEditDialog.release();
                                                           },
-                                                          PlayerEditDialogWindow::ImageChangedCallback()),
-                               true);
+                                                          PlayerEditDialogWindow::ImageChangedCallback());
     }
     m_PlayerEditDialog->addToDesktop();
     m_PlayerEditDialog->toFront(true);
@@ -394,11 +393,11 @@ std::vector<std::pair<char, int>> CDPlayer::createMapping()
 
 void CDPlayer::configureChannels()
 {
-    if (m_channelMappingWindow.get() == nullptr)
+    if (m_channelMappingWindow)
     {
-        m_channelMappingWindow.set(new ChannelMappingWindow(m_outputChannelNames, m_soloBusSettings, createMapping(), [&](int source, int target) { m_remappingAudioSource.setOutputChannelMapping(source, target); }, [&]() {
+        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(m_outputChannelNames, m_soloBusSettings, createMapping(), [&](int source, int target) { m_remappingAudioSource.setOutputChannelMapping(source, target); }, [&]() {
             // clear is not working
-            delete m_channelMappingWindow.release(); }), true);
+            delete m_channelMappingWindow.release(); });
     }
     m_channelMappingWindow->addToDesktop();
     m_channelMappingWindow->toFront(true);
@@ -406,7 +405,7 @@ void CDPlayer::configureChannels()
 
 void CDPlayer::setNextReadPosition(int64 sampleInCDSampleRate)
 {
-    int64 sampleInPlaybackSampleRate = (int64)(sampleInCDSampleRate * m_remappingAudioSource.getSampleRate() / m_reader->sampleRate);
+    int64 sampleInPlaybackSampleRate = static_cast<int64>(sampleInCDSampleRate * m_remappingAudioSource.getSampleRate() / m_reader->sampleRate);
     m_transportSource.setNextReadPosition(sampleInPlaybackSampleRate);
 }
 
@@ -469,7 +468,7 @@ void CDPlayer::buttonClicked(Button* button)
 
 void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
-    OptionalScopedPointer<AudioCDReader> newReader(AudioCDReader::createReaderForCD(comboBoxThatHasChanged->getSelectedItemIndex()), true);
+    std::unique_ptr<AudioCDReader> newReader(AudioCDReader::createReaderForCD(comboBoxThatHasChanged->getSelectedItemIndex()));
 
     // Update UI state.
     const bool cdPresent = newReader && newReader->isCDStillPresent();
@@ -483,7 +482,7 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     // Clear out objects for previous CD.
     m_tracksTable.setModel(nullptr);
     m_model.release();
-    m_source.release();
+    m_source = nullptr;
     m_reader.release();
 
     // Create new objects if we have a CD.
@@ -491,7 +490,7 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     {
         newReader->refreshTrackLengths();
 
-        m_source.setOwned(new AudioFormatReaderSource(newReader.get(), false));
+        m_source = std::make_unique<AudioFormatReaderSource>(newReader.get(), false);
 
         m_transportSource.setSource(m_source.get(),
                                     32768,     // tells it to buffer this many samples ahead
@@ -499,12 +498,12 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
                                     newReader->sampleRate);
 
         {
-            OptionalScopedPointer<CDTracksModel> model(new CDTracksModel(*newReader.get()), true);
+            std::unique_ptr<CDTracksModel> model = std::make_unique<CDTracksModel>(*newReader.get());
             m_tracksTable.setModel(model.get());
-            m_model = model;
+            m_model = std::move(model);
         }
 
-        m_reader = newReader;
+        m_reader = std::move(newReader);
     }
 }
 

@@ -43,7 +43,7 @@ private:
     std::vector<float> prepared;
     std::uniform_real_distribution<float> dis;
     std::mt19937 gen;
-    Mode mode;
+    Mode mode{Mode::Sine1kHz};
     float level = 0.125f;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TestToneGeneratorAudioSource)
 };

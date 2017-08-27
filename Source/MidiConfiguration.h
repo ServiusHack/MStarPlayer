@@ -36,7 +36,7 @@ public:
     virtual void resized() override;
 
 private:
-    ScopedPointer<ComboBox> m_outputDevices;
-    ScopedPointer<TextButton> m_closeButton;
+    std::unique_ptr<ComboBox> m_outputDevices;
+    std::unique_ptr<TextButton> m_closeButton;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiConfigurationComponent)
 };

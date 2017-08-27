@@ -172,7 +172,7 @@ private:
     File m_audioFile;
     MixerAudioSource& m_tracksMixer;
     TimeSliceThread& m_thread;
-    ScopedPointer<AudioFormatReaderSource> m_currentAudioFileSource;
+    std::unique_ptr<AudioFormatReaderSource> m_currentAudioFileSource;
     AudioTransportSource m_transportSource;
     SoloBusSettings& m_soloBusSettings;
     ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;

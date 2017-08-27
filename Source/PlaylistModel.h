@@ -62,7 +62,7 @@ private:
     void showEditDialog(int rowNumber);
 
     std::vector<PlaylistEntry> m_playlist;
-    ScopedPointer<PlaylistEntryDialogWindow> m_editDialog;
+    std::unique_ptr<PlaylistEntryDialogWindow> m_editDialog;
     ReloadedCallback m_reloadedCallback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistModel)

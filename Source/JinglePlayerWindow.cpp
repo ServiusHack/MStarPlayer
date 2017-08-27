@@ -74,7 +74,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
 
     // play button
     addAndMakeVisible(m_playButton);
-    m_playButton.setImages(m_playImage);
+    m_playButton.setImages(m_playImage.get());
     m_playButton.addListener(this);
     m_playButton.setEdgeIndent(30);
 
@@ -94,7 +94,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     addAndMakeVisible(m_fileNameLabel);
 
     Track::PositionCallback positionCallback = [&](double position, bool finished) {
-        double remainingTime = m_totalLength - position;
+        const double remainingTime = m_totalLength - position;
 
         m_progress = finished ? 0.0 : position / m_totalLength;
 
@@ -103,8 +103,8 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
 
         if (remainingTime < 10)
         {
-            double decimal = remainingTime - static_cast<long>(remainingTime);
-            bool blink = decimal >= 0.5;
+            const double decimal = remainingTime - static_cast<long>(remainingTime);
+            const bool blink = decimal >= 0.5;
             if (blink != m_blink)
             {
                 m_blink = blink;
@@ -114,7 +114,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
         }
 
         if (finished)
-            m_playButton.setImages(m_playImage);
+            m_playButton.setImages(m_playImage.get());
 
     };
     m_tracksContainer->addPositionCallback(positionCallback);
@@ -126,7 +126,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 
     Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
-        m_playButton.setImages(isPlaying ? m_stopImage : m_playImage);
+        m_playButton.setImages(isPlaying ? m_stopImage.get() : m_playImage.get());
     };
     m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
 }
@@ -258,12 +258,12 @@ void JinglePlayerWindow::buttonClicked(Button* /*button*/)
 {
     if (m_tracksContainer->isPlaying())
     {
-        m_playButton.setImages(m_playImage);
+        m_playButton.setImages(m_playImage.get());
         m_player.stop();
     }
     else
     {
-        m_playButton.setImages(m_stopImage);
+        m_playButton.setImages(m_stopImage.get());
         m_player.play();
     }
 }
@@ -287,6 +287,6 @@ void JinglePlayerWindow::setUserImage(const File& file)
     if (file == File::nonexistent)
         delete m_userImage.release();
     else
-        m_userImage.set(Drawable::createFromImageFile(file), true);
+        m_userImage.reset(Drawable::createFromImageFile(file));
     repaint();
 }

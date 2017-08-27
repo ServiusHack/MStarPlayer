@@ -23,16 +23,6 @@ MixerComponent::MixerComponent(AudioDeviceManager* audioDeviceManager, OutputCha
     m_audioDeviceManager->addAudioCallback(&m_audioSourcePlayer);
     m_audioSourcePlayer.setSource(&m_channelVolumeAudioSource);
 
-    // Add enough sliders for all output channels.
-    AudioDeviceManager::AudioDeviceSetup deviceSetup;
-    m_audioDeviceManager->getAudioDeviceSetup(deviceSetup);
-    for (int i = 0; i < deviceSetup.outputChannels.countNumberOfSetBits(); i++)
-    {
-        addChannelSlider();
-        m_channelSliders.at(i)->setLabel(m_outputChannelNames->getInternalOutputChannelName(i));
-    }
-    m_channelVolumeAudioSource.setChannelCount(deviceSetup.outputChannels.countNumberOfSetBits());
-
     setSize(100, 112);
     startTimer(1000 / LevelMeter::refreshRate);
 
@@ -43,7 +33,6 @@ MixerComponent::~MixerComponent()
 {
     while (!m_channelSliders.empty())
     {
-        delete m_channelSliders.back();
         m_channelSliders.pop_back();
     }
 
@@ -62,16 +51,15 @@ void MixerComponent::registerPlayer(SubchannelPlayer* player)
 
 void MixerComponent::unregisterPlayer(SubchannelPlayer* player)
 {
-    auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](PlayerMixerFader* probe) { return probe->getPlayer() == player; });
+    auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](const std::unique_ptr<PlayerMixerFader>& probe) { return probe->getPlayer() == player; });
 
-    delete *it;
     m_playerSliders.erase(it);
     resized();
 }
 
 void MixerComponent::updatePlayerColor(SubchannelPlayer* player, Colour color)
 {
-    auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](PlayerMixerFader* probe) { return probe->getPlayer() == player; });
+    auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](const std::unique_ptr<PlayerMixerFader>& probe) { return probe->getPlayer() == player; });
     (*it)->setColor(color);
 }
 
@@ -82,7 +70,7 @@ void MixerComponent::resized()
 
     // Determine width of all sliders.
     int width = 0;
-    auto sumWidths = [&width](const MixerFader* fader) {
+    auto sumWidths = [&width](const auto& fader) {
         width += fader->isVisible() ? fader->getBounds().getWidth() : 0;
     };
 
@@ -95,7 +83,7 @@ void MixerComponent::resized()
 
     int x = 0;
 
-    auto updateBounds = [&x, sliderHeight](MixerFader* fader) {
+    auto updateBounds = [&x, sliderHeight](const auto& fader) {
         if (!fader->isVisible())
             return;
         Rectangle<int> bounds = fader->getBounds();
@@ -123,17 +111,17 @@ void MixerComponent::resized()
 
 void MixerComponent::addPlayerSlider(SubchannelPlayer* player)
 {
-    PlayerMixerFader* slider = new PlayerMixerFader(player, player->getSubMixerControlables(), false, std::bind(&MixerComponent::resized, this));
-    m_slidersContainer.addAndMakeVisible(slider);
-    m_playerSliders.push_back(slider);
+    std::unique_ptr<PlayerMixerFader> slider = std::make_unique<PlayerMixerFader>(player, player->getSubMixerControlables(), false, std::bind(&MixerComponent::resized, this));
+    m_slidersContainer.addAndMakeVisible(slider.get());
+    m_playerSliders.push_back(std::move(slider));
 }
 
 void MixerComponent::addChannelSlider()
 {
     int channelNumber = m_channelSliders.size();
-    MixerFader* slider = new ChannelMixerFader(channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
-    m_slidersContainer.addAndMakeVisible(slider);
-    m_channelSliders.push_back(slider);
+    std::unique_ptr<MixerFader> slider = std::make_unique<ChannelMixerFader>(channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
+    m_slidersContainer.addAndMakeVisible(slider.get());
+    m_channelSliders.push_back(std::move(slider));
 }
 
 void MixerComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
@@ -145,7 +133,6 @@ void MixerComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
     // remove sliders until there are not too many
     while (numberOfChannels < m_channelSliders.size())
     {
-        delete m_channelSliders.back();
         m_channelSliders.pop_back();
     }
 
@@ -214,10 +201,10 @@ void MixerComponent::outputChannelPairingModeChanged(int activeChannelIndex, Pai
         m_channelSliders[activeChannelIndex]->pairTo(nullptr);
         break;
     case PairingMode::Left:
-        m_channelSliders[activeChannelIndex]->pairTo(m_channelSliders[activeChannelIndex + 1]);
+        m_channelSliders[activeChannelIndex]->pairTo(m_channelSliders[activeChannelIndex + 1].get());
         break;
     case PairingMode::Right:
-        m_channelSliders[activeChannelIndex]->pairTo(m_channelSliders[activeChannelIndex - 1]);
+        m_channelSliders[activeChannelIndex]->pairTo(m_channelSliders[activeChannelIndex - 1].get());
         break;
     }
 }

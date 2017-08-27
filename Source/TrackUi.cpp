@@ -117,9 +117,9 @@ void TrackUi::buttonClicked(Button* button)
         switch (result)
         {
         case 1:
-            m_editDialog = ScopedPointer<TrackEditDialogWindow>(new TrackEditDialogWindow(m_track.getName(), m_track.getGain(),
+            m_editDialog = std::make_unique<TrackEditDialogWindow>(m_track.getName(), m_track.getGain(),
                                                                                           std::bind(&Track::setName, &m_track, std::placeholders::_1),
-                                                                                          std::bind(&Track::setGain, &m_track, std::placeholders::_1)));
+                                                                                          std::bind(&Track::setGain, &m_track, std::placeholders::_1));
             break;
         case 2:
             loadFile();
@@ -212,12 +212,12 @@ void TrackUi::mouseDrag(const MouseEvent& event)
         return;
 
     const static int componentWidth = 100 + 40 + 20;
-    int xPosition = event.x - componentWidth;
+    const int xPosition = event.x - componentWidth;
 
     if (xPosition < 0)
         return;
 
-    double positionFraction = static_cast<double>(xPosition) / static_cast<double>(getWidth() - componentWidth);
+    const double positionFraction = static_cast<double>(xPosition) / static_cast<double>(getWidth() - componentWidth);
     m_setPositionCallback(positionFraction * m_longestDuration);
 }
 
@@ -230,7 +230,7 @@ void TrackUi::setLongestDuration(double duration)
 void TrackUi::positionChanged(double position)
 {
     const static int componentWidth = 100 + 40 + 20;
-    int drawWidth = getWidth() - componentWidth;
+    const int drawWidth = getWidth() - componentWidth;
 
     int old_lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
     m_progress = position / m_longestDuration;
@@ -252,7 +252,7 @@ void TrackUi::loadFile()
 
 void TrackUi::loadFile(const File& audioFile)
 {
-    ScopedPointer<AudioFormatReader> reader = m_track.getAudioFormatManager().createReaderFor(audioFile);
+    std::unique_ptr<AudioFormatReader> reader{m_track.getAudioFormatManager().createReaderFor(audioFile)};
 
     if (reader != nullptr)
     {
@@ -300,7 +300,7 @@ void TrackUi::paint(Graphics& g)
     g.setColour(Colour(255, 0, 0));
     drawWidth = getWidth() - componentWidth;
 
-    int lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
+    const int lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
     g.drawVerticalLine(lineX, 0.0f, static_cast<float>(getHeight()));
 }
 

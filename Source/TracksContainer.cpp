@@ -185,9 +185,9 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
         double longestDuration = 0;
         m_longestTrack = nullptr;
 
-        for (auto& track : m_tracks)
+        for (const auto& track : m_tracks)
         {
-            double duration = track->getDuration();
+            const double duration = track->getDuration();
             if (duration > longestDuration)
             {
                 longestDuration = duration;
@@ -214,7 +214,7 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
                 callback(true);
         else
         {
-            bool isAnyPlaying = std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
+            const bool isAnyPlaying = std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
             if (!isAnyPlaying)
                 for (const auto& callback : m_playingStateChangedCallback)
                     callback(false);

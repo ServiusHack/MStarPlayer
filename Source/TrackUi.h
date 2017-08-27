@@ -47,7 +47,7 @@ private:
     VolumeSlider m_volumeSlider;
     Label m_fileNameLabel;
 
-    ScopedPointer<TrackEditDialogWindow> m_editDialog;
+    std::unique_ptr<TrackEditDialogWindow> m_editDialog;
 
     double m_longestDuration;
     double m_progress; // the progress of the playback

@@ -18,7 +18,7 @@ public:
     void setPosition(double position);
 
 private:
-    ScopedPointer<MidiOutput> m_midiOutput;
+    std::unique_ptr<MidiOutput> m_midiOutput;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MTCSender)
 
 // Used only in separate thread!

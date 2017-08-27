@@ -23,9 +23,9 @@ public:
     double getSampleRate() const;
 
 private:
-    std::vector<VolumeAnalyzer> m_volumes;
+    Array<VolumeAnalyzer> m_volumes;
     size_t m_bufferSize;
-    double m_sampleRate;
+    double m_sampleRate{0.0};
 
 // ChannelRemappingAudioSource
 public:

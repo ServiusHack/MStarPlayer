@@ -36,7 +36,7 @@ public:
 
         MainContentComponent::initLookAndFeel();
         LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
-        m_mainWindow = new MainWindow(m_applicationProperties);
+        m_mainWindow = std::make_unique<MainWindow>(m_applicationProperties);
     }
 
     void shutdown()
@@ -111,7 +111,7 @@ public:
     };
 
 private:
-    ScopedPointer<MainWindow> m_mainWindow;
+    std::unique_ptr<MainWindow> m_mainWindow;
     ApplicationProperties m_applicationProperties;
 };
 

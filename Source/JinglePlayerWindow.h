@@ -65,19 +65,15 @@ private:
     Label m_totalDurationText;
     DrawableButton m_playButton;
     ImageButton m_configureButton;
-    ScopedPointer<Drawable> m_playImage;
-    ScopedPointer<Drawable> m_stopImage;
-    OptionalScopedPointer<Drawable> m_userImage;
+    std::unique_ptr<Drawable> m_playImage;
+    std::unique_ptr<Drawable> m_stopImage;
+    std::unique_ptr<Drawable> m_userImage;
     Label m_fileNameLabel;
 
     // configuration menu actions
     void loadFile();
 
     // audio output
-    OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
-
-    OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
-
     bool m_showRemainingTime;
 
     Colour m_color;

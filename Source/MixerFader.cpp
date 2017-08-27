@@ -8,17 +8,17 @@ namespace
 }
 
 MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled, bool muteEnabled)
-    : m_label(new Label("label"))
-    , m_soloButton(soloEnabled ? new TextButton("solo") : nullptr)
-    , m_muteButton(muteEnabled ? new TextButton("mute") : nullptr)
-    , m_expandButton(new ChangeableArrowButton("expand", 0.0, Colour(0xff000000)))
-    , m_panSlider(panEnabled ? new Slider() : nullptr)
-    , m_levelMeter(new LevelMeter())
-    , m_volumeSlider(new VolumeSlider())
+    : m_label(std::make_unique<Label>("label"))
+    , m_soloButton(soloEnabled ? std::make_unique<TextButton>("solo") : nullptr)
+    , m_muteButton(muteEnabled ? std::make_unique<TextButton>("mute") : nullptr)
+    , m_expandButton(std::make_unique<ChangeableArrowButton>("expand", 0.0f, Colour(0xff000000)))
+    , m_panSlider(panEnabled ? std::make_unique<Slider>() : nullptr)
+    , m_levelMeter(std::make_unique<LevelMeter>())
+    , m_volumeSlider(std::make_unique<VolumeSlider>())
     , m_resizeCallback(resizeCallback)
     , m_mixerControlable(mainControlable)
 {
-    addAndMakeVisible(m_label);
+    addAndMakeVisible(m_label.get());
     m_label->setText(mainControlable->getName(), sendNotification);
     m_label->setFont(Font(10.00f, Font::plain));
     m_label->setJustificationType(Justification::centredLeft);
@@ -28,7 +28,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 
     if (m_soloButton)
     {
-        addAndMakeVisible(m_soloButton);
+        addAndMakeVisible(m_soloButton.get());
         m_soloButton->setButtonText(TRANS("Solo"));
         m_soloButton->addListener(this);
         m_soloButton->setWantsKeyboardFocus(false);
@@ -39,7 +39,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 
     if (m_muteButton)
     {
-        addAndMakeVisible(m_muteButton);
+        addAndMakeVisible(m_muteButton.get());
         m_muteButton->setButtonText(TRANS("Mute"));
         m_muteButton->addListener(this);
         m_muteButton->setWantsKeyboardFocus(false);
@@ -50,7 +50,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 
     if (m_panSlider)
     {
-        addAndMakeVisible(m_panSlider);
+        addAndMakeVisible(m_panSlider.get());
         m_panSlider->setRange(0, 2, 0.1);
         m_panSlider->setValue(1.0);
         m_panSlider->setSliderStyle(Slider::LinearHorizontal);
@@ -59,13 +59,13 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
         m_panSlider->setTransform(AffineTransform().scaled(0.7f));
     }
 
-    addAndMakeVisible(m_volumeSlider);
+    addAndMakeVisible(m_volumeSlider.get());
     m_volumeSlider->setValue(m_mixerControlable->getGain(), juce::dontSendNotification);
     m_volumeSlider->addListener(this);
 
-    addAndMakeVisible(m_levelMeter);
+    addAndMakeVisible(m_levelMeter.get());
 
-    addChildComponent(m_expandButton);
+    addChildComponent(m_expandButton.get());
     m_expandButton->addListener(this);
 
     setSize(100, 112);
@@ -91,7 +91,7 @@ MixerFader::~MixerFader()
 {
     m_mixerControlable->removeChangeListener(this);
 
-    for (std::unique_ptr<MixerFader>& subfader : m_subfaders)
+    for (const std::unique_ptr<MixerFader>& subfader : m_subfaders)
         removeChildComponent(subfader.get());
 }
 
@@ -155,19 +155,19 @@ void MixerFader::resized()
 
     if (m_panSlider)
     {
-        panBounds = getLocalArea(m_panSlider, m_panSlider->getLocalBounds());
+        panBounds = getLocalArea(m_panSlider.get(), m_panSlider->getLocalBounds());
     }
     else if (m_muteButton)
     {
-        panBounds = getLocalArea(m_muteButton, m_muteButton->getLocalBounds());
+        panBounds = getLocalArea(m_muteButton.get(), m_muteButton->getLocalBounds());
     }
     else if (m_soloButton)
     {
-        panBounds = getLocalArea(m_soloButton, m_soloButton->getLocalBounds());
+        panBounds = getLocalArea(m_soloButton.get(), m_soloButton->getLocalBounds());
     }
     else
     {
-        panBounds = getLocalArea(m_label, m_label->getLocalBounds());
+        panBounds = getLocalArea(m_label.get(), m_label->getLocalBounds());
     }
 
     m_levelMeter->setBounds(padding, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
@@ -180,18 +180,18 @@ void MixerFader::resized()
 
 void MixerFader::buttonClicked(Button* buttonThatWasClicked)
 {
-    if (buttonThatWasClicked == m_soloButton)
+    if (buttonThatWasClicked == m_soloButton.get())
     {
         m_mixerControlable->setSolo(m_soloButton->getToggleState());
     }
-    else if (buttonThatWasClicked == m_muteButton)
+    else if (buttonThatWasClicked == m_muteButton.get())
     {
         m_mixerControlable->setMute(m_muteButton->getToggleState());
     }
-    else if (buttonThatWasClicked == m_expandButton)
+    else if (buttonThatWasClicked == m_expandButton.get())
     {
         Rectangle<int> bounds = getBounds();
-        bool expand = bounds.getWidth() == baseWidth;
+        const bool expand = bounds.getWidth() == baseWidth;
         bounds.setWidth(expand ? (m_subfaders.size() + 1) * baseWidth : baseWidth);
         setBounds(bounds);
         m_expandButton->setArrowDirection(expand ? 0.5f : 0.0f);
@@ -201,11 +201,11 @@ void MixerFader::buttonClicked(Button* buttonThatWasClicked)
 
 void MixerFader::sliderValueChanged(Slider* sliderThatWasMoved)
 {
-    if (sliderThatWasMoved == m_panSlider)
+    if (sliderThatWasMoved == m_panSlider.get())
     {
         m_mixerControlable->setPan(static_cast<float>(sliderThatWasMoved->getValue()));
     }
-    else if (sliderThatWasMoved == m_volumeSlider)
+    else if (sliderThatWasMoved == m_volumeSlider.get())
     {
         const float gain = static_cast<float>(sliderThatWasMoved->getValue());
         m_mixerControlable->setGain(gain);
@@ -247,7 +247,7 @@ void MixerFader::setLabel(const String& text)
 
 void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
 {
-    for (std::unique_ptr<MixerFader>& subfader : m_subfaders)
+    for (const std::unique_ptr<MixerFader>& subfader : m_subfaders)
     {
         removeChildComponent(subfader.get());
     }
@@ -256,7 +256,7 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
     m_expandButton->setVisible(mixSettings.size() > 0);
     for (size_t i = 0; i < mixSettings.size(); ++i)
     {
-        m_subfaders.emplace_back(new MixerFader(mixSettings[i], std::vector<MixerControlable*>(), false, []() {}));
+        m_subfaders.push_back(std::make_unique<MixerFader>(mixSettings[i], std::vector<MixerControlable*>(), false, []() {}));
         addAndMakeVisible(m_subfaders.back().get());
     }
 
@@ -273,7 +273,7 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
 void MixerFader::updateLevel()
 {
     m_levelMeter->setVolume(m_mixerControlable->getVolume());
-    for (auto&& fader : m_subfaders)
+    for (const auto& fader : m_subfaders)
         fader->updateLevel();
 }
 

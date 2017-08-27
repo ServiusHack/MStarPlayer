@@ -110,7 +110,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
     m_tableListBox.selectRow(0);
 
     // tracks
-    Track::PositionCallback positionCallback = [&](double position, bool finished) {
+    Track::PositionCallback positionCallback = [&](double position, bool /*finished*/) {
         m_digitalDisplay.setText(Utils::formatSeconds(position), sendNotification);
     };
     m_tracksContainer->addPositionCallback(positionCallback);
@@ -137,8 +137,8 @@ void PlaylistPlayerWindow::setResizerBarPosition(int position)
 
 void PlaylistPlayerWindow::paint(Graphics& g)
 {
-    int buttonWidth = std::min(getWidth() / 11, 32);
-    int buttonHeight = buttonWidth;
+    const int buttonWidth = std::min(getWidth() / 11, 32);
+    const int buttonHeight = buttonWidth;
 
     g.fillAll(m_color);
 

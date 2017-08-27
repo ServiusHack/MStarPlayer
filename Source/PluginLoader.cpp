@@ -7,7 +7,7 @@ static MyMultiDocumentPanel* component;
 
 Player* getPlayer(const char* playerName)
 {
-    int components_count = component->getNumDocuments();
+    const int components_count = component->getNumDocuments();
     for (int i = 0; i < components_count; ++i)
     {
         Player* player = static_cast<Player*>(component->getDocument(i));
@@ -18,7 +18,7 @@ Player* getPlayer(const char* playerName)
     return nullptr;
 }
 
-MixerControlable* getTrack(Player* player, const char* trackName)
+MixerControlable* getTrack(const Player* player, const char* trackName)
 {
     auto subMixerControlables = player->getSubMixerControlables();
     auto hit = std::find_if(subMixerControlables.begin(), subMixerControlables.end(), [trackName](const MixerControlable* controlable) {
@@ -33,11 +33,11 @@ MixerControlable* getTrack(Player* player, const char* trackName)
 
 void listPlayers(PluginInterface::ListPlayersCallbackFunction callback, void* userData)
 {
-    int components_count = component->getNumDocuments();
+    const int components_count = component->getNumDocuments();
     std::vector<String> names;
     for (int i = 0; i < components_count; ++i)
     {
-        Player* player = static_cast<Player*>(component->getDocument(i));
+        const Player* player = static_cast<Player*>(component->getDocument(i));
         callback(player->getName().toRawUTF8(), userData);
     }
 }
@@ -76,10 +76,10 @@ void previousEntry(const char* playerName)
 
 void listTracks(const char* playerName, PluginInterface::ListTracksCallbackFunction callback, void* userData)
 {
-    Player* player = getPlayer(playerName);
+    const Player* player = getPlayer(playerName);
     
     std::vector<MixerControlable*> subMixerControlables = player->getSubMixerControlables();
-    for (MixerControlable* subMixerControlable : subMixerControlables)
+    for (const MixerControlable* const subMixerControlable : subMixerControlables)
     {
         callback(subMixerControlable->getName().toRawUTF8(), userData);
     }
@@ -116,7 +116,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
         Plugin plugin;
 
         plugin.name = directoryIterator.getFile().getFileNameWithoutExtension().toStdString();
-        plugin.dynamicLibrary.reset(new DynamicLibrary(directoryIterator.getFile().getFullPathName()));
+        plugin.dynamicLibrary = std::make_unique<DynamicLibrary>(directoryIterator.getFile().getFullPathName());
 
         if (plugin.dynamicLibrary->getNativeHandle() == nullptr)
         {
@@ -237,7 +237,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
     init.previous = &previousEntry;
     init.setTrackVolume = &trackVolume;
 
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.initFunction(init);
     }
@@ -257,7 +257,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 
 PluginLoader::~PluginLoader()
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.shutdownFunction();
     }
@@ -280,7 +280,7 @@ void PluginLoader::configure(size_t index)
 
 void PluginLoader::playingStateChanged(const char* playerName, bool isPlaying)
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.playingStateChangedFunction(playerName, isPlaying);
     }
@@ -288,7 +288,7 @@ void PluginLoader::playingStateChanged(const char* playerName, bool isPlaying)
 
 void PluginLoader::nextEntrySelected(const char* playerName)
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.nextEntrySelectedFunction(playerName);
     }
@@ -296,7 +296,7 @@ void PluginLoader::nextEntrySelected(const char* playerName)
 
 void PluginLoader::previousEntrySelected(const char* playerName)
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.previousEntrySelectedFunction(playerName);
     }
@@ -304,7 +304,7 @@ void PluginLoader::previousEntrySelected(const char* playerName)
 
 void PluginLoader::playlistEntrySelected(const char* playerName, size_t entryIndex)
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.playlistEntrySelectedFunction(playerName, entryIndex);
     }
@@ -312,7 +312,7 @@ void PluginLoader::playlistEntrySelected(const char* playerName, size_t entryInd
 
 void PluginLoader::trackVolumeChanged(const char* playerName, const char* trackName, float volume)
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.trackVolumeChangedFunction(playerName, trackName, volume);
     }
@@ -320,7 +320,7 @@ void PluginLoader::trackVolumeChanged(const char* playerName, const char* trackN
 
 void PluginLoader::positionChanged(const char* playerName, double position)
 {
-    for (auto&& plugin : plugins)
+    for (const auto& plugin : plugins)
     {
         plugin.positionChangedFunction(playerName, position);
     }

@@ -24,7 +24,7 @@ void CrashDumper::run()
     if (library == nullptr)
         return;
 
-    auto address = (decltype(&MiniDumpWriteDump))GetProcAddress(library, "MiniDumpWriteDump");
+    const auto address = (decltype(&MiniDumpWriteDump))GetProcAddress(library, "MiniDumpWriteDump");
     if (address == nullptr)
         return;
 

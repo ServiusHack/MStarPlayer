@@ -22,7 +22,7 @@ VolumeSlider::VolumeSlider(const String& componentName)
 void VolumeSlider::paint(Graphics& g)
 {
     const int indent = LookAndFeel::getDefaultLookAndFeel().getSliderThumbRadius(*this);
-    float zeroPosition = static_cast<float>((1.0 - valueToProportionOfLength(1.0)) * (getHeight() - 2 * indent));
+    const float zeroPosition = static_cast<float>((1.0 - valueToProportionOfLength(1.0)) * (getHeight() - 2 * indent));
 
     g.setColour(Colours::black);
     g.drawLine(0.0f, indent + zeroPosition, static_cast<float>(getWidth()), indent + zeroPosition);

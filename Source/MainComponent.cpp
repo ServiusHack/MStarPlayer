@@ -45,28 +45,24 @@ MainContentComponent::MainContentComponent(ApplicationProperties& applicationPro
     , m_projectModified(false)
     , m_audioThumbnailCache(1000)
     , m_applicationProperties(applicationPropeties)
-    , m_multiDocumentPanel(new MyMultiDocumentPanel())
+    , m_multiDocumentPanel(std::make_unique<MyMultiDocumentPanel>())
+    , m_outputChannelNames(std::make_unique<OutputChannelNames>(m_audioDeviceManager))
+    , m_mixerComponent(std::make_unique<MixerComponent>(&m_audioDeviceManager, m_outputChannelNames.get(), m_soloBusSettings))
+    , m_testToneGenerator(std::make_unique<TestToneGeneratorComponent>(m_mixerComponent.get(), m_outputChannelNames.get()))
+    , m_soloComponent(std::make_unique<SoloBusMixer>(m_soloBusSettings, m_mixerComponent->getChannelVolumeAudioSource()))
     , m_pluginLoader(m_multiDocumentPanel.get())
 {
     // audio setup
-    m_audioDeviceManager = new AudioDeviceManager();
-    m_audioDeviceManager->initialise(64, 64, nullptr, false, String::empty, 0);
-
-    // output channel names
-    m_outputChannelNames = new OutputChannelNames(*m_audioDeviceManager);
+    m_audioDeviceManager.initialise(64, 64, nullptr, false, String::empty, 0);
 
     // mixer control
-    m_mixerComponent = new MixerComponent(m_audioDeviceManager, m_outputChannelNames, m_soloBusSettings);
-    addAndMakeVisible(m_mixerComponent);
-
-    m_testToneGenerator = new TestToneGeneratorComponent(m_mixerComponent, m_outputChannelNames);
+    addAndMakeVisible(m_mixerComponent.get());
 
     // solo bus control
-    m_soloComponent = new SoloBusMixer(m_soloBusSettings, m_mixerComponent->getChannelVolumeAudioSource());
-    addAndMakeVisible(m_soloComponent);
+    addAndMakeVisible(m_soloComponent.get());
 
     // player MDI area
-    addAndMakeVisible(m_multiDocumentPanel);
+    addAndMakeVisible(m_multiDocumentPanel.get());
     m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 
     m_timeSliceThread.startThread(3);
@@ -167,7 +163,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         break;
     case 4:
         {
-            size_t numberOfPlugins = m_pluginLoader.count();
+            const size_t numberOfPlugins = m_pluginLoader.count();
             for (size_t i = 0; i < numberOfPlugins; ++i)
                 menu.addCommandItem(m_commandManager, basePlugin + i);
         }
@@ -223,7 +219,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
 
     commands.addArray(ids, numElementsInArray(ids));
 
-    size_t numberOfPlugins = m_pluginLoader.count();
+    const size_t numberOfPlugins = m_pluginLoader.count();
     for (size_t i = 0; i < numberOfPlugins; ++i)
         commands.add(basePlugin + i);
 }
@@ -348,7 +344,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         break;
     case addJinglePlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
         player->setName("Jingle Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -357,7 +353,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addMultitrackPlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
         player->setName("Multitrack Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -366,7 +362,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addPlaylistPlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader);
         player->setName("Playlist Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -375,7 +371,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addCDPlayer:
     {
-        CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, m_pluginLoader);
+        CDPlayer* player = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, m_timeSliceThread, m_pluginLoader);
         player->setName("CD Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -389,10 +385,10 @@ bool MainContentComponent::perform(const InvocationInfo& info)
             DialogWindow::LaunchOptions options;
             options.dialogTitle = TRANS("Test Tone Generator");
             options.resizable = false;
-            options.content.setNonOwned(m_testToneGenerator);
+            options.content.setNonOwned(m_testToneGenerator.get());
             options.componentToCentreAround = this;
             options.useNativeTitleBar = false;
-            m_testToneGeneratorWindow = options.create();
+            m_testToneGeneratorWindow.reset(options.create());
         }
         m_testToneGeneratorWindow->setVisible(true);
     }
@@ -409,13 +405,13 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         break;
 
     case configureAudio:
-        m_audioConfigurationWindow = new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames, m_soloBusSettings);
+        m_audioConfigurationWindow = std::make_unique<AudioConfigurationWindow>(m_audioDeviceManager, *m_outputChannelNames, m_soloBusSettings);
         break;
     case configureMidi:
-        m_midiConfigurationWindow = new MidiConfigurationWindow(m_mtcSender);
+        m_midiConfigurationWindow = std::make_unique<MidiConfigurationWindow>(m_mtcSender);
         break;
     case editSettings:
-        m_editSettingsWindow = new EditSettingsWindow(m_applicationProperties);
+        m_editSettingsWindow = std::make_unique<EditSettingsWindow>(m_applicationProperties);
         break;
 
     case lookAndFeelDefault:
@@ -534,7 +530,7 @@ void MainContentComponent::readProjectFile()
     {
         XmlDocument document(m_projectFile);
 
-        ScopedPointer<XmlElement> root = document.getDocumentElement();
+        std::unique_ptr<XmlElement> root{document.getDocumentElement()};
 
         if (!root)
         {
@@ -584,12 +580,12 @@ void MainContentComponent::readProjectFile()
         {
             if (audio->getNumChildElements() > 0)
             {
-                String error = m_audioDeviceManager->initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
+                String error = m_audioDeviceManager.initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
                 if (error != "")
                 {
                     loadWarnings.add(error);
 
-                    error = m_audioDeviceManager->initialise(64, 64, nullptr, false, String::empty, 0);
+                    error = m_audioDeviceManager.initialise(64, 64, nullptr, false, String::empty, 0);
 
                     if (error != "")
                         throw std::exception(error.toRawUTF8());
@@ -597,7 +593,7 @@ void MainContentComponent::readProjectFile()
 
                 // AudioDeviceManager only notifies asynchronously but we want to continue loading the project now.
                 // So we fake a change broadcast by the AudioDeviceManager so that OutputChannelNames is configured correctly.
-                m_outputChannelNames->changeListenerCallback(m_audioDeviceManager);
+                m_outputChannelNames->changeListenerCallback(&m_audioDeviceManager);
             }
         }
 
@@ -663,7 +659,7 @@ void MainContentComponent::readProjectFile()
                         loadWarnings.add(String::formatted(TRANS("Unknown player type '%s'."), type));
                         continue;
                     }
-                    Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader, gain, solo, mute);
+                    Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, m_pluginLoader, gain, solo, mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);
@@ -674,7 +670,7 @@ void MainContentComponent::readProjectFile()
                     const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
                     const bool solo = player->getBoolAttribute("solo");
                     const bool mute = player->getBoolAttribute("mute");
-                    CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, m_timeSliceThread, m_pluginLoader, gain, solo, mute);
+                    CDPlayer* window = new CDPlayer(m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, m_timeSliceThread, m_pluginLoader, gain, solo, mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);
@@ -713,7 +709,7 @@ void MainContentComponent::writeProjectFile()
 {
     getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
-    ScopedPointer<XmlElement> root = new XmlElement("Project");
+    std::unique_ptr<XmlElement> root = std::make_unique<XmlElement>("Project");
 
     XmlElement* view = new XmlElement("View");
 
@@ -739,7 +735,7 @@ void MainContentComponent::writeProjectFile()
     root->addChildElement(view);
 
     XmlElement* audio = new XmlElement("Audio");
-    audio->addChildElement(m_audioDeviceManager->createStateXml());
+    audio->addChildElement(m_audioDeviceManager.createStateXml());
     root->addChildElement(audio);
 
     XmlElement* channelNames = new XmlElement("ChannelNames");

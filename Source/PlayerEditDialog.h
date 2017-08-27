@@ -70,8 +70,8 @@ private:
     TextButton m_closeButton;
 
     TextButton m_colorButton;
-    OptionalScopedPointer<TextButton> m_imageSelectorButton;
-    OptionalScopedPointer<TextButton> m_imageResetButton;
+    std::unique_ptr<TextButton> m_imageSelectorButton;
+    std::unique_ptr<TextButton> m_imageResetButton;
 
     Colour m_color;
     File m_imageFile;
