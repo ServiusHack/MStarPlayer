@@ -158,6 +158,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
     break;
     case 3:
         menu.addCommandItem(m_commandManager, configureAudio);
+        menu.addCommandItem(m_commandManager, configureMidi);
         menu.addCommandItem(m_commandManager, editSettings);
         break;
     }
@@ -165,7 +166,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
     return menu;
 }
 
-void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuIndex)
+void MainContentComponent::menuItemSelected(int menuItemID, int /*topLevelMenuIndex*/)
 {
     if (menuItemID >= projectRecentlyUsedFiles && menuItemID < projectRecentlyUsedFiles + MaxRecentlyUsedFiles)
     {
@@ -204,6 +205,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
         layoutModeTabs,
         showMixer,
         configureAudio,
+        configureMidi,
         editSettings,
         lookAndFeelDefault,
         lookAndFeelDark};
@@ -285,6 +287,10 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
         result.setInfo(TRANS("Configure Audio"), TRANS("Configure the audio device to use"), optionsCategory, 0);
         break;
 
+    case configureMidi:
+        result.setInfo(TRANS("Configure MIDI"), TRANS("Configure the MIDI device to use"), optionsCategory, 0);
+        break;
+
     case editSettings:
         result.setInfo(TRANS("Edit Settings"), TRANS("Edit the application settings"), optionsCategory, 0);
         break;
@@ -320,7 +326,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         break;
     case addJinglePlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Jingle, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender);
         player->setName("Jingle Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -329,7 +335,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addMultitrackPlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Multitrack, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender);
         player->setName("Multitrack Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -338,7 +344,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     break;
     case addPlaylistPlayer:
     {
-        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread);
+        Player* player = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, InterPlayerCommunication::PlayerType::Playlist, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender);
         player->setName("Playlist Player");
         player->addChangeListener(this);
         m_multiDocumentPanel->addDocument(player, Colours::white, true);
@@ -382,6 +388,9 @@ bool MainContentComponent::perform(const InvocationInfo& info)
 
     case configureAudio:
         m_audioConfigurationWindow = new AudioConfigurationWindow(*m_audioDeviceManager, *m_outputChannelNames, m_soloBusSettings);
+        break;
+    case configureMidi:
+        m_midiConfigurationWindow = new MidiConfigurationWindow(m_mtcSender);
         break;
     case editSettings:
         m_editSettingsWindow = new EditSettingsWindow(m_applicationProperties);
@@ -627,7 +636,7 @@ void MainContentComponent::readProjectFile()
                         loadWarnings.add(String::formatted(TRANS("Unknown player type '%s'."), type));
                         continue;
                     }
-                    Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, gain, solo, mute);
+                    Player* window = new Player(m_mixerComponent.get(), m_outputChannelNames, m_soloBusSettings, playerType, m_applicationProperties, m_audioThumbnailCache, m_timeSliceThread, m_mtcSender, gain, solo, mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
                     m_multiDocumentPanel->addDocument(window, Colours::white, true);

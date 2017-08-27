@@ -13,6 +13,8 @@
 #include "PlaylistPlayerWindow.h"
 #include "SubchannelPlayer.h"
 #include "MyMultiDocumentPanel.h"
+#include "PlayerMidiDialog.h"
+#include "MtcSender.h"
 
 /**
 	A player with a playlist and tracks to play audio files.
@@ -27,7 +29,7 @@ class Player
     , public SoloBusSettingsListener
 {
 public:
-    Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, float gain = 1.0f, bool solo = false, bool mute = false);
+    Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, float gain = 1.0f, bool solo = false, bool mute = false);
     ~Player();
 
     void setType(InterPlayerCommunication::PlayerType type);
@@ -90,6 +92,7 @@ private:
 
     void showEditDialog();
     void configureChannels();
+    void configureMidi();
 
     void trackConfigChanged();
 
@@ -115,6 +118,9 @@ private:
     Track::ChannelCountChangedCallback m_channelCountChanged;
     OptionalScopedPointer<PlayerEditDialogWindow> m_PlayerEditDialog;
     OptionalScopedPointer<ChannelMappingWindow> m_channelMappingWindow;
+    OptionalScopedPointer<PlayerMidiDialogWindow> m_PlayerMidiDialog;
+
+    MTCSender& m_mtcSender;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Player)
 };

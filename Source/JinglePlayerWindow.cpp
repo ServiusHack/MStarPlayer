@@ -37,7 +37,7 @@ namespace
     const int TotalDurationTextWidth = 70;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ChangePlayerTypeCallback changePlayerTypeCallback, SetUserImageCallback setUserImageCallback)
+JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ConfigureMidiCallback configureMidiCallback, ChangePlayerTypeCallback changePlayerTypeCallback, SetUserImageCallback setUserImageCallback)
     : m_tracksContainer(tracksContainer)
     , m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
     , m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
@@ -46,6 +46,7 @@ JinglePlayerWindow::JinglePlayerWindow(TracksContainer* tracksContainer, ShowEdi
     , m_paintColor(m_color)
     , m_showEditDialogCallback(showEditDialogCallback)
     , m_configureChannelsCallback(configureChannelsCallback)
+    , m_configureMidiCallback(configureMidiCallback)
     , m_changePlayerTypeCallback(changePlayerTypeCallback)
     , m_setUserImageCallback(setUserImageCallback)
     , m_totalLength(0)
@@ -203,6 +204,7 @@ void JinglePlayerWindow::mouseDown(const MouseEvent& event)
         m.addItem(1, TRANS("load file"));
         m.addItem(2, TRANS("configure channels"));
         m.addItem(3, TRANS("configure appearance"));
+        m.addItem(7, TRANS("configure MIDI"));
         m.addSeparator();
         m.addItem(4, TRANS("Jingle Mode"), true, true);
         m.addItem(5, TRANS("Multitrack Mode"));
@@ -229,6 +231,9 @@ void JinglePlayerWindow::mouseDown(const MouseEvent& event)
             break;
         case 6:
             m_changePlayerTypeCallback(PlayerType::Playlist);
+            break;
+        case 7:
+            m_configureMidiCallback();
             break;
         }
     }

@@ -5,13 +5,13 @@ int TestToneGeneratorOutputChannelsModel::getNumRows()
     return names.size();
 }
   
-void TestToneGeneratorOutputChannelsModel::paintListBoxItem(int rowNumber, Graphics &g, int width, int height, bool rowIsSelected)
+void TestToneGeneratorOutputChannelsModel::paintListBoxItem(int /*rowNumber*/, Graphics &/*g*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
 
 }
 
 Component* TestToneGeneratorOutputChannelsModel::refreshComponentForRow(int  	rowNumber,
-    bool  	isRowSelected,
+    bool  	/*isRowSelected*/,
     Component *  	existingComponentToUpdate
 )
 {

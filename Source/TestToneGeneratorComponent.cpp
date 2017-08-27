@@ -227,7 +227,7 @@ void TestToneGeneratorComponent::buttonClicked (Button* buttonThatWasClicked)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void TestToneGeneratorComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
-    size_t numberOfChannels = m_outputChannelNames->getNumberOfChannels();
+    int numberOfChannels = m_outputChannelNames->getNumberOfChannels();
     int oldSize = m_listBoxModel.getNumRows();
     m_listBoxModel.resizeTo(numberOfChannels);
     for (int i = oldSize; i < numberOfChannels; ++i)

@@ -121,8 +121,7 @@ float Track::getVolume() const
 
 void Track::play()
 {
-    if (m_transportSource.hasStreamFinished())
-        setPosition(0);
+    setPosition(0);
     m_transportSource.start();
     startTimer(50);
     m_playingStateChangedCallback(true);

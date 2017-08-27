@@ -79,6 +79,10 @@
       <FILE id="JgAqQL" name="ChangeableArrowButton.h" compile="0" resource="0"
             file="Source/ChangeableArrowButton.h"/>
       <GROUP id="{F77B95C1-AB4A-6CDF-7261-C2BEEFA2CBEE}" name="Player">
+        <FILE id="LqdOzk" name="PlayerMidiDialog.cpp" compile="1" resource="0"
+              file="Source/PlayerMidiDialog.cpp"/>
+        <FILE id="bZk2pt" name="PlayerMidiDialog.h" compile="0" resource="0"
+              file="Source/PlayerMidiDialog.h"/>
         <FILE id="vCosBz" name="PlayerEditDialog.cpp" compile="1" resource="0"
               file="Source/PlayerEditDialog.cpp"/>
         <FILE id="PItGjI" name="PlayerEditDialog.h" compile="0" resource="0"
@@ -167,6 +171,14 @@
         <FILE id="jS4Ju4" name="AudioConfiguration.cpp" compile="1" resource="0"
               file="Source/AudioConfiguration.cpp"/>
       </GROUP>
+      <GROUP id="{496520FE-9463-D97A-F184-FEA20DB4BE24}" name="Midi">
+        <FILE id="sHhxH8" name="MidiConfiguration.cpp" compile="1" resource="0"
+              file="Source/MidiConfiguration.cpp"/>
+        <FILE id="uOTxIT" name="MidiConfiguration.h" compile="0" resource="0"
+              file="Source/MidiConfiguration.h"/>
+        <FILE id="qXIU1S" name="MTCSender.cpp" compile="1" resource="0" file="Source/MTCSender.cpp"/>
+        <FILE id="RjMPaS" name="MTCSender.h" compile="0" resource="0" file="Source/MTCSender.h"/>
+      </GROUP>
       <GROUP id="{865AC646-72F7-2874-4DCD-D4F50884E329}" name="Mixer">
         <FILE id="W5gwzk" name="ChannelMixerFader.cpp" compile="1" resource="0"
               file="Source/ChannelMixerFader.cpp"/>
@@ -237,7 +249,8 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
   <EXPORTFORMATS>
-    <VS2017 targetFolder="Builds/VisualStudio2017" toolset="v141_xp">
+    <VS2017 targetFolder="Builds/VisualStudio2017" toolset="v141_xp" extraDefs="_CRT_SECURE_NO_WARNINGS"
+            extraCompilerFlags="/wd4458">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"/>

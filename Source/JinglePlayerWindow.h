@@ -26,7 +26,7 @@ public:
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    JinglePlayerWindow(TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
+    JinglePlayerWindow(TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ConfigureMidiCallback configureMidiCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
 
     void setColor(const Colour& color);
 
@@ -87,6 +87,7 @@ private:
 
     InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
     InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;
+    InterPlayerCommunication::ConfigureMidiCallback m_configureMidiCallback;
     InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
     InterPlayerCommunication::SetUserImageCallback m_setUserImageCallback;
 

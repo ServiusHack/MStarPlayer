@@ -9,7 +9,7 @@ public:
     using ChangeCallback = std::function<void(int, bool)>;
   int getNumRows() override;
   
-    void 	paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected);
+    void 	paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected) override;
     Component* refreshComponentForRow(int  	rowNumber,
         bool  	isRowSelected,
         Component *  	existingComponentToUpdate

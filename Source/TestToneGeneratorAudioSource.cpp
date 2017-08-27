@@ -40,7 +40,7 @@ void TestToneGeneratorAudioSource::setEnable(int channel, bool enable)
 
 void TestToneGeneratorAudioSource::setVolume(double volume)
 {
-    level = volume;
+    level = static_cast<float>(volume);
 }
 
 double TestToneGeneratorAudioSource::getVolume() const
@@ -52,7 +52,7 @@ void TestToneGeneratorAudioSource::getNextAudioBlock(const AudioSourceChannelInf
 {
     bufferToFill.clearActiveBufferRegion();
     const ScopedLock sl(m_lock);
-    size_t numberOfChannels = bufferToFill.buffer->getNumChannels();
+    int numberOfChannels = bufferToFill.buffer->getNumChannels();
 
     switch (mode)
     {

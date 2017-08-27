@@ -3,6 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "AudioConfiguration.h"
+#include "MidiConfiguration.h"
 #include "DarkLookAndFeel.h"
 #include "DefaultLookAndFeel.h"
 #include "EditSettingsDialog.h"
@@ -14,6 +15,7 @@
 #include "SoloBusMixer.h"
 #include "SoloBusSettings.h"
 #include "TestToneGeneratorComponent.h"
+#include "MTCSender.h"
 
 /** Main component of the Audio Player application.
 
@@ -45,6 +47,8 @@ private:
     ScopedPointer<OutputChannelNames> m_outputChannelNames;
     ScopedPointer<SoloBusMixer> m_soloComponent;
     ScopedPointer<AudioConfigurationWindow> m_audioConfigurationWindow;
+    MTCSender m_mtcSender;
+    ScopedPointer<MidiConfigurationWindow> m_midiConfigurationWindow;
     ScopedPointer<EditSettingsWindow> m_editSettingsWindow;
     ScopedPointer<TestToneGeneratorComponent> m_testToneGenerator;
     ScopedPointer<DialogWindow> m_testToneGeneratorWindow;
@@ -106,6 +110,7 @@ public:
         showMixer = 0x4002,
 
         configureAudio = 0x5000,
+        configureMidi = 0x5002,
         editSettings = 0x5001,
 
         lookAndFeelDefault = 0x6000,

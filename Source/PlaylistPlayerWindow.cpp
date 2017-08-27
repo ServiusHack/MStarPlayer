@@ -8,11 +8,12 @@
 
 using namespace InterPlayerCommunication;
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
+PlaylistPlayerWindow::PlaylistPlayerWindow(TracksContainer* tracksContainer, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ConfigureMidiCallback& configureMidiCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
     : m_color(0xffffffff)
     , m_tracksContainer(tracksContainer)
     , m_showEditDialogCallback(showEditDialogCallback)
     , m_configureChannelsCallback(configureChannelsCallback)
+    , m_configureMidiCallback(configureMidiCallback)
     , m_changePlayerTypeCallback(changePlayerTypeCallback)
     , m_playButton("Play")
     , m_pauseButton("Pause")
@@ -184,6 +185,7 @@ void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
     m.addItem(2, TRANS("add mono track"));
     m.addItem(3, TRANS("configure channels"));
     m.addItem(4, TRANS("configure appearance"));
+    m.addItem(8, TRANS("configure MIDI"));
     m.addSeparator();
     m.addItem(5, TRANS("Jingle Mode"));
     m.addItem(6, TRANS("Multitrack Mode"), true, !m_tableListBox.isVisible());
@@ -215,6 +217,9 @@ void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
         break;
     case 7:
         m_changePlayerTypeCallback(PlayerType::Playlist);
+        break;
+    case 8:
+        m_configureMidiCallback();
         break;
     }
 }

@@ -5,7 +5,7 @@
 
 using namespace InterPlayerCommunication;
 
-Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, float gain, bool solo, bool mute)
+Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
@@ -14,19 +14,22 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
     , m_soloMute(false)
     , m_mute(mute)
     , m_type(type)
-    , m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), audioThumbnailCache, thread)
+    , m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), audioThumbnailCache, thread, mtcSender)
     , m_playlistPlayer(&m_tracksContainer,
                        type == PlayerType::Playlist,
                        std::bind(&Player::showEditDialog, this),
                        std::bind(&Player::configureChannels, this),
+                       std::bind(&Player::configureMidi, this),
                        std::bind(&Player::setType, this, std::placeholders::_1),
                        playlistModel,
                        applicationProperties)
     , m_jinglePlayer(&m_tracksContainer,
                      std::bind(&Player::showEditDialog, this),
                      std::bind(&Player::configureChannels, this),
+                     std::bind(&Player::configureMidi, this),
                      std::bind(&Player::setType, this, std::placeholders::_1),
                      std::bind(&Player::setUserImage, this, std::placeholders::_1))
+    , m_mtcSender(mtcSender)
 {
     addChildComponent(&m_playlistPlayer);
 
@@ -190,6 +193,7 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
         break;
     }
     element->setAttribute("gain", m_tracksContainer.getGain());
+    element->setAttribute("mtcEnabled", m_tracksContainer.getMtcEnabled());
     element->setAttribute("mute", m_mute);
     element->setAttribute("solo", m_solo);
     element->setAttribute("color", m_color.toString());
@@ -251,6 +255,8 @@ void Player::restoreFromXml(const XmlElement& element, const File& projectDirect
     if (element.hasAttribute("userImage"))
         setUserImage(projectDirectory.getChildFile(element.getStringAttribute("userImage")));
     repaint();
+
+    m_tracksContainer.setMtcEnabled(element.getBoolAttribute("mtcEnabled"));
 
     XmlElement* boundsXml = element.getChildByName("Bounds");
 
@@ -335,6 +341,22 @@ void Player::configureChannels()
     }
     m_channelMappingWindow->addToDesktop();
     m_channelMappingWindow->toFront(true);
+}
+
+void Player::configureMidi()
+{
+    if (m_PlayerMidiDialog.get() == nullptr)
+    {
+        m_PlayerMidiDialog.set(new PlayerMidiDialogWindow(m_tracksContainer.getMtcEnabled(), 
+                                                          std::bind(&TracksContainer::setMtcEnabled, &m_tracksContainer, std::placeholders::_1),
+                                                          [&]() {
+                                                              // clear is not working
+                                                              delete m_PlayerMidiDialog.release();
+                                                          }),
+                               true);
+    }
+    m_PlayerMidiDialog->addToDesktop();
+    m_PlayerMidiDialog->toFront(true);
 }
 
 bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)

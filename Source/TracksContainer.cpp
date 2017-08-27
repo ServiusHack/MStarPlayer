@@ -1,8 +1,9 @@
 #include "TracksContainer.h"
 
-TracksContainer::TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
+TracksContainer::TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender)
     : m_mixer(mixer)
     , m_soloBusSettings(soloBusSettings)
+    , m_mtcSender(mtcSender)
     , m_outputChannels(outputChannels)
     , m_gain(1.0f)
     , m_mute(false)
@@ -47,21 +48,37 @@ TracksContainer::~TracksContainer()
 
 void TracksContainer::play()
 {
+    if (m_mtcEnabled)
+    {
+        m_mtcSender.start();
+    }
     std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::play, std::placeholders::_1));
 }
 
 void TracksContainer::pause()
 {
+    if (m_mtcEnabled)
+    {
+        m_mtcSender.pause();
+    }
     std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::pause, std::placeholders::_1));
 }
 
 void TracksContainer::stop()
 {
+    if (m_mtcEnabled)
+    {
+        m_mtcSender.stop();
+    }
     std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::stop, std::placeholders::_1));
 }
 
 void TracksContainer::setPosition(double position)
 {
+    if (m_mtcEnabled)
+    {
+        m_mtcSender.setPosition(position);
+    }
     std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setPosition, std::placeholders::_1, position));
 }
 
@@ -244,6 +261,16 @@ std::vector<std::pair<char, int>> TracksContainer::createMapping()
 bool TracksContainer::isPlaying() const
 {
     return std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
+}
+
+void TracksContainer::setMtcEnabled(bool enabled)
+{
+    m_mtcEnabled = enabled;
+}
+
+bool TracksContainer::getMtcEnabled() const
+{
+    return m_mtcEnabled;
 }
 
 void TracksContainer::removeTrack(Track* track)

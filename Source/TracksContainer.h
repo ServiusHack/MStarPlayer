@@ -6,6 +6,7 @@
 
 #include "MixerComponent.h"
 #include "Track.h"
+#include "MTCSender.h"
 
 /**
 	Container to manage all tracks.
@@ -18,7 +19,7 @@ public:
     typedef std::function<void()> TracksClearedCallback;
     typedef std::function<void(int)> TrackRemovedCallback;
 
-    TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+    TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender);
     ~TracksContainer();
 
 // Playback
@@ -33,6 +34,14 @@ private:
     MixerComponent* m_mixer;
     MixerAudioSource m_tracksMixer;
     SoloBusSettings& m_soloBusSettings;
+
+// MTC
+public:
+    void setMtcEnabled(bool enabled);
+    bool getMtcEnabled() const;
+private:
+    bool m_mtcEnabled{false};
+    MTCSender& m_mtcSender;
 
 // Tracks
 public:
