@@ -14,7 +14,7 @@
 #include "SubchannelPlayer.h"
 #include "MyMultiDocumentPanel.h"
 #include "PlayerMidiDialog.h"
-#include "MtcSender.h"
+#include "MTCSender.h"
 #include "PluginLoader.h"
 /**
 	A player with a playlist and tracks to play audio files.

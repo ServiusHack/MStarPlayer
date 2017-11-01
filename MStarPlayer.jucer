@@ -3,7 +3,7 @@
 <JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.1"
               bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="5.1.1"
               includeBinaryInAppConfig="1" displaySplashScreen="0" reportAppUsage="0"
-              splashScreenColour="Dark" cppLanguageStandard="11">
+              splashScreenColour="Dark" cppLanguageStandard="latest">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
     <GROUP id="{B276C2F9-F254-0001-8915-10D8D4444FD2}" name="Translations">
       <FILE id="ogLyug" name="German.txt" compile="0" resource="1" file="Translations/German.txt"/>

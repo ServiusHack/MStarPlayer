@@ -588,7 +588,7 @@ void MainContentComponent::readProjectFile()
                     error = m_audioDeviceManager.initialise(64, 64, nullptr, false, String::empty, 0);
 
                     if (error != "")
-                        throw std::exception(error.toRawUTF8());
+                        throw std::runtime_error(error.toRawUTF8());
                 }
 
                 // AudioDeviceManager only notifies asynchronously but we want to continue loading the project now.

@@ -1,5 +1,7 @@
 #include "PluginLoader.h"
 
+#include <memory>
+
 #include "Player.h"
 
 
@@ -124,7 +126,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             continue;
         }
 
-        auto versionFunction = static_cast<PluginInterface::MStarPluginVersion>(plugin.dynamicLibrary->getFunction("mstarPluginVersion"));
+        auto versionFunction = reinterpret_cast<PluginInterface::MStarPluginVersion>(plugin.dynamicLibrary->getFunction("mstarPluginVersion"));
 
         if (!versionFunction)
         {
@@ -141,84 +143,84 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             }
         }
 
-        plugin.initFunction = static_cast<PluginInterface::InitFunction>(plugin.dynamicLibrary->getFunction("init"));
+        plugin.initFunction = reinterpret_cast<PluginInterface::InitFunction>(plugin.dynamicLibrary->getFunction("init"));
         if (!plugin.initFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'init'."});
             continue;
         }
 
-        plugin.playingStateChangedFunction = static_cast<PluginInterface::PlayingStateChangedFunction>(plugin.dynamicLibrary->getFunction("playingStateChanged"));
+        plugin.playingStateChangedFunction = reinterpret_cast<PluginInterface::PlayingStateChangedFunction>(plugin.dynamicLibrary->getFunction("playingStateChanged"));
         if (!plugin.playingStateChangedFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'playingStateChanged'."});
             continue;
         }
 
-        plugin.nextEntrySelectedFunction = static_cast<PluginInterface::NextEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("nextEntrySelected"));
+        plugin.nextEntrySelectedFunction = reinterpret_cast<PluginInterface::NextEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("nextEntrySelected"));
         if (!plugin.nextEntrySelectedFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'nextEntrySelected'."});
             continue;
         }
 
-        plugin.previousEntrySelectedFunction = static_cast<PluginInterface::PreviousEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("previousEntrySelected"));
+        plugin.previousEntrySelectedFunction = reinterpret_cast<PluginInterface::PreviousEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("previousEntrySelected"));
         if (!plugin.previousEntrySelectedFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'previousEntrySelected'."});
             continue;
         }
 
-        plugin.playlistEntrySelectedFunction = static_cast<PluginInterface::PlaylistEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("playlistEntrySelected"));
+        plugin.playlistEntrySelectedFunction = reinterpret_cast<PluginInterface::PlaylistEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("playlistEntrySelected"));
         if (!plugin.playlistEntrySelectedFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'playlistEntrySelected'."});
             continue;
         }
 
-        plugin.trackVolumeChangedFunction = static_cast<PluginInterface::TrackVolumeChangedFunction>(plugin.dynamicLibrary->getFunction("trackVolumeChanged"));
+        plugin.trackVolumeChangedFunction = reinterpret_cast<PluginInterface::TrackVolumeChangedFunction>(plugin.dynamicLibrary->getFunction("trackVolumeChanged"));
         if (!plugin.trackVolumeChangedFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'trackVolumeChanged'."});
             continue;
         }
 
-        plugin.positionChangedFunction = static_cast<PluginInterface::PositionChangedFunction>(plugin.dynamicLibrary->getFunction("positionChanged"));
+        plugin.positionChangedFunction = reinterpret_cast<PluginInterface::PositionChangedFunction>(plugin.dynamicLibrary->getFunction("positionChanged"));
         if (!plugin.positionChangedFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'positionChanged'."});
             continue;
         }
 
-        plugin.configureFunction = static_cast<PluginInterface::ConfigureFunction>(plugin.dynamicLibrary->getFunction("configure"));
+        plugin.configureFunction = reinterpret_cast<PluginInterface::ConfigureFunction>(plugin.dynamicLibrary->getFunction("configure"));
         if (!plugin.configureFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'configure'."});
             continue;
         }
 
-        plugin.shutdownFunction = static_cast<PluginInterface::ShutdownFunction>(plugin.dynamicLibrary->getFunction("shutdown"));
+        plugin.shutdownFunction = reinterpret_cast<PluginInterface::ShutdownFunction>(plugin.dynamicLibrary->getFunction("shutdown"));
         if (!plugin.shutdownFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'shutdown'."});
             continue;
         }
 
-        plugin.loadConfigurationFunction = static_cast<PluginInterface::LoadConfigurationFunction>(plugin.dynamicLibrary->getFunction("loadConfiguration"));
+        plugin.loadConfigurationFunction = reinterpret_cast<PluginInterface::LoadConfigurationFunction>(plugin.dynamicLibrary->getFunction("loadConfiguration"));
         if (!plugin.loadConfigurationFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'loadConfiguration'."});
             continue;
         }
 
-        plugin.getConfigurationFunction = static_cast<PluginInterface::GetConfigurationFunction>(plugin.dynamicLibrary->getFunction("getConfiguration"));
+        plugin.getConfigurationFunction = reinterpret_cast<PluginInterface::GetConfigurationFunction>(plugin.dynamicLibrary->getFunction("getConfiguration"));
         if (!plugin.getConfigurationFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'getConfiguration'."});
             continue;
         }
 
-        plugin.freeConfigurationTextFunction = static_cast<PluginInterface::FreeConfigurationTextFunction>(plugin.dynamicLibrary->getFunction("freeConfigurationText"));
+        plugin.freeConfigurationTextFunction = reinterpret_cast<PluginInterface::FreeConfigurationTextFunction>(plugin.dynamicLibrary->getFunction("freeConfigurationText"));
         if (!plugin.freeConfigurationTextFunction)
         {
             failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'freeConfigurationText'."});
