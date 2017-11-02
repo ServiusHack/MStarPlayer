@@ -124,7 +124,9 @@ private:
     ImageButton m_stopButton;
     ImageButton m_skipBackwardButton;
     ImageButton m_skipForwardButton;
+#if JUCE_WINDOWS
     ImageButton m_ejectButton;
+#endif
     ImageButton m_configureButton;
     Label m_digitalDisplay;
     CDNamesComboBox m_availableCDsComboBox;

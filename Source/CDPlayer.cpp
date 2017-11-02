@@ -19,7 +19,9 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
     , m_skipBackwardButton("Skip Backward")
     , m_skipForwardButton("Skip Forward")
     , m_configureButton("Configure")
+#if JUCE_WINDOWS
     , m_ejectButton("Eject")
+#endif
     , m_remappingAudioSource(&m_transportSource, soloBusSettings, false)
     , m_digitalDisplay(String::empty, "00:00:00")
     , m_slider(Slider::LinearHorizontal, Slider::NoTextBox)
@@ -85,6 +87,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
                                    0.0f);
     addAndMakeVisible(m_skipForwardButton);
 
+#if JUCE_WINDOWS
     // eject button
     m_ejectButton.addListener(this);
     m_ejectButton.setEnabled(false);
@@ -95,6 +98,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
                              normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
                              0.0f);
     addAndMakeVisible(m_ejectButton);
+#endif
 
     // configuration button
     normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
@@ -161,8 +165,12 @@ void CDPlayer::resized()
     PLACE_BUTTON(2, m_stopButton);
     PLACE_BUTTON(3, m_skipBackwardButton);
     PLACE_BUTTON(4, m_skipForwardButton);
+#if JUCE_WINDOWS
     PLACE_BUTTON(5, m_ejectButton);
     PLACE_BUTTON(6, m_configureButton);
+#else
+    PLACE_BUTTON(5, m_configureButton);
+#endif
 #undef PLACE_BUTTON
     m_digitalDisplay.setBounds(7 * buttonWidth + 3, 3, buttonWidth * 3, buttonHeight - 6);
     m_availableCDsComboBox.setBounds(10 * buttonWidth + 3, 3, getWidth() - (10 * buttonWidth + 3), buttonHeight - 6);
@@ -449,6 +457,7 @@ void CDPlayer::buttonClicked(Button* button)
         stopTimer();
         m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
     }
+#if JUCE_WINDOWS
     else if (button == &m_ejectButton)
     {
         m_transportSource.stop();
@@ -456,6 +465,7 @@ void CDPlayer::buttonClicked(Button* button)
         m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
         m_reader->ejectDisk();
     }
+#endif
     else if (button == &m_skipBackwardButton)
     {
         m_tracksTable.previous();
@@ -477,7 +487,9 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     m_stopButton.setEnabled(cdPresent);
     m_skipBackwardButton.setEnabled(cdPresent);
     m_skipForwardButton.setEnabled(cdPresent);
+#if JUCE_WINDOWS
     m_ejectButton.setEnabled(comboBoxThatHasChanged->getSelectedItemIndex() != -1);
+#endif
 
     // Clear out objects for previous CD.
     m_tracksTable.setModel(nullptr);
