@@ -1,0 +1,40 @@
+image: Visual Studio 2017
+
+cache:
+  - C:\JUCE
+
+before_build:
+  # Download and extract JUCE to C:\JUCE
+  - if not exist C:\JUCE (curl -fsSLko juce.zip https://d30pueezughrda.cloudfront.net/juce/juce-huckleberry-windows.zip && 7z x -tzip -oC:\ juce.zip JUCE)
+  # Update version
+  - C:\JUCE\Projucer.exe --set-version %APPVEYOR_BUILD_VERSION% MStarPlayer.jucer
+  # Generate solution file
+  - C:\JUCE\Projucer.exe --resave MStarPlayer.jucer
+
+configuration:
+  - Release
+
+build:
+  project: Builds/VisualStudio2017/MStarPlayer.sln
+
+after_build:
+   - 7z a MStarPlayer.zip Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.exe
+   - 7z a MStarPlayer_PDB.zip Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.pdb
+   - choco pack --version %APPVEYOR_BUILD_VERSION%
+
+artifacts:
+  - path: MStarPlayer.zip
+  - path: MStarPlayer_PDB.zip
+
+deploy:
+  provider: FTP
+  protocol: ftps
+  host:
+    secure: nxZhnnxRwiBnT7WN+Yxt8IEKkOXwDkjGDb1mRWvrMZs=
+  username:
+    secure: HaHMzcvkYVKEK9MnfexXjA==
+  password:
+    secure: yYUQDY9IKwXXXIFJXYtaOA==
+  on:
+    branch: master
+
