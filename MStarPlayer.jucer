@@ -258,10 +258,10 @@
             extraCompilerFlags="/wd4458">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"
+                       isDebug="1" optimisation="1" targetName="MStarPlayer" headerPath=""
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="MStarPlayer" headerPath="..\..\ASIOSDK2.3\common"
+                       isDebug="0" optimisation="3" targetName="MStarPlayer" headerPath=""
                        alwaysGenerateDebugSymbols="1" debugInformationFormat="ProgramDatabase"
                        enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
@@ -307,7 +307,7 @@
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>
-  <JUCEOPTIONS JUCE_ASIO="enabled" JUCE_USE_CDREADER="enabled"/>
+  <JUCEOPTIONS JUCE_USE_CDREADER="enabled"/>
   <LIVE_SETTINGS>
     <WINDOWS/>
   </LIVE_SETTINGS>
