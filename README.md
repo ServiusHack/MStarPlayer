@@ -14,8 +14,8 @@ Precompiled binaries are available for download:
 * [Windows](http://serviushack.space/MStarPlayer/MStarPlayer.zip)
 
 ## Screenshot
-![Main window with players](http://serviushack.space/MStarPlayer/screenshots/MainWindow.png)
-![Audio configuration dialog](http://serviushack.space/MStarPlayer/screenshots/Configure%20Audio.png)
+![Main window with players](Screenshots/MainWindow.png)
+![Audio configuration dialog](Screenshots/Configure%20Audio.png)
 
 ## Development
 Pull requests are always welcome to improve the current code or add new features.
