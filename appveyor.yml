@@ -18,8 +18,8 @@ build:
   project: Builds/VisualStudio2017/MStarPlayer.sln
 
 after_build:
-   - 7z a MStarPlayer.zip Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.exe
-   - 7z a MStarPlayer_PDB.zip Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.pdb
+   - 7z a MStarPlayer.zip ./Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.exe
+   - 7z a MStarPlayer_PDB.zip ./Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.pdb
    - choco pack --version %APPVEYOR_BUILD_VERSION%
 
 artifacts:
