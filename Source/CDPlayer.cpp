@@ -24,7 +24,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
     , m_ejectButton("Eject")
 #endif
     , m_remappingAudioSource(&m_transportSource, soloBusSettings, false)
-    , m_digitalDisplay(String::empty, "00:00:00")
+    , m_digitalDisplay({}, "00:00:00")
     , m_slider(Slider::LinearHorizontal, Slider::NoTextBox)
     , m_tracksTable([&](int trackIndex) {
         setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));

@@ -50,7 +50,7 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
     , m_stringCallback(stringCallback)
     , m_closeCallback(closeCallback)
     , m_imageCallback(imageCallback)
-    , m_imageFile(imagePath == "" ? File::nonexistent : File(imagePath))
+    , m_imageFile(imagePath == "" ? File() : File(imagePath))
     , m_label("new label", TRANS("Name of the player:"))
     , m_textEditor("new text editor")
     , m_colorButton("color")
@@ -95,7 +95,7 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
         m_imageResetButton->addListener(this);
         m_imageResetButton->setWantsKeyboardFocus(false);
         m_imageResetButton->setConnectedEdges(Button::ConnectedOnLeft);
-        m_imageResetButton->setEnabled(m_imageFile != File::nonexistent);
+        m_imageResetButton->setEnabled(m_imageFile != File());
     }
 
     addAndMakeVisible(m_closeButton);
@@ -147,14 +147,14 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
         m_imageFile = myChooser.getResult();
         m_imageCallback(m_imageFile);
 
-        m_imageResetButton->setEnabled(m_imageFile != File::nonexistent);
+        m_imageResetButton->setEnabled(m_imageFile != File());
     }
     else if (buttonThatWasClicked == m_imageResetButton.get())
     {
-        m_imageFile = File::nonexistent;
-        m_imageCallback(File::nonexistent);
+        m_imageFile = File();
+        m_imageCallback(File());
 
-        m_imageResetButton->setEnabled(m_imageFile != File::nonexistent);
+        m_imageResetButton->setEnabled(m_imageFile != File());
     }
     else if (buttonThatWasClicked == &m_colorButton)
     {

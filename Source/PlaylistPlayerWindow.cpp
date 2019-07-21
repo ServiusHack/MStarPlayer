@@ -26,7 +26,7 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
     , m_skipBackwardButton("Skip Backward")
     , m_skipForwardButton("Skip Forward")
     , m_configureButton("Configure")
-    , m_digitalDisplay(String::empty, "00:00:00")
+    , m_digitalDisplay({}, "00:00:00")
     , m_tracks(*m_tracksContainer, applicationProperties,
           std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
           std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1),

@@ -217,7 +217,7 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
     element->setAttribute("mute", m_mute);
     element->setAttribute("solo", m_solo);
     element->setAttribute("color", m_color.toString());
-    if (m_userImage != File::nonexistent)
+    if (m_userImage != File())
     {
         if (m_userImage.isAChildOf(projectDirectory))
             element->setAttribute("userImage", m_userImage.getRelativePathFrom(projectDirectory));

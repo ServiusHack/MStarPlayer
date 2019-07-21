@@ -265,9 +265,8 @@ void JinglePlayerWindow::mouseDown(const MouseEvent& event)
 
 void JinglePlayerWindow::loadFile()
 {
-    FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-        File::nonexistent,
-        m_formatManager.getWildcardForAllFormats());
+    FileChooser myChooser(
+        TRANS("Please select the audio file you want to load ..."), File(), m_formatManager.getWildcardForAllFormats());
 
     if (!myChooser.browseForFileToOpen())
         return;
@@ -306,7 +305,7 @@ void JinglePlayerWindow::setColor(const Colour& color)
 
 void JinglePlayerWindow::setUserImage(const File& file)
 {
-    if (file == File::nonexistent)
+    if (file == File())
         delete m_userImage.release();
     else
         m_userImage.reset(Drawable::createFromImageFile(file));

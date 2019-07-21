@@ -138,8 +138,8 @@ void TrackUi::buttonClicked(Button* button)
         m.addItem(1, TRANS("edit track"));
         m.addItem(5, TRANS("delete track"), !m_trackHasFilesCallback(m_track.getTrackIndex()));
         m.addItem(2, TRANS("open file"));
-        m.addItem(3, TRANS("edit file"), m_track.getTrackConfig().file != File::nonexistent);
-        m.addItem(4, TRANS("remove file"), m_track.getTrackConfig().file != File::nonexistent);
+        m.addItem(3, TRANS("edit file"), m_track.getTrackConfig().file != File());
+        m.addItem(4, TRANS("remove file"), m_track.getTrackConfig().file != File());
         m.addSeparator();
         const int result = m.show();
 
@@ -278,7 +278,7 @@ void TrackUi::positionChanged(double position)
 void TrackUi::loadFile()
 {
     FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-        File::nonexistent,
+        File(),
         m_track.getAudioFormatManager().getWildcardForAllFormats());
     if (!myChooser.browseForFileToOpen())
         return;

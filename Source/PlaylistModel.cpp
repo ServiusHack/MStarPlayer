@@ -235,7 +235,7 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
         AudioFormatManager formatManager;
         formatManager.registerBasicFormats();
         FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-            File::nonexistent,
+            File(),
             formatManager.getWildcardForAllFormats());
 
         if (!myChooser.browseForMultipleFilesToOpen())
@@ -337,7 +337,7 @@ bool PlaylistModel::trackHasFiles(size_t trackIndex) const
     trackIndex -= 1; // adjust index to zero-based
     return std::any_of(m_playlist.cbegin(), m_playlist.cend(), [trackIndex](const PlaylistEntry& entry) {
         if (trackIndex < entry.trackConfigs.size())
-            return entry.trackConfigs.at(trackIndex).file != File::nonexistent;
+            return entry.trackConfigs.at(trackIndex).file != File();
         else
             return false;
     });

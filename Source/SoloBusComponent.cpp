@@ -2,8 +2,8 @@
 
 SoloBusComponent::SoloBusComponent(OutputChannelNames& outputChannelNames, SoloBusSettings& settings)
     : soloBusSettings(settings)
-    , label(String::empty, TRANS("left channel / mono:"))
-    , label2(String::empty, TRANS("right channel"))
+    , label({}, TRANS("left channel / mono:"))
+    , label2({}, TRANS("right channel"))
 {
     addAndMakeVisible(label);
     label.setFont(Font(15.00f, Font::plain));

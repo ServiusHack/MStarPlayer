@@ -294,7 +294,7 @@ void Track::reloadFile()
 
 void Track::unloadFile()
 {
-    loadFileIntoTransport(File::nonexistent);
+    loadFileIntoTransport(File());
 }
 
 void Track::timerCallback()

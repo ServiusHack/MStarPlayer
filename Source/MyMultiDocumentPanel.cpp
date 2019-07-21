@@ -9,8 +9,7 @@
 #include "MyMultiDocumentPanel.h"
 
 MyMultiDocumentPanelWindow::MyMultiDocumentPanelWindow(Colour backgroundColour)
-    : DocumentWindow(
-          String::empty, backgroundColour, DocumentWindow::maximiseButton | DocumentWindow::closeButton, false)
+    : DocumentWindow({}, backgroundColour, DocumentWindow::maximiseButton | DocumentWindow::closeButton, false)
 {
 }
 

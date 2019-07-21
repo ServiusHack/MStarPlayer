@@ -59,7 +59,7 @@ MainContentComponent::MainContentComponent(
     , m_pluginLoader(m_multiDocumentPanel.get())
 {
     // audio setup
-    m_audioDeviceManager.initialise(64, 64, nullptr, false, String::empty, 0);
+    m_audioDeviceManager.initialise(64, 64, nullptr, false, {}, 0);
 
     // mixer control
     addAndMakeVisible(m_mixerComponent.get());
@@ -483,7 +483,7 @@ void MainContentComponent::openProject()
     if (!askSaveProject())
         return;
 
-    FileChooser myChooser(TRANS("Please select the project file you want to load ..."), File::nonexistent, "*.aupp");
+    FileChooser myChooser(TRANS("Please select the project file you want to load ..."), File(), "*.aupp");
     if (myChooser.browseForFileToOpen())
     {
         m_projectFile = File(myChooser.getResult());
@@ -517,7 +517,7 @@ bool MainContentComponent::askSaveProject()
 
 bool MainContentComponent::saveProject()
 {
-    if (m_projectFile == File::nonexistent)
+    if (m_projectFile == File())
         return saveAsProject();
 
     writeProjectFile();
@@ -526,7 +526,7 @@ bool MainContentComponent::saveProject()
 
 bool MainContentComponent::saveAsProject()
 {
-    FileChooser myChooser(TRANS("Please select the project file you want to save ..."), File::nonexistent, "*.aupp");
+    FileChooser myChooser(TRANS("Please select the project file you want to save ..."), File(), "*.aupp");
     if (!myChooser.browseForFileToSave(true))
         return false;
 
@@ -610,13 +610,12 @@ void MainContentComponent::readProjectFile()
         {
             if (audio->getNumChildElements() > 0)
             {
-                String error
-                    = m_audioDeviceManager.initialise(64, 64, audio->getChildElement(0), false, String::empty, 0);
+                String error = m_audioDeviceManager.initialise(64, 64, audio->getChildElement(0), false, {}, 0);
                 if (error != "")
                 {
                     loadWarnings.add(error);
 
-                    error = m_audioDeviceManager.initialise(64, 64, nullptr, false, String::empty, 0);
+                    error = m_audioDeviceManager.initialise(64, 64, nullptr, false, {}, 0);
 
                     if (error != "")
                         throw std::runtime_error(error.toRawUTF8());
