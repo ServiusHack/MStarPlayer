@@ -82,35 +82,18 @@ static inline bool arrayContainsPlugin (const OwnedArray<PluginDescription>& lis
 
 #if JUCE_IOS
  #define JUCE_IOS_MAC_VIEW  UIView
- typedef UIViewComponent  ViewComponentBaseClass;
+ using ViewComponentBaseClass = UIViewComponent;
 #else
  #define JUCE_IOS_MAC_VIEW  NSView
- typedef NSViewComponent  ViewComponentBaseClass;
+ using ViewComponentBaseClass = NSViewComponent;
 #endif
 
 //==============================================================================
 struct AutoResizingNSViewComponent  : public ViewComponentBaseClass,
                                       private AsyncUpdater
 {
-    AutoResizingNSViewComponent() : recursive (false) {}
-
-    void childBoundsChanged (Component*) override
-    {
-        if (recursive)
-        {
-            triggerAsyncUpdate();
-        }
-        else
-        {
-            recursive = true;
-            resizeToFitView();
-            recursive = true;
-        }
-    }
-
-    void handleAsyncUpdate() override               { resizeToFitView(); }
-
-    bool recursive;
+    void childBoundsChanged (Component*) override  { triggerAsyncUpdate(); }
+    void handleAsyncUpdate() override              { resizeToFitView(); }
 };
 
 //==============================================================================
@@ -154,7 +137,9 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
 
 #include "format/juce_AudioPluginFormat.cpp"
 #include "format/juce_AudioPluginFormatManager.cpp"
+#include "format_types/juce_LegacyAudioParameter.cpp"
 #include "processors/juce_AudioProcessor.cpp"
+#include "processors/juce_AudioPluginInstance.cpp"
 #include "processors/juce_AudioProcessorEditor.cpp"
 #include "processors/juce_AudioProcessorGraph.cpp"
 #include "processors/juce_GenericAudioProcessorEditor.cpp"
@@ -167,4 +152,5 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
 #include "scanning/juce_PluginDirectoryScanner.cpp"
 #include "scanning/juce_PluginListComponent.cpp"
 #include "utilities/juce_AudioProcessorParameters.cpp"
+#include "processors/juce_AudioProcessorParameterGroup.cpp"
 #include "utilities/juce_AudioProcessorValueTreeState.cpp"

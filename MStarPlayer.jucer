@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="IUyUss" name="MStarPlayer" projectType="guiapp" version="1.0.1"
-              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="5.2.0"
+              bundleIdentifier="com.yourcompany.MStarPlayer" jucerVersion="5.4.3"
               includeBinaryInAppConfig="1" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" cppLanguageStandard="latest" companyCopyright="">
   <MAINGROUP id="Ytfmyf" name="MStarPlayer">
@@ -307,7 +307,7 @@
       </MODULEPATHS>
     </LINUX_MAKE>
   </EXPORTFORMATS>
-  <JUCEOPTIONS JUCE_USE_CDREADER="enabled"/>
+  <JUCEOPTIONS JUCE_USE_CDREADER="1"/>
   <LIVE_SETTINGS>
     <WINDOWS/>
   </LIVE_SETTINGS>

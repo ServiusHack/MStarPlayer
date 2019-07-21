@@ -491,11 +491,11 @@ static const unsigned char temp_binary_data_13[] =
 const char* play_svg = (const char*) temp_binary_data_13;
 
 
-const char* getNamedResource (const char*, int&) throw();
-const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw()
+const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 {
     unsigned int hash = 0;
-    if (resourceNameUTF8 != 0)
+
+    if (resourceNameUTF8 != nullptr)
         while (*resourceNameUTF8 != 0)
             hash = 31 * hash + (unsigned int) *resourceNameUTF8++;
 
@@ -519,7 +519,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
     }
 
     numBytes = 0;
-    return 0;
+    return nullptr;
 }
 
 const char* namedResourceList[] =
@@ -539,5 +539,34 @@ const char* namedResourceList[] =
     "stop_svg",
     "play_svg"
 };
+
+const char* originalFilenames[] =
+{
+    "German.txt",
+    "media-eject.png",
+    "arrow-right-double.png",
+    "audio-volume-medium.png",
+    "configure.png",
+    "audio-headphones.png",
+    "audio-volume-muted.png",
+    "media-playback-pause.png",
+    "media-playback-start.png",
+    "media-playback-stop.png",
+    "media-skip-backward.png",
+    "media-skip-forward.png",
+    "stop.svg",
+    "play.svg"
+};
+
+const char* getNamedResourceOriginalFilename (const char* resourceNameUTF8)
+{
+    for (unsigned int i = 0; i < (sizeof (namedResourceList) / sizeof (namedResourceList[0])); ++i)
+    {
+        if (namedResourceList[i] == resourceNameUTF8)
+            return originalFilenames[i];
+    }
+
+    return nullptr;
+}
 
 }

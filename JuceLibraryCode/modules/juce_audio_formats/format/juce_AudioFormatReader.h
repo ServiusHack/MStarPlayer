@@ -38,6 +38,8 @@ class AudioFormat;
     an AudioFormat object.
 
     @see AudioFormat, AudioFormatWriter
+
+    @tags{Audio}
 */
 class JUCE_API  AudioFormatReader
 {
@@ -67,6 +69,27 @@ public:
     const String& getFormatName() const noexcept    { return formatName; }
 
     //==============================================================================
+    /** Reads samples from the stream.
+
+        @param destSamples          an array of float buffers into which the sample data for each
+                                    channel will be written. Channels that aren't needed can be null
+        @param numDestChannels      the number of array elements in the destChannels array
+        @param startSampleInSource  the position in the audio file or stream at which the samples
+                                    should be read, as a number of samples from the start of the
+                                    stream. It's ok for this to be beyond the start or end of the
+                                    available data - any samples that are out-of-range will be returned
+                                    as zeros.
+        @param numSamplesToRead     the number of samples to read. If this is greater than the number
+                                    of samples that the file or stream contains. the result will be padded
+                                    with zeros
+        @returns                    true if the operation succeeded, false if there was an error. Note
+                                    that reading sections of data beyond the extent of the stream isn't an
+                                    error - the reader should just return zeros for these regions
+        @see readMaxLevels
+    */
+    bool read (float* const* destChannels, int numDestChannels,
+               int64 startSampleInSource, int numSamplesToRead);
+
     /** Reads samples from the stream.
 
         @param destSamples          an array of buffers into which the sample data for each
@@ -111,14 +134,14 @@ public:
                int numSamplesToRead,
                bool fillLeftoverChannelsWithCopies);
 
-    /** Fills a section of an AudioSampleBuffer from this reader.
+    /** Fills a section of an AudioBuffer from this reader.
 
         This will convert the reader's fixed- or floating-point data to
         the buffer's floating-point format, and will try to intelligently
         cope with mismatches between the number of channels in the reader
         and the buffer.
     */
-    void read (AudioSampleBuffer* buffer,
+    void read (AudioBuffer<float>* buffer,
                int startSampleInDestBuffer,
                int numSamples,
                int64 readerStartSample,
@@ -254,8 +277,8 @@ protected:
     template <class DestSampleType, class SourceSampleType, class SourceEndianness>
     struct ReadHelper
     {
-        typedef AudioData::Pointer<DestSampleType, AudioData::NativeEndian, AudioData::NonInterleaved, AudioData::NonConst>    DestType;
-        typedef AudioData::Pointer<SourceSampleType, SourceEndianness, AudioData::Interleaved, AudioData::Const>               SourceType;
+        using DestType   = AudioData::Pointer<DestSampleType,   AudioData::NativeEndian, AudioData::NonInterleaved, AudioData::NonConst>;
+        using SourceType = AudioData::Pointer<SourceSampleType, SourceEndianness, AudioData::Interleaved, AudioData::Const>;
 
         template <typename TargetType>
         static void read (TargetType* const* destData, int destOffset, int numDestChannels,
