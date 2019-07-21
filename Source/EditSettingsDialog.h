@@ -11,7 +11,7 @@
 */
 class EditSettingsWindow
     : public DialogWindow
-    , public ButtonListener
+    , public Button::Listener
 {
 public:
     EditSettingsWindow(ApplicationProperties& applicationProperties);
@@ -20,7 +20,7 @@ public:
 public:
     virtual void closeButtonPressed() override;
 
-    // ButtonListener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
@@ -34,7 +34,7 @@ private:
 class EditSettingsComponent
     : public Component
     , public FilenameComponentListener
-    , public ComboBoxListener
+    , public ComboBox::Listener
 {
 public:
     EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties);
@@ -55,7 +55,7 @@ public:
 public:
     virtual void filenameComponentChanged(FilenameComponent* fileComponentThatHasChanged) override;
 
-    // ComboBoxListener
+    // ComboBox::Listener
 public:
     virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 

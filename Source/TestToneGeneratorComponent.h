@@ -40,9 +40,9 @@ class TestToneGeneratorComponent
     : public Component
     , public ChangeListener
     , public OutputChannelNamesListener
-    , public SliderListener
-    , public ComboBoxListener
-    , public ButtonListener
+    , public Slider::Listener
+    , public ComboBox::Listener
+    , public Button::Listener
 {
 public:
     //==============================================================================

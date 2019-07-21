@@ -6,7 +6,7 @@
 
 class SoloBusComponent
     : public Component
-    , public ComboBoxListener
+    , public ComboBox::Listener
 {
 public:
     SoloBusComponent(OutputChannelNames& outputChannelNames, SoloBusSettings& settings);

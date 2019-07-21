@@ -6,7 +6,7 @@
 
 class MidiConfigurationWindow
     : public DialogWindow
-    , public ButtonListener
+    , public Button::Listener
     , public ComboBox::Listener
 {
 public:
@@ -15,7 +15,7 @@ public:
     // DialogWindow
     virtual void closeButtonPressed() override;
 
-    // ButtonListener
+    // Button::Listener
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
     // ComboBox::Listener

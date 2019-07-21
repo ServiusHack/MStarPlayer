@@ -363,7 +363,7 @@ void PluginLoader::loadConfigurations(XmlElement* pluginsElement)
     {
         XmlElement* pluginElement = pluginsElement->getChildElement(i);
         String configurationText = pluginElement->getAllSubText();
-        std::string pluginName = pluginElement->getStringAttribute("name").toStdString();
+        String pluginName = pluginElement->getStringAttribute("name");
         auto it = std::find_if(
             plugins.begin(), plugins.end(), [pluginName](const Plugin& plugin) { return plugin.name == pluginName; });
         if (it != plugins.end())

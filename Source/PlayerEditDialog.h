@@ -41,7 +41,7 @@ private:
 */
 class PlayerEditDialogComponent
     : public Component
-    , public ButtonListener
+    , public Button::Listener
     , public ChangeListener
     , public juce::TextEditor::Listener
 {
@@ -58,7 +58,7 @@ public:
 public:
     virtual void resized() override;
 
-    // ButtonListener overrides
+    // Button::Listener overrides
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 

@@ -23,7 +23,7 @@ typedef std::function<void()> CloseCallback;
 */
 class ChannelMapping
     : public TableListBoxModel
-    , public ComboBoxListener
+    , public ComboBox::Listener
 {
 public:
     /** A component to view and edit the channel mapping.
@@ -70,7 +70,7 @@ public:
     virtual Component* refreshComponentForCell(
         int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
-    // ComboBoxListener overrides
+    // ComboBox::Listener overrides
 public:
     virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
@@ -88,7 +88,7 @@ private:
 */
 class ChannelMappingComponent
     : public Component
-    , public ButtonListener
+    , public Button::Listener
 {
 public:
     ChannelMappingComponent(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
@@ -101,7 +101,7 @@ public:
 public:
     virtual void resized() override;
 
-    // ButtonListener
+    // Button::Listener
 public:
     void buttonClicked(Button* buttonThatWasClicked);
 

@@ -13,7 +13,7 @@ typedef std::function<void(String)> PlaylistEntrySettingsChangedCallback;
 */
 class PlaylistEntryDialogWindow
     : public DialogWindow
-    , public ButtonListener
+    , public Button::Listener
 {
 public:
     PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback);
@@ -24,7 +24,7 @@ public:
     virtual bool keyPressed(const KeyPress& key) override;
     virtual void focusGained(FocusChangeType cause) override;
 
-    // ButtonListener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 

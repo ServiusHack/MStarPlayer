@@ -36,7 +36,7 @@ private:
 */
 class PlayerMidiDialogComponent
     : public Component
-    , public ButtonListener
+    , public Button::Listener
 {
     friend class PlayerMidiDialogWindow;
 
@@ -49,7 +49,7 @@ public:
 public:
     virtual void resized() override;
 
-    // ButtonListener overrides
+    // Button::Listener overrides
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 

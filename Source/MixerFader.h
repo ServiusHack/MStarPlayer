@@ -22,7 +22,7 @@
 */
 class MixerFader
     : public Component
-    , public ButtonListener
+    , public Button::Listener
     , public juce::Slider::Listener
     , public MixerControlableChangeListener
 {
@@ -55,7 +55,7 @@ public:
     virtual void paint(Graphics&) override;
     virtual void resized() override;
 
-    // ButtonListener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 

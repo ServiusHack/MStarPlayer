@@ -16,7 +16,7 @@ typedef std::function<void(float)> VolumeChangedCallback;
 */
 class TrackEditDialogWindow
     : public DialogWindow
-    , public ButtonListener
+    , public Button::Listener
 {
 public:
     TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback,
@@ -28,7 +28,7 @@ public:
     virtual bool keyPressed(const KeyPress& key) override;
     virtual void focusGained(FocusChangeType cause) override;
 
-    // ButtonListener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 

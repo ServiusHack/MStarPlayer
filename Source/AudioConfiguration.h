@@ -12,7 +12,7 @@
 */
 class AudioConfigurationWindow
     : public DialogWindow
-    , public ButtonListener
+    , public Button::Listener
 {
 public:
     AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames,
@@ -21,7 +21,7 @@ public:
     // DialogWindow
     virtual void closeButtonPressed() override;
 
-    // ButtonListener
+    // Button::Listener
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
