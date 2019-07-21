@@ -12,17 +12,20 @@ const int MaxRecentlyUsedFiles = 5;
 
 DefaultLookAndFeel* MainContentComponent::s_defaultLookAndFeel;
 DarkLookAndFeel* MainContentComponent::s_darkLookAndFeel;
+PinkLookAndFeel* MainContentComponent::s_pinkLookAndFeel;
 
 void MainContentComponent::initLookAndFeel()
 {
     s_defaultLookAndFeel = new DefaultLookAndFeel();
     s_darkLookAndFeel = new DarkLookAndFeel();
+    s_pinkLookAndFeel = new PinkLookAndFeel();
 }
 
 void MainContentComponent::destroyLookAndFeel()
 {
     delete s_defaultLookAndFeel;
     delete s_darkLookAndFeel;
+    delete s_pinkLookAndFeel;
 }
 
 void MainContentComponent::switchToDefaultLookAndFeel()
@@ -39,6 +42,14 @@ void MainContentComponent::switchToDarkLookAndFeel()
         s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId).darker());
     static_cast<DocumentWindow*>(getParentComponent())
         ->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
+}
+
+void MainContentComponent::switchToPinkLookAndFeel()
+{
+    LookAndFeel::setDefaultLookAndFeel(s_pinkLookAndFeel);
+    m_multiDocumentPanel->setBackgroundColour(Colours::lightpink);
+    static_cast<DocumentWindow*>(getParentComponent())
+        ->setBackgroundColour(s_pinkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
 }
 
 MainContentComponent::MainContentComponent(
@@ -157,6 +168,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         PopupMenu stylePopupMenu;
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDefault);
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDark);
+        stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelPink);
         menu.addSubMenu(TRANS("Style"), stylePopupMenu);
 
         menu.addCommandItem(m_commandManager, showMixer);
@@ -220,7 +232,8 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
         configureMidi,
         editSettings,
         lookAndFeelDefault,
-        lookAndFeelDark};
+        lookAndFeelDark,
+        lookAndFeelPink};
 
     commands.addArray(ids, numElementsInArray(ids));
 
@@ -323,6 +336,11 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
     case lookAndFeelDark:
         result.setInfo(TRANS("Dark"), TRANS("Use a dark look and feel"), viewCategory, 0);
         result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel);
+        break;
+
+    case lookAndFeelPink:
+        result.setInfo(TRANS("Pink"), TRANS("Use a pink look and feel"), viewCategory, 0);
+        result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel);
         break;
     };
 
@@ -455,6 +473,10 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     case lookAndFeelDark:
         switchToDarkLookAndFeel();
         m_applicationProperties.getUserSettings()->setValue("lookAndFeel", "dark");
+        break;
+    case lookAndFeelPink:
+        switchToPinkLookAndFeel();
+        m_applicationProperties.getUserSettings()->setValue("lookAndFeel", "pink");
         break;
     default:
         if (info.commandID >= basePlugin)
@@ -598,6 +620,8 @@ void MainContentComponent::readProjectFile()
                     perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDefault));
                 else if (style == "dark")
                     perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
+                else if (style == "pink")
+                    perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelPink));
                 else
                     loadWarnings.add(TRANS("Unknown style, using default."));
             }
@@ -783,6 +807,8 @@ void MainContentComponent::writeProjectFile()
         style->addTextElement("default");
     else if (&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel)
         style->addTextElement("dark");
+    else if (&LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel)
+        style->addTextElement("pink");
     view->addChildElement(style);
 
     root->addChildElement(view);

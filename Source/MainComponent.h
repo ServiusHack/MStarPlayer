@@ -12,6 +12,7 @@
 #include "MixerComponent.h"
 #include "MyMultiDocumentPanel.h"
 #include "OutputChannelNames.h"
+#include "PinkLookAndFeel.h"
 #include "PlaylistPlayerWindow.h"
 #include "PluginLoader.h"
 #include "SoloBusMixer.h"
@@ -58,12 +59,14 @@ private:
 public:
     static DefaultLookAndFeel* s_defaultLookAndFeel;
     static DarkLookAndFeel* s_darkLookAndFeel;
+    static PinkLookAndFeel* s_pinkLookAndFeel;
 
     static void initLookAndFeel();
     static void destroyLookAndFeel();
 
     void switchToDefaultLookAndFeel();
     void switchToDarkLookAndFeel();
+    void switchToPinkLookAndFeel();
 
     // Component overrides
 public:
@@ -116,6 +119,7 @@ public:
 
         lookAndFeelDefault = 0x6000,
         lookAndFeelDark = 0x6001,
+        lookAndFeelPink = 0x6002,
 
         basePlugin = 0x7000,
     };

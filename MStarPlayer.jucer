@@ -207,6 +207,10 @@
         <FILE id="P9Ge44" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
       </GROUP>
       <GROUP id="{797CF8BB-665B-46ED-3A1A-9FAD5DADBBF3}" name="LookAndFeels">
+        <FILE id="xJS5qZ" name="PinkLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/PinkLookAndFeel.cpp"/>
+        <FILE id="Otfzdh" name="PinkLookAndFeel.h" compile="0" resource="0"
+              file="Source/PinkLookAndFeel.h"/>
         <FILE id="qom8he" name="DefaultLookAndFeel.cpp" compile="1" resource="0"
               file="Source/DefaultLookAndFeel.cpp"/>
         <FILE id="LPWvSe" name="DefaultLookAndFeel.h" compile="0" resource="0"

@@ -91,6 +91,10 @@ public:
             {
                 main->switchToDarkLookAndFeel();
             }
+            else if (properties.getUserSettings()->getValue("lookAndFeel") == "pink")
+            {
+                main->switchToPinkLookAndFeel();
+            }
 
             centreWithSize(getWidth(), getHeight());
             setVisible(true);
