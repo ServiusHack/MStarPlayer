@@ -9,7 +9,7 @@
 namespace BinaryData
 {
     extern const char*   German_txt;
-    const int            German_txtSize = 9342;
+    const int            German_txtSize = 9468;
 
     extern const char*   mediaeject_png;
     const int            mediaeject_pngSize = 1197;

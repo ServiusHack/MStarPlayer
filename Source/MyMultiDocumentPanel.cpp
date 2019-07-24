@@ -8,6 +8,49 @@
 
 #include "MyMultiDocumentPanel.h"
 
+void MyConstrainer::setSnapToGridEnabled(bool enable)
+{
+    snapToGrid = enable;
+}
+
+void MyConstrainer::setSnapToGridWidth(int width)
+{
+    gridWidth = width;
+}
+
+void MyConstrainer::setSnapToGridHeight(int height)
+{
+    gridHeight = height;
+}
+
+void MyConstrainer::checkBounds(Rectangle<int>& bounds, const Rectangle<int>& previousBounds,
+    const Rectangle<int>& limits, bool isStretchingTop, bool isStretchingLeft, bool isStretchingBottom,
+    bool isStretchingRight)
+{
+    if (snapToGrid)
+    {
+        if (isStretchingLeft || isStretchingRight)
+        {
+            bounds.setWidth(bounds.getWidth() / gridWidth * gridWidth);
+        }
+        else
+        {
+            bounds.setX(bounds.getX() / gridWidth * gridWidth);
+        }
+        if (isStretchingTop || isStretchingBottom)
+        {
+            bounds.setHeight(bounds.getHeight() / gridHeight * gridHeight);
+        }
+        else
+        {
+            bounds.setY(bounds.getY() / gridHeight * gridHeight);
+        }
+    }
+
+    ComponentBoundsConstrainer::checkBounds(
+        bounds, previousBounds, limits, isStretchingTop, isStretchingLeft, isStretchingBottom, isStretchingRight);
+}
+
 MyMultiDocumentPanelWindow::MyMultiDocumentPanelWindow(Colour backgroundColour)
     : DocumentWindow({}, backgroundColour, DocumentWindow::maximiseButton | DocumentWindow::closeButton, false)
 {
@@ -120,6 +163,7 @@ void MyMultiDocumentPanel::addWindow(Component* component)
     dw->setResizable(true, false);
     dw->setContentNonOwned(component, true);
     dw->setName(component->getName());
+    dw->setConstrainer(&m_myConstrainer);
 
     const var bkg(component->getProperties()["mdiDocumentBkg_"]);
     dw->setBackgroundColour(bkg.isVoid() ? backgroundColour : Colour((uint32) static_cast<int>(bkg)));
@@ -505,4 +549,11 @@ void MyMultiDocumentPanel::updateOrder()
 bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/)
 {
     return true;
+}
+
+void MyMultiDocumentPanel::reconfigSnapToGrid(bool snapToGrid, int gridWidth, int gridHeight)
+{
+    m_myConstrainer.setSnapToGridEnabled(snapToGrid);
+    m_myConstrainer.setSnapToGridWidth(gridWidth);
+    m_myConstrainer.setSnapToGridHeight(gridHeight);
 }

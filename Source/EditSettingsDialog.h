@@ -14,7 +14,7 @@ class EditSettingsWindow
     , public Button::Listener
 {
 public:
-    EditSettingsWindow(ApplicationProperties& applicationProperties);
+    EditSettingsWindow(ApplicationProperties& applicationProperties, const std::function<void()>& snapToGridChanged);
 
     // DialogWindow overrides
 public:
@@ -35,9 +35,12 @@ class EditSettingsComponent
     : public Component
     , public FilenameComponentListener
     , public ComboBox::Listener
+    , public ToggleButton::Listener
+    , public TextEditor::Listener
 {
 public:
-    EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties);
+    EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties,
+        const std::function<void()>& snapToGridChanged);
 
 private:
     ApplicationProperties& m_applicationProperties;
@@ -46,6 +49,13 @@ private:
     Label m_languageLabel;
     ComboBox m_languageComboBox;
     TextButton m_closeButton;
+
+    ToggleButton m_snapToGridButton;
+    Label m_snapToGridWidthLabel;
+    TextEditor m_snapToGridWidthEditor;
+    Label m_snapToGridHeightLabel;
+    TextEditor m_snapToGridHeightEditor;
+    std::function<void()> m_snapToGridChanged;
 
     // Component overrides
 public:
@@ -58,6 +68,14 @@ public:
     // ComboBox::Listener
 public:
     virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+
+    // ToggleButton::Listener
+public:
+    virtual void buttonClicked(Button*) override;
+
+    // TextEditor::Listener
+public:
+    virtual void textEditorTextChanged(TextEditor&) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditSettingsComponent)

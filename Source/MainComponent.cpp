@@ -91,6 +91,8 @@ MainContentComponent::MainContentComponent(
 
     m_recentlyOpenedFiles.setMaxNumberOfItems(MaxRecentlyUsedFiles);
     m_recentlyOpenedFiles.restoreFromString(m_applicationProperties.getUserSettings()->getValue("recentlyUsed"));
+
+    reconfigSnapToGrid();
 }
 
 MainContentComponent::~MainContentComponent()
@@ -100,6 +102,14 @@ MainContentComponent::~MainContentComponent()
     delete m_multiDocumentPanel.release();
     delete m_mixerComponent.release();
     m_applicationProperties.closeFiles();
+}
+
+void MainContentComponent::reconfigSnapToGrid()
+{
+    const bool snapToGrid = m_applicationProperties.getUserSettings()->getBoolValue("snapToGrid", false);
+    const int gridWidth = m_applicationProperties.getUserSettings()->getIntValue("snapToGridWidth", 1);
+    const int gridHeight = m_applicationProperties.getUserSettings()->getIntValue("snapToGridHeight", 1);
+    m_multiDocumentPanel->reconfigSnapToGrid(snapToGrid, gridWidth, gridHeight);
 }
 
 void MainContentComponent::resized()
@@ -463,7 +473,8 @@ bool MainContentComponent::perform(const InvocationInfo& info)
         m_midiConfigurationWindow = std::make_unique<MidiConfigurationWindow>(m_mtcSender);
         break;
     case editSettings:
-        m_editSettingsWindow = std::make_unique<EditSettingsWindow>(m_applicationProperties);
+        m_editSettingsWindow
+            = std::make_unique<EditSettingsWindow>(m_applicationProperties, [this]() { reconfigSnapToGrid(); });
         break;
 
     case lookAndFeelDefault:

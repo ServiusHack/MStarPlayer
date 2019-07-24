@@ -55,6 +55,8 @@ private:
     std::unique_ptr<EditSettingsWindow> m_editSettingsWindow;
     std::unique_ptr<DialogWindow> m_testToneGeneratorWindow;
 
+    void reconfigSnapToGrid();
+
     // look and feels
 public:
     static DefaultLookAndFeel* s_defaultLookAndFeel;

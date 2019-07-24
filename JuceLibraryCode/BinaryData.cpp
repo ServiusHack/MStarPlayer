@@ -71,6 +71,9 @@ static const unsigned char temp_binary_data_0[] =
 "// EditSettingsDialog\r\n"
 "\"Edit Settings\" = \"Einstellungen bearbeiten\"\r\n"
 "\"Audio editor\" = \"Programm zur Audiobearbeitung\"\r\n"
+"\"snap players to grid\" = \"Player an Gitternetz ausrichten\"\r\n"
+"\"grid width:\" = \"Gitterbreite:\"\r\n"
+"\"grid height:\" = \"Gitterh\xc3\xb6he:\"\r\n"
 "\"Language\" = \"Sprache\"\r\n"
 "\"Restart required\" = \"Neustart n\xc3\xb6tig\"\r\n"
 "\"Changing the language requires a restart.\" = \"Die ge\xc3\xa4nderte Sprache wird erst nach einem Neustart \xc3\xbc""bernommen.\"\r\n"
@@ -501,7 +504,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0xb36c8057:  numBytes = 9342; return German_txt;
+        case 0xb36c8057:  numBytes = 9468; return German_txt;
         case 0xf8b73e57:  numBytes = 1197; return mediaeject_png;
         case 0x1c3eb4ae:  numBytes = 1398; return arrowrightdouble_png;
         case 0x69242ccf:  numBytes = 1317; return audiovolumemedium_png;

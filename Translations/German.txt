@@ -59,6 +59,9 @@ countries:de
 // EditSettingsDialog
 "Edit Settings" = "Einstellungen bearbeiten"
 "Audio editor" = "Programm zur Audiobearbeitung"
+"snap players to grid" = "Player an Gitternetz ausrichten"
+"grid width:" = "Gitterbreite:"
+"grid height:" = "Gitterhöhe:"
 "Language" = "Sprache"
 "Restart required" = "Neustart nötig"
 "Changing the language requires a restart." = "Die geänderte Sprache wird erst nach einem Neustart übernommen."

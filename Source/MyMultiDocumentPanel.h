@@ -14,6 +14,22 @@
 
 class MyMultiDocumentPanel;
 
+class MyConstrainer : public ComponentBoundsConstrainer
+{
+public:
+    void setSnapToGridEnabled(bool enable);
+    void setSnapToGridWidth(int width);
+    void setSnapToGridHeight(int height);
+
+    void checkBounds(Rectangle<int>& bounds, const Rectangle<int>& previousBounds, const Rectangle<int>& limits,
+        bool isStretchingTop, bool isStretchingLeft, bool isStretchingBottom, bool isStretchingRight) override;
+
+private:
+    bool snapToGrid{false};
+    int gridWidth{1};
+    int gridHeight{1};
+};
+
 //==============================================================================
 /**
     This is a derivative of DocumentWindow that is used inside a MyMultiDocumentPanel
@@ -262,6 +278,8 @@ public:
     */
     virtual MyMultiDocumentPanelWindow* createNewDocumentWindow();
 
+    void reconfigSnapToGrid(bool snapToGrid, int gridWidth, int gridHeight);
+
     //==============================================================================
     /** @internal */
     void paint(Graphics&) override;
@@ -279,6 +297,8 @@ private:
     int maximumNumDocuments, numDocsBeforeTabsUsed;
     std::unique_ptr<Viewport> viewport;
     std::unique_ptr<ResizingComponent> resizingComponent;
+
+    MyConstrainer m_myConstrainer;
 
     class TabbedComponentInternal;
     friend class MyMultiDocumentPanelWindow;
