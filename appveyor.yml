@@ -10,6 +10,16 @@ before_build:
   - C:\JUCE\Projucer.exe --set-version %APPVEYOR_BUILD_VERSION% MStarPlayer.jucer
   # Generate solution file
   - C:\JUCE\Projucer.exe --resave MStarPlayer.jucer
+  # Run clang-format
+  - ps: |
+      $env:PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCPackages\;$env:PATH"
+      clang-format --version
+      powershell ./format-source.ps1
+      git diff --exit-code Source
+      if ($lastexitcode -gt 0) {
+        Add-AppveyorMessage -Category Error -Message "Source code not formatted correctly"
+        exit 1
+      }
 
 configuration:
   - Release
