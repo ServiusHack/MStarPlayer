@@ -2,24 +2,24 @@
 
 #include <memory>
 
-#include "Player.h"
+#include "PlayerComponent.h"
 
 static MyMultiDocumentPanel* component;
 
-Player* getPlayer(const char* playerName)
+PlayerComponent* getPlayer(const char* playerName)
 {
     const int components_count = component->getNumDocuments();
     for (int i = 0; i < components_count; ++i)
     {
-        Player* player = static_cast<Player*>(component->getDocument(i));
-        if (player->getName() == playerName)
+        PlayerComponent* player = static_cast<PlayerComponent*>(component->getDocument(i));
+        if (player->Component::getName() == playerName)
             return player;
     }
 
     return nullptr;
 }
 
-MixerControlable* getTrack(const Player* player, const char* trackName)
+MixerControlable* getTrack(const PlayerComponent* player, const char* trackName)
 {
     auto subMixerControlables = player->getSubMixerControlables();
     auto hit = std::find_if(subMixerControlables.begin(),
@@ -38,15 +38,15 @@ void listPlayers(PluginInterface::ListPlayersCallbackFunction callback, void* us
     std::vector<String> names;
     for (int i = 0; i < components_count; ++i)
     {
-        const Player* player = static_cast<Player*>(component->getDocument(i));
-        callback(player->getName().toRawUTF8(), userData);
+        const PlayerComponent* player = static_cast<PlayerComponent*>(component->getDocument(i));
+        callback(player->Component::getName().toRawUTF8(), userData);
     }
 }
 
 void play(const char* playerName)
 {
     const MessageManagerLock mmLock;
-    Player* player = getPlayer(playerName);
+    PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->play();
 }
@@ -54,7 +54,7 @@ void play(const char* playerName)
 void stop(const char* playerName)
 {
     const MessageManagerLock mmLock;
-    Player* player = getPlayer(playerName);
+    PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->stop();
 }
@@ -62,7 +62,7 @@ void stop(const char* playerName)
 void nextEntry(const char* playerName)
 {
     const MessageManagerLock mmLock;
-    Player* player = getPlayer(playerName);
+    PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->nextEntry();
 }
@@ -70,14 +70,14 @@ void nextEntry(const char* playerName)
 void previousEntry(const char* playerName)
 {
     const MessageManagerLock mmLock;
-    Player* player = getPlayer(playerName);
+    PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->previousEntry();
 }
 
 void listTracks(const char* playerName, PluginInterface::ListTracksCallbackFunction callback, void* userData)
 {
-    const Player* player = getPlayer(playerName);
+    const PlayerComponent* player = getPlayer(playerName);
 
     std::vector<MixerControlable*> subMixerControlables = player->getSubMixerControlables();
     for (const MixerControlable* const subMixerControlable : subMixerControlables)
@@ -89,7 +89,7 @@ void listTracks(const char* playerName, PluginInterface::ListTracksCallbackFunct
 void trackVolume(const char* playerName, const char* trackName, float volume)
 {
     const MessageManagerLock mmLock;
-    Player* player = getPlayer(playerName);
+    PlayerComponent* player = getPlayer(playerName);
     if (player == nullptr)
         return;
 

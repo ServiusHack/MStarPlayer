@@ -2,15 +2,13 @@
 
 #include <set>
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "MixerComponent.h"
 #include "MixerControlable.h"
 
 #include "InterPlayerCommunication.h"
 #include "JinglePlayerWindow.h"
-#include "MTCSender.h"
 #include "MyMultiDocumentPanel.h"
+#include "PlayerComponent.h"
 #include "PlayerMidiDialog.h"
 #include "PlaylistModel.h"
 #include "PlaylistPlayerWindow.h"
@@ -23,8 +21,7 @@
         is almost the same.
 */
 class Player
-    : public Component
-    , public SubchannelPlayer
+    : public PlayerComponent
     , public KeyListener
     , public SoloBusSettingsListener
 {
@@ -36,11 +33,11 @@ public:
     ~Player();
 
     void setType(InterPlayerCommunication::PlayerType type);
-    void play();
-    void pause();
-    void stop();
-    void nextEntry(bool onlyIfEntrySaysSo = false);
-    void previousEntry();
+    void play() override;
+    void pause() override;
+    void stop() override;
+    void nextEntry(bool onlyIfEntrySaysSo = false) override;
+    void previousEntry() override;
     void playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index);
     void gainChangedCallback(const char* track_name, float gain);
 

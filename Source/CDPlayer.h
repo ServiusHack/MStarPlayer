@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "MixerComponent.h"
 #include "MixerControlable.h"
 
@@ -13,6 +11,7 @@
 #include "SubchannelPlayer.h"
 
 #include "ChannelMappingDialog.h"
+#include "PlayerComponent.h"
 #include "PlayerEditDialog.h"
 #include "PluginLoader.h"
 
@@ -20,8 +19,7 @@
     A player for audio CDs
 */
 class CDPlayer
-    : public Component
-    , public SubchannelPlayer
+    : public PlayerComponent
     , public KeyListener
     , public Button::Listener
     , public ComboBox::Listener
@@ -33,6 +31,12 @@ public:
     CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
         TimeSliceThread& thread, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
     ~CDPlayer();
+
+    void play() override;
+    void pause() override;
+    void stop() override;
+    void nextEntry(bool onlyIfEntrySaysSo = false) override;
+    void previousEntry() override;
 
     // XML serialization
 public:

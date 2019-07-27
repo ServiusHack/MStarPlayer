@@ -205,6 +205,42 @@ CDPlayer::~CDPlayer()
     m_soloBusSettings.removeListener(this);
 }
 
+void CDPlayer::play()
+{
+    m_transportSource.start();
+    startTimer(50);
+    m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
+}
+void CDPlayer::pause()
+{
+    if (m_transportSource.isPlaying())
+    {
+        m_transportSource.stop();
+        stopTimer();
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
+    }
+    else
+    {
+        m_transportSource.start();
+        startTimer(50);
+        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
+    }
+}
+void CDPlayer::stop()
+{
+    m_transportSource.setPosition(0);
+    m_transportSource.stop();
+    stopTimer();
+    m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
+}
+void CDPlayer::nextEntry(bool)
+{
+    m_tracksTable.next();
+}
+void CDPlayer::previousEntry()
+{
+    m_tracksTable.previous();
+}
 void CDPlayer::paint(Graphics& g)
 {
     g.fillAll(m_color);
@@ -498,31 +534,15 @@ void CDPlayer::buttonClicked(Button* button)
 {
     if (button == &m_playButton)
     {
-        m_transportSource.start();
-        startTimer(50);
-        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
+        play();
     }
     else if (button == &m_pauseButton)
     {
-        if (m_transportSource.isPlaying())
-        {
-            m_transportSource.stop();
-            stopTimer();
-            m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
-        }
-        else
-        {
-            m_transportSource.start();
-            startTimer(50);
-            m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
-        }
+        pause();
     }
     else if (button == &m_stopButton)
     {
-        m_transportSource.setPosition(0);
-        m_transportSource.stop();
-        stopTimer();
-        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), false);
+        stop();
     }
 #if JUCE_WINDOWS
     else if (button == &m_ejectButton)
@@ -535,11 +555,11 @@ void CDPlayer::buttonClicked(Button* button)
 #endif
     else if (button == &m_skipBackwardButton)
     {
-        m_tracksTable.previous();
+        previousEntry();
     }
     else if (button == &m_skipForwardButton)
     {
-        m_tracksTable.next();
+        nextEntry();
     }
 }
 
