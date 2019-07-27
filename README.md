@@ -31,6 +31,12 @@ Pull requests are always welcome to improve the current code or add new features
 7. Select File -> Save Project to generate the Visual Studio solution.
 8. Open the solution at `Builds/VisualStudio2017/` and compile.
 
+### Format Source Code
+
+The format the source code according to the .clang-format file:
+
+      powershell -executionpolicy bypass -file .\format-source.ps1
+
 ## License
 
 M\*Player's own code is dual-licensed. This makes licensing a bit complicated but allows building it with ASIO.
