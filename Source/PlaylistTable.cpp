@@ -23,9 +23,7 @@ PlaylistTable::PlaylistTable(const PlaylistEntryChangedCallback& callback, Playl
     m_model.add("", 0);
     updateContent();
 
-    playlistModel.setReloadedCallback([&]() {
-        selectedRowsChanged(getSelectedRow());
-    });
+    playlistModel.setReloadedCallback([&]() { selectedRowsChanged(getSelectedRow()); });
 }
 
 void PlaylistTable::selectedRowsChanged(int lastRowSelected)
@@ -50,9 +48,7 @@ bool PlaylistTable::isInterestedInDragSource(const SourceDetails& dragSourceDeta
 
 void PlaylistTable::itemDropped(const SourceDetails& dragSourceDetails)
 {
-    int row = getRowContainingPosition(
-        dragSourceDetails.localPosition.x,
-        dragSourceDetails.localPosition.y);
+    int row = getRowContainingPosition(dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.y);
 
     Array<var> data = *dragSourceDetails.description.getArray();
 
@@ -95,7 +91,8 @@ void PlaylistTable::resized()
     TableListBox::resized();
 
     TableHeaderComponent& header = getHeader();
-    header.setColumnWidth(2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3) - header.getColumnWidth(4));
+    header.setColumnWidth(
+        2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3) - header.getColumnWidth(4));
 }
 
 void PlaylistTable::previous()

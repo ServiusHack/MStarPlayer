@@ -7,7 +7,7 @@
 #include <functional>
 
 /**
-	The playlist table component.
+        The playlist table component.
 */
 class PlaylistTable
     : public TableListBox
@@ -24,16 +24,16 @@ public:
     void previous();
     void next(bool onlyIfEntrySaysSo = false);
 
-// TableListBox
+    // TableListBox
 public:
     virtual void selectedRowsChanged(int lastRowSelected) override;
     virtual void resized() override;
 
-// ChangeListener
+    // ChangeListener
 public:
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
-// DragAndDropTarget
+    // DragAndDropTarget
 public:
     virtual bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
     virtual void itemDropped(const SourceDetails& dragSourceDetails) override;

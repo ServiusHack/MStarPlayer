@@ -3,7 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 /**
-	Keep track of a fixed number of samples to determine their loudness.
+        Keep track of a fixed number of samples to determine their loudness.
 */
 class VolumeAnalyzer
 {

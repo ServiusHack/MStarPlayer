@@ -6,12 +6,13 @@
 #include "SubchannelPlayer.h"
 
 /**
-	MixerFader for a player.
+        MixerFader for a player.
 */
 class PlayerMixerFader : public MixerFader
 {
 public:
-    PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback);
+    PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerControlable*> subControlable, bool panEnabled,
+        ResizeCallback resizeCallback);
 
     SubchannelPlayer* getPlayer() const;
 

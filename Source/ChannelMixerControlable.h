@@ -6,7 +6,7 @@
 #include "Player.h"
 
 /**
-	MixerControlable for an individual channel.
+        MixerControlable for an individual channel.
 */
 class ChannelMixerControlable : public MixerControlable
 {

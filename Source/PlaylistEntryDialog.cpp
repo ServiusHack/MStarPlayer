@@ -36,7 +36,8 @@ void PlaylistEntryDialogWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
     closeButtonPressed();
 }
 
-PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent)
+PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(
+    const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent)
     : m_changedCallback(changedCallback)
     , m_nameLabel("name label", TRANS("Name of the entry:"))
     , m_nameEditor("name editor")
@@ -81,10 +82,7 @@ void PlaylistEntryDialogComponent::resized()
     m_nameEditor.setBounds(padding, padding + rowHeight, getWidth() - 2 * padding, rowHeight);
 
     m_closeButton.setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - 2 * (rowHeight - padding),
-        buttonWidth,
-        rowHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - 2 * (rowHeight - padding), buttonWidth, rowHeight);
 }
 
 void PlaylistEntryDialogComponent::textEditorTextChanged(TextEditor&)

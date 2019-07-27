@@ -33,9 +33,14 @@ void CrashDumper::run()
 
     TCHAR path[MAX_PATH];
 
-    wsprintf(path, "CrashDump MStarPlayer %4d-%02d-%02d %02d_%02d_%02d.dmp",
-             time.wYear, time.wMonth, time.wDay,
-             time.wHour, time.wMinute, time.wSecond);
+    wsprintf(path,
+        "CrashDump MStarPlayer %4d-%02d-%02d %02d_%02d_%02d.dmp",
+        time.wYear,
+        time.wMonth,
+        time.wDay,
+        time.wHour,
+        time.wMinute,
+        time.wSecond);
 
     HANDLE dumpFile = CreateFile(path, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 
@@ -62,8 +67,7 @@ void CrashDumper::run()
 
     const MINIDUMP_TYPE miniDumpType = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
 
-    MiniDumpWriteDump(
-        GetCurrentProcess(),
+    MiniDumpWriteDump(GetCurrentProcess(),
         GetCurrentProcessId(),
         dumpFile,
         miniDumpType,

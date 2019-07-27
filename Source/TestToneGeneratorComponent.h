@@ -21,14 +21,12 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "OutputChannelNames.h"
-#include "TestToneGeneratorOutputChannelsModel.h"
-#include "TestToneGeneratorAudioSource.h"
-#include "VolumeSlider.h"
 #include "MixerComponent.h"
+#include "OutputChannelNames.h"
+#include "TestToneGeneratorAudioSource.h"
+#include "TestToneGeneratorOutputChannelsModel.h"
+#include "VolumeSlider.h"
 //[/Headers]
-
-
 
 //==============================================================================
 /**
@@ -38,40 +36,39 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class TestToneGeneratorComponent  : public Component,
-                                    public ChangeListener,
-                                    public OutputChannelNamesListener,
-                                    public SliderListener,
-                                    public ComboBoxListener,
-                                    public ButtonListener
+class TestToneGeneratorComponent
+    : public Component
+    , public ChangeListener
+    , public OutputChannelNamesListener
+    , public SliderListener
+    , public ComboBoxListener
+    , public ButtonListener
 {
 public:
     //==============================================================================
-    TestToneGeneratorComponent (MixerComponent* mixerComponent, OutputChannelNames* outputChannelNames);
+    TestToneGeneratorComponent(MixerComponent* mixerComponent, OutputChannelNames* outputChannelNames);
     ~TestToneGeneratorComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
-// ChangeListener
+    // ChangeListener
 public:
     /** Act accordingly to changes in the AudioDeviceManager. */
     virtual void changeListenerCallback(ChangeBroadcaster* /*source*/) override;
 
-// OutputChannelNamesListener
+    // OutputChannelNamesListener
 public:
     virtual void outputChannelNamesReset() override;
     virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
     virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) override;
-    virtual void sliderValueChanged (Slider* sliderThatWasMoved) override;
+    virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
     //[/UserMethods]
 
-    void paint (Graphics& g) override;
+    void paint(Graphics& g) override;
     void resized() override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
-    void buttonClicked (Button* buttonThatWasClicked) override;
-
-
+    void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+    void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
@@ -91,9 +88,8 @@ private:
     ScopedPointer<TextButton> textButton2;
     ScopedPointer<Label> dbLabel;
 
-
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TestToneGeneratorComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TestToneGeneratorComponent)
 };
 
 //[EndFile] You can add extra defines here...

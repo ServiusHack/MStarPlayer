@@ -4,12 +4,15 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "JinglePlayerWindow.h"
-#include "PlaylistPlayerWindow.h"
 #include "Player.h"
+#include "PlaylistPlayerWindow.h"
 
 using namespace InterPlayerCommunication;
 
-PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist, const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback, const ConfigureMidiCallback& configureMidiCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
+PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist,
+    const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback,
+    const ConfigureMidiCallback& configureMidiCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback,
+    PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
     : m_player(player)
     , m_color(0xffffffff)
     , m_tracksContainer(tracksContainer)
@@ -25,73 +28,124 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
     , m_configureButton("Configure")
     , m_digitalDisplay(String::empty, "00:00:00")
     , m_tracks(*m_tracksContainer, applicationProperties,
-                                                                        std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
-                                                                        std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1),
-                                                                        std::bind(&PlaylistPlayerWindow::fileLoaded, this, std::placeholders::_1))
-    , m_tableListBox([&](const std::vector<TrackConfig>& trackConfigs, bool play) {
-        m_tracksContainer->setTrackConfigs(trackConfigs);
-        if (play)
-            m_playButton.triggerClick();
-    }, playlistModel)
+          std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
+          std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1),
+          std::bind(&PlaylistPlayerWindow::fileLoaded, this, std::placeholders::_1))
+    , m_tableListBox(
+          [&](const std::vector<TrackConfig>& trackConfigs, bool play) {
+              m_tracksContainer->setTrackConfigs(trackConfigs);
+              if (play)
+                  m_playButton.triggerClick();
+          },
+          playlistModel)
     , m_resizeBar(&m_layout, 1, false)
 {
     // play button
-    Image normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
+    Image normalImage
+        = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
     m_playButton.addListener(this);
-    m_playButton.setImages(true, true, true,
-                            normalImage, 0.7f, Colours::transparentBlack,
-                            normalImage, 1.0f, Colours::transparentBlack,
-                            normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                            0.0f);
+    m_playButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_playButton);
 
     // pause button
     m_pauseButton.addListener(this);
     normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
-    m_pauseButton.setImages(true, true, true,
-                             normalImage, 0.7f, Colours::transparentBlack,
-                             normalImage, 1.0f, Colours::transparentBlack,
-                             normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                             0.0f);
+    m_pauseButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_pauseButton);
 
     // stop button
     m_stopButton.addListener(this);
     normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
-    m_stopButton.setImages(true, true, true,
-                            normalImage, 0.7f, Colours::transparentBlack,
-                            normalImage, 1.0f, Colours::transparentBlack,
-                            normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                            0.0f);
+    m_stopButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_stopButton);
 
     // skip backward button
     m_skipBackwardButton.addListener(this);
     normalImage = ImageFileFormat::loadFrom(BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
-    m_skipBackwardButton.setImages(true, true, true,
-                                    normalImage, 0.7f, Colours::transparentBlack,
-                                    normalImage, 1.0f, Colours::transparentBlack,
-                                    normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                                    0.0f);
+    m_skipBackwardButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_skipBackwardButton);
 
     // skip forward button
     m_skipForwardButton.addListener(this);
     normalImage = ImageFileFormat::loadFrom(BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
-    m_skipForwardButton.setImages(true, true, true,
-                                   normalImage, 0.7f, Colours::transparentBlack,
-                                   normalImage, 1.0f, Colours::transparentBlack,
-                                   normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                                   0.0f);
+    m_skipForwardButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_skipForwardButton);
 
     // configuration button
     normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
-    m_configureButton.setImages(true, true, true,
-                                 normalImage, 0.7f, Colours::transparentBlack,
-                                 normalImage, 1.0f, Colours::transparentBlack,
-                                 normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                                 0.0f);
+    m_configureButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_configureButton);
     m_configureButton.addMouseListener(this, false);
 
@@ -115,12 +169,13 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
     };
     m_tracksContainer->addPositionCallback(positionCallback);
 
-    m_tracksContainer->addLongestDurationChangedCallback(std::bind(&PlaylistTable::setCurrentDuration, &m_tableListBox, std::placeholders::_1));
+    m_tracksContainer->addLongestDurationChangedCallback(
+        std::bind(&PlaylistTable::setCurrentDuration, &m_tableListBox, std::placeholders::_1));
 
     addAndMakeVisible(m_resizeBar);
 
-    m_layout.setItemLayout(0, 60, -1.0, -0.3);  // playlist
-    m_layout.setItemLayout(1, 7, 7, 7);         // resize bar
+    m_layout.setItemLayout(0, 60, -1.0, -0.3); // playlist
+    m_layout.setItemLayout(1, 7, 7, 7); // resize bar
     m_layout.setItemLayout(2, 100, -1.0, -0.7); // tracks
 }
 
@@ -142,7 +197,8 @@ void PlaylistPlayerWindow::paint(Graphics& g)
 
     g.fillAll(m_color);
 
-    g.drawLine(0.0f, static_cast<float>(buttonHeight), static_cast<float>(getWidth()), static_cast<float>(buttonHeight));
+    g.drawLine(
+        0.0f, static_cast<float>(buttonHeight), static_cast<float>(getWidth()), static_cast<float>(buttonHeight));
 }
 
 void PlaylistPlayerWindow::resized()
@@ -163,9 +219,7 @@ void PlaylistPlayerWindow::resized()
     if (m_tableListBox.isVisible())
     {
         Component* components[] = {&m_tableListBox, &m_resizeBar, &m_tracksViewport};
-        m_layout.layOutComponents(components, 3,
-                                  0, buttonHeight, getWidth(), getHeight() - buttonHeight,
-                                  true, true);
+        m_layout.layOutComponents(components, 3, 0, buttonHeight, getWidth(), getHeight() - buttonHeight, true, true);
     }
     else
     {

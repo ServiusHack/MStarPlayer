@@ -10,7 +10,7 @@
 #include <memory>
 
 /*
-	Component containing all tracks.
+        Component containing all tracks.
 */
 class TracksComponent
     : public Component
@@ -21,16 +21,18 @@ public:
     typedef std::function<void(int)> TrackRemovedCallback;
     typedef std::function<void(String)> FileLoadedCallback;
 
-    TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback, FileLoadedCallback fileLoadedCallback);
+    TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties,
+        TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback,
+        FileLoadedCallback fileLoadedCallback);
 
     void addMonoTrack();
     void addStereoTrack();
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
 
-// FileDragAnDropTarget overrides
+    // FileDragAnDropTarget overrides
 public:
     bool isInterestedInFileDrag(const StringArray& files) override;
     void filesDropped(const StringArray& files, int x, int y) override;

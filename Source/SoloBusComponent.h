@@ -4,13 +4,14 @@
 #include "OutputChannelNames.h"
 #include "SoloBusSettings.h"
 
-class SoloBusComponent : public Component,
-                         public ComboBoxListener
+class SoloBusComponent
+    : public Component
+    , public ComboBoxListener
 {
 public:
     SoloBusComponent(OutputChannelNames& outputChannelNames, SoloBusSettings& settings);
 
-// Component
+    // Component
 public:
     void paint(Graphics& g) override;
     void resized() override;

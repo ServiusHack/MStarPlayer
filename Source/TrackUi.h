@@ -8,7 +8,7 @@
 #include "VolumeSlider.h"
 
 /**
-	User interface for a track, contained in TracksComponent.
+        User interface for a track, contained in TracksComponent.
 */
 class TrackUi
     : public Component
@@ -23,7 +23,9 @@ public:
     typedef std::function<bool(int)> TrackHasFilesCallback;
     typedef std::function<void(String)> FileLoadedCallback;
 
-    TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback, FileLoadedCallback fileLoadedCallback);
+    TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback,
+        RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback,
+        FileLoadedCallback fileLoadedCallback);
     ~TrackUi();
 
     void changeListenerCallback(ChangeBroadcaster* source);
@@ -62,22 +64,22 @@ private:
 
     FileLoadedCallback m_fileLoadedCallback;
 
-// Button::Listener
+    // Button::Listener
 public:
     void buttonClicked(Button* button);
 
-// Component
+    // Component
 public:
     virtual void paint(Graphics&) override;
     virtual void resized() override;
     virtual void mouseDown(const MouseEvent& event) override;
     virtual void mouseDrag(const MouseEvent& event) override;
 
-// juce::Slider::Listener
+    // juce::Slider::Listener
 public:
     virtual void sliderValueChanged(Slider* slider) override;
 
-// MixerControlableChangeListener
+    // MixerControlableChangeListener
 public:
     virtual void gainChanged(float gain) override;
     virtual void muteChanged(bool /*mute*/) override;

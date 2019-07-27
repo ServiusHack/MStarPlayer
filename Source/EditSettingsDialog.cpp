@@ -25,7 +25,9 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, Applica
     : m_applicationProperties(applicationProperties)
     , m_languageLabel("language", TRANS("Language"))
     , m_nameLabel("audio editor label", TRANS("Audio editor"))
-    , m_audioEditorFilenameComponent("audio editor", File(m_applicationProperties.getUserSettings()->getValue("audioEditor")), true, false, false, "*.exe", ".exe", "")
+    , m_audioEditorFilenameComponent("audio editor",
+          File(m_applicationProperties.getUserSettings()->getValue("audioEditor")), true, false, false, "*.exe", ".exe",
+          "")
     , m_closeButton("close")
 {
     addAndMakeVisible(m_nameLabel);
@@ -77,15 +79,13 @@ void EditSettingsComponent::resized()
     m_languageComboBox.setBounds(padding, padding + rowHeight * 3, getWidth() - 2 * padding, rowHeight);
 
     m_closeButton.setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - 2 * (rowHeight - padding),
-        buttonWidth,
-        rowHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - 2 * (rowHeight - padding), buttonWidth, rowHeight);
 }
 
 void EditSettingsComponent::filenameComponentChanged(FilenameComponent* /*fileComponentThatHasChanged*/)
 {
-    m_applicationProperties.getUserSettings()->setValue("audioEditor", m_audioEditorFilenameComponent.getCurrentFileText());
+    m_applicationProperties.getUserSettings()->setValue(
+        "audioEditor", m_audioEditorFilenameComponent.getCurrentFileText());
 }
 
 void EditSettingsComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
@@ -100,5 +100,6 @@ void EditSettingsComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
         break;
     }
 
-    AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Restart required"), TRANS("Changing the language requires a restart."));
+    AlertWindow::showMessageBoxAsync(
+        AlertWindow::WarningIcon, TRANS("Restart required"), TRANS("Changing the language requires a restart."));
 }

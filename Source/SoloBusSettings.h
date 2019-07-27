@@ -9,7 +9,7 @@ enum class SoloBusChannel
 };
 
 /**
-	Interface to receive changes to the output channel names.
+        Interface to receive changes to the output channel names.
 */
 class SoloBusSettingsListener
 {
@@ -18,10 +18,9 @@ public:
 };
 
 /**
-	Maintains the user selected solo bus channels.
+        Maintains the user selected solo bus channels.
 */
-class SoloBusSettings
-    : public ChangeBroadcaster
+class SoloBusSettings : public ChangeBroadcaster
 {
 public:
     void setChannel(SoloBusChannel busChannel, int outputChannel);
@@ -33,18 +32,19 @@ private:
     int m_leftChannel{-1};
     int m_rightChannel{-1};
 
-// XML serialization
+    // XML serialization
 public:
     void saveToXml(XmlElement* element) const;
     void restoreFromXml(const XmlElement& element);
 
-// SoloBusSettingsListener management
+    // SoloBusSettingsListener management
 public:
     /**
-		Add a listener which will be notified when a bus channel is assigned an output channel.
+                Add a listener which will be notified when a bus channel is assigned an output channel.
 
-		The ownership will not be transfered, it is the caller's responsibility to remove and destroy the listener later.
-	*/
+                The ownership will not be transfered, it is the caller's responsibility to remove and destroy the
+       listener later.
+        */
     void addListener(SoloBusSettingsListener* listener);
 
     void removeListener(SoloBusSettingsListener* listener);

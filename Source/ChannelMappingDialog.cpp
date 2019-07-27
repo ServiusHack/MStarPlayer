@@ -29,7 +29,8 @@ private:
     int m_row;
 };
 
-ChannelMapping::ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback)
+ChannelMapping::ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+    std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback)
     : m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
     , m_mapping(mapping)
@@ -42,16 +43,12 @@ int ChannelMapping::getNumRows()
     return m_mapping.size();
 }
 
-void ChannelMapping::paintRowBackground(Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
+void ChannelMapping::paintRowBackground(
+    Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
 }
 
-void ChannelMapping::paintCell(Graphics& g,
-                               int rowNumber,
-                               int columnId,
-                               int width,
-                               int height,
-                               bool /*rowIsSelected*/)
+void ChannelMapping::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
     g.setColour(Colours::black);
 
@@ -77,13 +74,15 @@ void ChannelMapping::paintCell(Graphics& g,
     g.fillRect(width - 1, 0, 1, height);
 }
 
-Component* ChannelMapping::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+Component* ChannelMapping::refreshComponentForCell(
+    int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
     if (columnId == 2)
     {
         // If it's the output channel column, we'll return our custom component..
 
-        OutputChannelColumnCustomComponent* comboBox = static_cast<OutputChannelColumnCustomComponent*>(existingComponentToUpdate);
+        OutputChannelColumnCustomComponent* comboBox
+            = static_cast<OutputChannelColumnCustomComponent*>(existingComponentToUpdate);
 
         // If an existing component is being passed-in for updating, we'll re-use it, but
         // if not, we'll have to create one.
@@ -122,7 +121,8 @@ Component* ChannelMapping::refreshComponentForCell(int rowNumber, int columnId, 
 
 void ChannelMapping::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
-    const OutputChannelColumnCustomComponent* outputChannelColumn = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
+    const OutputChannelColumnCustomComponent* outputChannelColumn
+        = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
     setChannelMapping(outputChannelColumn->getRow(), outputChannelColumn->getSelectedId());
 }
 
@@ -136,10 +136,13 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
     m_callback(row, outputChannel - 1);
 }
 
-ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
+ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+    std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback,
+    const CloseCallback& closeCallback)
     : DialogWindow(TRANS("Configure Channels"), Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
-    , m_component(std::make_unique<ChannelMappingComponent>(outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback))
+    , m_component(std::make_unique<ChannelMappingComponent>(
+          outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback))
 {
     setContentNonOwned(m_component.get(), true);
     centreWithSize(getWidth(), getHeight());
@@ -157,12 +160,15 @@ void ChannelMappingWindow::setMapping(const std::vector<std::pair<char, int>>& m
     m_component->setMapping(mapping);
 }
 
-ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
+ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChannelNames,
+    SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping,
+    const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
     : m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
     , m_changeCallback(changeCallback)
     , m_closeCallback(closeCallback)
-    , m_channelMapping(std::make_unique<ChannelMapping>(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
+    , m_channelMapping(
+          std::make_unique<ChannelMapping>(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
     , m_closeButton("close")
 {
     addAndMakeVisible(m_tableListBox);
@@ -187,7 +193,8 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
 
 void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>& mapping)
 {
-    m_channelMapping = std::make_unique<ChannelMapping>(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
+    m_channelMapping
+        = std::make_unique<ChannelMapping>(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
     m_tableListBox.setModel(m_channelMapping.get());
 }
 
@@ -204,8 +211,5 @@ void ChannelMappingComponent::resized()
 
     m_tableListBox.setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
     m_closeButton.setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - buttonHeight - padding,
-        buttonWidth,
-        buttonHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }

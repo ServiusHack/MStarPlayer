@@ -5,7 +5,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 /**
-	Interface to receive changes on a mixer controlable.
+        Interface to receive changes on a mixer controlable.
 */
 class MixerControlableChangeListener
 {
@@ -22,9 +22,9 @@ public:
 };
 
 /**
-	Interface for everything a mixer can control.
+        Interface for everything a mixer can control.
 
-	Currently this can be a player, a player's track or an output channel.
+        Currently this can be a player, a player's track or an output channel.
 */
 class MixerControlable
 {
@@ -53,7 +53,7 @@ public:
 
     virtual String getName() const = 0;
 
-// manage listeners
+    // manage listeners
 public:
     void addChangeListener(MixerControlableChangeListener* listener)
     {

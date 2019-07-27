@@ -5,7 +5,8 @@ DefaultLookAndFeel::DefaultLookAndFeel()
     // Fix what LookAndFeelV3 broke in 4.2.0:
     setColour(TextButton::buttonOnColourId, Colour(0xff4444ff));
 }
-void DefaultLookAndFeel::drawProgressBar(Graphics& g, ProgressBar& progressBar, int width, int height, double progress, const String& textToShow)
+void DefaultLookAndFeel::drawProgressBar(
+    Graphics& g, ProgressBar& progressBar, int width, int height, double progress, const String& textToShow)
 {
     const Colour background(progressBar.findColour(ProgressBar::backgroundColourId));
     const Colour foreground(progressBar.findColour(ProgressBar::foregroundColourId));
@@ -14,12 +15,18 @@ void DefaultLookAndFeel::drawProgressBar(Graphics& g, ProgressBar& progressBar, 
 
     if (progress >= 0.0f && progress < 1.0f)
     {
-        drawGlassLozenge(g, 1.0f, 1.0f,
-                         (float)jlimit(0.0, width - 2.0, progress * (width - 2.0)),
-                         (float)(height - 2),
-                         foreground,
-                         0.5f, 0.0f,
-                         true, true, true, true);
+        drawGlassLozenge(g,
+            1.0f,
+            1.0f,
+            (float)jlimit(0.0, width - 2.0, progress * (width - 2.0)),
+            (float)(height - 2),
+            foreground,
+            0.5f,
+            0.0f,
+            true,
+            true,
+            true,
+            true);
     }
     else
     {
@@ -32,21 +39,25 @@ void DefaultLookAndFeel::drawProgressBar(Graphics& g, ProgressBar& progressBar, 
         Path p;
 
         for (float x = (float)(-position); x < width + stripeWidth; x += stripeWidth)
-            p.addQuadrilateral(x, 0.0f,
-                               x + stripeWidth * 0.5f, 0.0f,
-                               x, (float)height,
-                               x - stripeWidth * 0.5f, (float)height);
+            p.addQuadrilateral(
+                x, 0.0f, x + stripeWidth * 0.5f, 0.0f, x, (float)height, x - stripeWidth * 0.5f, (float)height);
 
         Image im(Image::ARGB, width, height, true);
 
         {
             Graphics g2(im);
-            drawGlassLozenge(g2, 1.0f, 1.0f,
-                             (float)(width - 2),
-                             (float)(height - 2),
-                             foreground,
-                             0.5f, 0.0f,
-                             true, true, true, true);
+            drawGlassLozenge(g2,
+                1.0f,
+                1.0f,
+                (float)(width - 2),
+                (float)(height - 2),
+                foreground,
+                0.5f,
+                0.0f,
+                true,
+                true,
+                true,
+                true);
         }
 
         g.setTiledImageFill(im, 0, 0, 0.85f);

@@ -3,7 +3,11 @@
 
 #include <sstream>
 
-Track::Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
+Track::Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
+    int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback,
+    float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback,
+    PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback,
+    GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
     : m_trackIndex(trackIndex)
     , m_stereo(stereo)
     , m_tracksMixer(tracksMixer)
@@ -262,9 +266,9 @@ void Track::loadFileIntoTransport(const File& audioFile)
         m_currentAudioFileSource = std::make_unique<AudioFormatReaderSource>(reader, true);
         // ..and plug it into our transport source
         m_transportSource.setSource(m_currentAudioFileSource.get(),
-                                    32768,     // tells it to buffer this many samples ahead
-                                    &m_thread, // this is the background thread to use for reading-ahead
-                                    reader->sampleRate);
+            32768, // tells it to buffer this many samples ahead
+            &m_thread, // this is the background thread to use for reading-ahead
+            reader->sampleRate);
     }
     else
     {

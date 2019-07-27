@@ -5,7 +5,9 @@
 
 using namespace InterPlayerCommunication;
 
-Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
+Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+    PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache,
+    TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
@@ -15,23 +17,18 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
     , m_soloMute(false)
     , m_mute(mute)
     , m_type(type)
-    , m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(), std::bind(&Player::trackConfigChanged, this), std::bind(&Player::gainChangedCallback, this, std::placeholders::_1, std::placeholders::_2), audioThumbnailCache, thread, mtcSender)
-    , m_playlistPlayer(*this,
-                       &m_tracksContainer,
-                       type == PlayerType::Playlist, 
-                       std::bind(&Player::showEditDialog, this),
-                       std::bind(&Player::configureChannels, this),
-                       std::bind(&Player::configureMidi, this),
-                       std::bind(&Player::setType, this, std::placeholders::_1),
-                       playlistModel,
-                       applicationProperties)
-    , m_jinglePlayer(*this,
-                     &m_tracksContainer,
-                     std::bind(&Player::showEditDialog, this),
-                     std::bind(&Player::configureChannels, this),
-                     std::bind(&Player::configureMidi, this),
-                     std::bind(&Player::setType, this, std::placeholders::_1),
-                     std::bind(&Player::setUserImage, this, std::placeholders::_1))
+    , m_tracksContainer(mixer, soloBusSettings, outputChannelNames->getNumberOfChannels(),
+          std::bind(&Player::trackConfigChanged, this),
+          std::bind(&Player::gainChangedCallback, this, std::placeholders::_1, std::placeholders::_2),
+          audioThumbnailCache, thread, mtcSender)
+    , m_playlistPlayer(*this, &m_tracksContainer, type == PlayerType::Playlist,
+          std::bind(&Player::showEditDialog, this), std::bind(&Player::configureChannels, this),
+          std::bind(&Player::configureMidi, this), std::bind(&Player::setType, this, std::placeholders::_1),
+          playlistModel, applicationProperties)
+    , m_jinglePlayer(*this, &m_tracksContainer, std::bind(&Player::showEditDialog, this),
+          std::bind(&Player::configureChannels, this), std::bind(&Player::configureMidi, this),
+          std::bind(&Player::setType, this, std::placeholders::_1),
+          std::bind(&Player::setUserImage, this, std::placeholders::_1))
     , m_mtcSender(mtcSender)
 {
     addChildComponent(&m_playlistPlayer);
@@ -49,9 +46,8 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
 
     addKeyListener(this);
     setBounds(0, 0, 600, 300);
-    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
-        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), isPlaying);
-    };
+    Track::PlayingStateChangedCallback playingStateChangedCallback
+        = [&](bool isPlaying) { m_pluginLoader.playingStateChanged(getName().toRawUTF8(), isPlaying); };
     m_tracksContainer.addPlayingStateChangedCallback(playingStateChangedCallback);
 
     m_soloBusSettings.addListener(this);
@@ -60,10 +56,8 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
         m_pluginLoader.positionChanged(getName().toRawUTF8(), position);
         if (finished && m_playlistPlayer.isVisible())
             nextEntry(true);
-
     };
     m_tracksContainer.addPositionCallback(positionCallback);
-
 }
 
 Player::~Player()
@@ -95,7 +89,9 @@ void Player::setType(PlayerType type)
 void Player::setGain(float gain)
 {
     m_tracksContainer.setGain(gain);
-    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));
+    std::for_each(m_listeners.begin(),
+        m_listeners.end(),
+        std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));
 }
 
 float Player::getGain() const
@@ -105,7 +101,9 @@ float Player::getGain() const
 
 void Player::setPan(float pan)
 {
-    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::panChanged, std::placeholders::_1, pan));
+    std::for_each(m_listeners.begin(),
+        m_listeners.end(),
+        std::bind(&MixerControlableChangeListener::panChanged, std::placeholders::_1, pan));
 }
 
 float Player::getPan() const
@@ -128,7 +126,9 @@ void Player::setSolo(bool solo)
 {
     m_solo = solo;
     updateGain();
-    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
+    std::for_each(m_listeners.begin(),
+        m_listeners.end(),
+        std::bind(&MixerControlableChangeListener::soloChanged, std::placeholders::_1, solo));
     m_tracksContainer.setSolo(m_solo);
 }
 
@@ -141,7 +141,9 @@ void Player::setMute(bool mute)
 {
     m_mute = mute;
     updateGain();
-    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::muteChanged, std::placeholders::_1, mute));
+    std::for_each(m_listeners.begin(),
+        m_listeners.end(),
+        std::bind(&MixerControlableChangeListener::muteChanged, std::placeholders::_1, mute));
 }
 
 bool Player::getMute() const
@@ -165,7 +167,9 @@ String Player::getName() const
 void Player::setName(const String& newName)
 {
     Component::setName(newName);
-    std::for_each(m_listeners.begin(), m_listeners.end(), std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
+    std::for_each(m_listeners.begin(),
+        m_listeners.end(),
+        std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
 }
 
 void Player::updateGain()
@@ -224,23 +228,23 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
     switch (layoutMode)
     {
     case MyMultiDocumentPanel::FloatingWindows:
-        {
-            Rectangle<int> parentBounds = getParentComponent()->getBounds();
-            XmlElement* boundsXml = new XmlElement("Bounds");
-            boundsXml->setAttribute("x", parentBounds.getX());
-            boundsXml->setAttribute("y", parentBounds.getY());
-            boundsXml->setAttribute("width", parentBounds.getWidth());
-            boundsXml->setAttribute("height", parentBounds.getHeight());
-            element->addChildElement(boundsXml);
-        }
-        break;
+    {
+        Rectangle<int> parentBounds = getParentComponent()->getBounds();
+        XmlElement* boundsXml = new XmlElement("Bounds");
+        boundsXml->setAttribute("x", parentBounds.getX());
+        boundsXml->setAttribute("y", parentBounds.getY());
+        boundsXml->setAttribute("width", parentBounds.getWidth());
+        boundsXml->setAttribute("height", parentBounds.getHeight());
+        element->addChildElement(boundsXml);
+    }
+    break;
     case MyMultiDocumentPanel::MaximisedWindowsWithTabs:
-        {
-            XmlElement* mdiDocumentPosXml = new XmlElement("MdiDocumentPos");
-            mdiDocumentPosXml->addTextElement(getProperties()["mdiDocumentPos_"]);
-            element->addChildElement(mdiDocumentPosXml);
-        }
-        break;
+    {
+        XmlElement* mdiDocumentPosXml = new XmlElement("MdiDocumentPos");
+        mdiDocumentPosXml->addTextElement(getProperties()["mdiDocumentPos_"]);
+        element->addChildElement(mdiDocumentPosXml);
+    }
+    break;
     }
 
     XmlElement* viewXml = new XmlElement("View");
@@ -326,14 +330,16 @@ void Player::showEditDialog()
 {
     if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(), m_color, m_userImage.getFullPathName(),
-                                                          std::bind(&Player::setName, this, std::placeholders::_1),
-                                                          std::bind(&Player::setColor, this, std::placeholders::_1),
-                                                          [&]() {
-                                                              // clear is not working
-                                                              delete m_PlayerEditDialog.release();
-                                                          },
-                                                          std::bind(&Player::setUserImage, this, std::placeholders::_1));
+        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(),
+            m_color,
+            m_userImage.getFullPathName(),
+            std::bind(&Player::setName, this, std::placeholders::_1),
+            std::bind(&Player::setColor, this, std::placeholders::_1),
+            [&]() {
+                // clear is not working
+                delete m_PlayerEditDialog.release();
+            },
+            std::bind(&Player::setUserImage, this, std::placeholders::_1));
     }
     m_PlayerEditDialog->addToDesktop();
     m_PlayerEditDialog->toFront(true);
@@ -343,16 +349,24 @@ void Player::configureChannels()
 {
     if (!m_channelMappingWindow)
     {
-        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(m_outputChannelNames, m_soloBusSettings, m_tracksContainer.createMapping(), [&](int source, int target) {
-			for (size_t i = 0; i < m_tracksContainer.size(); ++i) {
-				if (source - m_tracksContainer[i].getNumChannels() < 0) {
-					m_tracksContainer[i].setOutputChannelMapping(source, target);
-					break;
-				}
-				source -= m_tracksContainer[i].getNumChannels();
-			} }, [&]() {
-			// clear is not working
-			delete m_channelMappingWindow.release(); });
+        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(m_outputChannelNames,
+            m_soloBusSettings,
+            m_tracksContainer.createMapping(),
+            [&](int source, int target) {
+                for (size_t i = 0; i < m_tracksContainer.size(); ++i)
+                {
+                    if (source - m_tracksContainer[i].getNumChannels() < 0)
+                    {
+                        m_tracksContainer[i].setOutputChannelMapping(source, target);
+                        break;
+                    }
+                    source -= m_tracksContainer[i].getNumChannels();
+                }
+            },
+            [&]() {
+                // clear is not working
+                delete m_channelMappingWindow.release();
+            });
     }
     m_channelMappingWindow->addToDesktop();
     m_channelMappingWindow->toFront(true);
@@ -362,12 +376,12 @@ void Player::configureMidi()
 {
     if (!m_PlayerMidiDialog)
     {
-        m_PlayerMidiDialog = std::make_unique<PlayerMidiDialogWindow>(m_tracksContainer.getMtcEnabled(), 
-                                                          std::bind(&TracksContainer::setMtcEnabled, &m_tracksContainer, std::placeholders::_1),
-                                                          [&]() {
-                                                              // clear is not working
-                                                              delete m_PlayerMidiDialog.release();
-                                                          });
+        m_PlayerMidiDialog = std::make_unique<PlayerMidiDialogWindow>(m_tracksContainer.getMtcEnabled(),
+            std::bind(&TracksContainer::setMtcEnabled, &m_tracksContainer, std::placeholders::_1),
+            [&]() {
+                // clear is not working
+                delete m_PlayerMidiDialog.release();
+            });
     }
     m_PlayerMidiDialog->addToDesktop();
     m_PlayerMidiDialog->toFront(true);
@@ -400,14 +414,16 @@ void Player::previousEntry()
     m_pluginLoader.previousEntrySelected(getName().toRawUTF8());
 }
 
-void Player::playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index) {
+void Player::playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index)
+{
     m_tracksContainer.setTrackConfigs(trackConfigs);
     m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), index);
     if (play)
         this->play();
 }
 
-void Player::gainChangedCallback(const char* track_name, float gain) {
+void Player::gainChangedCallback(const char* track_name, float gain)
+{
     m_pluginLoader.trackVolumeChanged(getName().toRawUTF8(), track_name, gain);
 };
 

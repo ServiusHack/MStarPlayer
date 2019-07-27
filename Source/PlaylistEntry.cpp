@@ -40,7 +40,8 @@ PlaylistEntry PlaylistEntry::createFromXml(const XmlElement& element, const File
     for (int i = 0; i < trackConfigsXml->getNumChildElements(); ++i)
     {
         TrackConfig config;
-        config.file = File(projectDirectory.getChildFile(trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim()));
+        config.file = File(projectDirectory.getChildFile(
+            trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim()));
         entry.trackConfigs.push_back(config);
     }
 

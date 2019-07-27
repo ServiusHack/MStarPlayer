@@ -1,10 +1,13 @@
 #include "PlayerEditDialog.h"
 
-PlayerEditDialogWindow::PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath, const StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback)
+PlayerEditDialogWindow::PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath,
+    const StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback,
+    const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback)
     : DialogWindow(TRANS("Rename player"), Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
 {
-    PlayerEditDialogComponent* component = new PlayerEditDialogComponent(playerName, color, imagePath, stringCallback, colourCallback, closeCallback, imageCallback);
+    PlayerEditDialogComponent* component = new PlayerEditDialogComponent(
+        playerName, color, imagePath, stringCallback, colourCallback, closeCallback, imageCallback);
     setContentOwned(component, true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
@@ -37,7 +40,11 @@ void PlayerEditDialogWindow::focusGained(FocusChangeType /*cause*/)
     static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor.grabKeyboardFocus();
 }
 
-PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, const Colour& color, const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const PlayerEditDialogWindow::CloseCallback& closeCallback, const PlayerEditDialogWindow::ImageChangedCallback& imageCallback)
+PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, const Colour& color,
+    const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback,
+    const PlayerEditDialogWindow::ColourChangedCallback& colourCallback,
+    const PlayerEditDialogWindow::CloseCallback& closeCallback,
+    const PlayerEditDialogWindow::ImageChangedCallback& imageCallback)
     : m_color(color)
     , m_colorCallback(colourCallback)
     , m_stringCallback(stringCallback)
@@ -123,10 +130,7 @@ void PlayerEditDialogComponent::resized()
     }
 
     m_closeButton.setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - rowIndex * (buttonHeight - padding),
-        buttonWidth,
-        buttonHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - rowIndex * (buttonHeight - padding), buttonWidth, buttonHeight);
 }
 
 void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
@@ -135,9 +139,7 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
         m_closeCallback();
     else if (buttonThatWasClicked == m_imageSelectorButton.get())
     {
-        FileChooser myChooser("Please select the image you want to use ...",
-                              m_imageFile,
-                              "*.jpg;*.png");
+        FileChooser myChooser("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
 
         if (!myChooser.browseForFileToOpen())
             return;

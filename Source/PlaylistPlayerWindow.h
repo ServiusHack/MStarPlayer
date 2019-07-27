@@ -12,7 +12,7 @@
 class Player;
 
 /**
-	User interface with an optional playlist and a list of tracks.
+        User interface with an optional playlist and a list of tracks.
 */
 class PlaylistPlayerWindow
     : public Component
@@ -21,13 +21,18 @@ class PlaylistPlayerWindow
 {
 public:
     /** Creates a new PlaylistPlayer.
-    
+
         @param mixer              Mix the audio into this mixer.
 
         @param outputChannels     Number of output channels when the player is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist, const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback, const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback, const InterPlayerCommunication::ConfigureMidiCallback& configureMidiCallback, const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback, PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
+    PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist,
+        const InterPlayerCommunication::ShowEditDialogCallback& showEditDialogCallback,
+        const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback,
+        const InterPlayerCommunication::ConfigureMidiCallback& configureMidiCallback,
+        const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback,
+        PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
 
     void setColor(const Colour& color);
 
@@ -43,13 +48,13 @@ public:
 
     void setResizerBarPosition(int position);
 
-// Component overrides
+    // Component overrides
 public:
     virtual void paint(Graphics&) override;
     virtual void resized() override;
     virtual void mouseDown(const MouseEvent& event) override;
 
-// Button::Listener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button* /*button*/) override;
 

@@ -19,11 +19,12 @@ public:
 
 private:
     std::unique_ptr<MidiOutput> m_midiOutput;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MTCSender)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MTCSender)
 
-// Used only in separate thread!
+    // Used only in separate thread!
 private:
-    enum class Piece {
+    enum class Piece
+    {
         FrameLSB = 0,
         FrameMSB,
         SecondLSB,

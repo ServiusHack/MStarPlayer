@@ -1,5 +1,5 @@
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "MTCSender.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
 #include <math.h>
 
@@ -7,12 +7,9 @@ MTCSender::MTCSender()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-
 }
 
-MTCSender::~MTCSender()
-{
-}
+MTCSender::~MTCSender() {}
 
 void MTCSender::setDevice(int deviceIndex)
 {
@@ -30,7 +27,9 @@ void MTCSender::setDevice(int deviceIndex)
 
     if (!m_midiOutput)
     {
-        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed opening MIDI output device"), TRANS("The selected MIDI output device could not be opened."));
+        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+            TRANS("Failed opening MIDI output device"),
+            TRANS("The selected MIDI output device could not be opened."));
     }
 }
 
@@ -88,9 +87,7 @@ void MTCSender::hiResTimerCallback()
     std::unique_lock<std::mutex> lock_guard(m_mutex);
 
     const int value = getValue(m_piece);
-    const auto message = MidiMessage::quarterFrame(
-        static_cast<int>(m_piece),
-        value);
+    const auto message = MidiMessage::quarterFrame(static_cast<int>(m_piece), value);
     m_midiOutput->sendMessageNow(message);
 
     m_piece = static_cast<Piece>((static_cast<int>(m_piece) + 1) % 8);
@@ -114,13 +111,13 @@ void MTCSender::hiResTimerCallback()
                 }
             }
         }
-
     }
 }
 
 int MTCSender::getValue(Piece piece)
 {
-    switch (piece) {
+    switch (piece)
+    {
     case Piece::FrameLSB:
         return m_frame & 0b1111;
     case Piece::FrameMSB:

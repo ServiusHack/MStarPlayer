@@ -4,10 +4,11 @@
 
 namespace
 {
-    static int baseWidth = 70;
+static int baseWidth = 70;
 }
 
-MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled, bool muteEnabled)
+MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable,
+    bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled, bool muteEnabled)
     : m_label(std::make_unique<Label>("label"))
     , m_soloButton(soloEnabled ? std::make_unique<TextButton>("solo") : nullptr)
     , m_muteButton(muteEnabled ? std::make_unique<TextButton>("mute") : nullptr)
@@ -143,7 +144,8 @@ void MixerFader::resized()
 
     if (m_muteButton)
     {
-        m_muteButton->setBounds(padding + buttonWidth - padding, padding + labelHeight, buttonWidth - padding, buttonHeight);
+        m_muteButton->setBounds(
+            padding + buttonWidth - padding, padding + labelHeight, buttonWidth - padding, buttonHeight);
     }
 
     if (m_panSlider)
@@ -170,9 +172,18 @@ void MixerFader::resized()
         panBounds = getLocalArea(m_label.get(), m_label->getLocalBounds());
     }
 
-    m_levelMeter->setBounds(padding, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
-    m_volumeSlider->setBounds(padding + (baseWidth - 2 * padding) / 3, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
-    m_expandButton->setBounds(padding + 2 * (baseWidth - 2 * padding) / 3, panBounds.getBottomLeft().getY(), (baseWidth - 2 * padding) / 3, getHeight() - panBounds.getBottomLeft().getY() - padding);
+    m_levelMeter->setBounds(padding,
+        panBounds.getBottomLeft().getY(),
+        (baseWidth - 2 * padding) / 3,
+        getHeight() - panBounds.getBottomLeft().getY() - padding);
+    m_volumeSlider->setBounds(padding + (baseWidth - 2 * padding) / 3,
+        panBounds.getBottomLeft().getY(),
+        (baseWidth - 2 * padding) / 3,
+        getHeight() - panBounds.getBottomLeft().getY() - padding);
+    m_expandButton->setBounds(padding + 2 * (baseWidth - 2 * padding) / 3,
+        panBounds.getBottomLeft().getY(),
+        (baseWidth - 2 * padding) / 3,
+        getHeight() - panBounds.getBottomLeft().getY() - padding);
 
     for (size_t i = 0; i < m_subfaders.size(); ++i)
         m_subfaders[i]->setBounds((i + 1) * baseWidth, 0, baseWidth, getHeight());
@@ -256,7 +267,8 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
     m_expandButton->setVisible(mixSettings.size() > 0);
     for (size_t i = 0; i < mixSettings.size(); ++i)
     {
-        m_subfaders.push_back(std::make_unique<MixerFader>(mixSettings[i], std::vector<MixerControlable*>(), false, []() {}));
+        m_subfaders.push_back(
+            std::make_unique<MixerFader>(mixSettings[i], std::vector<MixerControlable*>(), false, []() {}));
         addAndMakeVisible(m_subfaders.back().get());
     }
 

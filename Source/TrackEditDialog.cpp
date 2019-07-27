@@ -1,9 +1,11 @@
 #include "TrackEditDialog.h"
 
-TrackEditDialogWindow::TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
+TrackEditDialogWindow::TrackEditDialogWindow(String name, float trackGain,
+    TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
     : DialogWindow(TRANS("Edit track"), Colours::lightgrey, true, true)
 {
-    TrackEditDialogComponent* component = new TrackEditDialogComponent(name, trackGain, settingsChangedCallback, volumeChangedCallback, this);
+    TrackEditDialogComponent* component
+        = new TrackEditDialogComponent(name, trackGain, settingsChangedCallback, volumeChangedCallback, this);
     setContentOwned(component, true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
@@ -36,7 +38,9 @@ void TrackEditDialogWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
     closeButtonPressed();
 }
 
-TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent)
+TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain,
+    TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback,
+    TrackEditDialogWindow* parent)
     : m_settingsChangedCallback(settingsChangedCallback)
     , m_volumeChangedCallback(volumeChangedCallback)
     , m_nameLabel("name label", TRANS("Name of the track:"))
@@ -85,14 +89,15 @@ void TrackEditDialogComponent::resized()
 
     m_volumeSlider.setBounds(padding, padding, volumeSliderWidth, getHeight() - rowHeight - 3 * padding);
 
-    m_nameLabel.setBounds(padding + volumeSliderWidth + padding, padding, getWidth() - 3 * padding - volumeSliderWidth, rowHeight);
-    m_nameEditor.setBounds(padding + volumeSliderWidth + padding, padding + rowHeight, getWidth() - 3 * padding - volumeSliderWidth, rowHeight);
+    m_nameLabel.setBounds(
+        padding + volumeSliderWidth + padding, padding, getWidth() - 3 * padding - volumeSliderWidth, rowHeight);
+    m_nameEditor.setBounds(padding + volumeSliderWidth + padding,
+        padding + rowHeight,
+        getWidth() - 3 * padding - volumeSliderWidth,
+        rowHeight);
 
     m_closeButton.setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - 2 * (rowHeight - padding),
-        buttonWidth,
-        rowHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - 2 * (rowHeight - padding), buttonWidth, rowHeight);
 }
 
 void TrackEditDialogComponent::sliderValueChanged(Slider* /*slider*/)

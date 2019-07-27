@@ -10,7 +10,7 @@
 #include "PlaylistEntry.h"
 
 /**
-	Actual logic for the playback of a track.
+        Actual logic for the playback of a track.
 */
 class Track
     : public MixerControlable
@@ -27,7 +27,12 @@ public:
     typedef std::function<void()> TrackConfigChangedCallback;
     typedef std::function<void(const char*, float)> GainChangedCallback;
 
-    Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo, int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback, float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback, PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback, GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+    Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
+        int outputChannels, DurationChangedCallback callback, bool soloMute,
+        DurationChangedCallback soloChangedCallback, float gain, bool mute,
+        ChannelCountChangedCallback channelCountChangedCallback,
+        PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback,
+        GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
     ~Track();
 
     void play();
@@ -64,7 +69,7 @@ public:
 
     bool isPlaying();
 
-// Solo mute: Track should be muted because other track(s) are in solo mode.
+    // Solo mute: Track should be muted because other track(s) are in solo mode.
 public:
     virtual void setSoloMute(bool mute) override;
     virtual bool getSoloMute() const override;
@@ -72,28 +77,28 @@ public:
 private:
     bool m_soloMute;
 
-// player gain
+    // player gain
 public:
     void setPlayerGain(float gain);
 
 private:
     float m_playerGain;
 
-// player mute
+    // player mute
 public:
     void setPlayerSolo(bool solo);
 
 private:
     bool m_playerSolo;
 
-// player mute
+    // player mute
 public:
     void setPlayerMute(bool mute);
 
 private:
     bool m_playerMute;
 
-// MixerControlable gain
+    // MixerControlable gain
 public:
     virtual void setGain(float gain) override;
     virtual float getGain() const override;
@@ -101,7 +106,7 @@ public:
 private:
     float m_trackGain;
 
-// MixerControlable mute
+    // MixerControlable mute
 public:
     virtual void setMute(bool mute) override;
     virtual bool getMute() const override;
@@ -109,7 +114,7 @@ public:
 private:
     bool m_mute;
 
-// MixerControlable solo
+    // MixerControlable solo
 public:
     virtual void setSolo(bool solo) override;
     virtual bool getSolo() const override;
@@ -117,13 +122,16 @@ public:
 private:
     bool m_solo;
 
-// MixerControlable pan
+    // MixerControlable pan
 public:
     virtual void setPan(float) override{};
-    virtual float getPan() const override { return 0; };
+    virtual float getPan() const override
+    {
+        return 0;
+    };
     virtual float getVolume() const override;
 
-// MixerControlable name
+    // MixerControlable name
 public:
     void setName(String name);
     String getName() const override;
@@ -131,14 +139,14 @@ public:
 private:
     String m_name;
 
-// AudioFormat
+    // AudioFormat
 public:
     AudioFormatManager& getAudioFormatManager();
 
 private:
     AudioFormatManager m_formatManager;
 
-// stereo
+    // stereo
 public:
     bool isStereo() const;
     void setStereo(bool stereo);
@@ -146,7 +154,7 @@ public:
 private:
     bool m_stereo;
 
-// track ID
+    // track ID
 public:
     int getTrackIndex() const;
     void setTrackIndex(int index);
@@ -154,7 +162,7 @@ public:
 private:
     int m_trackIndex;
 
-// Audio Thumbnail
+    // Audio Thumbnail
 public:
     AudioThumbnail& getAudioThumbnail();
 
@@ -162,7 +170,7 @@ private:
     AudioThumbnailCache& m_audioThumbnailCache;
     AudioThumbnail m_audioThumbnail;
 
-// SoloBusListener
+    // SoloBusListener
 public:
     void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 

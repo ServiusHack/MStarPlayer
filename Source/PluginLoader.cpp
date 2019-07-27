@@ -4,7 +4,6 @@
 
 #include "Player.h"
 
-
 static MyMultiDocumentPanel* component;
 
 Player* getPlayer(const char* playerName)
@@ -23,9 +22,9 @@ Player* getPlayer(const char* playerName)
 MixerControlable* getTrack(const Player* player, const char* trackName)
 {
     auto subMixerControlables = player->getSubMixerControlables();
-    auto hit = std::find_if(subMixerControlables.begin(), subMixerControlables.end(), [trackName](const MixerControlable* controlable) {
-        return controlable->getName() == trackName;
-    });
+    auto hit = std::find_if(subMixerControlables.begin(),
+        subMixerControlables.end(),
+        [trackName](const MixerControlable* controlable) { return controlable->getName() == trackName; });
 
     if (hit == subMixerControlables.end())
         return nullptr;
@@ -79,7 +78,7 @@ void previousEntry(const char* playerName)
 void listTracks(const char* playerName, PluginInterface::ListTracksCallbackFunction callback, void* userData)
 {
     const Player* player = getPlayer(playerName);
-    
+
     std::vector<MixerControlable*> subMixerControlables = player->getSubMixerControlables();
     for (const MixerControlable* const subMixerControlable : subMixerControlables)
     {
@@ -105,10 +104,12 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 {
     component = pComponent;
 
-    DirectoryIterator directoryIterator(File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("plugins"), false, "*.dll");
+    DirectoryIterator directoryIterator(
+        File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("plugins"), false, "*.dll");
     std::vector<File> dlls;
 
-    struct LoadFailure {
+    struct LoadFailure
+    {
         String file;
         String error;
     };
@@ -126,11 +127,13 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             continue;
         }
 
-        auto versionFunction = reinterpret_cast<PluginInterface::MStarPluginVersion>(plugin.dynamicLibrary->getFunction("mstarPluginVersion"));
+        auto versionFunction = reinterpret_cast<PluginInterface::MStarPluginVersion>(
+            plugin.dynamicLibrary->getFunction("mstarPluginVersion"));
 
         if (!versionFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Function 'mstarPluginVersion' not found. Is this a M*Player plugin?" });
+            failedPlugins.add({directoryIterator.getFile().getFileName(),
+                "Function 'mstarPluginVersion' not found. Is this a M*Player plugin?"});
             continue;
         }
 
@@ -138,92 +141,105 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             int version = versionFunction();
             if (version != 1)
             {
-                failedPlugins.add({ directoryIterator.getFile().getFileName(), "Plugin has version " + String(version) + " but M*Player requires version 1." });
+                failedPlugins.add({directoryIterator.getFile().getFileName(),
+                    "Plugin has version " + String(version) + " but M*Player requires version 1."});
                 continue;
             }
         }
 
-        plugin.initFunction = reinterpret_cast<PluginInterface::InitFunction>(plugin.dynamicLibrary->getFunction("init"));
+        plugin.initFunction
+            = reinterpret_cast<PluginInterface::InitFunction>(plugin.dynamicLibrary->getFunction("init"));
         if (!plugin.initFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'init'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'init'."});
             continue;
         }
 
-        plugin.playingStateChangedFunction = reinterpret_cast<PluginInterface::PlayingStateChangedFunction>(plugin.dynamicLibrary->getFunction("playingStateChanged"));
+        plugin.playingStateChangedFunction = reinterpret_cast<PluginInterface::PlayingStateChangedFunction>(
+            plugin.dynamicLibrary->getFunction("playingStateChanged"));
         if (!plugin.playingStateChangedFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'playingStateChanged'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'playingStateChanged'."});
             continue;
         }
 
-        plugin.nextEntrySelectedFunction = reinterpret_cast<PluginInterface::NextEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("nextEntrySelected"));
+        plugin.nextEntrySelectedFunction = reinterpret_cast<PluginInterface::NextEntrySelectedFunction>(
+            plugin.dynamicLibrary->getFunction("nextEntrySelected"));
         if (!plugin.nextEntrySelectedFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'nextEntrySelected'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'nextEntrySelected'."});
             continue;
         }
 
-        plugin.previousEntrySelectedFunction = reinterpret_cast<PluginInterface::PreviousEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("previousEntrySelected"));
+        plugin.previousEntrySelectedFunction = reinterpret_cast<PluginInterface::PreviousEntrySelectedFunction>(
+            plugin.dynamicLibrary->getFunction("previousEntrySelected"));
         if (!plugin.previousEntrySelectedFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'previousEntrySelected'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'previousEntrySelected'."});
             continue;
         }
 
-        plugin.playlistEntrySelectedFunction = reinterpret_cast<PluginInterface::PlaylistEntrySelectedFunction>(plugin.dynamicLibrary->getFunction("playlistEntrySelected"));
+        plugin.playlistEntrySelectedFunction = reinterpret_cast<PluginInterface::PlaylistEntrySelectedFunction>(
+            plugin.dynamicLibrary->getFunction("playlistEntrySelected"));
         if (!plugin.playlistEntrySelectedFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'playlistEntrySelected'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'playlistEntrySelected'."});
             continue;
         }
 
-        plugin.trackVolumeChangedFunction = reinterpret_cast<PluginInterface::TrackVolumeChangedFunction>(plugin.dynamicLibrary->getFunction("trackVolumeChanged"));
+        plugin.trackVolumeChangedFunction = reinterpret_cast<PluginInterface::TrackVolumeChangedFunction>(
+            plugin.dynamicLibrary->getFunction("trackVolumeChanged"));
         if (!plugin.trackVolumeChangedFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'trackVolumeChanged'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'trackVolumeChanged'."});
             continue;
         }
 
-        plugin.positionChangedFunction = reinterpret_cast<PluginInterface::PositionChangedFunction>(plugin.dynamicLibrary->getFunction("positionChanged"));
+        plugin.positionChangedFunction = reinterpret_cast<PluginInterface::PositionChangedFunction>(
+            plugin.dynamicLibrary->getFunction("positionChanged"));
         if (!plugin.positionChangedFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'positionChanged'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'positionChanged'."});
             continue;
         }
 
-        plugin.configureFunction = reinterpret_cast<PluginInterface::ConfigureFunction>(plugin.dynamicLibrary->getFunction("configure"));
+        plugin.configureFunction
+            = reinterpret_cast<PluginInterface::ConfigureFunction>(plugin.dynamicLibrary->getFunction("configure"));
         if (!plugin.configureFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'configure'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'configure'."});
             continue;
         }
 
-        plugin.shutdownFunction = reinterpret_cast<PluginInterface::ShutdownFunction>(plugin.dynamicLibrary->getFunction("shutdown"));
+        plugin.shutdownFunction
+            = reinterpret_cast<PluginInterface::ShutdownFunction>(plugin.dynamicLibrary->getFunction("shutdown"));
         if (!plugin.shutdownFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'shutdown'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'shutdown'."});
             continue;
         }
 
-        plugin.loadConfigurationFunction = reinterpret_cast<PluginInterface::LoadConfigurationFunction>(plugin.dynamicLibrary->getFunction("loadConfiguration"));
+        plugin.loadConfigurationFunction = reinterpret_cast<PluginInterface::LoadConfigurationFunction>(
+            plugin.dynamicLibrary->getFunction("loadConfiguration"));
         if (!plugin.loadConfigurationFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'loadConfiguration'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'loadConfiguration'."});
             continue;
         }
 
-        plugin.getConfigurationFunction = reinterpret_cast<PluginInterface::GetConfigurationFunction>(plugin.dynamicLibrary->getFunction("getConfiguration"));
+        plugin.getConfigurationFunction = reinterpret_cast<PluginInterface::GetConfigurationFunction>(
+            plugin.dynamicLibrary->getFunction("getConfiguration"));
         if (!plugin.getConfigurationFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'getConfiguration'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'getConfiguration'."});
             continue;
         }
 
-        plugin.freeConfigurationTextFunction = reinterpret_cast<PluginInterface::FreeConfigurationTextFunction>(plugin.dynamicLibrary->getFunction("freeConfigurationText"));
+        plugin.freeConfigurationTextFunction = reinterpret_cast<PluginInterface::FreeConfigurationTextFunction>(
+            plugin.dynamicLibrary->getFunction("freeConfigurationText"));
         if (!plugin.freeConfigurationTextFunction)
         {
-            failedPlugins.add({ directoryIterator.getFile().getFileName(), "Missing function 'freeConfigurationText'."});
+            failedPlugins.add({directoryIterator.getFile().getFileName(), "Missing function 'freeConfigurationText'."});
             continue;
         }
 
@@ -348,9 +364,8 @@ void PluginLoader::loadConfigurations(XmlElement* pluginsElement)
         XmlElement* pluginElement = pluginsElement->getChildElement(i);
         String configurationText = pluginElement->getAllSubText();
         std::string pluginName = pluginElement->getStringAttribute("name").toStdString();
-        auto it = std::find_if(plugins.begin(), plugins.end(), [pluginName](const Plugin& plugin) {
-            return plugin.name == pluginName;
-        });
+        auto it = std::find_if(
+            plugins.begin(), plugins.end(), [pluginName](const Plugin& plugin) { return plugin.name == pluginName; });
         if (it != plugins.end())
         {
             it->loadConfigurationFunction(configurationText.toRawUTF8());
@@ -358,9 +373,7 @@ void PluginLoader::loadConfigurations(XmlElement* pluginsElement)
     }
 }
 
-PluginLoader::Plugin::Plugin()
-{
-}
+PluginLoader::Plugin::Plugin() {}
 
 PluginLoader::Plugin::Plugin(Plugin&& other)
     : name(std::move(other.name))

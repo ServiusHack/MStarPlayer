@@ -12,7 +12,7 @@
 class Player;
 
 /**
-	User interface with a single big button to control the playback.
+        User interface with a single big button to control the playback.
 */
 class JinglePlayerWindow
     : public Component
@@ -22,35 +22,40 @@ class JinglePlayerWindow
 {
 public:
     /** Creates a new JinglePlayer.
-    
+
         @param mixer              Mix the jingle audio into this mixer.
 
         @param outputChannels     Number of output channels when the JinglePlayer is created.
                                   When this changes later the setOutputChannels method is called.
     */
-    JinglePlayerWindow(Player& player, TracksContainer* tracksContainer, InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback, InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback, InterPlayerCommunication::ConfigureMidiCallback configureMidiCallback, InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback, InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
+    JinglePlayerWindow(Player& player, TracksContainer* tracksContainer,
+        InterPlayerCommunication::ShowEditDialogCallback showEditDialogCallback,
+        InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback,
+        InterPlayerCommunication::ConfigureMidiCallback configureMidiCallback,
+        InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback,
+        InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
 
     void setColor(const Colour& color);
 
     void setUserImage(const File& file);
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
     virtual void paint(Graphics& g) override;
     /** Show the configuration menu. */
     virtual void mouseDown(const MouseEvent& event) override;
 
-// Button::Listener
+    // Button::Listener
 public:
     /** Play or stop the audio playback. */
     virtual void buttonClicked(Button* /*button*/) override;
 
-// ChangeListener
+    // ChangeListener
 public:
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
-// FileDragAndDropTarget
+    // FileDragAndDropTarget
 public:
     bool isInterestedInFileDrag(const StringArray& files) override;
     void filesDropped(const StringArray& files, int x, int y) override;

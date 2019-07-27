@@ -4,11 +4,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+// clang-format off
 #include <Windows.h>
 #include <Dbghelp.h>
+// clang-format on
 
 /**
-	Show a dialog and write a crash dump when the application crashes.
+        Show a dialog and write a crash dump when the application crashes.
 */
 class CrashDumper : public ThreadWithProgressWindow
 {
@@ -17,7 +19,7 @@ public:
 
     static void init();
 
-// ThreadWithProgressWindow
+    // ThreadWithProgressWindow
 public:
     virtual void run() override;
 

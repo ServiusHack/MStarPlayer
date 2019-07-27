@@ -5,12 +5,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 /**
-	Audio source which generates test tones on selected output channels.
+        Audio source which generates test tones on selected output channels.
 */
 class TestToneGeneratorAudioSource : public AudioSource
 {
 public:
-
     enum class Mode
     {
         Sine1kHz,
@@ -27,7 +26,7 @@ public:
     void setVolume(double volume);
     double getVolume() const;
 
-// AudioSource
+    // AudioSource
 public:
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     virtual void releaseResources() override;
@@ -37,7 +36,7 @@ private:
     CriticalSection m_lock;
     int m_samplesPerBlockExpected;
     double m_sampleRate;
-    double currentAngle{ 0.0 };
+    double currentAngle{0.0};
     double angleDelta;
     Array<bool> channels;
     std::vector<float> prepared;

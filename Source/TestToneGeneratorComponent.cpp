@@ -22,64 +22,62 @@
 
 #include "TestToneGeneratorComponent.h"
 
-
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
 
 //==============================================================================
-TestToneGeneratorComponent::TestToneGeneratorComponent (MixerComponent* mixerComponent, OutputChannelNames* outputChannelNames)
-    : m_mixerComponent(mixerComponent),
-      m_outputChannelNames(outputChannelNames)
+TestToneGeneratorComponent::TestToneGeneratorComponent(
+    MixerComponent* mixerComponent, OutputChannelNames* outputChannelNames)
+    : m_mixerComponent(mixerComponent)
+    , m_outputChannelNames(outputChannelNames)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     m_outputChannelNames->addListener(this);
     m_outputChannelNames->addChangeListener(this);
     //[/Constructor_pre]
 
-    addAndMakeVisible (comboBox = new ComboBox ("new combo box"));
-    comboBox->setEditableText (false);
-    comboBox->setJustificationType (Justification::centredLeft);
-    comboBox->setTextWhenNothingSelected (String());
-    comboBox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    comboBox->addItem (TRANS("1kHz"), 1);
-    comboBox->addItem (TRANS("White"), 2);
-    comboBox->addListener (this);
+    addAndMakeVisible(comboBox = new ComboBox("new combo box"));
+    comboBox->setEditableText(false);
+    comboBox->setJustificationType(Justification::centredLeft);
+    comboBox->setTextWhenNothingSelected(String());
+    comboBox->setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
+    comboBox->addItem(TRANS("1kHz"), 1);
+    comboBox->addItem(TRANS("White"), 2);
+    comboBox->addListener(this);
 
-    addAndMakeVisible (toggleButton = new TextButton ("new button"));
-    toggleButton->setButtonText (TRANS("play"));
-    toggleButton->addListener (this);
+    addAndMakeVisible(toggleButton = new TextButton("new button"));
+    toggleButton->setButtonText(TRANS("play"));
+    toggleButton->addListener(this);
 
-    addAndMakeVisible (component = new ListBox());
-    component->setName ("new component");
+    addAndMakeVisible(component = new ListBox());
+    component->setName("new component");
 
-    addAndMakeVisible (label = new Label ("new label",
-                                          TRANS("Tone:")));
-    label->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    label->setJustificationType (Justification::centredLeft);
-    label->setEditable (false, false, false);
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible(label = new Label("new label", TRANS("Tone:")));
+    label->setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
+    label->setJustificationType(Justification::centredLeft);
+    label->setEditable(false, false, false);
+    label->setColour(TextEditor::textColourId, Colours::black);
+    label->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
 
-    addAndMakeVisible (slider = new VolumeSlider());
-    slider->setName ("new slider");
+    addAndMakeVisible(slider = new VolumeSlider());
+    slider->setName("new slider");
 
-    addAndMakeVisible (textButton = new TextButton ("new button"));
-    textButton->setButtonText (TRANS("select all"));
-    textButton->setConnectedEdges (Button::ConnectedOnRight);
-    textButton->addListener (this);
+    addAndMakeVisible(textButton = new TextButton("new button"));
+    textButton->setButtonText(TRANS("select all"));
+    textButton->setConnectedEdges(Button::ConnectedOnRight);
+    textButton->addListener(this);
 
-    addAndMakeVisible (textButton2 = new TextButton ("new button"));
-    textButton2->setButtonText (TRANS("select none"));
-    textButton2->setConnectedEdges (Button::ConnectedOnLeft);
-    textButton2->addListener (this);
+    addAndMakeVisible(textButton2 = new TextButton("new button"));
+    textButton2->setButtonText(TRANS("select none"));
+    textButton2->setConnectedEdges(Button::ConnectedOnLeft);
+    textButton2->addListener(this);
 
-    addAndMakeVisible (dbLabel = new Label ("new label",
-                                            TRANS("0 dB")));
-    dbLabel->setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-    dbLabel->setJustificationType (Justification::centredLeft);
-    dbLabel->setEditable (false, false, false);
-    dbLabel->setColour (TextEditor::textColourId, Colours::black);
-    dbLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible(dbLabel = new Label("new label", TRANS("0 dB")));
+    dbLabel->setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
+    dbLabel->setJustificationType(Justification::centredLeft);
+    dbLabel->setEditable(false, false, false);
+    dbLabel->setColour(TextEditor::textColourId, Colours::black);
+    dbLabel->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
 
     //[UserPreSize]
     toggleButton->setEnabled(false);
@@ -87,8 +85,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent (MixerComponent* mixerCom
     toggleButton->setClickingTogglesState(true);
     //[/UserPreSize]
 
-    setSize (296, 400);
-
+    setSize(296, 400);
 
     //[Constructor] You can add your own custom stuff here..
     component->setMultipleSelectionEnabled(true);
@@ -129,18 +126,17 @@ TestToneGeneratorComponent::~TestToneGeneratorComponent()
     textButton2 = nullptr;
     dbLabel = nullptr;
 
-
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
 }
 
 //==============================================================================
-void TestToneGeneratorComponent::paint (Graphics& g)
+void TestToneGeneratorComponent::paint(Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colours::white);
+    g.fillAll(Colours::white);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -151,19 +147,19 @@ void TestToneGeneratorComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    comboBox->setBounds (64, 16, 112, 24);
-    toggleButton->setBounds (200, 16, 86, 24);
-    component->setBounds (56, 56, getWidth() - 64, getHeight() - 144);
-    label->setBounds (8, 16, 64, 24);
-    slider->setBounds (8, 56, 40, 296);
-    textButton->setBounds (56, 320, 112, 24);
-    textButton2->setBounds (168, 320, 118, 24);
-    dbLabel->setBounds (8, 360, 280, 24);
+    comboBox->setBounds(64, 16, 112, 24);
+    toggleButton->setBounds(200, 16, 86, 24);
+    component->setBounds(56, 56, getWidth() - 64, getHeight() - 144);
+    label->setBounds(8, 16, 64, 24);
+    slider->setBounds(8, 56, 40, 296);
+    textButton->setBounds(56, 320, 112, 24);
+    textButton2->setBounds(168, 320, 118, 24);
+    dbLabel->setBounds(8, 360, 280, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
 
-void TestToneGeneratorComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+void TestToneGeneratorComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
@@ -185,7 +181,7 @@ void TestToneGeneratorComponent::comboBoxChanged (ComboBox* comboBoxThatHasChang
     //[/UsercomboBoxChanged_Post]
 }
 
-void TestToneGeneratorComponent::buttonClicked (Button* buttonThatWasClicked)
+void TestToneGeneratorComponent::buttonClicked(Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
@@ -222,8 +218,6 @@ void TestToneGeneratorComponent::buttonClicked (Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
-
-
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void TestToneGeneratorComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
@@ -238,10 +232,7 @@ void TestToneGeneratorComponent::changeListenerCallback(ChangeBroadcaster* /*sou
     component->updateContent();
 }
 
-void TestToneGeneratorComponent::outputChannelNamesReset()
-{
-
-}
+void TestToneGeneratorComponent::outputChannelNamesReset() {}
 
 void TestToneGeneratorComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
 {
@@ -249,11 +240,9 @@ void TestToneGeneratorComponent::outputChannelNameChanged(int activeChannelIndex
     component->updateContent();
 }
 
-void TestToneGeneratorComponent::outputChannelPairingModeChanged(int /*activeChannelIndex*/, PairingMode /*mode*/)
-{
-}
+void TestToneGeneratorComponent::outputChannelPairingModeChanged(int /*activeChannelIndex*/, PairingMode /*mode*/) {}
 
-void TestToneGeneratorComponent::sliderValueChanged (Slider* sliderThatWasMoved)
+void TestToneGeneratorComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
@@ -262,7 +251,8 @@ void TestToneGeneratorComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_slider] -- add your slider handling code here..
         m_audioSource.setVolume(sliderThatWasMoved->getValue());
-        dbLabel->setText(Decibels::toString(Decibels::gainToDecibels(sliderThatWasMoved->getValue())), juce::sendNotification);
+        dbLabel->setText(
+            Decibels::toString(Decibels::gainToDecibels(sliderThatWasMoved->getValue())), juce::sendNotification);
         //[/UserSliderCode_slider]
     }
 
@@ -270,7 +260,6 @@ void TestToneGeneratorComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 //[/MiscUserCode]
-
 
 //==============================================================================
 #if 0
@@ -322,7 +311,6 @@ BEGIN_JUCER_METADATA
 END_JUCER_METADATA
 */
 #endif
-
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]

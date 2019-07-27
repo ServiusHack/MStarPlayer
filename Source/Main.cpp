@@ -7,9 +7,18 @@ class MStarPlayerApplication : public JUCEApplication
 {
 public:
     MStarPlayerApplication() {}
-    const String getApplicationName()       { return ProjectInfo::projectName; }
-    const String getApplicationVersion()    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed()       { return true; }
+    const String getApplicationName()
+    {
+        return ProjectInfo::projectName;
+    }
+    const String getApplicationVersion()
+    {
+        return ProjectInfo::versionString;
+    }
+    bool moreThanOneInstanceAllowed()
+    {
+        return true;
+    }
     void initialise(const String& /*commandLine*/)
     {
 #ifdef _WIN32
@@ -50,9 +59,7 @@ public:
         quit();
     }
 
-    void anotherInstanceStarted(const String& /*commandLine*/)
-    {
-    }
+    void anotherInstanceStarted(const String& /*commandLine*/) {}
 
     /*
         This class implements the desktop window that contains an instance of
@@ -65,9 +72,7 @@ public:
         ApplicationCommandManager commandManager;
 
         MainWindow(ApplicationProperties& properties)
-            : DocumentWindow("M*Player",
-                             Colours::lightgrey,
-                             DocumentWindow::allButtons)
+            : DocumentWindow("M*Player", Colours::lightgrey, DocumentWindow::allButtons)
         {
             MainContentComponent* main = new MainContentComponent(properties, &commandManager);
 

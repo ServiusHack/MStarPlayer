@@ -2,8 +2,7 @@
 
 #include "AudioConfiguration.h"
 
-class ChannelNameTextEditor
-    : public TextEditor
+class ChannelNameTextEditor : public TextEditor
 {
 public:
     ChannelNameTextEditor()
@@ -26,8 +25,7 @@ private:
     int m_row;
 };
 
-class ChannelNameComboBox
-    : public ComboBox
+class ChannelNameComboBox : public ComboBox
 {
 public:
     ChannelNameComboBox()
@@ -49,10 +47,12 @@ private:
     int m_row;
 };
 
-AudioConfigurationWindow::AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
+AudioConfigurationWindow::AudioConfigurationWindow(
+    AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
     : DialogWindow(TRANS("Configure Audio"), Colours::lightgrey, true, true)
 {
-    setContentOwned(new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames, soloBusSettings), true);
+    setContentOwned(
+        new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames, soloBusSettings), true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
     setResizable(true, true);
@@ -78,27 +78,30 @@ int ChannelNames::getNumRows()
     return m_outputChannelName.getNumberOfChannels();
 }
 
-void ChannelNames::paintRowBackground(Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
+void ChannelNames::paintRowBackground(
+    Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
 }
 
-void ChannelNames::paintCell(Graphics& g,
-                             int rowNumber,
-                             int columnId,
-                             int width,
-                             int height,
-                             bool /*rowIsSelected*/)
+void ChannelNames::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
     g.setColour(Colours::black);
 
     if (columnId == 1)
-        g.drawText(m_outputChannelName.getDeviceOutputChannelName(rowNumber), 2, 0, width - 4, height, Justification::centredLeft, true);
+        g.drawText(m_outputChannelName.getDeviceOutputChannelName(rowNumber),
+            2,
+            0,
+            width - 4,
+            height,
+            Justification::centredLeft,
+            true);
 
     g.setColour(Colours::black.withAlpha(0.2f));
     g.fillRect(width - 1, 0, 1, height);
 }
 
-Component* ChannelNames::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+Component* ChannelNames::refreshComponentForCell(
+    int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
     if (columnId == 3)
     {
@@ -112,16 +115,16 @@ Component* ChannelNames::refreshComponentForCell(int rowNumber, int columnId, bo
 
         editor->clear();
         editor->addItem("mono", 1);
-        if (rowNumber < m_outputChannelName.getNumberOfChannels() - 1 
+        if (rowNumber < m_outputChannelName.getNumberOfChannels() - 1
             && m_outputChannelName.GetChannelPairing(rowNumber) != PairingMode::Right
-            && m_outputChannelName.GetChannelPairing(rowNumber +1) != PairingMode::Left)
+            && m_outputChannelName.GetChannelPairing(rowNumber + 1) != PairingMode::Left)
             editor->addItem("left of below", 2);
-        if (rowNumber > 0 
-            && m_outputChannelName.GetChannelPairing(rowNumber) != PairingMode::Left
+        if (rowNumber > 0 && m_outputChannelName.GetChannelPairing(rowNumber) != PairingMode::Left
             && m_outputChannelName.GetChannelPairing(rowNumber - 1) != PairingMode::Right)
             editor->addItem("right of above", 3);
 
-        editor->setSelectedId(static_cast<int>(m_outputChannelName.GetChannelPairing(rowNumber)) + 1, juce::dontSendNotification);
+        editor->setSelectedId(
+            static_cast<int>(m_outputChannelName.GetChannelPairing(rowNumber)) + 1, juce::dontSendNotification);
         editor->setRow(rowNumber);
 
         return editor;
@@ -157,12 +160,14 @@ void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
 void ChannelNames::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 {
     const ChannelNameComboBox* channelNameComboBox = static_cast<ChannelNameComboBox*>(comboBoxThatHasChanged);
-    const bool changed = m_outputChannelName.SetChannelPairing(channelNameComboBox->getRow(), static_cast<PairingMode>(channelNameComboBox->getSelectedId() - 1));
+    const bool changed = m_outputChannelName.SetChannelPairing(
+        channelNameComboBox->getRow(), static_cast<PairingMode>(channelNameComboBox->getSelectedId() - 1));
     if (changed)
         updateCallback();
 }
 
-AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName, SoloBusSettings& soloBusSettings)
+AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent,
+    AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName, SoloBusSettings& soloBusSettings)
     : m_tabbedComponent(std::make_unique<TabbedComponent>(TabbedButtonBar::TabsAtTop))
     , m_closeButton(std::make_unique<TextButton>("close"))
     , m_channelNames(std::make_unique<ChannelNames>(outputChannelName))
@@ -173,7 +178,8 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 
     addAndMakeVisible(m_tabbedComponent.get());
 
-    AudioDeviceSelectorComponent* selector = new AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
+    AudioDeviceSelectorComponent* selector
+        = new AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
     m_tabbedComponent->addTab(TRANS("Audio Device"), Colour(0xffffffff), selector, true);
 
     m_tableListBox = std::make_unique<TableListBox>();
@@ -213,10 +219,7 @@ void AudioConfigurationComponent::resized()
 
     m_tabbedComponent->setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
     m_closeButton->setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - buttonHeight - padding,
-        buttonWidth,
-        buttonHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }
 
 void AudioConfigurationComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)

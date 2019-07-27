@@ -4,12 +4,12 @@
 
 #include <functional>
 
+#include "MTCSender.h"
 #include "MixerComponent.h"
 #include "Track.h"
-#include "MTCSender.h"
 
 /**
-	Container to manage all tracks.
+        Container to manage all tracks.
 */
 class TracksContainer
 {
@@ -19,10 +19,13 @@ public:
     typedef std::function<void()> TracksClearedCallback;
     typedef std::function<void(int)> TrackRemovedCallback;
 
-    TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender);
+    TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels,
+        const Track::TrackConfigChangedCallback& trackConfigChangedCallback,
+        const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache,
+        TimeSliceThread& thread, MTCSender& mtcSender);
     ~TracksContainer();
 
-// Playback
+    // Playback
 public:
     void play();
     void pause();
@@ -35,15 +38,16 @@ private:
     MixerAudioSource m_tracksMixer;
     SoloBusSettings& m_soloBusSettings;
 
-// MTC
+    // MTC
 public:
     void setMtcEnabled(bool enabled);
     bool getMtcEnabled() const;
+
 private:
     bool m_mtcEnabled{false};
     MTCSender& m_mtcSender;
 
-// Tracks
+    // Tracks
 public:
     size_t size() const;
     Track& operator[](size_t index) const;
@@ -58,12 +62,12 @@ private:
     std::vector<std::unique_ptr<Track>> m_tracks;
     AudioThumbnailCache& m_audioThumbnailCache;
 
-// Track configs
+    // Track configs
 public:
     void setTrackConfigs(const std::vector<TrackConfig>& trackConfigs);
     std::vector<TrackConfig> getTrackConfigs() const;
 
-// Configuration
+    // Configuration
 public:
     void setOutputChannels(int outputChannels);
     void setGain(float gain);
@@ -78,7 +82,7 @@ private:
     float m_gain;
     bool m_mute;
 
-// Callbacks
+    // Callbacks
 public:
     void setTrackAddedCallback(TrackAddedCallback callback);
     void setTracksClearedCallback(TracksClearedCallback callback);

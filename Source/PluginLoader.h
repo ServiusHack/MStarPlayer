@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -9,7 +9,8 @@
 
 #include "PluginInterface.h"
 
-class PluginLoader {
+class PluginLoader
+{
 
 public:
     PluginLoader(MyMultiDocumentPanel* content);
@@ -38,8 +39,8 @@ public:
     void loadConfigurations(XmlElement* element);
 
 private:
-
-    struct Plugin {
+    struct Plugin
+    {
         Plugin();
         Plugin(Plugin&& other);
         String name;
@@ -59,5 +60,4 @@ private:
     };
 
     std::vector<Plugin> plugins;
-
 };

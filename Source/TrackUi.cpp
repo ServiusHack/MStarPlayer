@@ -2,7 +2,9 @@
 
 #include <sstream>
 
-TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback, FileLoadedCallback fileLoadedCallback)
+TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback,
+    RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback,
+    FileLoadedCallback fileLoadedCallback)
     : Component("TrackUi")
     , m_track(track)
     , m_longestDuration(0)
@@ -29,31 +31,57 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
     m_volumeSlider.addListener(this);
 
     Image editImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
-    m_editButton.setImages(true, true, true,
-                            editImage, 0.7f, Colours::transparentBlack,
-                            editImage, 1.0f, Colours::transparentBlack,
-                            editImage, 1.0f, Colours::transparentBlack,
-                            0.0f);
+    m_editButton.setImages(true,
+        true,
+        true,
+        editImage,
+        0.7f,
+        Colours::transparentBlack,
+        editImage,
+        1.0f,
+        Colours::transparentBlack,
+        editImage,
+        1.0f,
+        Colours::transparentBlack,
+        0.0f);
     addAndMakeVisible(m_editButton);
     m_editButton.addListener(this);
 
     Image soloImage = ImageFileFormat::loadFrom(BinaryData::audioheadphones_png, BinaryData::audioheadphones_pngSize);
     m_soloButton.setClickingTogglesState(true);
     m_soloButton.addListener(this);
-    m_soloButton.setImages(true, true, true,
-                            soloImage, 0.7f, Colours::transparentBlack,
-                            soloImage, 1.0f, Colours::transparentBlack,
-                            soloImage, 1.0f, Colours::red.withAlpha(0.5f),
-                            0.0f);
+    m_soloButton.setImages(true,
+        true,
+        true,
+        soloImage,
+        0.7f,
+        Colours::transparentBlack,
+        soloImage,
+        1.0f,
+        Colours::transparentBlack,
+        soloImage,
+        1.0f,
+        Colours::red.withAlpha(0.5f),
+        0.0f);
     addAndMakeVisible(m_soloButton);
 
-    Image muteedImage = ImageFileFormat::loadFrom(BinaryData::audiovolumemuted_png, BinaryData::audiovolumemuted_pngSize);
-    Image unmutedImage = ImageFileFormat::loadFrom(BinaryData::audiovolumemedium_png, BinaryData::audiovolumemedium_pngSize);
-    m_muteButton.setImages(true, true, true,
-                            unmutedImage, 0.7f, Colours::transparentBlack,
-                            unmutedImage, 1.0f, Colours::transparentBlack,
-                            muteedImage, 1.0f, Colours::transparentBlack,
-                            0.0f);
+    Image muteedImage
+        = ImageFileFormat::loadFrom(BinaryData::audiovolumemuted_png, BinaryData::audiovolumemuted_pngSize);
+    Image unmutedImage
+        = ImageFileFormat::loadFrom(BinaryData::audiovolumemedium_png, BinaryData::audiovolumemedium_pngSize);
+    m_muteButton.setImages(true,
+        true,
+        true,
+        unmutedImage,
+        0.7f,
+        Colours::transparentBlack,
+        unmutedImage,
+        1.0f,
+        Colours::transparentBlack,
+        muteedImage,
+        1.0f,
+        Colours::transparentBlack,
+        0.0f);
     m_muteButton.setClickingTogglesState(true);
     m_muteButton.addListener(this);
     addAndMakeVisible(m_muteButton);
@@ -64,7 +92,8 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
     m_track.addChangeListener(this);
     m_track.getAudioThumbnail().addChangeListener(this);
     m_track.addPositionCallback(std::bind(&TrackUi::positionChanged, this, std::placeholders::_1));
-    m_track.setFileChangedCallback(std::bind(&TrackUi::fileChanged, this, std::placeholders::_1, std::placeholders::_2));
+    m_track.setFileChangedCallback(
+        std::bind(&TrackUi::fileChanged, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 TrackUi::~TrackUi()
@@ -117,9 +146,10 @@ void TrackUi::buttonClicked(Button* button)
         switch (result)
         {
         case 1:
-            m_editDialog = std::make_unique<TrackEditDialogWindow>(m_track.getName(), m_track.getGain(),
-                                                                                          std::bind(&Track::setName, &m_track, std::placeholders::_1),
-                                                                                          std::bind(&Track::setGain, &m_track, std::placeholders::_1));
+            m_editDialog = std::make_unique<TrackEditDialogWindow>(m_track.getName(),
+                m_track.getGain(),
+                std::bind(&Track::setName, &m_track, std::placeholders::_1),
+                std::bind(&Track::setGain, &m_track, std::placeholders::_1));
             break;
         case 2:
             loadFile();
@@ -128,7 +158,8 @@ void TrackUi::buttonClicked(Button* button)
         {
             if (!File(m_applicationProperties.getUserSettings()->getValue("audioEditor")).existsAsFile())
             {
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, TRANS("No audio editor"), TRANS("No audio editor was configured."));
+                AlertWindow::showMessageBox(
+                    AlertWindow::WarningIcon, TRANS("No audio editor"), TRANS("No audio editor was configured."));
                 return;
             }
 
@@ -137,13 +168,17 @@ void TrackUi::buttonClicked(Button* button)
             arguments.add(m_track.getTrackConfig().file.getFullPathName());
             if (!process.start(arguments))
             {
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, TRANS("Failed launch audio editor"), TRANS("Failed to start the audio editor."));
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon,
+                    TRANS("Failed launch audio editor"),
+                    TRANS("Failed to start the audio editor."));
                 return;
             }
 
             File file(m_track.getTrackConfig().file);
             m_track.unloadFile();
-            AlertWindow blockDialog(TRANS("Audio editor launched"), TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again."), AlertWindow::NoIcon);
+            AlertWindow blockDialog(TRANS("Audio editor launched"),
+                TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it again."),
+                AlertWindow::NoIcon);
             blockDialog.addButton(TRANS("ok"), 1);
             blockDialog.runModalLoop();
             m_track.loadFileIntoTransport(file);
@@ -152,12 +187,12 @@ void TrackUi::buttonClicked(Button* button)
         case 4:
         {
             int alertResult = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon,
-                                                           TRANS("Confirm"),
-                                                           TRANS("Do you really want to remove the audio file from this track?"),
-                                                           TRANS("Yes"),
-                                                           TRANS("No"),
-                                                           this,
-                                                           nullptr);
+                TRANS("Confirm"),
+                TRANS("Do you really want to remove the audio file from this track?"),
+                TRANS("Yes"),
+                TRANS("No"),
+                this,
+                nullptr);
 
             if (alertResult == 1)
                 m_track.unloadFile();
@@ -187,7 +222,8 @@ void TrackUi::updateIdText()
 void TrackUi::fileChanged(const File& file, bool updatePlaylist)
 {
     m_fileNameLabel.setText(file.getFileName(), sendNotification);
-    int textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText()) + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
+    int textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText())
+        + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
     m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 
     if (updatePlaylist)
@@ -242,8 +278,8 @@ void TrackUi::positionChanged(double position)
 void TrackUi::loadFile()
 {
     FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-                          File::nonexistent,
-                          m_track.getAudioFormatManager().getWildcardForAllFormats());
+        File::nonexistent,
+        m_track.getAudioFormatManager().getWildcardForAllFormats());
     if (!myChooser.browseForFileToOpen())
         return;
 
@@ -259,24 +295,26 @@ void TrackUi::loadFile(const File& audioFile)
         if (reader->numChannels > 2)
         {
             AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-                                             TRANS("MStarPlayer"),
-                                             TRANS("The selected file has more than two channels. This is not supported."));
+                TRANS("MStarPlayer"),
+                TRANS("The selected file has more than two channels. This is not supported."));
             return;
         }
 
         if (!m_track.isStereo() && reader->numChannels != 1)
         {
             AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-                                             TRANS("MStarPlayer"),
-                                             String::formatted(TRANS("The selected file has %d channels but this is a mono track."), reader->numChannels));
+                TRANS("MStarPlayer"),
+                String::formatted(
+                    TRANS("The selected file has %d channels but this is a mono track."), reader->numChannels));
             return;
         }
 
         if (m_track.isStereo() && reader->numChannels != 2)
         {
             AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-                                             "MStarPlayer",
-                                             String::formatted(TRANS("The selected file has %d channel(s) but this is a stereo track."), reader->numChannels));
+                "MStarPlayer",
+                String::formatted(
+                    TRANS("The selected file has %d channel(s) but this is a stereo track."), reader->numChannels));
             return;
         }
     }
@@ -295,7 +333,11 @@ void TrackUi::paint(Graphics& g)
     int drawWidth = getWidth() - componentWidth;
     if (m_longestDuration != 0)
         drawWidth = static_cast<int>(drawWidth * m_track.getAudioThumbnail().getTotalLength() / m_longestDuration);
-    m_track.getAudioThumbnail().drawChannels(g, Rectangle<int>(componentWidth, 0, drawWidth, getHeight()), 0, m_track.getAudioThumbnail().getTotalLength(), 1.0f);
+    m_track.getAudioThumbnail().drawChannels(g,
+        Rectangle<int>(componentWidth, 0, drawWidth, getHeight()),
+        0,
+        m_track.getAudioThumbnail().getTotalLength(),
+        1.0f);
 
     g.setColour(Colour(255, 0, 0));
     drawWidth = getWidth() - componentWidth;
@@ -319,6 +361,7 @@ void TrackUi::resized()
 
     int textWidth = 0;
     if (m_fileNameLabel.getText() != "")
-        textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText()) + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
+        textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText())
+            + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
     m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 }

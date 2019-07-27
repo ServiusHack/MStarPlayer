@@ -9,18 +9,18 @@
 
 #include "InterPlayerCommunication.h"
 #include "JinglePlayerWindow.h"
-#include "PlaylistModel.h"
-#include "PlaylistPlayerWindow.h"
-#include "SubchannelPlayer.h"
+#include "MTCSender.h"
 #include "MyMultiDocumentPanel.h"
 #include "PlayerMidiDialog.h"
-#include "MTCSender.h"
+#include "PlaylistModel.h"
+#include "PlaylistPlayerWindow.h"
 #include "PluginLoader.h"
+#include "SubchannelPlayer.h"
 /**
-	A player with a playlist and tracks to play audio files.
+        A player with a playlist and tracks to play audio files.
 
-	The different types of players only differ in their user interface. The actual logic
-	is almost the same.
+        The different types of players only differ in their user interface. The actual logic
+        is almost the same.
 */
 class Player
     : public Component
@@ -29,7 +29,10 @@ class Player
     , public SoloBusSettingsListener
 {
 public:
-    Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
+    Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+        InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties,
+        AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender,
+        PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
     ~Player();
 
     void setType(InterPlayerCommunication::PlayerType type);
@@ -41,7 +44,7 @@ public:
     void playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index);
     void gainChangedCallback(const char* track_name, float gain);
 
-// XML serialization
+    // XML serialization
 public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
@@ -53,11 +56,11 @@ public:
     */
     void restoreFromXml(const XmlElement& element, const File& projectDirectory);
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
 
-// SubchannelPlayer
+    // SubchannelPlayer
 public:
     virtual void setGain(float gain) override;
     virtual float getGain() const override;
@@ -75,11 +78,11 @@ public:
     virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;
     virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
-// KeyListener
+    // KeyListener
 public:
     virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
-// SoloBusListener
+    // SoloBusListener
 public:
     void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 

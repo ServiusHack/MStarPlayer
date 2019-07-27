@@ -18,13 +18,13 @@ class PlaylistEntryDialogWindow
 public:
     PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback);
 
-// DialogWindow
+    // DialogWindow
 public:
     virtual void closeButtonPressed() override;
     virtual bool keyPressed(const KeyPress& key) override;
     virtual void focusGained(FocusChangeType cause) override;
 
-// ButtonListener
+    // ButtonListener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
@@ -33,7 +33,7 @@ private:
 };
 
 /**
-	The actual component containing controls to edit a playlist entry.
+        The actual component containing controls to edit a playlist entry.
 */
 class PlaylistEntryDialogComponent
     : public Component
@@ -42,13 +42,14 @@ class PlaylistEntryDialogComponent
     friend class PlaylistEntryDialogWindow;
 
 public:
-    PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent);
+    PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback,
+        PlaylistEntryDialogWindow* parent);
 
-// Component
+    // Component
 public:
     virtual void resized() override;
 
-// TextEditor::Listener
+    // TextEditor::Listener
 public:
     virtual void textEditorTextChanged(TextEditor&) override;
 

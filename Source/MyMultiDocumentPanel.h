@@ -29,7 +29,7 @@ class JUCE_API MyMultiDocumentPanelWindow : public DocumentWindow
 public:
     //==============================================================================
     /**
-    */
+     */
     MyMultiDocumentPanelWindow(Colour backgroundColour);
 
     /** Destructor. */
@@ -65,8 +65,9 @@ private:
     panel - never use any of the Component methods to access the panel's child
     components directly, as these are managed internally.
 */
-class JUCE_API MyMultiDocumentPanel : public Component,
-                                      private ComponentListener
+class JUCE_API MyMultiDocumentPanel
+    : public Component
+    , private ComponentListener
 {
 public:
     //==============================================================================
@@ -118,9 +119,7 @@ public:
                                     or closeAllDocuments(), then it will be deleted. If false, then
                                     the caller must handle the component's deletion
     */
-    bool addDocument(Component* component,
-                     Colour backgroundColour,
-                     bool deleteWhenRemoved);
+    bool addDocument(Component* component, Colour backgroundColour, bool deleteWhenRemoved);
 
     /** Closes one of the documents.
 
@@ -136,8 +135,7 @@ public:
 
         @see addDocument, closeAllDocuments
     */
-    bool closeDocument(Component* component,
-                       bool checkItsOkToCloseFirst);
+    bool closeDocument(Component* component, bool checkItsOkToCloseFirst);
 
     /** Returns the number of open document windows.
 
@@ -191,14 +189,14 @@ public:
     void useFullscreenWhenOneDocument(bool shouldUseTabs);
 
     /** Returns the result of the last time useFullscreenWhenOneDocument() was called.
-    */
+     */
     bool isFullscreenWhenOneDocument() const noexcept;
 
     //==============================================================================
     /** The different layout modes available. */
     enum LayoutMode
     {
-        FloatingWindows,         /**< In this mode, there are overlapping DocumentWindow components for each document. */
+        FloatingWindows, /**< In this mode, there are overlapping DocumentWindow components for each document. */
         MaximisedWindowsWithTabs /**< In this mode, a TabbedComponent is used to show one document at a time. */
     };
 
@@ -209,7 +207,10 @@ public:
     void setLayoutMode(LayoutMode newLayoutMode);
 
     /** Returns the current layout mode. */
-    LayoutMode getLayoutMode() const noexcept { return mode; }
+    LayoutMode getLayoutMode() const noexcept
+    {
+        return mode;
+    }
     /** Sets the background colour for the whole panel.
 
         Each document has its own background colour, but this is the one used to fill the areas
@@ -221,9 +222,15 @@ public:
 
         @see setBackgroundColour
     */
-    Colour getBackgroundColour() const noexcept { return backgroundColour; }
+    Colour getBackgroundColour() const noexcept
+    {
+        return backgroundColour;
+    }
     /** If the panel is being used in tabbed mode, this returns the TabbedComponent that's involved. */
-    TabbedComponent* getCurrentTabbedComponent() const noexcept { return tabComponent.get(); }
+    TabbedComponent* getCurrentTabbedComponent() const noexcept
+    {
+        return tabComponent.get();
+    }
     //==============================================================================
     /** A subclass must override this to say whether its currently ok for a document
         to be closed.

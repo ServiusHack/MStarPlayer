@@ -3,27 +3,29 @@
 
 namespace
 {
-    bool isAudioFile(const String& filePath)
-    {
-        AudioFormatManager formatManager;
-        formatManager.registerBasicFormats();
+bool isAudioFile(const String& filePath)
+{
+    AudioFormatManager formatManager;
+    formatManager.registerBasicFormats();
 
-        for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
+    for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
+    {
+        for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
         {
-            for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
+            if (filePath.endsWithIgnoreCase(extension))
             {
-                if (filePath.endsWithIgnoreCase(extension))
-                {
-                    return true;
-                }
+                return true;
             }
         }
-
-        return false;
     }
+
+    return false;
+}
 }
 
-TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties, TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback, FileLoadedCallback fileLoadedCallback)
+TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties,
+    TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback,
+    FileLoadedCallback fileLoadedCallback)
     : m_container(container)
     , m_applicationProperties(applicationProperties)
     , m_trackHasFilesCallback(trackHasFilesCallback)
@@ -69,9 +71,9 @@ void TracksComponent::filesDropped(const StringArray& files, int x, int y)
 
     const TrackUi* trackUi = static_cast<TrackUi*>(component);
 
-    auto trackUiIt = std::find_if(m_tracks.begin(), m_tracks.end(), [trackUi](const std::unique_ptr<TrackUi>& uniquePointer) {
-        return uniquePointer.get() == trackUi;
-    });
+    auto trackUiIt = std::find_if(m_tracks.begin(),
+        m_tracks.end(),
+        [trackUi](const std::unique_ptr<TrackUi>& uniquePointer) { return uniquePointer.get() == trackUi; });
     auto fileIt = files.begin();
 
     for (; trackUiIt != m_tracks.end(); ++trackUiIt)
@@ -100,11 +102,12 @@ void TracksComponent::addStereoTrack()
 
 void TracksComponent::trackAdded(Track& track)
 {
-    m_tracks.push_back(std::make_unique<TrackUi>(track, m_applicationProperties,
-                                      std::bind(&TracksContainer::setPosition, &m_container, std::placeholders::_1),
-                                      std::bind(&TracksContainer::removeTrack, &m_container, std::placeholders::_1),
-                                      m_trackHasFilesCallback,
-                                      m_fileLoadedCallback));
+    m_tracks.push_back(std::make_unique<TrackUi>(track,
+        m_applicationProperties,
+        std::bind(&TracksContainer::setPosition, &m_container, std::placeholders::_1),
+        std::bind(&TracksContainer::removeTrack, &m_container, std::placeholders::_1),
+        m_trackHasFilesCallback,
+        m_fileLoadedCallback));
     addAndMakeVisible(*m_tracks.back());
     resized();
 }

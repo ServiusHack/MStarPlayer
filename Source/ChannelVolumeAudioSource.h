@@ -5,7 +5,7 @@
 #include "VolumeAnalyzer.h"
 
 /**
-	Audio source which applies a gain, solo and mute state to individual channels.
+        Audio source which applies a gain, solo and mute state to individual channels.
 */
 class ChannelVolumeAudioSource : public AudioSource
 {
@@ -27,7 +27,7 @@ private:
     AudioSource* m_source;
     CriticalSection m_lock;
 
-// volume
+    // volume
 public:
     /** Resets all volumes.
 
@@ -47,13 +47,13 @@ public:
     void setChannelVolume(size_t channelIndex, float gain);
 
     /** Returns the volume from a channel.
-    */
+     */
     float getChannelVolume(int channelIndex) const;
 
 private:
     Array<float> m_setVolumes;
 
-// solo
+    // solo
 public:
     void setChannelSolo(int channelIndex, bool solo);
     bool getChannelSolo(int channelIndex) const;
@@ -70,7 +70,7 @@ public:
 private:
     Array<bool> m_setMutes;
 
-// actual output volume
+    // actual output volume
 public:
     float getActualVolume(int channelIndex) const;
 
@@ -78,12 +78,12 @@ private:
     Array<VolumeAnalyzer> m_actualVolumes;
     size_t m_bufferSize{0};
 
-// gain to apply
+    // gain to apply
 private:
     void updateGain(size_t channelIndex);
     Array<float> m_appliedGains;
 
-// AudioSource
+    // AudioSource
 public:
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     virtual void releaseResources() override;

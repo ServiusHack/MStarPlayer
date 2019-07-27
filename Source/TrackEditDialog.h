@@ -19,15 +19,16 @@ class TrackEditDialogWindow
     , public ButtonListener
 {
 public:
-    TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback);
+    TrackEditDialogWindow(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback,
+        VolumeChangedCallback volumeChangedCallback);
 
-// DialogWindow overrides
+    // DialogWindow overrides
 public:
     virtual void closeButtonPressed() override;
     virtual bool keyPressed(const KeyPress& key) override;
     virtual void focusGained(FocusChangeType cause) override;
 
-// ButtonListener
+    // ButtonListener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
@@ -36,7 +37,7 @@ private:
 };
 
 /**
-	The actual component containing controls to edit a track.
+        The actual component containing controls to edit a track.
 */
 class TrackEditDialogComponent
     : public Component
@@ -46,17 +47,18 @@ class TrackEditDialogComponent
     friend class TrackEditDialogWindow;
 
 public:
-    TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
+    TrackEditDialogComponent(String name, float trackGain, TrackSettingsChangedCallback settingsChangedCallback,
+        VolumeChangedCallback volumeChangedCallback, TrackEditDialogWindow* parent);
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
 
-// Slider::Listener
+    // Slider::Listener
 public:
     virtual void sliderValueChanged(Slider* slider) override;
 
-// TextEditor::Listener
+    // TextEditor::Listener
 public:
     virtual void textEditorTextChanged(TextEditor&) override;
 

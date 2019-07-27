@@ -3,7 +3,8 @@
 #include "ChannelMixerFader.h"
 #include "MixerComponent.h"
 
-MixerComponent::MixerComponent(AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings)
+MixerComponent::MixerComponent(
+    AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings)
     : m_mixerAudioSource()
     , m_channelVolumeAudioSource(&m_mixerAudioSource)
     , m_audioDeviceManager(audioDeviceManager)
@@ -51,7 +52,9 @@ void MixerComponent::registerPlayer(SubchannelPlayer* player)
 
 void MixerComponent::unregisterPlayer(SubchannelPlayer* player)
 {
-    auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](const std::unique_ptr<PlayerMixerFader>& probe) { return probe->getPlayer() == player; });
+    auto it = std::find_if(m_playerSliders.begin(),
+        m_playerSliders.end(),
+        [player](const std::unique_ptr<PlayerMixerFader>& probe) { return probe->getPlayer() == player; });
 
     m_playerSliders.erase(it);
     resized();
@@ -59,7 +62,9 @@ void MixerComponent::unregisterPlayer(SubchannelPlayer* player)
 
 void MixerComponent::updatePlayerColor(SubchannelPlayer* player, Colour color)
 {
-    auto it = std::find_if(m_playerSliders.begin(), m_playerSliders.end(), [player](const std::unique_ptr<PlayerMixerFader>& probe) { return probe->getPlayer() == player; });
+    auto it = std::find_if(m_playerSliders.begin(),
+        m_playerSliders.end(),
+        [player](const std::unique_ptr<PlayerMixerFader>& probe) { return probe->getPlayer() == player; });
     (*it)->setColor(color);
 }
 
@@ -70,9 +75,7 @@ void MixerComponent::resized()
 
     // Determine width of all sliders.
     int width = 0;
-    auto sumWidths = [&width](const auto& fader) {
-        width += fader->isVisible() ? fader->getBounds().getWidth() : 0;
-    };
+    auto sumWidths = [&width](const auto& fader) { width += fader->isVisible() ? fader->getBounds().getWidth() : 0; };
 
     std::for_each(m_playerSliders.begin(), m_playerSliders.end(), sumWidths);
     width += 10;
@@ -111,7 +114,8 @@ void MixerComponent::resized()
 
 void MixerComponent::addPlayerSlider(SubchannelPlayer* player)
 {
-    std::unique_ptr<PlayerMixerFader> slider = std::make_unique<PlayerMixerFader>(player, player->getSubMixerControlables(), false, std::bind(&MixerComponent::resized, this));
+    std::unique_ptr<PlayerMixerFader> slider = std::make_unique<PlayerMixerFader>(
+        player, player->getSubMixerControlables(), false, std::bind(&MixerComponent::resized, this));
     m_slidersContainer.addAndMakeVisible(slider.get());
     m_playerSliders.push_back(std::move(slider));
 }
@@ -119,7 +123,8 @@ void MixerComponent::addPlayerSlider(SubchannelPlayer* player)
 void MixerComponent::addChannelSlider()
 {
     int channelNumber = m_channelSliders.size();
-    std::unique_ptr<MixerFader> slider = std::make_unique<ChannelMixerFader>(channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
+    std::unique_ptr<MixerFader> slider = std::make_unique<ChannelMixerFader>(
+        channelNumber, &m_channelVolumeAudioSource, std::bind(&MixerComponent::resized, this));
     m_slidersContainer.addAndMakeVisible(slider.get());
     m_channelSliders.push_back(std::move(slider));
 }
@@ -184,9 +189,7 @@ void MixerComponent::restoreFromXml(const XmlElement& element)
         m_channelSliders[i]->setMute(element.getChildElement(i)->getBoolAttribute("mute"));
     }
 }
-void MixerComponent::outputChannelNamesReset()
-{
-}
+void MixerComponent::outputChannelNamesReset() {}
 
 void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
 {

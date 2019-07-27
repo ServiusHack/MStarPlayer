@@ -16,11 +16,11 @@ class EditSettingsWindow
 public:
     EditSettingsWindow(ApplicationProperties& applicationProperties);
 
-// DialogWindow overrides
+    // DialogWindow overrides
 public:
     virtual void closeButtonPressed() override;
 
-// ButtonListener
+    // ButtonListener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
@@ -29,7 +29,7 @@ private:
 };
 
 /**
-	The actual component.
+        The actual component.
 */
 class EditSettingsComponent
     : public Component
@@ -47,15 +47,15 @@ private:
     ComboBox m_languageComboBox;
     TextButton m_closeButton;
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
 
-// FilenameComponentListener
+    // FilenameComponentListener
 public:
     virtual void filenameComponentChanged(FilenameComponent* fileComponentThatHasChanged) override;
 
-// ComboBoxListener
+    // ComboBoxListener
 public:
     virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 

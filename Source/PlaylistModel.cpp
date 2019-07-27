@@ -6,33 +6,34 @@ class PlayNextButton : public ImageButton
 {
 public:
     PlayNextButton() = default;
-    void setRowNumber(int rowNumber) { m_rowNumber = rowNumber; }
-    int getRowNumber() { return m_rowNumber; }
+    void setRowNumber(int rowNumber)
+    {
+        m_rowNumber = rowNumber;
+    }
+    int getRowNumber()
+    {
+        return m_rowNumber;
+    }
+
 private:
     int m_rowNumber{0};
 };
 
-PlaylistModel::PlaylistModel()
-{
-}
+PlaylistModel::PlaylistModel() {}
 
 int PlaylistModel::getNumRows()
 {
     return m_playlist.size();
 }
 
-void PlaylistModel::paintRowBackground(Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+void PlaylistModel::paintRowBackground(
+    Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
     if (rowIsSelected)
         g.fillAll(Colours::lightblue);
 }
 
-void PlaylistModel::paintCell(Graphics& g,
-                              int rowNumber,
-                              int columnId,
-                              int width,
-                              int height,
-                              bool /*rowIsSelected*/)
+void PlaylistModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
     g.setColour(Colours::black);
 
@@ -48,7 +49,13 @@ void PlaylistModel::paintCell(Graphics& g,
         }
         else if (columnId == 3)
         {
-            g.drawText(Utils::formatSeconds(m_playlist[rowNumber].durationInSeconds), 2, 0, width - 4, height, Justification::centredLeft, true);
+            g.drawText(Utils::formatSeconds(m_playlist[rowNumber].durationInSeconds),
+                2,
+                0,
+                width - 4,
+                height,
+                Justification::centredLeft,
+                true);
         }
     }
 
@@ -56,7 +63,8 @@ void PlaylistModel::paintCell(Graphics& g,
     g.fillRect(width - 1, 0, 1, height);
 }
 
-Component* PlaylistModel::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+Component* PlaylistModel::refreshComponentForCell(
+    int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
     if (columnId == 4)
     {
@@ -69,15 +77,24 @@ Component* PlaylistModel::refreshComponentForCell(int rowNumber, int columnId, b
         if (editor == nullptr)
         {
             editor = new PlayNextButton();
-            Image normalImage = ImageFileFormat::loadFrom(BinaryData::arrowrightdouble_png, BinaryData::arrowrightdouble_pngSize);
+            Image normalImage
+                = ImageFileFormat::loadFrom(BinaryData::arrowrightdouble_png, BinaryData::arrowrightdouble_pngSize);
             Image desaturedImage(normalImage.createCopy());
             desaturedImage.desaturate();
             editor->setClickingTogglesState(true);
-            editor->setImages(true, true, true,
-                              desaturedImage, 0.7f, Colours::transparentBlack,
-                              normalImage, 1.0f, Colours::transparentBlack,
-                              normalImage, 1.0f, Colours::transparentBlack,
-                              0.0f);
+            editor->setImages(true,
+                true,
+                true,
+                desaturedImage,
+                0.7f,
+                Colours::transparentBlack,
+                normalImage,
+                1.0f,
+                Colours::transparentBlack,
+                normalImage,
+                1.0f,
+                Colours::transparentBlack,
+                0.0f);
             editor->addListener(this);
         }
 
@@ -103,7 +120,8 @@ void PlaylistModel::buttonClicked(Button* button)
     m_playlist[rowNumber].playNext = button->getToggleState();
 }
 
-void PlaylistModel::add(String name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
+void PlaylistModel::add(
+    String name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
 {
     PlaylistEntry entry;
     entry.name = name;
@@ -114,7 +132,8 @@ void PlaylistModel::add(String name, double durationInSeconds, bool playNext, co
     sendChangeMessage();
 }
 
-void PlaylistModel::insert(int rowNumber, const String& name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
+void PlaylistModel::insert(int rowNumber, const String& name, double durationInSeconds, bool playNext,
+    const std::vector<TrackConfig>& trackConfigs)
 {
     PlaylistEntry entry;
     entry.name = name;
@@ -130,15 +149,13 @@ void PlaylistModel::move(int sourceRowNumber, int targetRowNumber)
 {
     if (sourceRowNumber < targetRowNumber)
     {
-        std::rotate(
-            std::next(m_playlist.begin(), sourceRowNumber),
+        std::rotate(std::next(m_playlist.begin(), sourceRowNumber),
             std::next(m_playlist.begin(), sourceRowNumber + 1),
             std::next(m_playlist.begin(), targetRowNumber + 1));
     }
     else
     {
-        std::rotate(
-            std::next(m_playlist.begin(), targetRowNumber),
+        std::rotate(std::next(m_playlist.begin(), targetRowNumber),
             std::next(m_playlist.begin(), sourceRowNumber),
             std::next(m_playlist.begin(), sourceRowNumber + 1));
     }
@@ -167,7 +184,7 @@ void PlaylistModel::backgroundClicked(const MouseEvent& event)
     }
 }
 
-var PlaylistModel::getDragSourceDescription(const SparseSet< int > &  currentlySelectedRows)
+var PlaylistModel::getDragSourceDescription(const SparseSet<int>& currentlySelectedRows)
 {
     jassert(currentlySelectedRows.size() == 1);
 
@@ -218,8 +235,8 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
         AudioFormatManager formatManager;
         formatManager.registerBasicFormats();
         FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-                              File::nonexistent,
-                              formatManager.getWildcardForAllFormats());
+            File::nonexistent,
+            formatManager.getWildcardForAllFormats());
 
         if (!myChooser.browseForMultipleFilesToOpen())
             return;
@@ -227,7 +244,7 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
         for (const File& file : myChooser.getResults())
         {
             std::vector<TrackConfig> trackConfigs;
-            trackConfigs.push_back({ file });
+            trackConfigs.push_back({file});
             const AudioFormatReader* reader = formatManager.createReaderFor(trackConfigs[0].file);
             double duration = reader->lengthInSamples / reader->sampleRate;
             add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);

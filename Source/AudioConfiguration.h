@@ -15,12 +15,13 @@ class AudioConfigurationWindow
     , public ButtonListener
 {
 public:
-    AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings);
+    AudioConfigurationWindow(AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames,
+        SoloBusSettings& soloBusSettings);
 
-// DialogWindow
+    // DialogWindow
     virtual void closeButtonPressed() override;
 
-// ButtonListener
+    // ButtonListener
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
 private:
@@ -28,7 +29,7 @@ private:
 };
 
 /**
-	Table model for the channel names.
+        Table model for the channel names.
 */
 class ChannelNames
     : public TableListBoxModel
@@ -40,19 +41,21 @@ public:
 
     std::function<void()> updateCallback;
 
-// TableListBoxModel
+    // TableListBoxModel
 public:
     virtual int getNumRows() override;
     virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
-    virtual void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-    virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+    virtual void paintCell(
+        Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+    virtual Component* refreshComponentForCell(
+        int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
-// TextEditor::Listener
+    // TextEditor::Listener
 public:
     virtual void textEditorTextChanged(TextEditor& textEditor) override;
 
-// ComboBox::Listener
-    virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    // ComboBox::Listener
+    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 private:
     OutputChannelNames& m_outputChannelName;
@@ -61,20 +64,21 @@ private:
 };
 
 /**
-	The actual component containing the tabs.
+        The actual component containing the tabs.
 */
 class AudioConfigurationComponent
     : public Component
     , public ChangeListener
 {
 public:
-    AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings);
+    AudioConfigurationComponent(AudioConfigurationWindow* parent, AudioDeviceManager& audioDeviceManager,
+        OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings);
     ~AudioConfigurationComponent();
 
-// Component
+    // Component
     virtual void resized() override;
 
-// ChangeListener
+    // ChangeListener
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:

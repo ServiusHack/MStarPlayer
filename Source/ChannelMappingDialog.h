@@ -27,7 +27,7 @@ class ChannelMapping
 {
 public:
     /** A component to view and edit the channel mapping.
-    
+
         @param outputChannels     Number of output channels currently configured.
                                   This gives the maximum value the user can select as the output channel.
 
@@ -37,7 +37,8 @@ public:
         @param channels           Number of channels the audio source has.
                                   This gives the number of rows to show to the user.
     */
-    ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
+    ChannelMapping(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+        std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback);
 
     /** Get the output channel for a table row.
 
@@ -53,7 +54,7 @@ public:
 
         This is used by the combo box to forward a change to the
         ChannelRemappingAudioSource.
-        
+
         @param row               row index (starting with 0)
 
         @param outputChannel     newly selected output channel (starting with 1)
@@ -64,10 +65,12 @@ public:
 public:
     virtual int getNumRows() override;
     virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
-    virtual void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-    virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+    virtual void paintCell(
+        Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+    virtual Component* refreshComponentForCell(
+        int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
 
-    //ComboBoxListener overrides
+    // ComboBoxListener overrides
 public:
     virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
@@ -81,14 +84,16 @@ private:
 };
 
 /**
-	The actual component containing controls to change the mapping from playback channels to output channels.
+        The actual component containing controls to change the mapping from playback channels to output channels.
 */
 class ChannelMappingComponent
-    : public Component,
-      public ButtonListener
+    : public Component
+    , public ButtonListener
 {
 public:
-    ChannelMappingComponent(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback);
+    ChannelMappingComponent(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+        std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback,
+        const CloseCallback& closeCallback);
 
     void setMapping(const std::vector<std::pair<char, int>>& mapping);
 
@@ -124,14 +129,16 @@ public:
 
         @see ChannelMapping
     */
-    ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback, const CloseCallback& closeCallback);
+    ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+        std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback,
+        const CloseCallback& closeCallback);
 
     void setMapping(const std::vector<std::pair<char, int>>& mapping);
 
     // DialogWindow
 public:
     /** Delete (and thus close) the window when requested by the user.
-    */
+     */
     virtual void closeButtonPressed() override;
 
 private:

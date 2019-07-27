@@ -2,9 +2,8 @@
 
 #include <algorithm>
 
-ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(AudioSource* const source_,
-                                                                             SoloBusSettings& soloBusSettings,
-                                                                             const bool deleteSourceWhenDeleted)
+ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(
+    AudioSource* const source_, SoloBusSettings& soloBusSettings, const bool deleteSourceWhenDeleted)
     : source(source_, deleteSourceWhenDeleted)
     , requiredNumberOfChannels(2)
     , m_bufferSize(1)
@@ -26,7 +25,8 @@ void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int req
     requiredNumberOfChannels = requiredNumberOfChannels_;
 
     if (requiredNumberOfChannels > m_volumes.size())
-        m_volumes.insertMultiple(m_volumes.size(), VolumeAnalyzer(m_bufferSize), requiredNumberOfChannels_ - m_volumes.size());
+        m_volumes.insertMultiple(
+            m_volumes.size(), VolumeAnalyzer(m_bufferSize), requiredNumberOfChannels_ - m_volumes.size());
 }
 
 void ChannelRemappingAudioSourceWithVolume::clearAllMappings()
@@ -90,8 +90,8 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 
             if (remappedChan >= 0 && remappedChan < numChans)
             {
-                bufferToFill.buffer->addFrom(remappedChan, bufferToFill.startSample,
-                                             buffer, i, 0, bufferToFill.numSamples);
+                bufferToFill.buffer->addFrom(
+                    remappedChan, bufferToFill.startSample, buffer, i, 0, bufferToFill.numSamples);
             }
         }
 
@@ -102,8 +102,8 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
 
             if (remappedChan >= 0 && remappedChan < numChans)
             {
-                bufferToFill.buffer->addFrom(remappedChan, bufferToFill.startSample,
-                                             buffer, i, 0, bufferToFill.numSamples);
+                bufferToFill.buffer->addFrom(
+                    remappedChan, bufferToFill.startSample, buffer, i, 0, bufferToFill.numSamples);
             }
         }
     }
@@ -112,7 +112,8 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
     {
         if (i == m_soloLeftChannel || i == m_soloRightChannel)
             continue;
-        m_volumes.getUnchecked(i).update(bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
+        m_volumes.getUnchecked(i).update(
+            bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
     }
 }
 
@@ -174,7 +175,8 @@ void ChannelRemappingAudioSourceWithVolume::setOutputChannelMapping(int sourceCh
     setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex, false);
 }
 
-void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(const int sourceIndex, const int destIndex, const bool solo)
+void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(
+    const int sourceIndex, const int destIndex, const bool solo)
 {
     while (remappedOutputs.size() < sourceIndex + 1)
         remappedOutputs.add(std::pair<int, int>(-1, -1));
@@ -202,7 +204,8 @@ void ChannelRemappingAudioSourceWithVolume::setSolo(bool solo)
     }
 }
 
-void ChannelRemappingAudioSourceWithVolume::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
+void ChannelRemappingAudioSourceWithVolume::soloBusChannelChanged(
+    SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
     ignoreUnused(previousOutputChannel);
     const ScopedLock sl(lock);

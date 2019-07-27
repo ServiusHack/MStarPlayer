@@ -12,14 +12,14 @@ class MidiConfigurationWindow
 public:
     MidiConfigurationWindow(MTCSender& mtcSender);
 
-// DialogWindow
+    // DialogWindow
     virtual void closeButtonPressed() override;
 
-// ButtonListener
+    // ButtonListener
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
-// ComboBox::Listener
-    virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    // ComboBox::Listener
+    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
 private:
     MTCSender& m_mtcSender;
@@ -32,11 +32,11 @@ public:
     MidiConfigurationComponent(MidiConfigurationWindow* parent, int selectedDevice);
     ~MidiConfigurationComponent();
 
-// Component
+    // Component
     virtual void resized() override;
 
 private:
     std::unique_ptr<ComboBox> m_outputDevices;
     std::unique_ptr<TextButton> m_closeButton;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MidiConfigurationComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationComponent)
 };

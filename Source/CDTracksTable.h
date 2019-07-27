@@ -21,11 +21,11 @@ public:
     void previous();
     void next();
 
-// TableListBox
+    // TableListBox
 public:
     virtual void selectedRowsChanged(int lastRowSelected) override;
 
-// ChangeListener
+    // ChangeListener
 public:
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 

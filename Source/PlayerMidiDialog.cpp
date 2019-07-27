@@ -1,10 +1,12 @@
 #include "PlayerMidiDialog.h"
 
-PlayerMidiDialogWindow::PlayerMidiDialogWindow(bool mtcEnabled, const MtcEnabledChangedCallback& mtcEnabledChangedCallback, const CloseCallback& closeCallback)
+PlayerMidiDialogWindow::PlayerMidiDialogWindow(
+    bool mtcEnabled, const MtcEnabledChangedCallback& mtcEnabledChangedCallback, const CloseCallback& closeCallback)
     : DialogWindow(TRANS("Configure MIDI for player"), Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
 {
-    PlayerMidiDialogComponent* component = new PlayerMidiDialogComponent(mtcEnabled, mtcEnabledChangedCallback, closeCallback);
+    PlayerMidiDialogComponent* component
+        = new PlayerMidiDialogComponent(mtcEnabled, mtcEnabledChangedCallback, closeCallback);
     setContentOwned(component, true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
@@ -27,11 +29,11 @@ bool PlayerMidiDialogWindow::keyPressed(const KeyPress& key)
     return false;
 }
 
-void PlayerMidiDialogWindow::focusGained(FocusChangeType /*cause*/)
-{
-}
+void PlayerMidiDialogWindow::focusGained(FocusChangeType /*cause*/) {}
 
-PlayerMidiDialogComponent::PlayerMidiDialogComponent(bool mtcEnabled, const PlayerMidiDialogWindow::MtcEnabledChangedCallback& mtcEnabledChangedCallback, const PlayerMidiDialogWindow::CloseCallback& closeCallback)
+PlayerMidiDialogComponent::PlayerMidiDialogComponent(bool mtcEnabled,
+    const PlayerMidiDialogWindow::MtcEnabledChangedCallback& mtcEnabledChangedCallback,
+    const PlayerMidiDialogWindow::CloseCallback& closeCallback)
     : m_mtcEnabledChangedCallback(mtcEnabledChangedCallback)
     , m_closeCallback(closeCallback)
     , m_mtcEnabledButton(TRANS("MTC aktiviert"))
@@ -61,10 +63,7 @@ void PlayerMidiDialogComponent::resized()
     m_mtcEnabledButton.setBounds(padding, padding, getWidth(), rowHeight);
 
     m_closeButton.setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - 2 * (buttonHeight - padding),
-        buttonWidth,
-        buttonHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - 2 * (buttonHeight - padding), buttonWidth, buttonHeight);
 }
 
 void PlayerMidiDialogComponent::buttonClicked(Button* buttonThatWasClicked)

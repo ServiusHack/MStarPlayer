@@ -2,18 +2,16 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class TestToneGeneratorOutputChannelsModel : public ListBoxModel,
-    public TextButton::Listener
+class TestToneGeneratorOutputChannelsModel
+    : public ListBoxModel
+    , public TextButton::Listener
 {
 public:
     using ChangeCallback = std::function<void(int, bool)>;
-  int getNumRows() override;
-  
-    void 	paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected) override;
-    Component* refreshComponentForRow(int  	rowNumber,
-        bool  	isRowSelected,
-        Component *  	existingComponentToUpdate
-    );
+    int getNumRows() override;
+
+    void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) override;
+    Component* refreshComponentForRow(int rowNumber, bool isRowSelected, Component* existingComponentToUpdate);
 
     void resizeTo(int size);
 
@@ -27,11 +25,10 @@ private:
     struct Data
     {
         String name;
-        bool enabled{ false };
+        bool enabled{false};
     };
     Array<Data> names;
 
     // Inherited via Listener
-    virtual void buttonClicked(Button *) override;
-
+    virtual void buttonClicked(Button*) override;
 };

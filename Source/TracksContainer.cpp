@@ -1,6 +1,9 @@
 #include "TracksContainer.h"
 
-TracksContainer::TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels, const Track::TrackConfigChangedCallback& trackConfigChangedCallback, const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender)
+TracksContainer::TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels,
+    const Track::TrackConfigChangedCallback& trackConfigChangedCallback,
+    const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache,
+    TimeSliceThread& thread, MTCSender& mtcSender)
     : m_mixer(mixer)
     , m_soloBusSettings(soloBusSettings)
     , m_mtcSender(mtcSender)
@@ -107,7 +110,8 @@ void TracksContainer::clear()
 void TracksContainer::setOutputChannels(int outputChannels)
 {
     m_outputChannels = outputChannels;
-    std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setOutputChannels, std::placeholders::_1, outputChannels));
+    std::for_each(
+        m_tracks.begin(), m_tracks.end(), std::bind(&Track::setOutputChannels, std::placeholders::_1, outputChannels));
 }
 
 void TracksContainer::setGain(float gain)
@@ -162,23 +166,22 @@ std::vector<TrackConfig> TracksContainer::getTrackConfigs() const
 }
 void TracksContainer::addTrack(bool stereo, const XmlElement* element)
 {
-    bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) {
-        return track->getSolo();
-    });
+    bool soloMute = std::any_of(
+        m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) { return track->getSolo(); });
 
     auto updateSoloMute = [&]() {
-        bool soloMute = std::any_of(m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) {
-            return track->getSolo();
-        });
-        std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::setSoloMute, std::placeholders::_1, soloMute));
+        bool soloMute = std::any_of(
+            m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) { return track->getSolo(); });
+        std::for_each(
+            m_tracks.begin(), m_tracks.end(), std::bind(&Track::setSoloMute, std::placeholders::_1, soloMute));
     };
 
     auto updateLongestDuration = [&]() {
-
         if (m_longestTrack)
         {
-            std::for_each(m_positionCallbackRegistrationTokens.begin(), m_positionCallbackRegistrationTokens.end(),
-                          std::bind(&Track::unregisterPositionCallback, m_longestTrack, std::placeholders::_1));
+            std::for_each(m_positionCallbackRegistrationTokens.begin(),
+                m_positionCallbackRegistrationTokens.end(),
+                std::bind(&Track::unregisterPositionCallback, m_longestTrack, std::placeholders::_1));
             m_positionCallbackRegistrationTokens.clear();
         }
 
@@ -214,14 +217,30 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
                 callback(true);
         else
         {
-            const bool isAnyPlaying = std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
+            const bool isAnyPlaying
+                = std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
             if (!isAnyPlaying)
                 for (const auto& callback : m_playingStateChangedCallback)
                     callback(false);
         }
     };
 
-    m_tracks.emplace_back(new Track(m_tracksMixer, m_soloBusSettings, m_tracks.size() + 1, stereo, m_outputChannels, updateLongestDuration, soloMute, updateSoloMute, m_gain, m_mute, channelCountChanged, playingStateChangedCallback, m_trackConfigChangedCallback, m_gainChangedCallback, m_audioThumbnailCache, m_timeSliceThread));
+    m_tracks.emplace_back(new Track(m_tracksMixer,
+        m_soloBusSettings,
+        m_tracks.size() + 1,
+        stereo,
+        m_outputChannels,
+        updateLongestDuration,
+        soloMute,
+        updateSoloMute,
+        m_gain,
+        m_mute,
+        channelCountChanged,
+        playingStateChangedCallback,
+        m_trackConfigChangedCallback,
+        m_gainChangedCallback,
+        m_audioThumbnailCache,
+        m_timeSliceThread));
     if (element != nullptr)
         m_tracks.back()->restoreFromXml(*element);
 

@@ -3,20 +3,20 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "AudioConfiguration.h"
-#include "MidiConfiguration.h"
 #include "DarkLookAndFeel.h"
 #include "DefaultLookAndFeel.h"
 #include "EditSettingsDialog.h"
 #include "JinglePlayerWindow.h"
+#include "MTCSender.h"
+#include "MidiConfiguration.h"
 #include "MixerComponent.h"
 #include "MyMultiDocumentPanel.h"
 #include "OutputChannelNames.h"
 #include "PlaylistPlayerWindow.h"
+#include "PluginLoader.h"
 #include "SoloBusMixer.h"
 #include "SoloBusSettings.h"
 #include "TestToneGeneratorComponent.h"
-#include "MTCSender.h"
-#include "PluginLoader.h"
 
 /** Main component of the Audio Player application.
 
@@ -54,7 +54,7 @@ private:
     std::unique_ptr<EditSettingsWindow> m_editSettingsWindow;
     std::unique_ptr<DialogWindow> m_testToneGeneratorWindow;
 
-// look and feels
+    // look and feels
 public:
     static DefaultLookAndFeel* s_defaultLookAndFeel;
     static DarkLookAndFeel* s_darkLookAndFeel;
@@ -65,32 +65,32 @@ public:
     void switchToDefaultLookAndFeel();
     void switchToDarkLookAndFeel();
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
 
-// MenuBarModel overrides
+    // MenuBarModel overrides
 public:
     virtual StringArray getMenuBarNames() override;
     virtual PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;
     virtual void menuItemSelected(int menuItemID, int topLevelMenuIndex) override;
 
-// ApplicationCommandTarget overrides
+    // ApplicationCommandTarget overrides
 public:
     virtual ApplicationCommandTarget* getNextCommandTarget() override;
     virtual void getAllCommands(Array<CommandID>& commands) override;
     virtual void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
     virtual bool perform(const InvocationInfo& info) override;
 
-// MixerControlableChangeListener overrides
+    // MixerControlableChangeListener overrides
 public:
     virtual void soloChanged(bool solo) override;
 
-// SoloBusSettingsListener
+    // SoloBusSettingsListener
 public:
     void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 
-// Commands for menu
+    // Commands for menu
 public:
     enum CommandIDs
     {
@@ -120,9 +120,10 @@ public:
         basePlugin = 0x7000,
     };
 
-// Project file related methods and fields
+    // Project file related methods and fields
 public:
     bool askSaveProject();
+
 private:
     void newProject();
     void openProject();

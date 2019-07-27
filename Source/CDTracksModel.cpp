@@ -12,18 +12,14 @@ int CDTracksModel::getNumRows()
     return m_reader.getNumTracks();
 }
 
-void CDTracksModel::paintRowBackground(Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+void CDTracksModel::paintRowBackground(
+    Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
     if (rowIsSelected)
         g.fillAll(Colours::lightblue);
 }
 
-void CDTracksModel::paintCell(Graphics& g,
-                              int rowNumber,
-                              int columnId,
-                              int width,
-                              int height,
-                              bool /*rowIsSelected*/)
+void CDTracksModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
     g.setColour(Colours::black);
 
@@ -35,7 +31,9 @@ void CDTracksModel::paintCell(Graphics& g,
         }
         else if (columnId == 2)
         {
-            const String formattedDuration = Utils::formatSeconds((m_reader.getPositionOfTrackStart(rowNumber + 1) - m_reader.getPositionOfTrackStart(rowNumber)) / m_reader.sampleRate);
+            const String formattedDuration = Utils::formatSeconds(
+                (m_reader.getPositionOfTrackStart(rowNumber + 1) - m_reader.getPositionOfTrackStart(rowNumber))
+                / m_reader.sampleRate);
             g.drawText(formattedDuration, 2, 0, width - 4, height, Justification::centredLeft, true);
         }
     }

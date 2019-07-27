@@ -11,34 +11,37 @@ using namespace InterPlayerCommunication;
 
 namespace
 {
-    bool isAudioFile(const String& filePath)
-    {
-        AudioFormatManager formatManager;
-        formatManager.registerBasicFormats();
+bool isAudioFile(const String& filePath)
+{
+    AudioFormatManager formatManager;
+    formatManager.registerBasicFormats();
 
-        for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
+    for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
+    {
+        for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
         {
-            for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
+            if (filePath.endsWithIgnoreCase(extension))
             {
-                if (filePath.endsWithIgnoreCase(extension))
-                {
-                    return true;
-                }
+                return true;
             }
         }
-
-        return false;
     }
 
-    bool isImageFile(const String& filePath)
-    {
-        return filePath.endsWithIgnoreCase(".jpg") || filePath.endsWithIgnoreCase(".png");
-    }
-    const int ProgressBarHeight = 26;
-    const int TotalDurationTextWidth = 70;
+    return false;
 }
 
-JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksContainer, ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback, ConfigureMidiCallback configureMidiCallback, ChangePlayerTypeCallback changePlayerTypeCallback, SetUserImageCallback setUserImageCallback)
+bool isImageFile(const String& filePath)
+{
+    return filePath.endsWithIgnoreCase(".jpg") || filePath.endsWithIgnoreCase(".png");
+}
+const int ProgressBarHeight = 26;
+const int TotalDurationTextWidth = 70;
+}
+
+JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksContainer,
+    ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback,
+    ConfigureMidiCallback configureMidiCallback, ChangePlayerTypeCallback changePlayerTypeCallback,
+    SetUserImageCallback setUserImageCallback)
     : m_player(player)
     , m_tracksContainer(tracksContainer)
     , m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
@@ -80,11 +83,19 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
 
     // configuration button
     Image normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
-    m_configureButton.setImages(true, true, true,
-                                 normalImage, 0.7f, Colours::transparentBlack,
-                                 normalImage, 1.0f, Colours::transparentBlack,
-                                 normalImage, 1.0f, Colours::pink.withAlpha(0.8f),
-                                 0.0f);
+    m_configureButton.setImages(true,
+        true,
+        true,
+        normalImage,
+        0.7f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::transparentBlack,
+        normalImage,
+        1.0f,
+        Colours::pink.withAlpha(0.8f),
+        0.0f);
     addAndMakeVisible(m_configureButton);
     m_configureButton.addMouseListener(this, false);
 
@@ -115,7 +126,6 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
 
         if (finished)
             m_playButton.setImages(m_playImage.get());
-
     };
     m_tracksContainer->addPositionCallback(positionCallback);
 
@@ -125,9 +135,8 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     };
     m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 
-    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
-        m_playButton.setImages(isPlaying ? m_stopImage.get() : m_playImage.get());
-    };
+    Track::PlayingStateChangedCallback playingStateChangedCallback
+        = [&](bool isPlaying) { m_playButton.setImages(isPlaying ? m_stopImage.get() : m_playImage.get()); };
     m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
 }
 
@@ -173,8 +182,14 @@ void JinglePlayerWindow::filesDropped(const StringArray& files, int /*x*/, int /
 void JinglePlayerWindow::resized()
 {
     m_configureButton.setBounds(0, getHeight() - ProgressBarHeight, ProgressBarHeight, ProgressBarHeight);
-    m_progressBar.setBounds(m_configureButton.getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth, ProgressBarHeight);
-    m_totalDurationText.setBounds(getWidth() - TotalDurationTextWidth, getHeight() - ProgressBarHeight, TotalDurationTextWidth, ProgressBarHeight);
+    m_progressBar.setBounds(m_configureButton.getWidth(),
+        getHeight() - ProgressBarHeight,
+        getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth,
+        ProgressBarHeight);
+    m_totalDurationText.setBounds(getWidth() - TotalDurationTextWidth,
+        getHeight() - ProgressBarHeight,
+        TotalDurationTextWidth,
+        ProgressBarHeight);
     m_playButton.setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
     m_fileNameLabel.setBounds(0, getHeight() - ProgressBarHeight - ProgressBarHeight, getWidth(), ProgressBarHeight);
 }
@@ -189,7 +204,14 @@ void JinglePlayerWindow::paint(Graphics& g)
     g.setColour(Colour(0x55000000));
 
     AudioThumbnail& audioThumbnail = (*m_tracksContainer)[0].getAudioThumbnail();
-    audioThumbnail.drawChannels(g, Rectangle<int>(m_configureButton.getWidth(), getHeight() - ProgressBarHeight, getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth, ProgressBarHeight), 0, audioThumbnail.getTotalLength(), 1.0f);
+    audioThumbnail.drawChannels(g,
+        Rectangle<int>(m_configureButton.getWidth(),
+            getHeight() - ProgressBarHeight,
+            getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth,
+            ProgressBarHeight),
+        0,
+        audioThumbnail.getTotalLength(),
+        1.0f);
 
     Component::paint(g);
 }
@@ -244,8 +266,8 @@ void JinglePlayerWindow::mouseDown(const MouseEvent& event)
 void JinglePlayerWindow::loadFile()
 {
     FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-                          File::nonexistent,
-                          m_formatManager.getWildcardForAllFormats());
+        File::nonexistent,
+        m_formatManager.getWildcardForAllFormats());
 
     if (!myChooser.browseForFileToOpen())
         return;

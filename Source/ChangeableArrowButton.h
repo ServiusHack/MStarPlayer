@@ -12,9 +12,7 @@ public:
                                 pointing right, 0.25 is down, 0.5 is left, 0.75 is up
         @param arrowColour      the colour to use for the arrow
     */
-    ChangeableArrowButton(const String& buttonName,
-                          float arrowDirection,
-                          Colour arrowColour);
+    ChangeableArrowButton(const String& buttonName, float arrowDirection, Colour arrowColour);
 
     /** @internal */
     void paintButton(Graphics&, bool isMouseOverButton, bool isButtonDown) override;

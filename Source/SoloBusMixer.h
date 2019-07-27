@@ -20,7 +20,7 @@ public:
     SoloBusMixer(SoloBusSettings& soloBusSettings, ChannelVolumeAudioSource& channelVolumeAudioSource);
     ~SoloBusMixer();
 
-// XML Serialization
+    // XML Serialization
 public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
@@ -32,7 +32,7 @@ public:
     */
     void restoreFromXml(const XmlElement& element);
 
-// Slider for channels and players
+    // Slider for channels and players
 private:
     ChannelMixerControlable m_leftMixer;
     ChannelMixerControlable m_rightMixer;
@@ -40,15 +40,15 @@ private:
     MixerFader m_rightFader;
     SoloBusSettings& m_soloBusSettings;
 
-// Component
+    // Component
 public:
     virtual void resized() override;
 
-// SoloBusSettingsListener
+    // SoloBusSettingsListener
 public:
     void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 
-// Timer
+    // Timer
 public:
     virtual void timerCallback() override;
 

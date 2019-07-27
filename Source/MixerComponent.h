@@ -12,12 +12,12 @@
 
 /** Shows sliders for output channels to change the individual volumes of them.
 
-	This component is shown at the bottom and allows the user to change the volume
-	of each output channel individually. The actual work is done by
-	ChannelVolumeAudioSource, which is managed by this class.
+        This component is shown at the bottom and allows the user to change the volume
+        of each output channel individually. The actual work is done by
+        ChannelVolumeAudioSource, which is managed by this class.
 
-	The audio flow looks like this:
-	Players -> MixerAudioSource -> ChannelVolumeAudioSource -> AudioSourcePlayer -> AudioDeviceManager
+        The audio flow looks like this:
+        Players -> MixerAudioSource -> ChannelVolumeAudioSource -> AudioSourcePlayer -> AudioDeviceManager
 */
 class MixerComponent
     : public Component
@@ -32,7 +32,8 @@ public:
 
         @param audioDeviceManager The AudioDeviceManager used throughout the application.
     */
-    MixerComponent(AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings);
+    MixerComponent(AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames,
+        SoloBusSettings& soloBusSettings);
     ~MixerComponent();
 
     /** Returns the MixerAudioSource into which all Players mix their audio stream. */
@@ -41,12 +42,12 @@ public:
 
     void updatePlayerColor(SubchannelPlayer* player, Colour color);
 
-// Player registration
+    // Player registration
 public:
     void registerPlayer(SubchannelPlayer* player);
     void unregisterPlayer(SubchannelPlayer* player);
 
-// XML Serialization
+    // XML Serialization
 public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
@@ -58,7 +59,7 @@ public:
     */
     void restoreFromXml(const XmlElement& element);
 
-// Slider for channels and players
+    // Slider for channels and players
 private:
     /** Adds a new slider to the component because not enough are being shown. */
     void addChannelSlider();
@@ -70,30 +71,30 @@ private:
     Component m_slidersContainer;
     ScrollBar m_sliderScrollBar;
 
-// Component
+    // Component
 public:
     virtual void resized() override;
 
-// ChangeListener
+    // ChangeListener
 public:
     /** Act accordingly to changes in the AudioDeviceManager. */
     virtual void changeListenerCallback(ChangeBroadcaster* /*source*/) override;
 
-// OutputChannelNamesListener
+    // OutputChannelNamesListener
 public:
     virtual void outputChannelNamesReset() override;
     virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
     virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) override;
 
-// SoloBusSettingsListener
+    // SoloBusSettingsListener
 public:
     virtual void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 
-// ScrollBar::Listener
+    // ScrollBar::Listener
 public:
     virtual void scrollBarMoved(ScrollBar* scrollBarThatHasMoved, double newRangeStart) override;
 
-// Timer
+    // Timer
 public:
     virtual void timerCallback() override;
 

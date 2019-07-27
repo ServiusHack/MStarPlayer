@@ -5,7 +5,7 @@
 #include "DefaultLookAndFeel.h"
 
 /**
-	A darker look and feel.
+        A darker look and feel.
 */
 class DarkLookAndFeel : public DefaultLookAndFeel
 {

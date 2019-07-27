@@ -8,8 +8,8 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "MidiConfiguration.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
 MidiConfigurationWindow::MidiConfigurationWindow(MTCSender& mtcSender)
     : DialogWindow(TRANS("Configure MIDI"), Colours::lightgrey, true, true)
@@ -46,11 +46,11 @@ MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* 
     m_closeButton->setWantsKeyboardFocus(false);
 
     m_outputDevices->addListener(parent);
-    m_outputDevices->addItem(TRANS("no MIDI output"),1);
+    m_outputDevices->addItem(TRANS("no MIDI output"), 1);
     StringArray deviceNames = MidiOutput::getDevices();
     for (int i = 0; i < deviceNames.size(); ++i)
     {
-        m_outputDevices->addItem(deviceNames[i],i+2);
+        m_outputDevices->addItem(deviceNames[i], i + 2);
     }
 
     m_outputDevices->setSelectedId(selectedDevice + 2, juce::dontSendNotification);
@@ -68,12 +68,7 @@ void MidiConfigurationComponent::resized()
 
     m_outputDevices->setBounds(padding, padding, getWidth() - 2 * padding, buttonHeight);
     m_closeButton->setBounds(
-        (getWidth() - buttonWidth) / 2,
-        getHeight() - buttonHeight - padding,
-        buttonWidth,
-        buttonHeight);
+        (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }
 
-MidiConfigurationComponent::~MidiConfigurationComponent()
-{
-}
+MidiConfigurationComponent::~MidiConfigurationComponent() {}

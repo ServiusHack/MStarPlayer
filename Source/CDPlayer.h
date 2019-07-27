@@ -8,9 +8,9 @@
 #include "CDNamesComboBox.h"
 #include "CDTracksModel.h"
 #include "CDTracksTable.h"
+#include "MyMultiDocumentPanel.h"
 #include "SoloBusSettings.h"
 #include "SubchannelPlayer.h"
-#include "MyMultiDocumentPanel.h"
 
 #include "ChannelMappingDialog.h"
 #include "PlayerEditDialog.h"
@@ -19,7 +19,7 @@
 /**
     A player for audio CDs
 */
-class CDPlayer 
+class CDPlayer
     : public Component
     , public SubchannelPlayer
     , public KeyListener
@@ -30,10 +30,11 @@ class CDPlayer
     , private Timer
 {
 public:
-    CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings, TimeSliceThread& thread, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
+    CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
+        TimeSliceThread& thread, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
     ~CDPlayer();
 
-// XML serialization
+    // XML serialization
 public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
@@ -45,13 +46,13 @@ public:
     */
     void restoreFromXml(const XmlElement& element, const File& projectDirectory);
 
-// Component overrides
+    // Component overrides
 public:
     virtual void paint(Graphics&) override;
     virtual void resized() override;
     virtual void mouseDown(const MouseEvent& event) override;
 
-// SubchannelPlayer
+    // SubchannelPlayer
 public:
     virtual void setGain(float gain) override;
     virtual float getGain() const override;
@@ -69,27 +70,27 @@ public:
     virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;
     virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
-// KeyListener
+    // KeyListener
 public:
     virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
-// Button::Listener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button* /*button*/) override;
 
-// ComboBox::Listener
+    // ComboBox::Listener
 public:
     virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
-// Slider::Listener
+    // Slider::Listener
 public:
     void sliderValueChanged(Slider* sliderThatWasMoved) override;
 
-// SoloBusListener
+    // SoloBusListener
 public:
     void soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel) override;
 
-// Timer
+    // Timer
 private:
     void timerCallback() override;
 

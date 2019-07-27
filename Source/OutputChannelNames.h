@@ -10,7 +10,7 @@ enum class PairingMode
 };
 
 /**
-	Interface to receive changes to the output channel names.
+        Interface to receive changes to the output channel names.
 */
 class OutputChannelNamesListener
 {
@@ -21,11 +21,11 @@ public:
 };
 
 /**
-	Identification of an audio device.
+        Identification of an audio device.
 
-	We can't use a pointer to the audio device because the AudioDeviceManager might delete, reuse or do what
-	it wants to with it. Therefore we take the type name and device name which is most likely unique to each
-	device in the system.
+        We can't use a pointer to the audio device because the AudioDeviceManager might delete, reuse or do what
+        it wants to with it. Therefore we take the type name and device name which is most likely unique to each
+        device in the system.
 */
 struct DeviceIdentification
 {
@@ -36,7 +36,7 @@ struct DeviceIdentification
 };
 
 /**
-	Maintains the user defined output channel names.
+        Maintains the user defined output channel names.
 */
 class OutputChannelNames
     : public ChangeListener
@@ -52,7 +52,7 @@ private:
     AudioIODevice* m_audioDevice;
     DeviceIdentification m_deviceIdentification;
 
-// channel pairing
+    // channel pairing
 public:
     bool SetChannelPairing(int activeChannelIndex, PairingMode mode);
     PairingMode GetChannelPairing(int activeChannelIndex);
@@ -60,7 +60,7 @@ public:
 private:
     Array<PairingMode> m_pairingModes;
 
-// output device names and their internal names
+    // output device names and their internal names
 public:
     String getDeviceOutputChannelName(int activeChannelIndex);
     StringArray getAllDeviceOutputChannelNames();
@@ -71,18 +71,19 @@ private:
     StringArray m_deviceOutputChannelNames;
     StringArray m_internalOutputChannelNames;
 
-// XML serialization
+    // XML serialization
 public:
     void saveToXml(XmlElement* element) const;
     void restoreFromXml(const XmlElement& element);
 
-// OutputChannelNamesListener management
+    // OutputChannelNamesListener management
 public:
     /**
-		Add a listener which will be notified when a channel name changes or all names are reset.
+                Add a listener which will be notified when a channel name changes or all names are reset.
 
-		The ownership will not be transfered, it is the caller's responsibility to remove and destroy the listener later.
-	*/
+                The ownership will not be transfered, it is the caller's responsibility to remove and destroy the
+       listener later.
+        */
     void addListener(OutputChannelNamesListener* listener);
 
     void removeListener(OutputChannelNamesListener* listener);
@@ -90,7 +91,7 @@ public:
 private:
     std::vector<OutputChannelNamesListener*> m_listeners;
 
-// ChangeListener
+    // ChangeListener
 public:
     virtual void changeListenerCallback(ChangeBroadcaster* source) override;
 };

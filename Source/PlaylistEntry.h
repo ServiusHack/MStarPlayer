@@ -3,7 +3,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 /**
-	Track configuration stored for each playlist entry.
+        Track configuration stored for each playlist entry.
 */
 struct TrackConfig
 {
@@ -11,7 +11,7 @@ struct TrackConfig
 };
 
 /**
-	Entry in the playlist.
+        Entry in the playlist.
 */
 class PlaylistEntry
 {

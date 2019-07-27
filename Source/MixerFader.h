@@ -11,14 +11,14 @@
 #include "VolumeSlider.h"
 
 /**
-	A set of controls for an player channel or output channel.
+        A set of controls for an player channel or output channel.
 
-	This includes:
-	- volume fader
-	- level meter
-	- solo button
-	- mute button
-	- pan slider (not fully implemented yet)
+        This includes:
+        - volume fader
+        - level meter
+        - solo button
+        - mute button
+        - pan slider (not fully implemented yet)
 */
 class MixerFader
     : public Component
@@ -30,7 +30,8 @@ public:
     typedef std::function<void(bool)> SoloChangedCallback;
     typedef std::function<void()> ResizeCallback;
 
-    MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled = true, bool muteEnabled = true);
+    MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled,
+        ResizeCallback resizeCallback, bool soloEnabled = true, bool muteEnabled = true);
     ~MixerFader();
 
     float getValue() const;
@@ -49,20 +50,20 @@ public:
 
     void pairTo(MixerFader* fader);
 
-// Component
+    // Component
 public:
     virtual void paint(Graphics&) override;
     virtual void resized() override;
 
-// ButtonListener
+    // ButtonListener
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
-// Slider::Listener
+    // Slider::Listener
 public:
     virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
 
-// MixerControlableChangeListener
+    // MixerControlableChangeListener
 public:
     virtual void gainChanged(float gain) override;
 

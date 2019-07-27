@@ -104,7 +104,6 @@ bool OutputChannelNames::SetChannelPairing(int activeChannelIndex, PairingMode m
         }
         else
         {
-
         }
         break;
     case PairingMode::Right:
@@ -117,7 +116,6 @@ bool OutputChannelNames::SetChannelPairing(int activeChannelIndex, PairingMode m
         }
         else
         {
-
         }
         break;
     }

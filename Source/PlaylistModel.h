@@ -6,7 +6,7 @@
 #include "PlaylistEntryDialog.h"
 
 /**
-	Table model for the channel names.
+        Table model for the channel names.
 */
 class PlaylistModel
     : public TableListBoxModel
@@ -19,10 +19,12 @@ public:
 
     void setReloadedCallback(ReloadedCallback);
 
-// Playlist management
+    // Playlist management
 public:
-    void add(String name, double durationInSeconds, bool playNext = false, const std::vector<TrackConfig>& trackConfigs = {});
-    void insert(int rowNumber, const String& name, double durationInSeconds, bool playNext = false, const std::vector<TrackConfig>& trackConfigs = {});
+    void add(String name, double durationInSeconds, bool playNext = false,
+        const std::vector<TrackConfig>& trackConfigs = {});
+    void insert(int rowNumber, const String& name, double durationInSeconds, bool playNext = false,
+        const std::vector<TrackConfig>& trackConfigs = {});
     void move(int sourceRowNumber, int targetRowNumber);
     void remove(int rowNumber);
     void clear();
@@ -32,28 +34,30 @@ public:
     void setTrackDuration(size_t row, double duration);
     void setTrackNameIfEmpty(size_t row, const String& name);
 
-// Track configs
+    // Track configs
 public:
     const std::vector<TrackConfig>& getTrackConfigs(size_t selectedRow);
     void setTrackConfigs(size_t selectedRow, const std::vector<TrackConfig>& trackConfigs);
 
-// XML serialization
+    // XML serialization
 public:
     XmlElement* saveToXml(const File& projectDirectory) const;
     void restoreFromXml(const XmlElement& element, const File& projectDirectory);
 
-// TableListBoxModel
+    // TableListBoxModel
 public:
     virtual int getNumRows() override;
     virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
-    virtual void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-    virtual Component* refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+    virtual void paintCell(
+        Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+    virtual Component* refreshComponentForCell(
+        int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
     virtual void cellClicked(int rowNumber, int columnId, const MouseEvent&) override;
     virtual void cellDoubleClicked(int rowNumber, int columnId, const MouseEvent&) override;
     virtual void backgroundClicked(const MouseEvent&) override;
-    virtual var getDragSourceDescription(const SparseSet< int > &  currentlySelectedRows) override;
+    virtual var getDragSourceDescription(const SparseSet<int>& currentlySelectedRows) override;
 
-// Button::Listener
+    // Button::Listener
 public:
     virtual void buttonClicked(Button*) override;
 

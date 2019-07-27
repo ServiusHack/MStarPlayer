@@ -4,16 +4,14 @@ int TestToneGeneratorOutputChannelsModel::getNumRows()
 {
     return names.size();
 }
-  
-void TestToneGeneratorOutputChannelsModel::paintListBoxItem(int /*rowNumber*/, Graphics &/*g*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
-{
 
+void TestToneGeneratorOutputChannelsModel::paintListBoxItem(
+    int /*rowNumber*/, Graphics& /*g*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
+{
 }
 
-Component* TestToneGeneratorOutputChannelsModel::refreshComponentForRow(int  	rowNumber,
-    bool  	/*isRowSelected*/,
-    Component *  	existingComponentToUpdate
-)
+Component* TestToneGeneratorOutputChannelsModel::refreshComponentForRow(
+    int rowNumber, bool /*isRowSelected*/, Component* existingComponentToUpdate)
 {
     if (rowNumber >= names.size())
     {
@@ -47,7 +45,7 @@ void TestToneGeneratorOutputChannelsModel::setChannelName(int pos, String name)
     names.getReference(pos).name = name;
 }
 
-void TestToneGeneratorOutputChannelsModel::buttonClicked(Button * button)
+void TestToneGeneratorOutputChannelsModel::buttonClicked(Button* button)
 {
     int pos = button->getProperties()["row"];
     names.getReference(pos).enabled = button->getToggleState();

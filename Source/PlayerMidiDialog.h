@@ -15,12 +15,13 @@ public:
     typedef std::function<void(bool)> MtcEnabledChangedCallback;
     typedef std::function<void()> CloseCallback;
 
-    PlayerMidiDialogWindow(bool mtcEnabled, const MtcEnabledChangedCallback& mtcEnabledChangedCallback, const CloseCallback& closeCallback);
+    PlayerMidiDialogWindow(bool mtcEnabled, const MtcEnabledChangedCallback& mtcEnabledChangedCallback,
+        const CloseCallback& closeCallback);
 
 private:
     CloseCallback m_closeCallback;
 
-// DialogWindow
+    // DialogWindow
 public:
     virtual void closeButtonPressed() override;
     virtual bool keyPressed(const KeyPress& key) override;
@@ -31,7 +32,7 @@ private:
 };
 
 /**
-	The actual component containing controls to edit a player.
+        The actual component containing controls to edit a player.
 */
 class PlayerMidiDialogComponent
     : public Component
@@ -40,13 +41,15 @@ class PlayerMidiDialogComponent
     friend class PlayerMidiDialogWindow;
 
 public:
-    PlayerMidiDialogComponent(bool mtcEnabled, const PlayerMidiDialogWindow::MtcEnabledChangedCallback& mtcEnabledChangedCallback, const PlayerMidiDialogWindow::CloseCallback& closeCallback);
+    PlayerMidiDialogComponent(bool mtcEnabled,
+        const PlayerMidiDialogWindow::MtcEnabledChangedCallback& mtcEnabledChangedCallback,
+        const PlayerMidiDialogWindow::CloseCallback& closeCallback);
 
-// Component overrides
+    // Component overrides
 public:
     virtual void resized() override;
 
-// ButtonListener overrides
+    // ButtonListener overrides
 public:
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 

@@ -17,14 +17,12 @@ void TestToneGeneratorAudioSource::prepareToPlay(int samplesPerBlockExpected, do
     m_sampleRate = sampleRate;
 
     const double cyclesPerSample = 1000 / m_sampleRate; // [2]
-    angleDelta = cyclesPerSample * 2.0 * double_Pi;                                // [3]
+    angleDelta = cyclesPerSample * 2.0 * double_Pi; // [3]
 
     prepared.resize(m_samplesPerBlockExpected);
 }
 
-void TestToneGeneratorAudioSource::releaseResources()
-{
-}
+void TestToneGeneratorAudioSource::releaseResources() {}
 
 void TestToneGeneratorAudioSource::setNumChannels(int numberOfChannels)
 {
@@ -61,14 +59,14 @@ void TestToneGeneratorAudioSource::getNextAudioBlock(const AudioSourceChannelInf
         {
             const float currentSample = static_cast<float>(std::sin(currentAngle));
             currentAngle += angleDelta;
-            prepared[sample] =  currentSample * level;
+            prepared[sample] = currentSample * level;
         }
         break;
     case Mode::White:
         for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
         {
             const float currentSample = dis(gen);
-            prepared[sample] =  currentSample * level;
+            prepared[sample] = currentSample * level;
         }
         break;
     }
