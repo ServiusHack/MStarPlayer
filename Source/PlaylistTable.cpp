@@ -32,7 +32,7 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
         return;
 
     const std::vector<TrackConfig>& trackConfigs = m_model.getTrackConfigs(lastRowSelected);
-    m_callback(trackConfigs, m_playNext);
+    m_callback(trackConfigs, m_playNext, lastRowSelected);
 }
 
 void PlaylistTable::changeListenerCallback(ChangeBroadcaster* /*source*/)
