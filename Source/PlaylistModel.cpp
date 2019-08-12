@@ -245,7 +245,7 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
         {
             std::vector<TrackConfig> trackConfigs;
             trackConfigs.push_back({file});
-            const AudioFormatReader* reader = formatManager.createReaderFor(trackConfigs[0].file);
+            const std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(trackConfigs[0].file));
             double duration = reader->lengthInSamples / reader->sampleRate;
             add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
         }
