@@ -15,7 +15,7 @@ class PlaylistTable
     , public DragAndDropTarget
 {
 public:
-    typedef std::function<void(const std::vector<TrackConfig>& trackConfigs, bool)> PlaylistEntryChangedCallback;
+    typedef std::function<void(const std::vector<TrackConfig>& trackConfigs, bool, int)> PlaylistEntryChangedCallback;
 
     PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel);
 

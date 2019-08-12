@@ -31,12 +31,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
           std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
           std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1),
           std::bind(&PlaylistPlayerWindow::fileLoaded, this, std::placeholders::_1))
-    , m_tableListBox(
-          [&](const std::vector<TrackConfig>& trackConfigs, bool play) {
-              m_tracksContainer->setTrackConfigs(trackConfigs);
-              if (play)
-                  m_playButton.triggerClick();
-          },
+    , m_tableListBox([&](const std::vector<TrackConfig>& trackConfigs, bool play,
+                         int index) { m_player.playlistEntryChanged(trackConfigs, play, index); },
           playlistModel)
     , m_resizeBar(&m_layout, 1, false)
 {
