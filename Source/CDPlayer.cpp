@@ -650,7 +650,11 @@ void CDPlayer::timerCallback()
         // precise.
         m_slider.setValue(static_cast<double>(currentSample), juce::dontSendNotification);
         m_currentTrack = 0;
-        m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), m_currentTrack);
+        const double duration = (m_reader->getPositionOfTrackStart(m_currentTrack + 1)
+                                    - m_reader->getPositionOfTrackStart(m_currentTrack))
+            / m_reader->sampleRate;
+        m_pluginLoader.playlistEntrySelected(
+            getName().toRawUTF8(), m_currentTrack, std::to_string(m_currentTrack + 1).c_str(), duration);
         SparseSet<int> rows;
         rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
         m_tracksTable.setSelectedRows(rows, juce::dontSendNotification);
@@ -695,7 +699,11 @@ void CDPlayer::timerCallback()
         }
 
         m_pluginLoader.previousEntrySelected(getName().toRawUTF8());
-        m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), m_currentTrack);
+        const double duration = (m_reader->getPositionOfTrackStart(m_currentTrack + 1)
+                                    - m_reader->getPositionOfTrackStart(m_currentTrack))
+            / m_reader->sampleRate;
+        m_pluginLoader.playlistEntrySelected(
+            getName().toRawUTF8(), m_currentTrack, std::to_string(m_currentTrack + 1).c_str(), duration);
     }
 
     if (currentSample >= offsets[m_currentTrack + 1])
@@ -720,7 +728,11 @@ void CDPlayer::timerCallback()
         }
 
         m_pluginLoader.nextEntrySelected(getName().toRawUTF8());
-        m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), m_currentTrack);
+        const double duration = (m_reader->getPositionOfTrackStart(m_currentTrack + 1)
+                                    - m_reader->getPositionOfTrackStart(m_currentTrack))
+            / m_reader->sampleRate;
+        m_pluginLoader.playlistEntrySelected(
+            getName().toRawUTF8(), m_currentTrack, std::to_string(m_currentTrack + 1).c_str(), duration);
     }
 
     jassert(currentSample >= firstSample);

@@ -15,9 +15,11 @@ class PlaylistModel
 {
 public:
     typedef std::function<void()> ReloadedCallback;
+    typedef std::function<void(int rowNumber, const String& name)> NameChangedCallback;
     PlaylistModel();
 
     void setReloadedCallback(ReloadedCallback);
+    void setNameChangedCallback(NameChangedCallback);
 
     // Playlist management
 public:
@@ -32,7 +34,9 @@ public:
     bool doPlayNext(int selectedRow);
     bool trackHasFiles(size_t track) const;
     void setTrackDuration(size_t row, double duration);
+    double getTrackDuration(size_t row) const;
     void setTrackNameIfEmpty(size_t row, const String& name);
+    String getTrackName(size_t row) const;
 
     // Track configs
 public:
@@ -68,6 +72,7 @@ private:
     std::vector<PlaylistEntry> m_playlist;
     std::unique_ptr<PlaylistEntryDialogWindow> m_editDialog;
     ReloadedCallback m_reloadedCallback;
+    NameChangedCallback m_nameChangedCallback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistModel)
 };
