@@ -108,6 +108,7 @@ private:
     SoloBusSettings& m_soloBusSettings;
 
     PlaylistModel playlistModel;
+    int currentPlaylistEntry{-1};
     TracksContainer m_tracksContainer;
 
     PluginLoader& m_pluginLoader;

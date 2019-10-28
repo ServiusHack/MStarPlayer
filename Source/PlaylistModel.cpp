@@ -257,6 +257,7 @@ void PlaylistModel::showEditDialog(int rowNumber)
 {
     PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](String name) {
         m_playlist[rowNumber].name = name;
+        m_nameChangedCallback(rowNumber, name);
         sendChangeMessage();
     };
     m_editDialog = std::make_unique<PlaylistEntryDialogWindow>(m_playlist[rowNumber].name, callback);
@@ -286,6 +287,12 @@ void PlaylistModel::setTrackDuration(size_t selectedRow, double duration)
     m_playlist[selectedRow].durationInSeconds = duration;
 }
 
+double PlaylistModel::getTrackDuration(size_t selectedRow) const
+{
+    jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
+    return m_playlist[selectedRow].durationInSeconds;
+}
+
 void PlaylistModel::setTrackNameIfEmpty(size_t selectedRow, const String& name)
 {
     jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
@@ -295,6 +302,12 @@ void PlaylistModel::setTrackNameIfEmpty(size_t selectedRow, const String& name)
         entry.name = name;
         sendChangeMessage();
     }
+}
+
+String PlaylistModel::getTrackName(size_t row) const
+{
+    jassert(row >= 0 && row < m_playlist.size());
+    return m_playlist[row].name;
 }
 
 void PlaylistModel::clear()
@@ -318,6 +331,11 @@ XmlElement* PlaylistModel::saveToXml(const File& projectDirectory) const
 void PlaylistModel::setReloadedCallback(ReloadedCallback callback)
 {
     m_reloadedCallback = callback;
+}
+
+void PlaylistModel::setNameChangedCallback(NameChangedCallback callback)
+{
+    m_nameChangedCallback = callback;
 }
 
 void PlaylistModel::restoreFromXml(const XmlElement& element, const File& projectDirectory)

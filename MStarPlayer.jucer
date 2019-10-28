@@ -35,6 +35,10 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="OpTO6W" name="PluginInterfaceV2.h" compile="0" resource="0"
+            file="Source/PluginInterfaceV2.h"/>
+      <FILE id="ZIFMcz" name="PluginInterfaceV1.h" compile="0" resource="0"
+            file="Source/PluginInterfaceV1.h"/>
       <FILE id="osEMHA" name="PlayerComponent.h" compile="0" resource="0"
             file="Source/PlayerComponent.h"/>
       <GROUP id="{0069317A-E327-5190-2E93-9745795F2724}" name="TestToneGenerator">

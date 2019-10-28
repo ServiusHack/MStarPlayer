@@ -58,6 +58,15 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
             nextEntry(true);
     };
     m_tracksContainer.addPositionCallback(positionCallback);
+
+    TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
+        m_pluginLoader.playlistEntryDurationChanged(getName().toRawUTF8(), currentPlaylistEntry, duration);
+    };
+    m_tracksContainer.addLongestDurationChangedCallback(longestDurationCallback);
+
+    playlistModel.setNameChangedCallback([&](int rowNumber, const String& name) {
+        m_pluginLoader.playlistEntryNameChanged(getName().toRawUTF8(), rowNumber, name.toRawUTF8());
+    });
 }
 
 Player::~Player()
@@ -416,8 +425,11 @@ void Player::previousEntry()
 
 void Player::playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index)
 {
+    currentPlaylistEntry = index;
     m_tracksContainer.setTrackConfigs(trackConfigs);
-    m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), index);
+    const String playlistEntryName = playlistModel.getTrackName(index);
+    const double duration = playlistModel.getTrackDuration(index);
+    m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), index, playlistEntryName.toRawUTF8(), duration);
     if (play)
         this->play();
 }

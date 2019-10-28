@@ -1,13 +1,15 @@
 #pragma once
 
 #include <memory>
+#include <variant>
 #include <vector>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "MyMultiDocumentPanel.h"
 
-#include "PluginInterface.h"
+#include "PluginInterfaceV1.h"
+#include "PluginInterfaceV2.h"
 
 class PluginLoader
 {
@@ -24,7 +26,12 @@ public:
 
     void previousEntrySelected(const char* playerName);
 
-    void playlistEntrySelected(const char* playerName, size_t entryIndex);
+    void playlistEntrySelected(
+        const char* playerName, size_t entryIndex, const char* playlistEntryName, double duration);
+
+    void playlistEntryNameChanged(const char* playerName, size_t entryIndex, const char* playlistEntryName);
+
+    void playlistEntryDurationChanged(const char* playerName, size_t entryIndex, double duration);
 
     void trackVolumeChanged(const char* playerName, const char* trackName, float volume);
 
@@ -39,25 +46,51 @@ public:
     void loadConfigurations(XmlElement* element);
 
 private:
-    struct Plugin
+    struct PluginV1
     {
-        Plugin();
-        Plugin(Plugin&& other);
+        PluginV1();
+        PluginV1(PluginV1&& other);
         String name;
         std::unique_ptr<DynamicLibrary> dynamicLibrary;
-        PluginInterface::InitFunction initFunction;
-        PluginInterface::PlayingStateChangedFunction playingStateChangedFunction;
-        PluginInterface::NextEntrySelectedFunction nextEntrySelectedFunction;
-        PluginInterface::PreviousEntrySelectedFunction previousEntrySelectedFunction;
-        PluginInterface::PlaylistEntrySelectedFunction playlistEntrySelectedFunction;
-        PluginInterface::TrackVolumeChangedFunction trackVolumeChangedFunction;
-        PluginInterface::PositionChangedFunction positionChangedFunction;
-        PluginInterface::ConfigureFunction configureFunction;
-        PluginInterface::ShutdownFunction shutdownFunction;
-        PluginInterface::LoadConfigurationFunction loadConfigurationFunction;
-        PluginInterface::GetConfigurationFunction getConfigurationFunction;
-        PluginInterface::FreeConfigurationTextFunction freeConfigurationTextFunction;
+        PluginInterface::V1::InitFunction initFunction;
+        PluginInterface::V1::PlayingStateChangedFunction playingStateChangedFunction;
+        PluginInterface::V1::NextEntrySelectedFunction nextEntrySelectedFunction;
+        PluginInterface::V1::PreviousEntrySelectedFunction previousEntrySelectedFunction;
+        PluginInterface::V1::PlaylistEntrySelectedFunction playlistEntrySelectedFunction;
+        PluginInterface::V1::TrackVolumeChangedFunction trackVolumeChangedFunction;
+        PluginInterface::V1::PositionChangedFunction positionChangedFunction;
+        PluginInterface::V1::ConfigureFunction configureFunction;
+        PluginInterface::V1::ShutdownFunction shutdownFunction;
+        PluginInterface::V1::LoadConfigurationFunction loadConfigurationFunction;
+        PluginInterface::V1::GetConfigurationFunction getConfigurationFunction;
+        PluginInterface::V1::FreeConfigurationTextFunction freeConfigurationTextFunction;
     };
 
-    std::vector<Plugin> plugins;
+    struct PluginV2
+    {
+        PluginV2();
+        PluginV2(PluginV2&& other);
+        String name;
+        std::unique_ptr<DynamicLibrary> dynamicLibrary;
+        PluginInterface::V2::InitFunction initFunction;
+        PluginInterface::V2::PlayingStateChangedFunction playingStateChangedFunction;
+        PluginInterface::V2::NextEntrySelectedFunction nextEntrySelectedFunction;
+        PluginInterface::V2::PreviousEntrySelectedFunction previousEntrySelectedFunction;
+        PluginInterface::V2::PlaylistEntrySelectedFunction playlistEntrySelectedFunction;
+        PluginInterface::V2::PlaylistEntryDurationChangedFunction playlistEntryDurationChangedFunction;
+        PluginInterface::V2::PlaylistEntryNameChangedFunction playlistEntryNameChangedFunction;
+        PluginInterface::V2::TrackVolumeChangedFunction trackVolumeChangedFunction;
+        PluginInterface::V2::PositionChangedFunction positionChangedFunction;
+        PluginInterface::V2::ConfigureFunction configureFunction;
+        PluginInterface::V2::ShutdownFunction shutdownFunction;
+        PluginInterface::V2::LoadConfigurationFunction loadConfigurationFunction;
+        PluginInterface::V2::GetConfigurationFunction getConfigurationFunction;
+        PluginInterface::V2::FreeConfigurationTextFunction freeConfigurationTextFunction;
+    };
+
+    std::variant<PluginV1, std::string> loadPluginV1(DynamicLibrary& library);
+    std::variant<PluginV2, std::string> loadPluginV2(DynamicLibrary& library);
+
+    std::vector<PluginV1> pluginsV1;
+    std::vector<PluginV2> pluginsV2;
 };
