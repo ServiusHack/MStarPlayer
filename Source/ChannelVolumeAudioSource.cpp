@@ -90,7 +90,7 @@ float ChannelVolumeAudioSource::getActualVolume(int channelIndex) const
 
     if (channelIndex >= 0 && channelIndex < m_actualVolumes.size())
     {
-        return m_actualVolumes.getUnchecked(channelIndex).getVolume();
+        return m_actualVolumes.getReference(channelIndex).getVolume();
     }
 
     return 0.0f;
@@ -156,7 +156,7 @@ void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& b
         if (channel < m_actualVolumes.size())
         {
             const float* buffer = bufferToFill.buffer->getReadPointer(channel) + bufferToFill.startSample;
-            m_actualVolumes.getUnchecked(channel).update(buffer, bufferToFill.numSamples);
+            m_actualVolumes.getReference(channel).update(buffer, bufferToFill.numSamples);
         }
     }
 }

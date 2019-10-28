@@ -112,7 +112,7 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
     {
         if (i == m_soloLeftChannel || i == m_soloRightChannel)
             continue;
-        m_volumes.getUnchecked(i).update(
+        m_volumes.getReference(i).update(
             bufferToFill.buffer->getReadPointer(i) + bufferToFill.startSample, bufferToFill.numSamples);
     }
 }
