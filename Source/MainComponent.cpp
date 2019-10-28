@@ -511,6 +511,14 @@ void MainContentComponent::newProject()
     m_projectModified = false;
 }
 
+void MainContentComponent::openProject(File projectFile)
+{
+    m_projectFile = projectFile;
+    m_recentlyOpenedFiles.addFile(m_projectFile);
+    m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
+    readProjectFile();
+}
+
 void MainContentComponent::openProject()
 {
     if (!askSaveProject())
@@ -519,10 +527,7 @@ void MainContentComponent::openProject()
     FileChooser myChooser(TRANS("Please select the project file you want to load ..."), File(), "*.aupp");
     if (myChooser.browseForFileToOpen())
     {
-        m_projectFile = File(myChooser.getResult());
-        m_recentlyOpenedFiles.addFile(m_projectFile);
-        m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
-        readProjectFile();
+        openProject(myChooser.getResult());
     }
 }
 
