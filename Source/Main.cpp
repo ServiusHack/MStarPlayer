@@ -46,6 +46,12 @@ public:
         MainContentComponent::initLookAndFeel();
         LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
         m_mainWindow = std::make_unique<MainWindow>(m_applicationProperties);
+
+        StringArray parameters = JUCEApplication::getCommandLineParameterArray();
+        if (!parameters.isEmpty())
+        {
+            m_mainWindow->openProject(File(parameters[0]));
+        }
     }
 
     void shutdown()
@@ -113,6 +119,11 @@ public:
                 return;
 
             JUCEApplication::getInstance()->systemRequestedQuit();
+        }
+
+        void openProject(File projectFile)
+        {
+            static_cast<MainContentComponent*>(getContentComponent())->openProject(projectFile);
         }
 
     private:

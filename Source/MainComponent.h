@@ -129,6 +129,7 @@ public:
     // Project file related methods and fields
 public:
     bool askSaveProject();
+    void openProject(File projectFile);
 
 private:
     void newProject();
