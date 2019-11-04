@@ -6,7 +6,7 @@ ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(
     AudioSource* const source_, SoloBusSettings& soloBusSettings, const bool deleteSourceWhenDeleted)
     : source(source_, deleteSourceWhenDeleted)
     , requiredNumberOfChannels(2)
-    , m_bufferSize(1)
+    , m_decayRate(0)
     , m_soloBusSettings(soloBusSettings)
 {
     m_soloBusSettings.addListener(this);
@@ -26,7 +26,7 @@ void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int req
 
     if (requiredNumberOfChannels > m_volumes.size())
         m_volumes.insertMultiple(
-            m_volumes.size(), VolumeAnalyzer(m_bufferSize), requiredNumberOfChannels_ - m_volumes.size());
+            m_volumes.size(), VolumeAnalyzer(m_decayRate), requiredNumberOfChannels_ - m_volumes.size());
 }
 
 void ChannelRemappingAudioSourceWithVolume::clearAllMappings()
@@ -51,11 +51,11 @@ void ChannelRemappingAudioSourceWithVolume::prepareToPlay(int samplesPerBlockExp
     source->prepareToPlay(samplesPerBlockExpected, sampleRate);
 
     const ScopedLock sl(lock);
-    m_bufferSize = static_cast<size_t>(sampleRate / 10);
+    m_decayRate = static_cast<float>(sampleRate / 10);
     auto numberOfChannels = m_volumes.size();
     m_volumes.clear();
     if (numberOfChannels > m_volumes.size())
-        m_volumes.insertMultiple(m_volumes.size(), VolumeAnalyzer(m_bufferSize), numberOfChannels - m_volumes.size());
+        m_volumes.insertMultiple(m_volumes.size(), VolumeAnalyzer(m_decayRate), numberOfChannels - m_volumes.size());
     m_sampleRate = sampleRate;
 }
 

@@ -1,19 +1,23 @@
 #include "VolumeAnalyzer.h"
 
-VolumeAnalyzer::VolumeAnalyzer(size_t bufferSize)
-    : m_samples(bufferSize, 0.0f)
-    , m_writeIndex(0)
+VolumeAnalyzer::VolumeAnalyzer(float decayRate)
+    : m_decayRate(decayRate)
 {
-    jassert(bufferSize > 0);
 }
 
 float VolumeAnalyzer::getVolume() const
 {
-    return *std::max_element(m_samples.begin(), m_samples.end());
+    return m_volume;
 }
 
 void VolumeAnalyzer::update(const float* buffer, int numSamples)
 {
     for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
-        m_samples[++m_writeIndex % m_samples.size()] = std::abs(buffer[sampleIndex]);
+    {
+        float abs = std::abs(buffer[sampleIndex]);
+        if (abs >= m_volume)
+            m_volume = abs;
+        else
+            m_volume *= (1.0f - 1.0f / m_decayRate);
+    }
 }

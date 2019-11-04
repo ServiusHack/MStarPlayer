@@ -8,12 +8,12 @@
 class VolumeAnalyzer
 {
 public:
-    VolumeAnalyzer(size_t bufferSize);
+    VolumeAnalyzer(float decayRate);
 
     float getVolume() const;
     void update(const float* buffer, int numSamples);
 
 private:
-    std::vector<float> m_samples;
-    size_t m_writeIndex;
+    float m_decayRate;
+    float m_volume{};
 };
