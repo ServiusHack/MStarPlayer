@@ -76,7 +76,7 @@ public:
 
 private:
     Array<VolumeAnalyzer> m_actualVolumes;
-    size_t m_bufferSize{0};
+    float m_decayRate{0};
 
     // gain to apply
 private:

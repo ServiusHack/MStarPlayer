@@ -25,7 +25,7 @@ public:
 
 private:
     Array<VolumeAnalyzer> m_volumes;
-    size_t m_bufferSize;
+    float m_decayRate;
     double m_sampleRate{0.0};
 
     // ChannelRemappingAudioSource

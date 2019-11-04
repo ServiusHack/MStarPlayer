@@ -99,10 +99,10 @@ float ChannelVolumeAudioSource::getActualVolume(int channelIndex) const
 void ChannelVolumeAudioSource::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     m_source->prepareToPlay(samplesPerBlockExpected, sampleRate);
-    m_bufferSize = static_cast<size_t>(sampleRate / 10);
+    m_decayRate = static_cast<float>(sampleRate / 10);
     auto numberOfChannels = m_actualVolumes.size();
     m_actualVolumes.clear();
-    m_actualVolumes.insertMultiple(0, VolumeAnalyzer(m_bufferSize), numberOfChannels);
+    m_actualVolumes.insertMultiple(0, VolumeAnalyzer(m_decayRate), numberOfChannels);
 }
 
 void ChannelVolumeAudioSource::releaseResources()
@@ -120,7 +120,7 @@ void ChannelVolumeAudioSource::setChannelCount(int channelCount)
     if (channelCount > m_setMutes.size())
         m_setMutes.insertMultiple(m_setMutes.size(), false, channelCount);
     if (channelCount > m_actualVolumes.size())
-        m_actualVolumes.insertMultiple(m_actualVolumes.size(), VolumeAnalyzer(m_bufferSize), channelCount);
+        m_actualVolumes.insertMultiple(m_actualVolumes.size(), VolumeAnalyzer(m_decayRate), channelCount);
     if (channelCount > m_appliedGains.size())
         m_appliedGains.insertMultiple(m_appliedGains.size(), 1.0f, channelCount);
 }
