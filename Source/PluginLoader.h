@@ -10,6 +10,7 @@
 
 #include "PluginInterfaceV1.h"
 #include "PluginInterfaceV2.h"
+#include "PluginInterfaceV3.h"
 
 class PluginLoader
 {
@@ -88,9 +89,34 @@ private:
         PluginInterface::V2::FreeConfigurationTextFunction freeConfigurationTextFunction;
     };
 
+    struct PluginV3
+    {
+        PluginV3();
+        PluginV3(PluginV3&& other);
+        String name;
+        std::unique_ptr<DynamicLibrary> dynamicLibrary;
+        PluginInterface::V3::InitFunction initFunction;
+        PluginInterface::V3::PlayingStateChangedFunction playingStateChangedFunction;
+        PluginInterface::V3::NextEntrySelectedFunction nextEntrySelectedFunction;
+        PluginInterface::V3::PreviousEntrySelectedFunction previousEntrySelectedFunction;
+        PluginInterface::V3::PlaylistEntrySelectedFunction playlistEntrySelectedFunction;
+        PluginInterface::V3::PlaylistEntryDurationChangedFunction playlistEntryDurationChangedFunction;
+        PluginInterface::V3::PlaylistEntryNameChangedFunction playlistEntryNameChangedFunction;
+        PluginInterface::V3::PlayerVolumeChangedFunction playerVolumeChangedFunction;
+        PluginInterface::V3::TrackVolumeChangedFunction trackVolumeChangedFunction;
+        PluginInterface::V3::PositionChangedFunction positionChangedFunction;
+        PluginInterface::V3::ConfigureFunction configureFunction;
+        PluginInterface::V3::ShutdownFunction shutdownFunction;
+        PluginInterface::V3::LoadConfigurationFunction loadConfigurationFunction;
+        PluginInterface::V3::GetConfigurationFunction getConfigurationFunction;
+        PluginInterface::V3::FreeConfigurationTextFunction freeConfigurationTextFunction;
+    };
+
     std::variant<PluginV1, std::string> loadPluginV1(DynamicLibrary& library);
     std::variant<PluginV2, std::string> loadPluginV2(DynamicLibrary& library);
+    std::variant<PluginV3, std::string> loadPluginV3(DynamicLibrary& library);
 
     std::vector<PluginV1> pluginsV1;
     std::vector<PluginV2> pluginsV2;
+    std::vector<PluginV3> pluginsV3;
 };

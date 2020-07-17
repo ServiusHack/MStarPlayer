@@ -56,6 +56,17 @@ void listPlayersV2(PluginInterface::V2::ListPlayersCallbackFunction callback, vo
     }
 }
 
+void listPlayersV3(PluginInterface::V3::ListPlayersCallbackFunction callback, void* userData)
+{
+    const int components_count = component->getNumDocuments();
+    std::vector<String> names;
+    for (int i = 0; i < components_count; ++i)
+    {
+        const PlayerComponent* player = static_cast<PlayerComponent*>(component->getDocument(i));
+        callback(player->Component::getName().toRawUTF8(), userData);
+    }
+}
+
 void play(const char* playerName)
 {
     const MessageManagerLock mmLock;
@@ -108,6 +119,27 @@ void listTracksV2(const char* playerName, PluginInterface::V2::ListTracksCallbac
     {
         callback(subMixerControlable->getName().toRawUTF8(), userData);
     }
+}
+
+void listTracksV3(const char* playerName, PluginInterface::V3::ListTracksCallbackFunction callback, void* userData)
+{
+    const PlayerComponent* player = getPlayer(playerName);
+
+    std::vector<MixerControlable*> subMixerControlables = player->getSubMixerControlables();
+    for (const MixerControlable* const subMixerControlable : subMixerControlables)
+    {
+        callback(subMixerControlable->getName().toRawUTF8(), userData);
+    }
+}
+
+void playerVolume(const char* playerName, float volume)
+{
+    const MessageManagerLock mmLock;
+    PlayerComponent* player = getPlayer(playerName);
+    if (player == nullptr)
+        return;
+
+    player->setGain(volume);
 }
 
 void trackVolume(const char* playerName, const char* trackName, float volume)
@@ -207,9 +239,32 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             }
             break;
         }
+        case 3:
+        {
+            auto loadResult = loadPluginV3(*dynamicLibrary);
+            switch (loadResult.index())
+            {
+            case 0:
+            {
+                PluginV3 plugin = std::move(std::get<0>(loadResult));
+                plugin.name = directoryIterator.getFile().getFileNameWithoutExtension().toStdString();
+                plugin.dynamicLibrary = std::move(dynamicLibrary);
+                pluginsV3.emplace_back(std::move(plugin));
+                break;
+            }
+            case 1:
+            {
+                failedPlugins.add({directoryIterator.getFile().getFileName(), std::get<1>(loadResult)});
+                break;
+            }
+            default:
+                std::terminate();
+            }
+            break;
+        }
         default:
             failedPlugins.add({directoryIterator.getFile().getFileName(),
-                "Plugin has version " + String(version) + " but M*Player requires version 1 or 2."});
+                "Plugin has version " + String(version) + " but M*Player requires version 1, 2 or 3."});
             continue;
         }
     }
@@ -246,6 +301,23 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
         }
     }
 
+    {
+        PluginInterface::V3::Init init;
+        init.listPlayers = &listPlayersV2;
+        init.listTracks = &listTracksV2;
+        init.play = &play;
+        init.stop = &stop;
+        init.next = &nextEntry;
+        init.previous = &previousEntry;
+        init.setPlayerVolume = &playerVolume;
+        init.setTrackVolume = &trackVolume;
+
+        for (const auto& plugin : pluginsV3)
+        {
+            plugin.initFunction(init);
+        }
+    }
+
     if (failedPlugins.size() > 0)
     {
         String lines;
@@ -269,27 +341,45 @@ PluginLoader::~PluginLoader()
     {
         plugin.shutdownFunction();
     }
+    for (const auto& plugin : pluginsV3)
+    {
+        plugin.shutdownFunction();
+    }
 }
 
 size_t PluginLoader::count()
 {
-    return pluginsV1.size() + pluginsV2.size();
+    return pluginsV1.size() + pluginsV2.size() + pluginsV3.size();
 }
 
 String PluginLoader::pluginName(size_t index)
 {
     if (index < pluginsV1.size())
         return pluginsV1[index].name;
-    else
-        return pluginsV2[index - pluginsV1.size()].name;
+
+    index -= pluginsV1.size();
+
+    if (index < pluginsV2.size())
+        return pluginsV2[index].name;
+
+    index -= pluginsV2.size();
+
+    return pluginsV3[index].name;
 }
 
 void PluginLoader::configure(size_t index)
 {
     if (index < pluginsV1.size())
         pluginsV1[index].configureFunction();
-    else
-        pluginsV2[index - pluginsV1.size()].configureFunction();
+
+    index -= pluginsV1.size();
+
+    if (index < pluginsV2.size())
+        pluginsV2[index].configureFunction();
+
+    index -= pluginsV2.size();
+
+    pluginsV3[index].configureFunction();
 }
 
 void PluginLoader::playingStateChanged(const char* playerName, bool isPlaying)
@@ -299,6 +389,10 @@ void PluginLoader::playingStateChanged(const char* playerName, bool isPlaying)
         plugin.playingStateChangedFunction(playerName, isPlaying);
     }
     for (const auto& plugin : pluginsV2)
+    {
+        plugin.playingStateChangedFunction(playerName, isPlaying);
+    }
+    for (const auto& plugin : pluginsV3)
     {
         plugin.playingStateChangedFunction(playerName, isPlaying);
     }
@@ -314,6 +408,10 @@ void PluginLoader::nextEntrySelected(const char* playerName)
     {
         plugin.nextEntrySelectedFunction(playerName);
     }
+    for (const auto& plugin : pluginsV3)
+    {
+        plugin.nextEntrySelectedFunction(playerName);
+    }
 }
 
 void PluginLoader::previousEntrySelected(const char* playerName)
@@ -323,6 +421,10 @@ void PluginLoader::previousEntrySelected(const char* playerName)
         plugin.previousEntrySelectedFunction(playerName);
     }
     for (const auto& plugin : pluginsV2)
+    {
+        plugin.previousEntrySelectedFunction(playerName);
+    }
+    for (const auto& plugin : pluginsV3)
     {
         plugin.previousEntrySelectedFunction(playerName);
     }
@@ -339,6 +441,10 @@ void PluginLoader::playlistEntrySelected(
     {
         plugin.playlistEntrySelectedFunction(playerName, entryIndex, playlistEntryName, duration);
     }
+    for (const auto& plugin : pluginsV3)
+    {
+        plugin.playlistEntrySelectedFunction(playerName, entryIndex, playlistEntryName, duration);
+    }
 }
 
 void PluginLoader::playlistEntryNameChanged(const char* playerName, size_t entryIndex, const char* playlistEntryName)
@@ -347,11 +453,19 @@ void PluginLoader::playlistEntryNameChanged(const char* playerName, size_t entry
     {
         plugin.playlistEntryNameChangedFunction(playerName, entryIndex, playlistEntryName);
     }
+    for (const auto& plugin : pluginsV3)
+    {
+        plugin.playlistEntryNameChangedFunction(playerName, entryIndex, playlistEntryName);
+    }
 }
 
 void PluginLoader::playlistEntryDurationChanged(const char* playerName, size_t entryIndex, double duration)
 {
     for (const auto& plugin : pluginsV2)
+    {
+        plugin.playlistEntryDurationChangedFunction(playerName, entryIndex, duration);
+    }
+    for (const auto& plugin : pluginsV3)
     {
         plugin.playlistEntryDurationChangedFunction(playerName, entryIndex, duration);
     }
@@ -367,6 +481,10 @@ void PluginLoader::trackVolumeChanged(const char* playerName, const char* trackN
     {
         plugin.trackVolumeChangedFunction(playerName, trackName, volume);
     }
+    for (const auto& plugin : pluginsV3)
+    {
+        plugin.trackVolumeChangedFunction(playerName, trackName, volume);
+    }
 }
 
 void PluginLoader::positionChanged(const char* playerName, double position)
@@ -376,6 +494,10 @@ void PluginLoader::positionChanged(const char* playerName, double position)
         plugin.positionChangedFunction(playerName, position);
     }
     for (const auto& plugin : pluginsV2)
+    {
+        plugin.positionChangedFunction(playerName, position);
+    }
+    for (const auto& plugin : pluginsV3)
     {
         plugin.positionChangedFunction(playerName, position);
     }
@@ -393,6 +515,15 @@ void PluginLoader::saveConfigurations(XmlElement* pluginsElement)
         pluginsElement->addChildElement(pluginElement);
     }
     for (auto&& plugin : pluginsV2)
+    {
+        XmlElement* pluginElement = new XmlElement("Plugin");
+        pluginElement->setAttribute("name", plugin.name);
+        const char* data = plugin.getConfigurationFunction();
+        pluginElement->addTextElement(String::fromUTF8(data));
+        plugin.freeConfigurationTextFunction(data);
+        pluginsElement->addChildElement(pluginElement);
+    }
+    for (auto&& plugin : pluginsV3)
     {
         XmlElement* pluginElement = new XmlElement("Plugin");
         pluginElement->setAttribute("name", plugin.name);
@@ -424,6 +555,13 @@ void PluginLoader::loadConfigurations(XmlElement* pluginsElement)
         if (it2 != pluginsV2.end())
         {
             it2->loadConfigurationFunction(configurationText.toRawUTF8());
+        }
+        auto it3 = std::find_if(pluginsV3.begin(), pluginsV3.end(), [pluginName](const PluginV3& plugin) {
+            return plugin.name == pluginName;
+        });
+        if (it3 != pluginsV3.end())
+        {
+            it3->loadConfigurationFunction(configurationText.toRawUTF8());
         }
     }
 }
@@ -623,6 +761,118 @@ std::variant<PluginLoader::PluginV2, std::string> PluginLoader::loadPluginV2(Dyn
     return plugin;
 }
 
+std::variant<PluginLoader::PluginV3, std::string> PluginLoader::loadPluginV3(DynamicLibrary& dynamicLibrary)
+{
+    PluginV3 plugin;
+
+    plugin.initFunction = reinterpret_cast<PluginInterface::V3::InitFunction>(dynamicLibrary.getFunction("mstarInit"));
+    if (!plugin.initFunction)
+    {
+        return "Missing function 'init'.";
+    }
+
+    plugin.playingStateChangedFunction = reinterpret_cast<PluginInterface::V3::PlayingStateChangedFunction>(
+        dynamicLibrary.getFunction("mstarPlayingStateChanged"));
+    if (!plugin.playingStateChangedFunction)
+    {
+        return "Missing function 'playingStateChanged'.";
+    }
+
+    plugin.nextEntrySelectedFunction = reinterpret_cast<PluginInterface::V3::NextEntrySelectedFunction>(
+        dynamicLibrary.getFunction("mstarNextEntrySelected"));
+    if (!plugin.nextEntrySelectedFunction)
+    {
+        return "Missing function 'nextEntrySelected'.";
+    }
+
+    plugin.previousEntrySelectedFunction = reinterpret_cast<PluginInterface::V3::PreviousEntrySelectedFunction>(
+        dynamicLibrary.getFunction("mstarPreviousEntrySelected"));
+    if (!plugin.previousEntrySelectedFunction)
+    {
+        return "Missing function 'previousEntrySelected'.";
+    }
+
+    plugin.playlistEntrySelectedFunction = reinterpret_cast<PluginInterface::V3::PlaylistEntrySelectedFunction>(
+        dynamicLibrary.getFunction("mstarPlaylistEntrySelected"));
+    if (!plugin.playlistEntrySelectedFunction)
+    {
+        return "Missing function 'playlistEntrySelected'.";
+    }
+
+    plugin.playlistEntryDurationChangedFunction
+        = reinterpret_cast<PluginInterface::V3::PlaylistEntryDurationChangedFunction>(
+            dynamicLibrary.getFunction("mstarPlaylistEntryDurationChanged"));
+    if (!plugin.playlistEntryDurationChangedFunction)
+    {
+        return "Missing function 'playlistEntryDurationChanged'.";
+    }
+
+    plugin.playlistEntryNameChangedFunction = reinterpret_cast<PluginInterface::V3::PlaylistEntryNameChangedFunction>(
+        dynamicLibrary.getFunction("mstarPlaylistEntryNameChanged"));
+    if (!plugin.playlistEntrySelectedFunction)
+    {
+        return "Missing function 'playlistEntryNameChanged'.";
+    }
+
+    plugin.playerVolumeChangedFunction = reinterpret_cast<PluginInterface::V3::PlayerVolumeChangedFunction>(
+        dynamicLibrary.getFunction("mstarPlayerVolumeChanged"));
+    if (!plugin.playerVolumeChangedFunction)
+    {
+        return "Missing function 'playerVolumeChanged'.";
+    }
+
+    plugin.trackVolumeChangedFunction = reinterpret_cast<PluginInterface::V3::TrackVolumeChangedFunction>(
+        dynamicLibrary.getFunction("mstarTrackVolumeChanged"));
+    if (!plugin.trackVolumeChangedFunction)
+    {
+        return "Missing function 'trackVolumeChanged'.";
+    }
+
+    plugin.positionChangedFunction = reinterpret_cast<PluginInterface::V3::PositionChangedFunction>(
+        dynamicLibrary.getFunction("mstarPositionChanged"));
+    if (!plugin.positionChangedFunction)
+    {
+        return "Missing function 'positionChanged'.";
+    }
+
+    plugin.configureFunction
+        = reinterpret_cast<PluginInterface::V3::ConfigureFunction>(dynamicLibrary.getFunction("mstarConfigure"));
+    if (!plugin.configureFunction)
+    {
+        return "Missing function 'configure'.";
+    }
+
+    plugin.shutdownFunction
+        = reinterpret_cast<PluginInterface::V3::ShutdownFunction>(dynamicLibrary.getFunction("mstarShutdown"));
+    if (!plugin.shutdownFunction)
+    {
+        return "Missing function 'shutdown'.";
+    }
+
+    plugin.loadConfigurationFunction = reinterpret_cast<PluginInterface::V3::LoadConfigurationFunction>(
+        dynamicLibrary.getFunction("mstarLoadConfiguration"));
+    if (!plugin.loadConfigurationFunction)
+    {
+        return "Missing function 'loadConfiguration'.";
+    }
+
+    plugin.getConfigurationFunction = reinterpret_cast<PluginInterface::V3::GetConfigurationFunction>(
+        dynamicLibrary.getFunction("mstarGetConfiguration"));
+    if (!plugin.getConfigurationFunction)
+    {
+        return "Missing function 'getConfiguration'.";
+    }
+
+    plugin.freeConfigurationTextFunction = reinterpret_cast<PluginInterface::V3::FreeConfigurationTextFunction>(
+        dynamicLibrary.getFunction("mstarFreeConfigurationText"));
+    if (!plugin.freeConfigurationTextFunction)
+    {
+        return "Missing function 'freeConfigurationText'.";
+    }
+
+    return plugin;
+}
+
 PluginLoader::PluginV1::PluginV1() {}
 
 PluginLoader::PluginV1::PluginV1(PluginV1&& other)
@@ -646,3 +896,7 @@ PluginLoader::PluginV1::PluginV1(PluginV1&& other)
 PluginLoader::PluginV2::PluginV2() {}
 
 PluginLoader::PluginV2::PluginV2(PluginV2&& other) = default;
+
+PluginLoader::PluginV3::PluginV3() {}
+
+PluginLoader::PluginV3::PluginV3(PluginV3&& other) = default;
