@@ -35,6 +35,8 @@
       <FILE id="mRV6dw" name="play.svg" compile="0" resource="1" file="Icons/play.svg"/>
     </GROUP>
     <GROUP id="{EDD331C4-D9A9-1CD3-DD08-FEA1C15C212F}" name="Source">
+      <FILE id="rtac3x" name="PluginInterfaceV3.h" compile="0" resource="0"
+            file="Source/PluginInterfaceV3.h"/>
       <FILE id="OpTO6W" name="PluginInterfaceV2.h" compile="0" resource="0"
             file="Source/PluginInterfaceV2.h"/>
       <FILE id="ZIFMcz" name="PluginInterfaceV1.h" compile="0" resource="0"
