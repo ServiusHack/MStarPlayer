@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.1.0
+  Created with Projucer version: 6.0.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
@@ -36,48 +36,66 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
     m_outputChannelNames->addChangeListener(this);
     //[/Constructor_pre]
 
-    addAndMakeVisible(comboBox = new ComboBox("new combo box"));
+    comboBox.reset(new juce::ComboBox("new combo box"));
+    addAndMakeVisible(comboBox.get());
     comboBox->setEditableText(false);
-    comboBox->setJustificationType(Justification::centredLeft);
-    comboBox->setTextWhenNothingSelected(String());
+    comboBox->setJustificationType(juce::Justification::centredLeft);
+    comboBox->setTextWhenNothingSelected(juce::String());
     comboBox->setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
     comboBox->addItem(TRANS("1kHz"), 1);
     comboBox->addItem(TRANS("White"), 2);
     comboBox->addListener(this);
 
-    addAndMakeVisible(toggleButton = new TextButton("new button"));
+    comboBox->setBounds(64, 16, 112, 24);
+
+    toggleButton.reset(new juce::TextButton("new button"));
+    addAndMakeVisible(toggleButton.get());
     toggleButton->setButtonText(TRANS("play"));
     toggleButton->addListener(this);
 
-    addAndMakeVisible(component = new ListBox());
+    toggleButton->setBounds(200, 16, 86, 24);
+
+    component.reset(new ListBox());
+    addAndMakeVisible(component.get());
     component->setName("new component");
 
-    addAndMakeVisible(label = new Label("new label", TRANS("Tone:")));
-    label->setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
-    label->setJustificationType(Justification::centredLeft);
+    label.reset(new juce::Label("new label", TRANS("Tone:")));
+    addAndMakeVisible(label.get());
+    label->setFont(juce::Font(15.00f, juce::Font::plain).withTypefaceStyle("Regular"));
+    label->setJustificationType(juce::Justification::centredLeft);
     label->setEditable(false, false, false);
-    label->setColour(TextEditor::textColourId, Colours::black);
-    label->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    label->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    label->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
-    addAndMakeVisible(slider = new VolumeSlider());
+    label->setBounds(8, 16, 64, 24);
+
+    slider.reset(new VolumeSlider());
+    addAndMakeVisible(slider.get());
     slider->setName("new slider");
 
-    addAndMakeVisible(textButton = new TextButton("new button"));
+    slider->setBounds(8, 56, 40, 296);
+
+    textButton.reset(new juce::TextButton("new button"));
+    addAndMakeVisible(textButton.get());
     textButton->setButtonText(TRANS("select all"));
-    textButton->setConnectedEdges(Button::ConnectedOnRight);
+    textButton->setConnectedEdges(juce::Button::ConnectedOnRight);
     textButton->addListener(this);
 
-    addAndMakeVisible(textButton2 = new TextButton("new button"));
+    textButton2.reset(new juce::TextButton("new button"));
+    addAndMakeVisible(textButton2.get());
     textButton2->setButtonText(TRANS("select none"));
-    textButton2->setConnectedEdges(Button::ConnectedOnLeft);
+    textButton2->setConnectedEdges(juce::Button::ConnectedOnLeft);
     textButton2->addListener(this);
 
-    addAndMakeVisible(dbLabel = new Label("new label", TRANS("0 dB")));
-    dbLabel->setFont(Font(15.00f, Font::plain).withTypefaceStyle("Regular"));
-    dbLabel->setJustificationType(Justification::centredLeft);
+    dbLabel.reset(new juce::Label("new label", TRANS("0 dB")));
+    addAndMakeVisible(dbLabel.get());
+    dbLabel->setFont(juce::Font(15.00f, juce::Font::plain).withTypefaceStyle("Regular"));
+    dbLabel->setJustificationType(juce::Justification::centredLeft);
     dbLabel->setEditable(false, false, false);
-    dbLabel->setColour(TextEditor::textColourId, Colours::black);
-    dbLabel->setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    dbLabel->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    dbLabel->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
+
+    dbLabel->setBounds(8, 360, 280, 24);
 
     //[UserPreSize]
     toggleButton->setEnabled(false);
@@ -131,12 +149,12 @@ TestToneGeneratorComponent::~TestToneGeneratorComponent()
 }
 
 //==============================================================================
-void TestToneGeneratorComponent::paint(Graphics& g)
+void TestToneGeneratorComponent::paint(juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll(Colours::white);
+    g.fillAll(juce::Colours::white);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -147,24 +165,19 @@ void TestToneGeneratorComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    comboBox->setBounds(64, 16, 112, 24);
-    toggleButton->setBounds(200, 16, 86, 24);
     component->setBounds(56, 56, getWidth() - 64, getHeight() - 144);
-    label->setBounds(8, 16, 64, 24);
-    slider->setBounds(8, 56, 40, 296);
     textButton->setBounds(56, 320, 112, 24);
     textButton2->setBounds(168, 320, 118, 24);
-    dbLabel->setBounds(8, 360, 280, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
 
-void TestToneGeneratorComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void TestToneGeneratorComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == comboBox)
+    if (comboBoxThatHasChanged == comboBox.get())
     {
         //[UserComboBoxCode_comboBox] -- add your combo box handling code here..
         if (comboBoxThatHasChanged->isEnabled())
@@ -181,12 +194,12 @@ void TestToneGeneratorComponent::comboBoxChanged(ComboBox* comboBoxThatHasChange
     //[/UsercomboBoxChanged_Post]
 }
 
-void TestToneGeneratorComponent::buttonClicked(Button* buttonThatWasClicked)
+void TestToneGeneratorComponent::buttonClicked(juce::Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == toggleButton)
+    if (buttonThatWasClicked == toggleButton.get())
     {
         //[UserButtonCode_toggleButton] -- add your button handler code here..
         if (toggleButton->getToggleState())
@@ -199,14 +212,14 @@ void TestToneGeneratorComponent::buttonClicked(Button* buttonThatWasClicked)
         }
         //[/UserButtonCode_toggleButton]
     }
-    else if (buttonThatWasClicked == textButton)
+    else if (buttonThatWasClicked == textButton.get())
     {
         //[UserButtonCode_textButton] -- add your button handler code here..
         m_listBoxModel.selectAll();
         component->updateContent();
         //[/UserButtonCode_textButton]
     }
-    else if (buttonThatWasClicked == textButton2)
+    else if (buttonThatWasClicked == textButton2.get())
     {
         //[UserButtonCode_textButton2] -- add your button handler code here..
         m_listBoxModel.deselectAll();
@@ -247,7 +260,7 @@ void TestToneGeneratorComponent::sliderValueChanged(Slider* sliderThatWasMoved)
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == slider)
+    if (sliderThatWasMoved == slider.get())
     {
         //[UserSliderCode_slider] -- add your slider handling code here..
         m_audioSource.setVolume(sliderThatWasMoved->getValue());
@@ -271,7 +284,7 @@ void TestToneGeneratorComponent::sliderValueChanged(Slider* sliderThatWasMoved)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="TestToneGeneratorComponent"
-                 componentName="" parentClasses="public Component, public ChangeListener, public OutputChannelNamesListener, public SliderListener"
+                 componentName="" parentClasses="public Component, public ChangeListener, public OutputChannelNamesListener, public Slider::Listener"
                  constructorParams="MixerComponent* mixerComponent, OutputChannelNames* outputChannelNames"
                  variableInitialisers="m_mixerComponent(mixerComponent)&#10;m_outputChannelNames(outputChannelNames)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
@@ -289,8 +302,8 @@ BEGIN_JUCER_METADATA
   <LABEL name="new label" id="fa4fe90b2c777bd9" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="8 16 64 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Tone:" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         kerning="0" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="new slider" id="ee7d514938f90c29" memberName="slider" virtualName="VolumeSlider"
                     explicitFocusOrder="0" pos="8 56 40 296" class="Component" params=""/>
   <TEXTBUTTON name="new button" id="710c460e04cff859" memberName="textButton"
@@ -304,8 +317,8 @@ BEGIN_JUCER_METADATA
   <LABEL name="new label" id="863c5289d7b6c1d0" memberName="dbLabel" virtualName=""
          explicitFocusOrder="0" pos="8 360 280 24" edTextCol="ff000000"
          edBkgCol="0" labelText="0 dB" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         kerning="0" bold="0" italic="0" justification="33"/>
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

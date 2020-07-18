@@ -306,8 +306,8 @@ void JinglePlayerWindow::setColor(const Colour& color)
 void JinglePlayerWindow::setUserImage(const File& file)
 {
     if (file == File())
-        delete m_userImage.release();
+        m_userImage.reset();
     else
-        m_userImage.reset(Drawable::createFromImageFile(file));
+        m_userImage = Drawable::createFromImageFile(file);
     repaint();
 }

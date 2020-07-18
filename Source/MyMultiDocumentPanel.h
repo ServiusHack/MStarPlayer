@@ -39,6 +39,8 @@ private:
     everything works nicely inside a MyMultiDocumentPanel.
 
     @see MyMultiDocumentPanel
+
+    @tags{GUI}
 */
 class JUCE_API MyMultiDocumentPanelWindow : public DocumentWindow
 {
@@ -80,6 +82,8 @@ private:
     Use addDocument() and closeDocument() to add or remove components from the
     panel - never use any of the Component methods to access the panel's child
     components directly, as these are managed internally.
+
+    @tags{GUI}
 */
 class JUCE_API MyMultiDocumentPanel
     : public Component
@@ -290,19 +294,16 @@ public:
 
 private:
     //==============================================================================
-    LayoutMode mode;
+    LayoutMode mode = MaximisedWindowsWithTabs;
     Array<Component*> components;
     std::unique_ptr<TabbedComponent> tabComponent;
-    Colour backgroundColour;
-    int maximumNumDocuments, numDocsBeforeTabsUsed;
-    std::unique_ptr<Viewport> viewport;
-    std::unique_ptr<ResizingComponent> resizingComponent;
+    Colour backgroundColour{Colours::lightblue};
+    int maximumNumDocuments = 0, numDocsBeforeTabsUsed = 0;
 
     MyConstrainer m_myConstrainer;
 
-    class TabbedComponentInternal;
+    struct TabbedComponentInternal;
     friend class MyMultiDocumentPanelWindow;
-    friend class TabbedComponentInternal;
 
     Component* getContainerComp(Component*) const;
     void updateOrder();

@@ -30,6 +30,6 @@
   </metadata>
 
   <files>
-    <file src="Builds\VisualStudio2017\Win32\Release\App\MStarPlayer.exe" target="MStarPlayer.exe" />
+    <file src="Build\MStarPlayer_artefacts\RelWithDebInfo\MStarPlayer.exe" target="MStarPlayer.exe" />
   </files>
 </package>

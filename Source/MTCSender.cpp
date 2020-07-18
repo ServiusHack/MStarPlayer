@@ -18,12 +18,12 @@ void MTCSender::setDevice(int deviceIndex)
     {
         if (m_midiOutput)
         {
-            delete m_midiOutput.release();
+            m_midiOutput.reset();
         }
         return;
     }
 
-    m_midiOutput.reset(MidiOutput::openDevice(deviceIndex));
+    m_midiOutput = MidiOutput::openDevice(deviceIndex);
 
     if (!m_midiOutput)
     {

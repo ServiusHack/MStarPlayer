@@ -160,7 +160,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 {
     component = pComponent;
 
-    DirectoryIterator directoryIterator(
+    RangedDirectoryIterator directoryIterator(
         File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("plugins"), false, "*.dll");
     std::vector<File> dlls;
 
@@ -170,13 +170,13 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
         String error;
     };
     Array<LoadFailure> failedPlugins;
-    while (directoryIterator.next())
+    for (DirectoryEntry dirEntry : directoryIterator)
     {
-        auto dynamicLibrary = std::make_unique<DynamicLibrary>(directoryIterator.getFile().getFullPathName());
+        auto dynamicLibrary = std::make_unique<DynamicLibrary>(dirEntry.getFile().getFullPathName());
 
         if (dynamicLibrary->getNativeHandle() == nullptr)
         {
-            failedPlugins.add({directoryIterator.getFile().getFileName(), "Unable to open the plugin."});
+            failedPlugins.add({dirEntry.getFile().getFileName(), "Unable to open the plugin."});
             continue;
         }
 
@@ -185,7 +185,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 
         if (!versionFunction)
         {
-            failedPlugins.add({directoryIterator.getFile().getFileName(),
+            failedPlugins.add({dirEntry.getFile().getFileName(),
                 "Function 'mstarPluginVersion' not found. Is this a M*Player plugin?"});
             continue;
         }
@@ -201,14 +201,14 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             case 0:
             {
                 PluginV1 plugin = std::move(std::get<0>(loadResult));
-                plugin.name = directoryIterator.getFile().getFileNameWithoutExtension().toStdString();
+                plugin.name = dirEntry.getFile().getFileNameWithoutExtension().toStdString();
                 plugin.dynamicLibrary = std::move(dynamicLibrary);
                 pluginsV1.emplace_back(std::move(plugin));
                 break;
             }
             case 1:
             {
-                failedPlugins.add({directoryIterator.getFile().getFileName(), std::get<1>(loadResult)});
+                failedPlugins.add({dirEntry.getFile().getFileName(), std::get<1>(loadResult)});
                 break;
             }
             default:
@@ -224,14 +224,14 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             case 0:
             {
                 PluginV2 plugin = std::move(std::get<0>(loadResult));
-                plugin.name = directoryIterator.getFile().getFileNameWithoutExtension().toStdString();
+                plugin.name = dirEntry.getFile().getFileNameWithoutExtension().toStdString();
                 plugin.dynamicLibrary = std::move(dynamicLibrary);
                 pluginsV2.emplace_back(std::move(plugin));
                 break;
             }
             case 1:
             {
-                failedPlugins.add({directoryIterator.getFile().getFileName(), std::get<1>(loadResult)});
+                failedPlugins.add({dirEntry.getFile().getFileName(), std::get<1>(loadResult)});
                 break;
             }
             default:
@@ -247,14 +247,14 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             case 0:
             {
                 PluginV3 plugin = std::move(std::get<0>(loadResult));
-                plugin.name = directoryIterator.getFile().getFileNameWithoutExtension().toStdString();
+                plugin.name = dirEntry.getFile().getFileNameWithoutExtension().toStdString();
                 plugin.dynamicLibrary = std::move(dynamicLibrary);
                 pluginsV3.emplace_back(std::move(plugin));
                 break;
             }
             case 1:
             {
-                failedPlugins.add({directoryIterator.getFile().getFileName(), std::get<1>(loadResult)});
+                failedPlugins.add({dirEntry.getFile().getFileName(), std::get<1>(loadResult)});
                 break;
             }
             default:
@@ -263,7 +263,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
             break;
         }
         default:
-            failedPlugins.add({directoryIterator.getFile().getFileName(),
+            failedPlugins.add({dirEntry.getFile().getFileName(),
                 "Plugin has version " + String(version) + " but M*Player requires version 1, 2 or 3."});
             continue;
         }

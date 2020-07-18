@@ -22,14 +22,12 @@ Pull requests are always welcome to improve the current code or add new features
 
 ### How To Compile
 
-1. Get [Visual Studio 2017](https://www.visualstudio.com/downloads/).
-2. Clone this repository.
-3. Download the [ASIO SDK](https://www.steinberg.net/de/company/developer.html) and extract it.
-4. Download the [JUCE framework](https://shop.juce.com/get-juce).
-5. Open MStarPlayer.jucer with Projucer from the JUCE framework.
-6. Change the 'Header search paths' for the configurations to include the ASIO SDK.
-7. Select File -> Save Project to generate the Visual Studio solution.
-8. Open the solution at `Builds/VisualStudio2017/` and compile.
+1. Get [CMake](https://cmake.org/).
+2. Get [Visual Studio 2017](https://www.visualstudio.com/downloads/).
+3. Clone this repository, including its submodule.
+4. Download the [ASIO SDK](https://www.steinberg.net/de/company/developer.html) and extract it.
+5. Call cmake like this: `cmake -S . -B build_dir -DASIO_PATH=path/to/asio/sdk/common`
+6. Build: `cmake --build build_dir`
 
 ### Format Source Code
 
