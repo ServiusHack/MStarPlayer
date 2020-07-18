@@ -1,15 +1,10 @@
 image: Visual Studio 2017
 
-cache:
-  - C:\JUCE
+install:
+    - cmd: git submodule update --init --recursive
 
 before_build:
-  # Download and extract JUCE to C:\JUCE
-  - if not exist C:\JUCE (curl -fsSLko juce.zip https://d30pueezughrda.cloudfront.net/juce/juce-huckleberry-windows.zip && 7z x -tzip -oC:\ juce.zip JUCE)
-  # Update version
-  - C:\JUCE\Projucer.exe --set-version %APPVEYOR_BUILD_VERSION% MStarPlayer.jucer
-  # Generate solution file
-  - C:\JUCE\Projucer.exe --resave MStarPlayer.jucer
+  - cmake -G "Visual Studio 15 2017" -A Win32 -B Build -S . -DCMAKE_GENERATOR_TOOLSET=v141_xp -DVERSION=%APPVEYOR_BUILD_VERSION%
   # Run clang-format
   - ps: |
       $env:PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCPackages\;$env:PATH"
@@ -22,14 +17,14 @@ before_build:
       }
 
 configuration:
-  - Release
+  - RelWithDebInfo
 
 build:
-  project: Builds/VisualStudio2017/MStarPlayer.sln
+  project: Build/MStarPlayer.sln
 
 after_build:
-   - 7z a MStarPlayer.zip ./Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.exe
-   - 7z a MStarPlayer_PDB.zip ./Builds/VisualStudio2017/Win32/%CONFIGURATION%/App/MStarPlayer.pdb
+   - 7z a MStarPlayer.zip ./Build/MStarPlayer_artefacts/RelWithDebInfo/MStarPlayer.exe
+   - 7z a MStarPlayer_PDB.zip ./Build/MStarPlayer_artefacts/RelWithDebInfo/MStarPlayer.pdb
    - choco pack --version %APPVEYOR_BUILD_VERSION%
 
 artifacts:

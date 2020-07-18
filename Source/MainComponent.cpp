@@ -313,12 +313,12 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 
     case layoutModeFloating:
         result.setInfo(TRANS("Windows"), TRANS("Players are floating windows"), viewCategory, 0);
-        result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::FloatingWindows);
+        result.setTicked(m_multiDocumentPanel->getLayoutMode() == MyMultiDocumentPanel::FloatingWindows);
         break;
 
     case layoutModeTabs:
         result.setInfo(TRANS("Tabs"), TRANS("Players are tabs"), viewCategory, 0);
-        result.setTicked(m_multiDocumentPanel->getLayoutMode() == MultiDocumentPanel::MaximisedWindowsWithTabs);
+        result.setTicked(m_multiDocumentPanel->getLayoutMode() == MyMultiDocumentPanel::MaximisedWindowsWithTabs);
         break;
 
     case showMixer:
@@ -830,7 +830,7 @@ void MainContentComponent::writeProjectFile()
     root->addChildElement(view);
 
     XmlElement* audio = new XmlElement("Audio");
-    audio->addChildElement(m_audioDeviceManager.createStateXml());
+    audio->addChildElement(m_audioDeviceManager.createStateXml().get());
     root->addChildElement(audio);
 
     XmlElement* channelNames = new XmlElement("ChannelNames");
@@ -872,7 +872,7 @@ void MainContentComponent::writeProjectFile()
         root->addChildElement(plugins);
     }
 
-    if (!root->writeToFile(m_projectFile, ""))
+    if (!root->writeTo(m_projectFile))
         AlertWindow::showMessageBoxAsync(
             AlertWindow::WarningIcon, TRANS("Failed to save project file"), TRANS("Failed to save project file."));
     else
