@@ -474,7 +474,8 @@ void CDPlayer::showEditDialog()
 {
     if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(),
+        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(
+            getName(),
             m_color,
             String(),
             std::bind(&CDPlayer::setName, this, std::placeholders::_1),
@@ -500,7 +501,8 @@ void CDPlayer::configureChannels()
 {
     if (m_channelMappingWindow)
     {
-        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(m_outputChannelNames,
+        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(
+            m_outputChannelNames,
             m_soloBusSettings,
             createMapping(),
             [&](int source, int target) { m_remappingAudioSource.setOutputChannelMapping(source, target); },

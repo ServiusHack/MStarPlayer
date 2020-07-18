@@ -7,5 +7,7 @@ BreakBeforeBraces: 'Allman'
 BreakConstructorInitializers: BeforeComma
 ColumnLimit: '120'
 Cpp11BracedListStyle: 'true'
-
+SpaceBeforeCpp11BracedList: 'false'
+SpaceInEmptyBlock: 'false'
+AlignAfterOpenBracket: 'DontAlign'
 ...
