@@ -339,7 +339,8 @@ void Player::showEditDialog()
 {
     if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(),
+        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(
+            getName(),
             m_color,
             m_userImage.getFullPathName(),
             std::bind(&Player::setName, this, std::placeholders::_1),
@@ -358,7 +359,8 @@ void Player::configureChannels()
 {
     if (!m_channelMappingWindow)
     {
-        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(m_outputChannelNames,
+        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(
+            m_outputChannelNames,
             m_soloBusSettings,
             m_tracksContainer.createMapping(),
             [&](int source, int target) {
