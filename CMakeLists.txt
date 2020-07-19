@@ -164,6 +164,9 @@ juce_add_binary_data(BinaryData SOURCES
     Translations/German.txt
 )
 
+set_property(TARGET BinaryData PROPERTY
+  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 target_link_libraries(MStarPlayer PRIVATE
     BinaryData
     juce::juce_audio_basics
