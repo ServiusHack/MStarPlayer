@@ -13,6 +13,9 @@ juce_add_gui_app(MStarPlayer)
 
 set_property(TARGET MStarPlayer PROPERTY CXX_STANDARD 17)
 
+set_property(TARGET MStarPlayer PROPERTY
+  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 juce_generate_juce_header(MStarPlayer)
 
 target_sources(MStarPlayer PRIVATE
