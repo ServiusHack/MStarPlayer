@@ -5,6 +5,8 @@ if (NOT VERSION)
 	set(VERSION "0.0.0")
 endif()
 
+cmake_policy(SET CMP0091 NEW)
+
 project(MStarPlayer VERSION ${VERSION})
 
 add_subdirectory(JUCE)
