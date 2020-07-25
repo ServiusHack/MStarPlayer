@@ -8,6 +8,7 @@
 #include "PlayerEditDialog.h"
 #include "TracksContainer.h"
 #include "Utils.h"
+#include "Waveform.h"
 
 class Player;
 
@@ -97,6 +98,8 @@ private:
     InterPlayerCommunication::SetUserImageCallback m_setUserImageCallback;
 
     AudioFormatManager m_formatManager;
+
+    Waveform m_waveform;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(JinglePlayerWindow)
 };

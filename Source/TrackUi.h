@@ -6,6 +6,7 @@
 #include "Track.h"
 #include "TrackEditDialog.h"
 #include "VolumeSlider.h"
+#include "Waveform.h"
 
 /**
         User interface for a track, contained in TracksComponent.
@@ -64,6 +65,8 @@ private:
 
     FileLoadedCallback m_fileLoadedCallback;
 
+    Waveform m_waveform;
+
     // Button::Listener
 public:
     void buttonClicked(Button* button);
@@ -71,6 +74,7 @@ public:
     // Component
 public:
     virtual void paint(Graphics&) override;
+    virtual void paintOverChildren(Graphics&) override;
     virtual void resized() override;
     virtual void mouseDown(const MouseEvent& event) override;
     virtual void mouseDrag(const MouseEvent& event) override;

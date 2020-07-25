@@ -19,6 +19,8 @@ TrackUi::TrackUi(Track& track, ApplicationProperties& applicationProperties, Set
     , m_muteButton("mute")
     , m_fileNameLabel("filename label")
 {
+    addAndMakeVisible(m_waveform);
+
     addAndMakeVisible(m_idLabel);
     updateIdText();
 
@@ -333,16 +335,16 @@ void TrackUi::paint(Graphics& g)
     int drawWidth = getWidth() - componentWidth;
     if (m_longestDuration != 0)
         drawWidth = static_cast<int>(drawWidth * m_track.getAudioThumbnail().getTotalLength() / m_longestDuration);
-    m_track.getAudioThumbnail().drawChannels(g,
-        Rectangle<int>(componentWidth, 0, drawWidth, getHeight()),
-        0,
-        m_track.getAudioThumbnail().getTotalLength(),
-        1.0f);
+    m_waveform.setAudioThumbnail(&m_track.getAudioThumbnail());
+}
+
+void TrackUi::paintOverChildren(Graphics& g)
+{
+    const static int componentWidth = 100 + 40 + 20;
+    int drawWidth = getWidth() - componentWidth;
+    const int lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
 
     g.setColour(Colour(255, 0, 0));
-    drawWidth = getWidth() - componentWidth;
-
-    const int lineX = componentWidth + static_cast<int>(drawWidth * (std::isnan(m_progress) ? 0 : m_progress));
     g.drawVerticalLine(lineX, 0.0f, static_cast<float>(getHeight()));
 }
 
@@ -352,6 +354,8 @@ void TrackUi::resized()
     m_descriptionLabel.setBounds(0, 20, 100, getHeight() - 20);
 
     static const int buttonWidth = 40;
+    const static int componentWidth = 100 + 40 + 20;
+    int drawWidth = getWidth() - componentWidth;
 
     m_volumeSlider.setBounds(100 + 3, 3, 20, getHeight() - 6);
 
@@ -364,4 +368,6 @@ void TrackUi::resized()
         textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText())
             + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
     m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
+
+    m_waveform.setBounds(componentWidth, 0, drawWidth, getHeight());
 }
