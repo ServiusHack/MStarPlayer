@@ -60,8 +60,11 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     , m_playButton("Play", DrawableButton::ImageFitted)
     , m_configureButton("Configure")
     , m_fileNameLabel("filename label")
+    , m_waveform(Colour(0x55000000))
 {
     m_formatManager.registerBasicFormats();
+
+    addAndMakeVisible(m_waveform);
 
     // progress bar
     m_progressBar.setPercentageDisplay(false);
@@ -192,6 +195,11 @@ void JinglePlayerWindow::resized()
         ProgressBarHeight);
     m_playButton.setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
     m_fileNameLabel.setBounds(0, getHeight() - ProgressBarHeight - ProgressBarHeight, getWidth(), ProgressBarHeight);
+
+    m_waveform.setBounds(m_configureButton.getWidth(),
+        getHeight() - ProgressBarHeight,
+        getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth,
+        ProgressBarHeight);
 }
 
 void JinglePlayerWindow::paint(Graphics& g)
@@ -201,17 +209,7 @@ void JinglePlayerWindow::paint(Graphics& g)
     if (m_userImage)
         m_userImage->drawWithin(g, getLocalBounds().toFloat(), RectanglePlacement::centred, 1.0f);
 
-    g.setColour(Colour(0x55000000));
-
-    AudioThumbnail& audioThumbnail = (*m_tracksContainer)[0].getAudioThumbnail();
-    audioThumbnail.drawChannels(g,
-        Rectangle<int>(m_configureButton.getWidth(),
-            getHeight() - ProgressBarHeight,
-            getWidth() - m_configureButton.getWidth() - TotalDurationTextWidth,
-            ProgressBarHeight),
-        0,
-        audioThumbnail.getTotalLength(),
-        1.0f);
+    m_waveform.setAudioThumbnail(&(*m_tracksContainer)[0].getAudioThumbnail());
 
     Component::paint(g);
 }

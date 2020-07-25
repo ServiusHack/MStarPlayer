@@ -130,6 +130,8 @@ target_sources(MStarPlayer PRIVATE
     Source/VolumeAnalyzer.h
     Source/VolumeSlider.cpp
     Source/VolumeSlider.h
+    Source/Waveform.cpp
+    Source/Waveform.h
 )
 
 target_compile_definitions(MStarPlayer PRIVATE
