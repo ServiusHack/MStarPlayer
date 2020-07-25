@@ -379,7 +379,8 @@ void PluginLoader::configure(size_t index)
 
     index -= pluginsV2.size();
 
-    pluginsV3[index].configureFunction();
+    if (index < pluginsV3.size())
+        pluginsV3[index].configureFunction();
 }
 
 void PluginLoader::playingStateChanged(const char* playerName, bool isPlaying)
