@@ -70,7 +70,7 @@ MainContentComponent::MainContentComponent(
     , m_pluginLoader(m_multiDocumentPanel.get())
 {
     // audio setup
-    m_audioDeviceManager.initialise(64, 64, nullptr, false, {}, 0);
+    m_audioDeviceManager.initialise(0, 64, nullptr, false, {}, 0);
 
     // mixer control
     addAndMakeVisible(m_mixerComponent.get());
@@ -650,12 +650,12 @@ void MainContentComponent::readProjectFile()
         {
             if (audio->getNumChildElements() > 0)
             {
-                String error = m_audioDeviceManager.initialise(64, 64, audio->getChildElement(0), false, {}, 0);
+                String error = m_audioDeviceManager.initialise(0, 64, audio->getChildElement(0), false, {}, 0);
                 if (error != "")
                 {
                     loadWarnings.add(error);
 
-                    error = m_audioDeviceManager.initialise(64, 64, nullptr, false, {}, 0);
+                    error = m_audioDeviceManager.initialise(0, 64, nullptr, false, {}, 0);
 
                     if (error != "")
                         throw std::runtime_error(error.toRawUTF8());
