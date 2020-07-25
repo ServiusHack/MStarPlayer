@@ -1,6 +1,11 @@
 #include "LevelMeter.h"
 #include "DefaultLookAndFeel.h"
 
+namespace
+{
+constexpr float Epsilon = 0.001f;
+}
+
 LevelMeter::LevelMeter()
     : m_volume(0.0f)
     , m_peak(0.0f)
@@ -16,8 +21,12 @@ void LevelMeter::setVolume(float volume)
         m_peak = volume;
         m_peakDurationLeft = LevelMeter::refreshRate;
     }
-    m_volume = volume;
-    repaint();
+    const bool valueChanged = std::abs(m_volume - volume) > Epsilon;
+    if (valueChanged || m_peakDurationLeft == LevelMeter::refreshRate)
+    {
+        m_volume = volume;
+        repaint();
+    }
 }
 
 void LevelMeter::paint(Graphics& g)
