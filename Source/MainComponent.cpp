@@ -830,7 +830,7 @@ void MainContentComponent::writeProjectFile()
     root->addChildElement(view);
 
     XmlElement* audio = new XmlElement("Audio");
-    audio->addChildElement(m_audioDeviceManager.createStateXml().get());
+    audio->addChildElement(m_audioDeviceManager.createStateXml().release());
     root->addChildElement(audio);
 
     XmlElement* channelNames = new XmlElement("ChannelNames");
