@@ -220,8 +220,11 @@ void TracksContainer::addTrack(bool stereo, const XmlElement* element)
             const bool isAnyPlaying
                 = std::any_of(m_tracks.cbegin(), m_tracks.cend(), std::bind(&Track::isPlaying, std::placeholders::_1));
             if (!isAnyPlaying)
+            {
+                m_mtcSender.stop();
                 for (const auto& callback : m_playingStateChangedCallback)
                     callback(false);
+            }
         }
     };
 
