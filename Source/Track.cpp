@@ -300,13 +300,14 @@ void Track::unloadFile()
 void Track::timerCallback()
 {
     const bool hasStreamFinished = m_transportSource.hasStreamFinished();
-    callPositionCallbacks(m_transportSource.getCurrentPosition(), hasStreamFinished);
 
     if (hasStreamFinished)
     {
         stopTimer();
         m_playingStateChangedCallback(false);
     }
+
+    callPositionCallbacks(m_transportSource.getCurrentPosition(), hasStreamFinished);
 }
 
 void Track::callPositionCallbacks(double position, bool hasStreamFinished)
