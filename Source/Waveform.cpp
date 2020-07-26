@@ -6,6 +6,7 @@ Waveform::Waveform(Colour color)
     , m_audioThumbnail(nullptr)
 {
     setBufferedToImage(true);
+    setInterceptsMouseClicks(false, false);
 }
 
 void Waveform::setAudioThumbnail(AudioThumbnail* audioThumbnail)
