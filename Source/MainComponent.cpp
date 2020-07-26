@@ -668,6 +668,17 @@ void MainContentComponent::readProjectFile()
             }
         }
 
+        XmlElement* midi = root->getChildByName("MIDI");
+        if (midi != nullptr)
+        {
+            Array<MidiDeviceInfo> deviceInfos = MidiOutput::getAvailableDevices();
+            for (int i = 0; i < deviceInfos.size(); ++i)
+            {
+                if (deviceInfos[i].name == midi->getAllSubText().trim())
+                    m_mtcSender.setDevice(i);
+            }
+        }
+
         XmlElement* channelNames = root->getChildByName("ChannelNames");
         if (channelNames == nullptr)
             loadWarnings.add(TRANS("No channel names found, using device defaults."));
@@ -832,6 +843,13 @@ void MainContentComponent::writeProjectFile()
     XmlElement* audio = new XmlElement("Audio");
     audio->addChildElement(m_audioDeviceManager.createStateXml().release());
     root->addChildElement(audio);
+
+    if (m_mtcSender.getDevice() != -1)
+    {
+        XmlElement* midi = new XmlElement("MIDI");
+        midi->addTextElement(MidiOutput::getAvailableDevices()[m_mtcSender.getDevice()].name);
+        root->addChildElement(midi);
+    }
 
     XmlElement* channelNames = new XmlElement("ChannelNames");
     m_outputChannelNames->saveToXml(channelNames);
