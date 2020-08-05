@@ -138,8 +138,12 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     };
     m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 
-    Track::PlayingStateChangedCallback playingStateChangedCallback
-        = [&](bool isPlaying) { m_playButton.setImages(isPlaying ? m_stopImage.get() : m_playImage.get()); };
+    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
+        m_playButton.setImages(isPlaying ? m_stopImage.get() : m_playImage.get());
+        m_blink = false;
+        updatePointColor();
+        repaint();
+    };
     m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
 }
 
