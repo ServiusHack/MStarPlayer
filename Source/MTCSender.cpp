@@ -11,31 +11,44 @@ MTCSender::MTCSender()
 
 MTCSender::~MTCSender() {}
 
-void MTCSender::setDevice(int deviceIndex)
+void MTCSender::setDevices(Array<MidiDeviceInfo> deviceInfos)
 {
-    m_deviceIndex = deviceIndex;
-    if (deviceIndex == -1)
+    outputs.erase(std::remove_if(outputs.begin(),
+                      outputs.end(),
+                      [&deviceInfos](const std::unique_ptr<MidiOutput>& output) {
+                          // Remove devices that are no longer requested.
+                          // At the same time remove already open devices from the list of devices to open.
+                          bool deviceWasRequested = deviceInfos.removeAllInstancesOf(output->getDeviceInfo()) > 0;
+                          return !deviceWasRequested;
+                      }),
+        outputs.end());
+
+    StringArray failedDeviceNames;
+    for (const MidiDeviceInfo& info : deviceInfos)
     {
-        if (m_midiOutput)
-        {
-            m_midiOutput.reset();
-        }
-        return;
+        auto device = MidiOutput::openDevice(info.identifier);
+        if (device)
+            outputs.push_back(std::move(device));
+        else
+            failedDeviceNames.add(info.name);
     }
 
-    m_midiOutput = MidiOutput::openDevice(deviceIndex);
-
-    if (!m_midiOutput)
+    if (!failedDeviceNames.isEmpty())
     {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
-            TRANS("Failed opening MIDI output device"),
-            TRANS("The selected MIDI output device could not be opened."));
+            TRANS("Failed opening MIDI output devices"),
+            TRANS("The following MIDI devices could not be opened:\n") + failedDeviceNames.joinIntoString("\n"));
     }
 }
 
-int MTCSender::getDevice()
+Array<MidiDeviceInfo> MTCSender::getDevices()
 {
-    return m_deviceIndex;
+    Array<MidiDeviceInfo> infos;
+    for (auto& output : outputs)
+    {
+        infos.add(output->getDeviceInfo());
+    }
+    return infos;
 }
 
 void MTCSender::start()
@@ -46,7 +59,10 @@ void MTCSender::start()
     m_hour = 0;
 
     auto message = MidiMessage::fullFrame(m_hour, m_minute, m_second, m_frame, MidiMessage::SmpteTimecodeType::fps25);
-    m_midiOutput->sendMessageNow(message);
+    for (auto& output : outputs)
+    {
+        output->sendMessageNow(message);
+    }
 
     startTimer(1000 / 25 / 4);
 }
@@ -76,19 +92,25 @@ void MTCSender::setPosition(double position)
     m_piece = Piece::FrameLSB;
 
     auto message = MidiMessage::fullFrame(m_hour, m_minute, m_second, m_frame, MidiMessage::SmpteTimecodeType::fps25);
-    m_midiOutput->sendMessageNow(message);
+    for (auto& output : outputs)
+    {
+        output->sendMessageNow(message);
+    }
 }
 
 void MTCSender::hiResTimerCallback()
 {
-    if (!m_midiOutput)
+    if (outputs.empty())
         return;
 
     std::unique_lock<std::mutex> lock_guard(m_mutex);
 
     const int value = getValue(m_piece);
     const auto message = MidiMessage::quarterFrame(static_cast<int>(m_piece), value);
-    m_midiOutput->sendMessageNow(message);
+    for (auto& output : outputs)
+    {
+        output->sendMessageNow(message);
+    }
 
     m_piece = static_cast<Piece>((static_cast<int>(m_piece) + 1) % 8);
 

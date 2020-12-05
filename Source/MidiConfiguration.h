@@ -7,7 +7,6 @@
 class MidiConfigurationWindow
     : public DialogWindow
     , public Button::Listener
-    , public ComboBox::Listener
 {
 public:
     MidiConfigurationWindow(MTCSender& mtcSender);
@@ -18,25 +17,42 @@ public:
     // Button::Listener
     virtual void buttonClicked(Button* buttonThatWasClicked) override;
 
-    // ComboBox::Listener
-    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationWindow)
+};
+
+// This is built after ChannelSelectorListBox of AudioDeviceSelectorComponent
+class MidiDeviceSelectorListBox
+    : public ListBox
+    , private ListBoxModel
+{
+public:
+    MidiDeviceSelectorListBox(MTCSender& mtcSender);
+    int getNumRows() override;
+    void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) override;
+    void listBoxItemClicked(int row, const MouseEvent& e) override;
+    void listBoxItemDoubleClicked(int row, const MouseEvent&) override;
+    void returnKeyPressed(int row) override;
+    void flipEnablement(int row);
+    int getTickX();
 
 private:
-    MTCSender& m_mtcSender;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationWindow)
+    Array<MidiDeviceInfo> devices;
+    SparseSet<int> indexes;
+    MTCSender& mtcSender;
 };
 
 class MidiConfigurationComponent : public Component
 {
 public:
-    MidiConfigurationComponent(MidiConfigurationWindow* parent, int selectedDevice);
+    MidiConfigurationComponent(MidiConfigurationWindow* parent, MTCSender& mtcSender);
     ~MidiConfigurationComponent();
 
     // Component
     virtual void resized() override;
 
 private:
-    std::unique_ptr<ComboBox> m_outputDevices;
+    MidiDeviceSelectorListBox deviceSelector;
     std::unique_ptr<TextButton> m_closeButton;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationComponent)
 };
