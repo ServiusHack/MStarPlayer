@@ -10,15 +10,15 @@ public:
     MTCSender();
     ~MTCSender();
 
-    void setDevice(int deviceIndex);
-    int getDevice();
+    void setDevices(Array<MidiDeviceInfo> deviceInfos);
+    Array<MidiDeviceInfo> getDevices();
     void start();
     void pause();
     void stop();
     void setPosition(double position);
 
 private:
-    std::unique_ptr<MidiOutput> m_midiOutput;
+    std::vector<std::unique_ptr<MidiOutput>> outputs;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MTCSender)
 
     // Used only in separate thread!
@@ -44,5 +44,4 @@ private:
     int m_second{0};
     int m_minute{0};
     int m_hour{0};
-    int m_deviceIndex{-1};
 };

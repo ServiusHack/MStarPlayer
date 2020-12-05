@@ -13,9 +13,8 @@
 
 MidiConfigurationWindow::MidiConfigurationWindow(MTCSender& mtcSender)
     : DialogWindow(TRANS("Configure MIDI"), Colours::lightgrey, true, true)
-    , m_mtcSender(mtcSender)
 {
-    setContentOwned(new MidiConfigurationComponent(this, m_mtcSender.getDevice()), true);
+    setContentOwned(new MidiConfigurationComponent(this, mtcSender), true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
     setResizable(true, true);
@@ -31,13 +30,79 @@ void MidiConfigurationWindow::buttonClicked(Button*)
     closeButtonPressed();
 }
 
-void MidiConfigurationWindow::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+MidiDeviceSelectorListBox::MidiDeviceSelectorListBox(MTCSender& mtcSender)
+    : devices(MidiOutput::getAvailableDevices())
+    , mtcSender(mtcSender)
 {
-    m_mtcSender.setDevice(comboBoxThatHasChanged->getSelectedId() - 2);
+    setModel(this);
+
+    for (const MidiDeviceInfo& info : mtcSender.getDevices())
+    {
+        int index = devices.indexOf(info);
+        indexes.addRange(Range(index, index + 1));
+    }
 }
 
-MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* parent, int selectedDevice)
-    : m_outputDevices(std::make_unique<ComboBox>())
+int MidiDeviceSelectorListBox::getNumRows()
+{
+    return devices.size();
+}
+
+void MidiDeviceSelectorListBox::paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected)
+{
+    auto enabled = indexes.contains(rowNumber);
+
+    auto x = getTickX();
+    auto tickW = (float)height * 0.75f;
+    getLookAndFeel().drawTickBox(
+        g, *this, (float)x - tickW, ((float)height - tickW) * 0.5f, tickW, tickW, enabled, true, true, false);
+    g.setFont((float)height * 0.6f);
+    g.setColour(findColour(ListBox::textColourId, true).withMultipliedAlpha(enabled ? 1.0f : 0.6f));
+    g.drawText(devices[rowNumber].name, x + 5, 0, width - x - 5, height, Justification::centredLeft, true);
+}
+
+void MidiDeviceSelectorListBox::listBoxItemClicked(int row, const MouseEvent& e)
+{
+    selectRow(row);
+
+    if (e.x < getTickX())
+        flipEnablement(row);
+}
+
+void MidiDeviceSelectorListBox::listBoxItemDoubleClicked(int row, const MouseEvent&)
+{
+    flipEnablement(row);
+}
+
+void MidiDeviceSelectorListBox::returnKeyPressed(int row)
+{
+    flipEnablement(row);
+}
+
+void MidiDeviceSelectorListBox::flipEnablement(int row)
+{
+    if (indexes.contains(row))
+        indexes.removeRange(Range(row, row + 1));
+    else
+        indexes.addRange(Range(row, row + 1));
+
+    Array<MidiDeviceInfo> deviceInfos;
+    for (int i = 0; i < indexes.size(); ++i)
+    {
+        deviceInfos.add(devices[indexes[i]]);
+    }
+    mtcSender.setDevices(deviceInfos);
+
+    repaint();
+}
+
+int MidiDeviceSelectorListBox::getTickX()
+{
+    return getRowHeight();
+}
+
+MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* parent, MTCSender& mtcSender)
+    : deviceSelector(mtcSender)
     , m_closeButton(std::make_unique<TextButton>("close"))
 {
     addAndMakeVisible(m_closeButton.get());
@@ -45,17 +110,7 @@ MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* 
     m_closeButton->addListener(parent);
     m_closeButton->setWantsKeyboardFocus(false);
 
-    m_outputDevices->addListener(parent);
-    m_outputDevices->addItem(TRANS("no MIDI output"), 1);
-    StringArray deviceNames = MidiOutput::getDevices();
-    for (int i = 0; i < deviceNames.size(); ++i)
-    {
-        m_outputDevices->addItem(deviceNames[i], i + 2);
-    }
-
-    m_outputDevices->setSelectedId(selectedDevice + 2, juce::dontSendNotification);
-
-    addAndMakeVisible(m_outputDevices.get());
+    addAndMakeVisible(&deviceSelector);
 
     setSize(500, 400);
 }
@@ -66,7 +121,7 @@ void MidiConfigurationComponent::resized()
     const static int buttonHeight = 24;
     const static int padding = 10;
 
-    m_outputDevices->setBounds(padding, padding, getWidth() - 2 * padding, buttonHeight);
+    deviceSelector.setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
     m_closeButton->setBounds(
         (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }
