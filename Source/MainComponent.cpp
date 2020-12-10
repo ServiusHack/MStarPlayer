@@ -671,12 +671,25 @@ void MainContentComponent::readProjectFile()
         XmlElement* midi = root->getChildByName("MIDI");
         if (midi != nullptr)
         {
-            Array<MidiDeviceInfo> deviceInfos = MidiOutput::getAvailableDevices();
-            for (int i = 0; i < deviceInfos.size(); ++i)
+            StringArray names;
+            if (midi->getNumChildElements() == 1 && midi->getChildElement(0)->isTextElement())
             {
-                if (deviceInfos[i].name == midi->getAllSubText().trim())
-                    m_mtcSender.setDevice(i);
+                // XML file is in the old format that stored only one device.
+                names.add(midi->getAllSubText().trim());
             }
+            else
+            {
+                for (int i = 0; i < midi->getNumChildElements(); ++i)
+                {
+                    names.add(midi->getChildElement(i)->getAllSubText().trim());
+                }
+            }
+
+            Array<MidiDeviceInfo> deviceInfos = MidiOutput::getAvailableDevices();
+            deviceInfos.removeIf(
+                [&names](const MidiDeviceInfo& deviceInfo) { return !names.contains(deviceInfo.name); });
+
+            m_mtcSender.setDevices(deviceInfos);
         }
 
         XmlElement* channelNames = root->getChildByName("ChannelNames");
@@ -844,10 +857,15 @@ void MainContentComponent::writeProjectFile()
     audio->addChildElement(m_audioDeviceManager.createStateXml().release());
     root->addChildElement(audio);
 
-    if (m_mtcSender.getDevice() != -1)
+    if (auto devices = m_mtcSender.getDevices(); !devices.isEmpty())
     {
         XmlElement* midi = new XmlElement("MIDI");
-        midi->addTextElement(MidiOutput::getAvailableDevices()[m_mtcSender.getDevice()].name);
+        for (auto& device : devices)
+        {
+            XmlElement* element = new XmlElement("device");
+            element->addTextElement(device.name);
+            midi->addChildElement(element);
+        }
         root->addChildElement(midi);
     }
 
