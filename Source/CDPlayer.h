@@ -20,16 +20,17 @@
 */
 class CDPlayer
     : public PlayerComponent
-    , public KeyListener
-    , public Button::Listener
-    , public ComboBox::Listener
-    , public Slider::Listener
+    , public juce::KeyListener
+    , public juce::Button::Listener
+    , public juce::ComboBox::Listener
+    , public juce::Slider::Listener
     , public SoloBusSettingsListener
-    , private Timer
+    , private juce::Timer
 {
 public:
     CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
-        TimeSliceThread& thread, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
+        juce::TimeSliceThread& thread, PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false,
+        bool mute = false);
     ~CDPlayer();
 
     void play() override;
@@ -43,18 +44,18 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    XmlElement* saveToXml(const File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const;
+    juce::XmlElement* saveToXml(const juce::File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml(const XmlElement& element, const File& projectDirectory);
+    void restoreFromXml(const juce::XmlElement& element, const juce::File& projectDirectory);
 
     // Component overrides
 public:
-    virtual void paint(Graphics&) override;
+    virtual void paint(juce::Graphics&) override;
     virtual void resized() override;
-    virtual void mouseDown(const MouseEvent& event) override;
+    virtual void mouseDown(const juce::MouseEvent& event) override;
 
     // SubchannelPlayer
 public:
@@ -69,26 +70,26 @@ public:
     virtual void setMute(bool mute) override;
     virtual bool getMute() const override;
     virtual float getVolume() const override;
-    virtual String getName() const override;
-    virtual void setName(const String& newName) override;
+    virtual juce::String getName() const override;
+    virtual void setName(const juce::String& newName) override;
     virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;
     virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
     // KeyListener
 public:
-    virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+    virtual bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
 
     // Button::Listener
 public:
-    virtual void buttonClicked(Button* /*button*/) override;
+    virtual void buttonClicked(juce::Button* /*button*/) override;
 
     // ComboBox::Listener
 public:
-    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+    virtual void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
     // Slider::Listener
 public:
-    void sliderValueChanged(Slider* sliderThatWasMoved) override;
+    void sliderValueChanged(juce::Slider* sliderThatWasMoved) override;
 
     // SoloBusListener
 public:
@@ -101,14 +102,14 @@ private:
 private:
     void updateGain();
 
-    void setColor(const Colour& color);
+    void setColor(const juce::Colour& color);
 
     void showEditDialog();
 
     std::vector<std::pair<char, int>> createMapping();
     void configureChannels();
 
-    void setNextReadPosition(int64 sampleInCDSampleRate);
+    void setNextReadPosition(juce::int64 sampleInCDSampleRate);
 
     MixerComponent* m_mixer;
     OutputChannelNames* m_outputChannelNames;
@@ -119,28 +120,28 @@ private:
     bool m_solo;
     bool m_mute;
 
-    Colour m_color;
+    juce::Colour m_color;
 
     PluginLoader& m_pluginLoader;
-    TimeSliceThread& m_thread;
+    juce::TimeSliceThread& m_thread;
 
-    ImageButton m_playButton;
-    ImageButton m_pauseButton;
-    ImageButton m_stopButton;
-    ImageButton m_skipBackwardButton;
-    ImageButton m_skipForwardButton;
+    juce::ImageButton m_playButton;
+    juce::ImageButton m_pauseButton;
+    juce::ImageButton m_stopButton;
+    juce::ImageButton m_skipBackwardButton;
+    juce::ImageButton m_skipForwardButton;
 #if JUCE_WINDOWS
-    ImageButton m_ejectButton;
+    juce::ImageButton m_ejectButton;
 #endif
-    ImageButton m_configureButton;
-    Label m_digitalDisplay;
+    juce::ImageButton m_configureButton;
+    juce::Label m_digitalDisplay;
     CDNamesComboBox m_availableCDsComboBox;
-    Slider m_slider;
-    std::unique_ptr<AudioCDReader> m_reader;
-    std::unique_ptr<AudioFormatReaderSource> m_source;
+    juce::Slider m_slider;
+    std::unique_ptr<juce::AudioCDReader> m_reader;
+    std::unique_ptr<juce::AudioFormatReaderSource> m_source;
     std::unique_ptr<CDTracksModel> m_model;
     CDTracksTable m_tracksTable;
-    AudioTransportSource m_transportSource;
+    juce::AudioTransportSource m_transportSource;
     ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
     std::unique_ptr<PlayerEditDialogWindow> m_PlayerEditDialog;

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 /**
         Default look and feel which is JUCE's look and feel with some minor improvements.
 */
-class DefaultLookAndFeel : public LookAndFeel_V3
+class DefaultLookAndFeel : public juce::LookAndFeel_V3
 {
 public:
     DefaultLookAndFeel();
 
-    virtual void drawProgressBar(Graphics& g, ProgressBar& progressBar, int width, int height, double progress,
-        const String& textToShow) override;
+    virtual void drawProgressBar(juce::Graphics& g, juce::ProgressBar& progressBar, int width, int height,
+        double progress, const juce::String& textToShow) override;
 
-    void drawLevelMeter(Graphics&, int width, int height, float level, float peak);
+    void drawLevelMeter(juce::Graphics&, int width, int height, float level, float peak);
 };

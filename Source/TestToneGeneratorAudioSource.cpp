@@ -17,7 +17,7 @@ void TestToneGeneratorAudioSource::prepareToPlay(int samplesPerBlockExpected, do
     m_sampleRate = sampleRate;
 
     const double cyclesPerSample = 1000 / m_sampleRate; // [2]
-    angleDelta = cyclesPerSample * 2.0 * double_Pi; // [3]
+    angleDelta = cyclesPerSample * 2.0 * juce::double_Pi; // [3]
 
     prepared.resize(m_samplesPerBlockExpected);
 }
@@ -26,13 +26,13 @@ void TestToneGeneratorAudioSource::releaseResources() {}
 
 void TestToneGeneratorAudioSource::setNumChannels(int numberOfChannels)
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
     channels.resize(numberOfChannels);
 }
 
 void TestToneGeneratorAudioSource::setEnable(int channel, bool enable)
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
     channels.set(channel, enable);
 }
 
@@ -46,10 +46,10 @@ double TestToneGeneratorAudioSource::getVolume() const
     return level;
 }
 
-void TestToneGeneratorAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
+void TestToneGeneratorAudioSource::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
     bufferToFill.clearActiveBufferRegion();
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
     const int numberOfChannels = bufferToFill.buffer->getNumChannels();
 
     switch (mode)

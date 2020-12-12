@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_events/juce_events.h"
 
 enum class SoloBusChannel
 {
@@ -20,7 +20,7 @@ public:
 /**
         Maintains the user selected solo bus channels.
 */
-class SoloBusSettings : public ChangeBroadcaster
+class SoloBusSettings : public juce::ChangeBroadcaster
 {
 public:
     void setChannel(SoloBusChannel busChannel, int outputChannel);
@@ -34,8 +34,8 @@ private:
 
     // XML serialization
 public:
-    void saveToXml(XmlElement* element) const;
-    void restoreFromXml(const XmlElement& element);
+    void saveToXml(juce::XmlElement* element) const;
+    void restoreFromXml(const juce::XmlElement& element);
 
     // SoloBusSettingsListener management
 public:

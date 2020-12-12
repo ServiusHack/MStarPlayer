@@ -2,8 +2,8 @@
 
 TracksContainer::TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels,
     const Track::TrackConfigChangedCallback& trackConfigChangedCallback,
-    const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache,
-    TimeSliceThread& thread, MTCSender& mtcSender)
+    const Track::GainChangedCallback& gainChangedCallback, juce::AudioThumbnailCache& audioThumbnailCache,
+    juce::TimeSliceThread& thread, MTCSender& mtcSender)
     : m_mixer(mixer)
     , m_soloBusSettings(soloBusSettings)
     , m_mtcSender(mtcSender)
@@ -164,7 +164,7 @@ std::vector<TrackConfig> TracksContainer::getTrackConfigs() const
 
     return configs;
 }
-void TracksContainer::addTrack(bool stereo, const XmlElement* element)
+void TracksContainer::addTrack(bool stereo, const juce::XmlElement* element)
 {
     bool soloMute = std::any_of(
         m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) { return track->getSolo(); });

@@ -1,10 +1,8 @@
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "EditSettingsDialog.h"
 
 EditSettingsWindow::EditSettingsWindow(
-    ApplicationProperties& applicationProperties, const std::function<void()>& snapToGridChanged)
-    : DialogWindow(TRANS("Edit Settings"), Colours::lightgrey, true, true)
+    juce::ApplicationProperties& applicationProperties, const std::function<void()>& snapToGridChanged)
+    : juce::DialogWindow(TRANS("Edit Settings"), juce::Colours::lightgrey, true, true)
 {
     setContentOwned(new EditSettingsComponent(this, applicationProperties, snapToGridChanged), true);
     centreWithSize(getWidth(), getHeight());
@@ -17,19 +15,19 @@ void EditSettingsWindow::closeButtonPressed()
     setVisible(false);
 }
 
-void EditSettingsWindow::buttonClicked(Button*)
+void EditSettingsWindow::buttonClicked(juce::Button*)
 {
     closeButtonPressed();
 }
 
-EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties,
-    const std::function<void()>& snapToGridChanged)
+EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent,
+    juce::ApplicationProperties& applicationProperties, const std::function<void()>& snapToGridChanged)
     : m_applicationProperties(applicationProperties)
     , m_languageLabel("language", TRANS("Language"))
     , m_nameLabel("audio editor label", TRANS("Audio editor"))
     , m_audioEditorFilenameComponent("audio editor",
-          File(m_applicationProperties.getUserSettings()->getValue("audioEditor")), true, false, false, "*.exe", ".exe",
-          "")
+          juce::File(m_applicationProperties.getUserSettings()->getValue("audioEditor")), true, false, false, "*.exe",
+          ".exe", "")
     , m_closeButton("close")
     , m_snapToGridButton(TRANS("snap players to grid"))
     , m_snapToGridWidthLabel("grid width label", TRANS("grid width:"))
@@ -37,21 +35,22 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, Applica
     , m_snapToGridChanged(snapToGridChanged)
 {
     addAndMakeVisible(m_nameLabel);
-    m_nameLabel.setFont(Font(15.00f, Font::plain));
-    m_nameLabel.setJustificationType(Justification::centredLeft);
+    m_nameLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_nameLabel.setJustificationType(juce::Justification::centredLeft);
     m_nameLabel.setEditable(false, false, false);
-    m_nameLabel.setColour(TextEditor::textColourId, Colours::black);
-    m_nameLabel.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    m_nameLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    m_nameLabel.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(m_audioEditorFilenameComponent);
-    m_audioEditorFilenameComponent.setDefaultBrowseTarget(File::getSpecialLocation(File::globalApplicationsDirectory));
+    m_audioEditorFilenameComponent.setDefaultBrowseTarget(
+        juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory));
     m_audioEditorFilenameComponent.addListener(this);
 
-    m_languageLabel.setFont(Font(15.00f, Font::plain));
-    m_languageLabel.setJustificationType(Justification::centredLeft);
+    m_languageLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_languageLabel.setJustificationType(juce::Justification::centredLeft);
     m_languageLabel.setEditable(false, false, false);
-    m_languageLabel.setColour(TextEditor::textColourId, Colours::black);
-    m_languageLabel.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    m_languageLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    m_languageLabel.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
     addAndMakeVisible(m_languageLabel);
 
     m_languageComboBox.addItem("English", 1);
@@ -67,24 +66,24 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent, Applica
     addAndMakeVisible(m_snapToGridButton);
     m_snapToGridButton.addListener(this);
     m_snapToGridButton.setToggleState(m_applicationProperties.getUserSettings()->getBoolValue("snapToGrid", false),
-        NotificationType::sendNotification);
+        juce::NotificationType::sendNotification);
 
     addAndMakeVisible(m_snapToGridWidthLabel);
-    m_snapToGridWidthLabel.setJustificationType(Justification::right);
+    m_snapToGridWidthLabel.setJustificationType(juce::Justification::right);
     addAndMakeVisible(m_snapToGridWidthEditor);
     m_snapToGridWidthEditor.setInputRestrictions(3, "0123456789");
     m_snapToGridWidthEditor.addListener(this);
     m_snapToGridWidthEditor.setText(
-        String(m_applicationProperties.getUserSettings()->getIntValue("snapToGridWidth", 1)));
+        juce::String(m_applicationProperties.getUserSettings()->getIntValue("snapToGridWidth", 1)));
 
     addAndMakeVisible(m_snapToGridHeightLabel);
-    m_snapToGridHeightLabel.setJustificationType(Justification::right);
+    m_snapToGridHeightLabel.setJustificationType(juce::Justification::right);
     addAndMakeVisible(m_snapToGridHeightEditor);
     m_snapToGridHeightEditor.setInputRestrictions(3, "0123456789");
     m_snapToGridHeightEditor.setText("10");
     m_snapToGridHeightEditor.addListener(this);
     m_snapToGridHeightEditor.setText(
-        String(m_applicationProperties.getUserSettings()->getIntValue("snapToGridHeight", 1)));
+        juce::String(m_applicationProperties.getUserSettings()->getIntValue("snapToGridHeight", 1)));
 
     addAndMakeVisible(m_closeButton);
     m_closeButton.setButtonText(TRANS("Close"));
@@ -127,13 +126,13 @@ void EditSettingsComponent::resized()
         (getWidth() - buttonWidth) / 2, getHeight() - 2 * (rowHeight - padding), buttonWidth, rowHeight);
 }
 
-void EditSettingsComponent::filenameComponentChanged(FilenameComponent* /*fileComponentThatHasChanged*/)
+void EditSettingsComponent::filenameComponentChanged(juce::FilenameComponent* /*fileComponentThatHasChanged*/)
 {
     m_applicationProperties.getUserSettings()->setValue(
         "audioEditor", m_audioEditorFilenameComponent.getCurrentFileText());
 }
 
-void EditSettingsComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void EditSettingsComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     switch (comboBoxThatHasChanged->getSelectedId())
     {
@@ -145,11 +144,11 @@ void EditSettingsComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
         break;
     }
 
-    AlertWindow::showMessageBoxAsync(
-        AlertWindow::WarningIcon, TRANS("Restart required"), TRANS("Changing the language requires a restart."));
+    juce::AlertWindow::showMessageBoxAsync(
+        juce::AlertWindow::WarningIcon, TRANS("Restart required"), TRANS("Changing the language requires a restart."));
 }
 
-void EditSettingsComponent::buttonClicked(Button* clickedButton)
+void EditSettingsComponent::buttonClicked(juce::Button* clickedButton)
 {
     if (clickedButton == &m_snapToGridButton)
     {
@@ -162,7 +161,7 @@ void EditSettingsComponent::buttonClicked(Button* clickedButton)
     }
 }
 
-void EditSettingsComponent::textEditorTextChanged(TextEditor& editor)
+void EditSettingsComponent::textEditorTextChanged(juce::TextEditor& editor)
 {
     if (&editor == &m_snapToGridHeightEditor)
     {

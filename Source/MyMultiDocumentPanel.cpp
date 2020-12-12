@@ -23,8 +23,8 @@ void MyConstrainer::setSnapToGridHeight(int height)
     gridHeight = height;
 }
 
-void MyConstrainer::checkBounds(Rectangle<int>& bounds, const Rectangle<int>& previousBounds,
-    const Rectangle<int>& limits, bool isStretchingTop, bool isStretchingLeft, bool isStretchingBottom,
+void MyConstrainer::checkBounds(juce::Rectangle<int>& bounds, const juce::Rectangle<int>& previousBounds,
+    const juce::Rectangle<int>& limits, bool isStretchingTop, bool isStretchingLeft, bool isStretchingBottom,
     bool isStretchingRight)
 {
     if (snapToGrid)
@@ -51,8 +51,9 @@ void MyConstrainer::checkBounds(Rectangle<int>& bounds, const Rectangle<int>& pr
         bounds, previousBounds, limits, isStretchingTop, isStretchingLeft, isStretchingBottom, isStretchingRight);
 }
 
-MyMultiDocumentPanelWindow::MyMultiDocumentPanelWindow(Colour backgroundColour)
-    : DocumentWindow({}, backgroundColour, DocumentWindow::maximiseButton | DocumentWindow::closeButton, false)
+MyMultiDocumentPanelWindow::MyMultiDocumentPanelWindow(juce::Colour backgroundColour)
+    : juce::DocumentWindow(
+        {}, backgroundColour, juce::DocumentWindow::maximiseButton | juce::DocumentWindow::closeButton, false)
 {
 }
 
@@ -77,13 +78,13 @@ void MyMultiDocumentPanelWindow::closeButtonPressed()
 
 void MyMultiDocumentPanelWindow::activeWindowStatusChanged()
 {
-    DocumentWindow::activeWindowStatusChanged();
+    juce::DocumentWindow::activeWindowStatusChanged();
     updateOrder();
 }
 
 void MyMultiDocumentPanelWindow::broughtToFront()
 {
-    DocumentWindow::broughtToFront();
+    juce::DocumentWindow::broughtToFront();
     updateOrder();
 }
 
@@ -99,14 +100,14 @@ MyMultiDocumentPanel* MyMultiDocumentPanelWindow::getOwner() const noexcept
 }
 
 //==============================================================================
-struct MyMultiDocumentPanel::TabbedComponentInternal : public TabbedComponent
+struct MyMultiDocumentPanel::TabbedComponentInternal : public juce::TabbedComponent
 {
     TabbedComponentInternal()
-        : TabbedComponent(TabbedButtonBar::TabsAtTop)
+        : juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop)
     {
     }
 
-    void currentTabChanged(int, const String&)
+    void currentTabChanged(int, const juce::String&)
     {
         if (auto* const owner = findParentComponentOfClass<MyMultiDocumentPanel>())
             owner->updateOrder();
@@ -127,7 +128,7 @@ MyMultiDocumentPanel::~MyMultiDocumentPanel()
 //==============================================================================
 namespace MultiDocHelpers
 {
-static bool shouldDeleteComp(Component* const c)
+static bool shouldDeleteComp(juce::Component* const c)
 {
     return c->getProperties()["mdiDocumentDelete_"];
 }
@@ -147,7 +148,7 @@ MyMultiDocumentPanelWindow* MyMultiDocumentPanel::createNewDocumentWindow()
     return new MyMultiDocumentPanelWindow(backgroundColour);
 }
 
-void MyMultiDocumentPanel::addWindow(Component* component)
+void MyMultiDocumentPanel::addWindow(juce::Component* component)
 {
     auto* const dw = createNewDocumentWindow();
 
@@ -157,7 +158,7 @@ void MyMultiDocumentPanel::addWindow(Component* component)
     dw->setConstrainer(&m_myConstrainer);
 
     auto bkg = component->getProperties()["mdiDocumentBkg_"];
-    dw->setBackgroundColour(bkg.isVoid() ? backgroundColour : Colour((uint32) static_cast<int>(bkg)));
+    dw->setBackgroundColour(bkg.isVoid() ? backgroundColour : juce::Colour((juce::uint32) static_cast<int>(bkg)));
 
     int x = 4;
 
@@ -175,11 +176,12 @@ void MyMultiDocumentPanel::addWindow(Component* component)
     dw->toFront(true);
 }
 
-bool MyMultiDocumentPanel::addDocument(Component* const component, Colour docColour, const bool deleteWhenRemoved)
+bool MyMultiDocumentPanel::addDocument(
+    juce::Component* const component, juce::Colour docColour, const bool deleteWhenRemoved)
 {
     // If you try passing a full DocumentWindow or ResizableWindow in here, you'll end up
     // with a frame-within-a-frame! Just pass in the bare content component.
-    jassert(dynamic_cast<ResizableWindow*>(component) == nullptr);
+    jassert(dynamic_cast<juce::ResizableWindow*>(component) == nullptr);
 
     if (component == nullptr || (maximumNumDocuments > 0 && components.size() >= maximumNumDocuments))
         return false;
@@ -240,7 +242,7 @@ bool MyMultiDocumentPanel::addDocument(Component* const component, Colour docCol
     return true;
 }
 
-bool MyMultiDocumentPanel::closeDocument(Component* component, const bool checkItsOkToCloseFirst)
+bool MyMultiDocumentPanel::closeDocument(juce::Component* component, const bool checkItsOkToCloseFirst)
 {
     if (components.contains(component))
     {
@@ -334,12 +336,12 @@ int MyMultiDocumentPanel::getNumDocuments() const noexcept
     return components.size();
 }
 
-Component* MyMultiDocumentPanel::getDocument(const int index) const noexcept
+juce::Component* MyMultiDocumentPanel::getDocument(const int index) const noexcept
 {
     return components[index];
 }
 
-Component* MyMultiDocumentPanel::getActiveDocument() const noexcept
+juce::Component* MyMultiDocumentPanel::getActiveDocument() const noexcept
 {
     if (mode == FloatingWindows)
     {
@@ -352,7 +354,7 @@ Component* MyMultiDocumentPanel::getActiveDocument() const noexcept
     return components.getLast();
 }
 
-void MyMultiDocumentPanel::setActiveDocument(Component* component)
+void MyMultiDocumentPanel::setActiveDocument(juce::Component* component)
 {
     jassert(component != nullptr);
 
@@ -432,13 +434,13 @@ void MyMultiDocumentPanel::setLayoutMode(const LayoutMode newLayoutMode)
 
         for (auto* c : tempComps)
             addDocument(c,
-                Colour((uint32) static_cast<int>(
-                    c->getProperties().getWithDefault("mdiDocumentBkg_", (int)Colours::white.getARGB()))),
+                juce::Colour((juce::uint32) static_cast<int>(
+                    c->getProperties().getWithDefault("mdiDocumentBkg_", (int)juce::Colours::white.getARGB()))),
                 MultiDocHelpers::shouldDeleteComp(c));
     }
 }
 
-void MyMultiDocumentPanel::setBackgroundColour(Colour newBackgroundColour)
+void MyMultiDocumentPanel::setBackgroundColour(juce::Colour newBackgroundColour)
 {
     if (backgroundColour != newBackgroundColour)
     {
@@ -449,7 +451,7 @@ void MyMultiDocumentPanel::setBackgroundColour(Colour newBackgroundColour)
 }
 
 //==============================================================================
-void MyMultiDocumentPanel::paint(Graphics& g)
+void MyMultiDocumentPanel::paint(juce::Graphics& g)
 {
     g.fillAll(backgroundColour);
 }
@@ -465,7 +467,7 @@ void MyMultiDocumentPanel::resized()
     setWantsKeyboardFocus(components.size() == 0);
 }
 
-Component* MyMultiDocumentPanel::getContainerComp(Component* c) const
+juce::Component* MyMultiDocumentPanel::getContainerComp(juce::Component* c) const
 {
     if (mode == FloatingWindows)
     {
@@ -478,7 +480,7 @@ Component* MyMultiDocumentPanel::getContainerComp(Component* c) const
     return c;
 }
 
-void MyMultiDocumentPanel::componentNameChanged(Component&)
+void MyMultiDocumentPanel::componentNameChanged(juce::Component&)
 {
     if (mode == FloatingWindows)
     {
@@ -521,7 +523,7 @@ void MyMultiDocumentPanel::updateOrder()
         activeDocumentChanged();
 }
 
-bool MyMultiDocumentPanel::tryToCloseDocument(Component* /*component*/)
+bool MyMultiDocumentPanel::tryToCloseDocument(juce::Component* /*component*/)
 {
     return true;
 }

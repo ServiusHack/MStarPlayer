@@ -1,8 +1,12 @@
 #include "PlaylistModel.h"
 
+#include "juce_audio_formats/juce_audio_formats.h"
+
+#include "BinaryData.h"
+
 #include "Utils.h"
 
-class PlayNextButton : public ImageButton
+class PlayNextButton : public juce::ImageButton
 {
 public:
     PlayNextButton() = default;
@@ -27,25 +31,26 @@ int PlaylistModel::getNumRows()
 }
 
 void PlaylistModel::paintRowBackground(
-    Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
+    juce::Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
     if (rowIsSelected)
-        g.fillAll(Colours::lightblue);
+        g.fillAll(juce::Colours::lightblue);
 }
 
-void PlaylistModel::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
+void PlaylistModel::paintCell(
+    juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
-    g.setColour(Colours::black);
+    g.setColour(juce::Colours::black);
 
     if (rowNumber >= 0 && static_cast<size_t>(rowNumber) < m_playlist.size())
     {
         if (columnId == 1)
         {
-            g.drawText(String(rowNumber + 1), 2, 0, width - 4, height, Justification::centredLeft, true);
+            g.drawText(juce::String(rowNumber + 1), 2, 0, width - 4, height, juce::Justification::centredLeft, true);
         }
         else if (columnId == 2)
         {
-            g.drawText(m_playlist[rowNumber].name, 2, 0, width - 4, height, Justification::centredLeft, true);
+            g.drawText(m_playlist[rowNumber].name, 2, 0, width - 4, height, juce::Justification::centredLeft, true);
         }
         else if (columnId == 3)
         {
@@ -54,17 +59,17 @@ void PlaylistModel::paintCell(Graphics& g, int rowNumber, int columnId, int widt
                 0,
                 width - 4,
                 height,
-                Justification::centredLeft,
+                juce::Justification::centredLeft,
                 true);
         }
     }
 
-    g.setColour(Colours::black.withAlpha(0.2f));
+    g.setColour(juce::Colours::black.withAlpha(0.2f));
     g.fillRect(width - 1, 0, 1, height);
 }
 
-Component* PlaylistModel::refreshComponentForCell(
-    int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+juce::Component* PlaylistModel::refreshComponentForCell(
+    int rowNumber, int columnId, bool /*isRowSelected*/, juce::Component* existingComponentToUpdate)
 {
     if (columnId == 4)
     {
@@ -77,9 +82,9 @@ Component* PlaylistModel::refreshComponentForCell(
         if (editor == nullptr)
         {
             editor = new PlayNextButton();
-            Image normalImage
-                = ImageFileFormat::loadFrom(BinaryData::arrowrightdouble_png, BinaryData::arrowrightdouble_pngSize);
-            Image desaturedImage(normalImage.createCopy());
+            juce::Image normalImage = juce::ImageFileFormat::loadFrom(
+                BinaryData::arrowrightdouble_png, BinaryData::arrowrightdouble_pngSize);
+            juce::Image desaturedImage(normalImage.createCopy());
             desaturedImage.desaturate();
             editor->setClickingTogglesState(true);
             editor->setImages(true,
@@ -87,19 +92,19 @@ Component* PlaylistModel::refreshComponentForCell(
                 true,
                 desaturedImage,
                 0.7f,
-                Colours::transparentBlack,
+                juce::Colours::transparentBlack,
                 normalImage,
                 1.0f,
-                Colours::transparentBlack,
+                juce::Colours::transparentBlack,
                 normalImage,
                 1.0f,
-                Colours::transparentBlack,
+                juce::Colours::transparentBlack,
                 0.0f);
             editor->addListener(this);
         }
 
         bool playNext = m_playlist[rowNumber].playNext;
-        editor->setToggleState(playNext, dontSendNotification);
+        editor->setToggleState(playNext, juce::dontSendNotification);
         editor->setRowNumber(rowNumber);
 
         return editor;
@@ -113,7 +118,7 @@ Component* PlaylistModel::refreshComponentForCell(
     }
 }
 
-void PlaylistModel::buttonClicked(Button* button)
+void PlaylistModel::buttonClicked(juce::Button* button)
 {
     int rowNumber = static_cast<PlayNextButton*>(button)->getRowNumber();
 
@@ -121,7 +126,7 @@ void PlaylistModel::buttonClicked(Button* button)
 }
 
 void PlaylistModel::add(
-    String name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
+    juce::String name, double durationInSeconds, bool playNext, const std::vector<TrackConfig>& trackConfigs)
 {
     PlaylistEntry entry;
     entry.name = name;
@@ -132,7 +137,7 @@ void PlaylistModel::add(
     sendChangeMessage();
 }
 
-void PlaylistModel::insert(int rowNumber, const String& name, double durationInSeconds, bool playNext,
+void PlaylistModel::insert(int rowNumber, const juce::String& name, double durationInSeconds, bool playNext,
     const std::vector<TrackConfig>& trackConfigs)
 {
     PlaylistEntry entry;
@@ -163,7 +168,7 @@ void PlaylistModel::move(int sourceRowNumber, int targetRowNumber)
     m_reloadedCallback();
 }
 
-void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const MouseEvent& event)
+void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const juce::MouseEvent& event)
 {
     if (event.mods.isPopupMenu())
     {
@@ -171,12 +176,12 @@ void PlaylistModel::cellClicked(int rowNumber, int /*columnId*/, const MouseEven
     }
 }
 
-void PlaylistModel::cellDoubleClicked(int rowNumber, int /*columnId*/, const MouseEvent&)
+void PlaylistModel::cellDoubleClicked(int rowNumber, int /*columnId*/, const juce::MouseEvent&)
 {
     showEditDialog(rowNumber);
 }
 
-void PlaylistModel::backgroundClicked(const MouseEvent& event)
+void PlaylistModel::backgroundClicked(const juce::MouseEvent& event)
 {
     if (event.mods.isPopupMenu())
     {
@@ -184,13 +189,13 @@ void PlaylistModel::backgroundClicked(const MouseEvent& event)
     }
 }
 
-var PlaylistModel::getDragSourceDescription(const SparseSet<int>& currentlySelectedRows)
+juce::var PlaylistModel::getDragSourceDescription(const juce::SparseSet<int>& currentlySelectedRows)
 {
     jassert(currentlySelectedRows.size() == 1);
 
     int start = currentlySelectedRows.getRange(0).getStart();
 
-    Array<var> data;
+    juce::Array<juce::var> data;
 
     data.add(start);
     data.add(m_playlist[start].name);
@@ -207,7 +212,7 @@ var PlaylistModel::getDragSourceDescription(const SparseSet<int>& currentlySelec
 
 void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelete)
 {
-    PopupMenu popup;
+    juce::PopupMenu popup;
     popup.addItem(1, TRANS("append"));
     popup.addItem(5, TRANS("append files"));
     popup.addItem(2, TRANS("insert"), enableInsert);
@@ -232,20 +237,20 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
         break;
     case 5:
     {
-        AudioFormatManager formatManager;
+        juce::AudioFormatManager formatManager;
         formatManager.registerBasicFormats();
-        FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
-            File(),
+        juce::FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
+            juce::File(),
             formatManager.getWildcardForAllFormats());
 
         if (!myChooser.browseForMultipleFilesToOpen())
             return;
 
-        for (const File& file : myChooser.getResults())
+        for (const juce::File& file : myChooser.getResults())
         {
             std::vector<TrackConfig> trackConfigs;
             trackConfigs.push_back({file});
-            const std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(trackConfigs[0].file));
+            const std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(trackConfigs[0].file));
             double duration = reader->lengthInSamples / reader->sampleRate;
             add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
         }
@@ -255,7 +260,7 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 
 void PlaylistModel::showEditDialog(int rowNumber)
 {
-    PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](String name) {
+    PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](juce::String name) {
         m_playlist[rowNumber].name = name;
         m_nameChangedCallback(rowNumber, name);
         sendChangeMessage();
@@ -293,7 +298,7 @@ double PlaylistModel::getTrackDuration(size_t selectedRow) const
     return m_playlist[selectedRow].durationInSeconds;
 }
 
-void PlaylistModel::setTrackNameIfEmpty(size_t selectedRow, const String& name)
+void PlaylistModel::setTrackNameIfEmpty(size_t selectedRow, const juce::String& name)
 {
     jassert(selectedRow >= 0 && selectedRow < m_playlist.size());
     PlaylistEntry& entry = m_playlist[selectedRow];
@@ -304,7 +309,7 @@ void PlaylistModel::setTrackNameIfEmpty(size_t selectedRow, const String& name)
     }
 }
 
-String PlaylistModel::getTrackName(size_t row) const
+juce::String PlaylistModel::getTrackName(size_t row) const
 {
     jassert(row >= 0 && row < m_playlist.size());
     return m_playlist[row].name;
@@ -320,9 +325,9 @@ bool PlaylistModel::doPlayNext(int selectedRow)
     return m_playlist[selectedRow].playNext;
 }
 
-XmlElement* PlaylistModel::saveToXml(const File& projectDirectory) const
+juce::XmlElement* PlaylistModel::saveToXml(const juce::File& projectDirectory) const
 {
-    XmlElement* playlistXml = new XmlElement("Playlist");
+    juce::XmlElement* playlistXml = new juce::XmlElement("Playlist");
     for (size_t i = 0; i < m_playlist.size(); ++i)
         playlistXml->addChildElement(m_playlist[i].saveToXml(projectDirectory));
     return playlistXml;
@@ -338,7 +343,7 @@ void PlaylistModel::setNameChangedCallback(NameChangedCallback callback)
     m_nameChangedCallback = callback;
 }
 
-void PlaylistModel::restoreFromXml(const XmlElement& element, const File& projectDirectory)
+void PlaylistModel::restoreFromXml(const juce::XmlElement& element, const juce::File& projectDirectory)
 {
     clear();
 
@@ -355,7 +360,7 @@ bool PlaylistModel::trackHasFiles(size_t trackIndex) const
     trackIndex -= 1; // adjust index to zero-based
     return std::any_of(m_playlist.cbegin(), m_playlist.cend(), [trackIndex](const PlaylistEntry& entry) {
         if (trackIndex < entry.trackConfigs.size())
-            return entry.trackConfigs.at(trackIndex).file != File();
+            return entry.trackConfigs.at(trackIndex).file != juce::File();
         else
             return false;
     });

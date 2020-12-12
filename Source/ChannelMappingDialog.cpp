@@ -1,18 +1,16 @@
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include <algorithm>
 
 #include "ChannelMappingDialog.h"
 
 // This is a custom component containing a combo box, which we're going to put inside
 // our table's "output channel" column.
-class OutputChannelColumnCustomComponent : public ComboBox
+class OutputChannelColumnCustomComponent : public juce::ComboBox
 {
 public:
     OutputChannelColumnCustomComponent()
         : m_row(-1)
     {
-        setBoundsInset(BorderSize<int>(2));
+        setBoundsInset(juce::BorderSize<int>(2));
     }
 
     void setRow(const int newRow)
@@ -44,17 +42,18 @@ int ChannelMapping::getNumRows()
 }
 
 void ChannelMapping::paintRowBackground(
-    Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
+    juce::Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
 }
 
-void ChannelMapping::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
+void ChannelMapping::paintCell(
+    juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
-    g.setColour(Colours::black);
+    g.setColour(juce::Colours::black);
 
     if (columnId == 1)
     {
-        String text = String(rowNumber + 1);
+        juce::String text = juce::String(rowNumber + 1);
         switch (m_mapping[rowNumber].first)
         {
         case 'm':
@@ -67,15 +66,15 @@ void ChannelMapping::paintCell(Graphics& g, int rowNumber, int columnId, int wid
             text += TRANS(" (right)");
             break;
         }
-        g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
+        g.drawText(text, 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
 
-    g.setColour(Colours::black.withAlpha(0.2f));
+    g.setColour(juce::Colours::black.withAlpha(0.2f));
     g.fillRect(width - 1, 0, 1, height);
 }
 
-Component* ChannelMapping::refreshComponentForCell(
-    int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+juce::Component* ChannelMapping::refreshComponentForCell(
+    int rowNumber, int columnId, bool /*isRowSelected*/, juce::Component* existingComponentToUpdate)
 {
     if (columnId == 2)
     {
@@ -106,7 +105,7 @@ Component* ChannelMapping::refreshComponentForCell(
             comboBox->setItemEnabled(1 + rightSoloChannel, false);
 
         comboBox->setRow(rowNumber);
-        comboBox->setSelectedId(getOutputChannel(rowNumber), dontSendNotification);
+        comboBox->setSelectedId(getOutputChannel(rowNumber), juce::dontSendNotification);
 
         return comboBox;
     }
@@ -119,7 +118,7 @@ Component* ChannelMapping::refreshComponentForCell(
     }
 }
 
-void ChannelMapping::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void ChannelMapping::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     const OutputChannelColumnCustomComponent* outputChannelColumn
         = static_cast<OutputChannelColumnCustomComponent*>(comboBoxThatHasChanged);
@@ -139,7 +138,7 @@ void ChannelMapping::setChannelMapping(int row, int outputChannel)
 ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
     std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback,
     const CloseCallback& closeCallback)
-    : DialogWindow(TRANS("Configure Channels"), Colours::lightgrey, true, false)
+    : juce::DialogWindow(TRANS("Configure Channels"), juce::Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
     , m_component(std::make_unique<ChannelMappingComponent>(
           outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback))
@@ -176,12 +175,14 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
     m_tableListBox.setModel(m_channelMapping.get());
 
     // m_tableListBox the table component a border
-    m_tableListBox.setColour(ListBox::outlineColourId, Colours::grey);
+    m_tableListBox.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
     m_tableListBox.setOutlineThickness(1);
 
     // set the table header columns
-    m_tableListBox.getHeader().addColumn(TRANS("Player Channel"), 1, 120, 50, 400, TableHeaderComponent::defaultFlags);
-    m_tableListBox.getHeader().addColumn(TRANS("Output Channel"), 2, 220, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox.getHeader().addColumn(
+        TRANS("Player Channel"), 1, 120, 50, 400, juce::TableHeaderComponent::defaultFlags);
+    m_tableListBox.getHeader().addColumn(
+        TRANS("Output Channel"), 2, 220, 50, 400, juce::TableHeaderComponent::defaultFlags);
 
     addAndMakeVisible(m_closeButton);
     m_closeButton.setButtonText(TRANS("Close"));
@@ -198,7 +199,7 @@ void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>
     m_tableListBox.setModel(m_channelMapping.get());
 }
 
-void ChannelMappingComponent::buttonClicked(Button* /*buttonThatWasClicked*/)
+void ChannelMappingComponent::buttonClicked(juce::Button* /*buttonThatWasClicked*/)
 {
     m_closeCallback();
 }

@@ -18,6 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "juce_audio_basics/juce_audio_basics.h"
 //[/Headers]
 
 #include "TestToneGeneratorComponent.h"
@@ -55,7 +56,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
 
     toggleButton->setBounds(200, 16, 86, 24);
 
-    component.reset(new ListBox());
+    component.reset(new juce::ListBox());
     addAndMakeVisible(component.get());
     component->setName("new component");
 
@@ -232,7 +233,7 @@ void TestToneGeneratorComponent::buttonClicked(juce::Button* buttonThatWasClicke
 }
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void TestToneGeneratorComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
+void TestToneGeneratorComponent::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
     int numberOfChannels = m_outputChannelNames->getNumberOfChannels();
     int oldSize = m_listBoxModel.getNumRows();
@@ -247,7 +248,7 @@ void TestToneGeneratorComponent::changeListenerCallback(ChangeBroadcaster* /*sou
 
 void TestToneGeneratorComponent::outputChannelNamesReset() {}
 
-void TestToneGeneratorComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
+void TestToneGeneratorComponent::outputChannelNameChanged(int activeChannelIndex, const juce::String& text)
 {
     m_listBoxModel.setChannelName(activeChannelIndex, text);
     component->updateContent();
@@ -255,7 +256,7 @@ void TestToneGeneratorComponent::outputChannelNameChanged(int activeChannelIndex
 
 void TestToneGeneratorComponent::outputChannelPairingModeChanged(int /*activeChannelIndex*/, PairingMode /*mode*/) {}
 
-void TestToneGeneratorComponent::sliderValueChanged(Slider* sliderThatWasMoved)
+void TestToneGeneratorComponent::sliderValueChanged(juce::Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
@@ -264,8 +265,8 @@ void TestToneGeneratorComponent::sliderValueChanged(Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_slider] -- add your slider handling code here..
         m_audioSource.setVolume(sliderThatWasMoved->getValue());
-        dbLabel->setText(
-            Decibels::toString(Decibels::gainToDecibels(sliderThatWasMoved->getValue())), juce::sendNotification);
+        dbLabel->setText(juce::Decibels::toString(juce::Decibels::gainToDecibels(sliderThatWasMoved->getValue())),
+            juce::sendNotification);
         //[/UserSliderCode_slider]
     }
 

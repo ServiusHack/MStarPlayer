@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "MixerControlable.h"
 #include "Track.h"
@@ -12,9 +12,9 @@
         User interface for a track, contained in TracksComponent.
 */
 class TrackUi
-    : public Component
-    , public ChangeListener
-    , public Button::Listener
+    : public juce::Component
+    , public juce::ChangeListener
+    , public juce::Button::Listener
     , public juce::Slider::Listener
     , public MixerControlableChangeListener
 {
@@ -22,40 +22,40 @@ public:
     typedef std::function<void(double)> SetPositionCallback;
     typedef std::function<void(Track*)> RemoveTrackCallback;
     typedef std::function<bool(int)> TrackHasFilesCallback;
-    typedef std::function<void(String)> FileLoadedCallback;
+    typedef std::function<void(juce::String)> FileLoadedCallback;
 
-    TrackUi(Track& track, ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback,
+    TrackUi(Track& track, juce::ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback,
         RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback,
         FileLoadedCallback fileLoadedCallback);
     ~TrackUi();
 
-    void changeListenerCallback(ChangeBroadcaster* source);
+    void changeListenerCallback(juce::ChangeBroadcaster* source);
     void loadFile();
-    void loadFile(const File& file);
+    void loadFile(const juce::File& file);
     void setLongestDuration(double duration);
     void positionChanged(double position);
 
     void updateIdText();
 
 private:
-    void fileChanged(const File& file, bool updatePlaylist);
+    void fileChanged(const juce::File& file, bool updatePlaylist);
 
     Track& m_track;
 
-    Label m_idLabel;
-    Label m_descriptionLabel;
-    ImageButton m_editButton;
-    ImageButton m_soloButton;
-    ImageButton m_muteButton;
+    juce::Label m_idLabel;
+    juce::Label m_descriptionLabel;
+    juce::ImageButton m_editButton;
+    juce::ImageButton m_soloButton;
+    juce::ImageButton m_muteButton;
     VolumeSlider m_volumeSlider;
-    Label m_fileNameLabel;
+    juce::Label m_fileNameLabel;
 
     std::unique_ptr<TrackEditDialogWindow> m_editDialog;
 
     double m_longestDuration;
     double m_progress; // the progress of the playback
 
-    ApplicationProperties& m_applicationProperties;
+    juce::ApplicationProperties& m_applicationProperties;
 
     SetPositionCallback m_setPositionCallback;
 
@@ -69,26 +69,26 @@ private:
 
     // Button::Listener
 public:
-    void buttonClicked(Button* button);
+    void buttonClicked(juce::Button* button);
 
     // Component
 public:
-    virtual void paint(Graphics&) override;
-    virtual void paintOverChildren(Graphics&) override;
+    virtual void paint(juce::Graphics&) override;
+    virtual void paintOverChildren(juce::Graphics&) override;
     virtual void resized() override;
-    virtual void mouseDown(const MouseEvent& event) override;
-    virtual void mouseDrag(const MouseEvent& event) override;
+    virtual void mouseDown(const juce::MouseEvent& event) override;
+    virtual void mouseDrag(const juce::MouseEvent& event) override;
 
     // juce::Slider::Listener
 public:
-    virtual void sliderValueChanged(Slider* slider) override;
+    virtual void sliderValueChanged(juce::Slider* slider) override;
 
     // MixerControlableChangeListener
 public:
     virtual void gainChanged(float gain) override;
     virtual void muteChanged(bool /*mute*/) override;
     virtual void soloChanged(bool /*solo*/) override;
-    virtual void nameChanged(const String& name) override;
+    virtual void nameChanged(const juce::String& name) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrackUi)
 };

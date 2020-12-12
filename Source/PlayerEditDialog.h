@@ -2,26 +2,26 @@
 
 #include <functional>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 /**
     Window wrapper for the PlayerEditDialogComponent.
 
     This allows the component to be shown in its own window.
 */
-class PlayerEditDialogWindow : public DialogWindow
+class PlayerEditDialogWindow : public juce::DialogWindow
 {
 public:
-    typedef std::function<void(Colour)> ColourChangedCallback;
-    typedef std::function<void(String)> StringChangedCallback;
+    typedef std::function<void(juce::Colour)> ColourChangedCallback;
+    typedef std::function<void(juce::String)> StringChangedCallback;
     typedef std::function<void(juce::File)> ImageChangedCallback;
     typedef std::function<void()> CloseCallback;
 
-    PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath,
+    PlayerEditDialogWindow(const juce::String& playerName, const juce::Colour& color, const juce::String& imagePath,
         const StringChangedCallback& stringCallback, const ColourChangedCallback& colourCallback,
         const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback = ImageChangedCallback());
 
-    String getPlayerName() const;
+    juce::String getPlayerName() const;
 
 private:
     CloseCallback m_closeCallback;
@@ -29,8 +29,8 @@ private:
     // DialogWindow
 public:
     virtual void closeButtonPressed() override;
-    virtual bool keyPressed(const KeyPress& key) override;
-    virtual void focusGained(FocusChangeType cause) override;
+    virtual bool keyPressed(const juce::KeyPress& key) override;
+    virtual void focusGained(juce::DialogWindow::FocusChangeType cause) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerEditDialogWindow)
@@ -40,15 +40,15 @@ private:
         The actual component containing controls to edit a player.
 */
 class PlayerEditDialogComponent
-    : public Component
-    , public Button::Listener
-    , public ChangeListener
+    : public juce::Component
+    , public juce::Button::Listener
+    , public juce::ChangeListener
     , public juce::TextEditor::Listener
 {
     friend class PlayerEditDialogWindow;
 
 public:
-    PlayerEditDialogComponent(const String& playerName, const Colour& color, const String& imagePath,
+    PlayerEditDialogComponent(const juce::String& playerName, const juce::Colour& color, const juce::String& imagePath,
         const PlayerEditDialogWindow::StringChangedCallback& stringCallback,
         const PlayerEditDialogWindow::ColourChangedCallback& colourCallback,
         const PlayerEditDialogWindow::CloseCallback& closeCallback,
@@ -60,27 +60,27 @@ public:
 
     // Button::Listener overrides
 public:
-    virtual void buttonClicked(Button* buttonThatWasClicked) override;
+    virtual void buttonClicked(juce::Button* buttonThatWasClicked) override;
 
     // ChangeListener overrides
 public:
-    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     // TextEditor::Listener overrides
 public:
-    virtual void textEditorTextChanged(TextEditor&) override;
+    virtual void textEditorTextChanged(juce::TextEditor&) override;
 
 private:
-    Label m_label;
-    TextEditor m_textEditor;
-    TextButton m_closeButton;
+    juce::Label m_label;
+    juce::TextEditor m_textEditor;
+    juce::TextButton m_closeButton;
 
-    TextButton m_colorButton;
-    std::unique_ptr<TextButton> m_imageSelectorButton;
-    std::unique_ptr<TextButton> m_imageResetButton;
+    juce::TextButton m_colorButton;
+    std::unique_ptr<juce::TextButton> m_imageSelectorButton;
+    std::unique_ptr<juce::TextButton> m_imageResetButton;
 
-    Colour m_color;
-    File m_imageFile;
+    juce::Colour m_color;
+    juce::File m_imageFile;
 
     PlayerEditDialogWindow::ColourChangedCallback m_colorCallback;
     PlayerEditDialogWindow::StringChangedCallback m_stringCallback;

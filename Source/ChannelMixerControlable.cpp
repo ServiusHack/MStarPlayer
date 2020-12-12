@@ -1,6 +1,7 @@
 #include "ChannelMixerControlable.h"
 
-ChannelMixerControlable::ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource, const String& name)
+ChannelMixerControlable::ChannelMixerControlable(
+    int channel, ChannelVolumeAudioSource* audioSource, const juce::String& name)
     : channelNumber(channel)
     , m_channelVolumeAudioSource(audioSource)
     , m_name(name)
@@ -69,7 +70,7 @@ float ChannelMixerControlable::getVolume() const
     return m_channelVolumeAudioSource->getActualVolume(channelNumber);
 }
 
-String ChannelMixerControlable::getName() const
+juce::String ChannelMixerControlable::getName() const
 {
     // not actually used in MixerComponent implementing OutputChannelNamesListener
     return m_name;

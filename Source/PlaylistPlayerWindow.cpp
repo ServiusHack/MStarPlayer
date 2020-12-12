@@ -2,7 +2,8 @@
 #include <memory>
 #include <vector>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "BinaryData.h"
+
 #include "JinglePlayerWindow.h"
 #include "Player.h"
 #include "PlaylistPlayerWindow.h"
@@ -12,7 +13,7 @@ using namespace InterPlayerCommunication;
 PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* tracksContainer, bool showPlaylist,
     const ShowEditDialogCallback& showEditDialogCallback, const ConfigureChannelsCallback& configureChannelsCallback,
     const ConfigureMidiCallback& configureMidiCallback, const ChangePlayerTypeCallback& changePlayerTypeCallback,
-    PlaylistModel& playlistModel, ApplicationProperties& applicationProperties)
+    PlaylistModel& playlistModel, juce::ApplicationProperties& applicationProperties)
     : m_player(player)
     , m_color(0xffffffff)
     , m_tracksContainer(tracksContainer)
@@ -37,110 +38,114 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
     , m_resizeBar(&m_layout, 1, false)
 {
     // play button
-    Image normalImage
-        = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
+    juce::Image normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
     m_playButton.addListener(this);
     m_playButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_playButton);
 
     // pause button
     m_pauseButton.addListener(this);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
     m_pauseButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_pauseButton);
 
     // stop button
     m_stopButton.addListener(this);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
     m_stopButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_stopButton);
 
     // skip backward button
     m_skipBackwardButton.addListener(this);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
     m_skipBackwardButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_skipBackwardButton);
 
     // skip forward button
     m_skipForwardButton.addListener(this);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
     m_skipForwardButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_skipForwardButton);
 
     // configuration button
-    normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
+    normalImage = juce::ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
     m_configureButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_configureButton);
     m_configureButton.addMouseListener(this, false);
@@ -154,14 +159,14 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
 
     // playlist
     addAndMakeVisible(m_tableListBox);
-    m_tableListBox.setColour(ListBox::outlineColourId, Colours::grey);
+    m_tableListBox.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
     m_tableListBox.setOutlineThickness(1);
     m_tableListBox.setVisible(showPlaylist);
     m_tableListBox.selectRow(0);
 
     // tracks
     Track::PositionCallback positionCallback = [&](double position, bool /*finished*/) {
-        m_digitalDisplay.setText(Utils::formatSeconds(position), sendNotification);
+        m_digitalDisplay.setText(Utils::formatSeconds(position), juce::sendNotification);
     };
     m_tracksContainer->addPositionCallback(positionCallback);
 
@@ -186,7 +191,7 @@ void PlaylistPlayerWindow::setResizerBarPosition(int position)
     resized();
 }
 
-void PlaylistPlayerWindow::paint(Graphics& g)
+void PlaylistPlayerWindow::paint(juce::Graphics& g)
 {
     const int buttonWidth = std::min(getWidth() / 11, 32);
     const int buttonHeight = buttonWidth;
@@ -214,7 +219,7 @@ void PlaylistPlayerWindow::resized()
 
     if (m_tableListBox.isVisible())
     {
-        Component* components[] = {&m_tableListBox, &m_resizeBar, &m_tracksViewport};
+        juce::Component* components[] = {&m_tableListBox, &m_resizeBar, &m_tracksViewport};
         m_layout.layOutComponents(components, 3, 0, buttonHeight, getWidth(), getHeight() - buttonHeight, true, true);
     }
     else
@@ -225,12 +230,12 @@ void PlaylistPlayerWindow::resized()
     m_tracks.setBounds(0, 0, m_tracksViewport.getMaximumVisibleWidth(), m_tracks.getHeight());
 }
 
-void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
+void PlaylistPlayerWindow::mouseDown(const juce::MouseEvent& event)
 {
     if (event.eventComponent != &m_configureButton)
         return;
 
-    PopupMenu m;
+    juce::PopupMenu m;
     m.addItem(1, TRANS("add stereo track"));
     m.addItem(2, TRANS("add mono track"));
     m.addItem(3, TRANS("configure channels"));
@@ -274,7 +279,7 @@ void PlaylistPlayerWindow::mouseDown(const MouseEvent& event)
     }
 }
 
-void PlaylistPlayerWindow::buttonClicked(Button* button)
+void PlaylistPlayerWindow::buttonClicked(juce::Button* button)
 {
     if (button == &m_playButton)
         m_player.play();
@@ -288,11 +293,12 @@ void PlaylistPlayerWindow::buttonClicked(Button* button)
         m_player.nextEntry();
 }
 
-void PlaylistPlayerWindow::setColor(const Colour& color)
+void PlaylistPlayerWindow::setColor(const juce::Colour& color)
 {
     m_color = color;
-    m_tableListBox.setColour(ListBox::backgroundColourId, m_color);
-    m_digitalDisplay.setColour(Label::textColourId, m_color.isTransparent() ? Colours::black : m_color.contrasting());
+    m_tableListBox.setColour(juce::ListBox::backgroundColourId, m_color);
+    m_digitalDisplay.setColour(
+        juce::Label::textColourId, m_color.isTransparent() ? juce::Colours::black : m_color.contrasting());
     repaint();
 }
 
@@ -309,7 +315,7 @@ int PlaylistPlayerWindow::getSelectedRow() const
     return m_tableListBox.getSelectedRow();
 }
 
-void PlaylistPlayerWindow::fileLoaded(const String& filename)
+void PlaylistPlayerWindow::fileLoaded(const juce::String& filename)
 {
     static_cast<PlaylistModel*>(m_tableListBox.getModel())->setTrackNameIfEmpty(getSelectedRow(), filename);
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "CDTracksModel.h"
 
 #include <functional>
@@ -10,8 +8,8 @@
     The CD tracks table component.
 */
 class CDTracksTable
-    : public TableListBox
-    , public ChangeListener
+    : public juce::TableListBox
+    , public juce::ChangeListener
 {
 public:
     typedef std::function<void(int sampleIndex)> TrackChangedCallback;
@@ -27,7 +25,7 @@ public:
 
     // ChangeListener
 public:
-    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
 private:
     void forceSelectRow(int rowIndex);

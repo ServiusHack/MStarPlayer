@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
+#include "juce_gui_extra/juce_gui_extra.h"
 
 #include "AudioConfiguration.h"
 #include "DarkLookAndFeel.h"
@@ -25,26 +26,27 @@
     for each channel at the bottom.
 */
 class MainContentComponent
-    : public Component
-    , public MenuBarModel
-    , public ApplicationCommandTarget
+    : public juce::Component
+    , public juce::MenuBarModel
+    , public juce::ApplicationCommandTarget
     , public MixerControlableChangeListener
     , public SoloBusSettingsListener
 {
 public:
-    MainContentComponent(ApplicationProperties& applicationProperties, ApplicationCommandManager* commandManager);
+    MainContentComponent(
+        juce::ApplicationProperties& applicationProperties, juce::ApplicationCommandManager* commandManager);
     ~MainContentComponent();
 
 private:
-    ApplicationProperties& m_applicationProperties;
-    AudioThumbnailCache m_audioThumbnailCache;
+    juce::ApplicationProperties& m_applicationProperties;
+    juce::AudioThumbnailCache m_audioThumbnailCache;
 
-    TimeSliceThread m_timeSliceThread;
+    juce::TimeSliceThread m_timeSliceThread;
 
     SoloBusSettings m_soloBusSettings;
-    ApplicationCommandManager* m_commandManager;
+    juce::ApplicationCommandManager* m_commandManager;
     std::unique_ptr<MyMultiDocumentPanel> m_multiDocumentPanel;
-    AudioDeviceManager m_audioDeviceManager;
+    juce::AudioDeviceManager m_audioDeviceManager;
     std::unique_ptr<OutputChannelNames> m_outputChannelNames;
     std::unique_ptr<MixerComponent> m_mixerComponent;
     std::unique_ptr<TestToneGeneratorComponent> m_testToneGenerator;
@@ -53,7 +55,7 @@ private:
     MTCSender m_mtcSender;
     std::unique_ptr<MidiConfigurationWindow> m_midiConfigurationWindow;
     std::unique_ptr<EditSettingsWindow> m_editSettingsWindow;
-    std::unique_ptr<DialogWindow> m_testToneGeneratorWindow;
+    std::unique_ptr<juce::DialogWindow> m_testToneGeneratorWindow;
 
     void reconfigSnapToGrid();
 
@@ -76,16 +78,16 @@ public:
 
     // MenuBarModel overrides
 public:
-    virtual StringArray getMenuBarNames() override;
-    virtual PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;
+    virtual juce::StringArray getMenuBarNames() override;
+    virtual juce::PopupMenu getMenuForIndex(int menuIndex, const juce::String& menuName) override;
     virtual void menuItemSelected(int menuItemID, int topLevelMenuIndex) override;
 
     // ApplicationCommandTarget overrides
 public:
-    virtual ApplicationCommandTarget* getNextCommandTarget() override;
-    virtual void getAllCommands(Array<CommandID>& commands) override;
-    virtual void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result) override;
-    virtual bool perform(const InvocationInfo& info) override;
+    virtual juce::ApplicationCommandTarget* getNextCommandTarget() override;
+    virtual void getAllCommands(juce::Array<juce::CommandID>& commands) override;
+    virtual void getCommandInfo(juce::CommandID commandID, juce::ApplicationCommandInfo& result) override;
+    virtual bool perform(const juce::ApplicationCommandTarget::InvocationInfo& info) override;
 
     // MixerControlableChangeListener overrides
 public:
@@ -129,7 +131,7 @@ public:
     // Project file related methods and fields
 public:
     bool askSaveProject();
-    void openProject(File projectFile);
+    void openProject(juce::File projectFile);
 
 private:
     void newProject();
@@ -140,10 +142,10 @@ private:
     void readProjectFile();
     void writeProjectFile();
 
-    File m_projectFile;
+    juce::File m_projectFile;
     bool m_projectModified;
 
-    RecentlyOpenedFilesList m_recentlyOpenedFiles;
+    juce::RecentlyOpenedFilesList m_recentlyOpenedFiles;
 
 private:
     PluginLoader m_pluginLoader;

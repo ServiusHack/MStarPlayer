@@ -1,8 +1,8 @@
 #include "TrackEditDialog.h"
 
-TrackEditDialogWindow::TrackEditDialogWindow(String name, float trackGain,
+TrackEditDialogWindow::TrackEditDialogWindow(juce::String name, float trackGain,
     TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback)
-    : DialogWindow(TRANS("Edit track"), Colours::lightgrey, true, true)
+    : juce::DialogWindow(TRANS("Edit track"), juce::Colours::lightgrey, true, true)
 {
     TrackEditDialogComponent* component
         = new TrackEditDialogComponent(name, trackGain, settingsChangedCallback, volumeChangedCallback, this);
@@ -17,9 +17,9 @@ void TrackEditDialogWindow::closeButtonPressed()
     setVisible(false);
 }
 
-bool TrackEditDialogWindow::keyPressed(const KeyPress& key)
+bool TrackEditDialogWindow::keyPressed(const juce::KeyPress& key)
 {
-    if (key == KeyPress::returnKey)
+    if (key == juce::KeyPress::returnKey)
     {
         exitModalState(0);
         return true;
@@ -28,17 +28,17 @@ bool TrackEditDialogWindow::keyPressed(const KeyPress& key)
     return false;
 }
 
-void TrackEditDialogWindow::focusGained(FocusChangeType /*cause*/)
+void TrackEditDialogWindow::focusGained(juce::DialogWindow::FocusChangeType /*cause*/)
 {
     static_cast<TrackEditDialogComponent*>(getContentComponent())->m_nameEditor.grabKeyboardFocus();
 }
 
-void TrackEditDialogWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
+void TrackEditDialogWindow::buttonClicked(juce::Button* /*buttonThatWasClicked*/)
 {
     closeButtonPressed();
 }
 
-TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain,
+TrackEditDialogComponent::TrackEditDialogComponent(juce::String name, float trackGain,
     TrackSettingsChangedCallback settingsChangedCallback, VolumeChangedCallback volumeChangedCallback,
     TrackEditDialogWindow* parent)
     : m_settingsChangedCallback(settingsChangedCallback)
@@ -48,11 +48,11 @@ TrackEditDialogComponent::TrackEditDialogComponent(String name, float trackGain,
     , m_closeButton("close")
 {
     addAndMakeVisible(m_nameLabel);
-    m_nameLabel.setFont(Font(15.00f, Font::plain));
-    m_nameLabel.setJustificationType(Justification::centredLeft);
+    m_nameLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_nameLabel.setJustificationType(juce::Justification::centredLeft);
     m_nameLabel.setEditable(false, false, false);
-    m_nameLabel.setColour(TextEditor::textColourId, Colours::black);
-    m_nameLabel.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    m_nameLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    m_nameLabel.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(m_nameEditor);
     m_nameEditor.setMultiLine(false);
@@ -100,12 +100,12 @@ void TrackEditDialogComponent::resized()
         (getWidth() - buttonWidth) / 2, getHeight() - 2 * (rowHeight - padding), buttonWidth, rowHeight);
 }
 
-void TrackEditDialogComponent::sliderValueChanged(Slider* /*slider*/)
+void TrackEditDialogComponent::sliderValueChanged(juce::Slider* /*slider*/)
 {
     m_volumeChangedCallback(static_cast<float>(m_volumeSlider.getValue()));
 }
 
-void TrackEditDialogComponent::textEditorTextChanged(TextEditor&)
+void TrackEditDialogComponent::textEditorTextChanged(juce::TextEditor&)
 {
     m_settingsChangedCallback(m_nameEditor.getText());
 }

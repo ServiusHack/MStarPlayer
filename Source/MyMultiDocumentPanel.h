@@ -8,21 +8,20 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "ResizingComponent.h"
 
 class MyMultiDocumentPanel;
 
-class MyConstrainer : public ComponentBoundsConstrainer
+class MyConstrainer : public juce::ComponentBoundsConstrainer
 {
 public:
     void setSnapToGridEnabled(bool enable);
     void setSnapToGridWidth(int width);
     void setSnapToGridHeight(int height);
 
-    void checkBounds(Rectangle<int>& bounds, const Rectangle<int>& previousBounds, const Rectangle<int>& limits,
-        bool isStretchingTop, bool isStretchingLeft, bool isStretchingBottom, bool isStretchingRight) override;
+    void checkBounds(juce::Rectangle<int>& bounds, const juce::Rectangle<int>& previousBounds,
+        const juce::Rectangle<int>& limits, bool isStretchingTop, bool isStretchingLeft, bool isStretchingBottom,
+        bool isStretchingRight) override;
 
 private:
     bool snapToGrid{false};
@@ -42,13 +41,13 @@ private:
 
     @tags{GUI}
 */
-class JUCE_API MyMultiDocumentPanelWindow : public DocumentWindow
+class JUCE_API MyMultiDocumentPanelWindow : public juce::DocumentWindow
 {
 public:
     //==============================================================================
     /**
      */
-    MyMultiDocumentPanelWindow(Colour backgroundColour);
+    MyMultiDocumentPanelWindow(juce::Colour backgroundColour);
 
     /** Destructor. */
     ~MyMultiDocumentPanelWindow();
@@ -86,8 +85,8 @@ private:
     @tags{GUI}
 */
 class JUCE_API MyMultiDocumentPanel
-    : public Component
-    , private ComponentListener
+    : public juce::Component
+    , private juce::ComponentListener
 {
 public:
     //==============================================================================
@@ -139,7 +138,7 @@ public:
                                     or closeAllDocuments(), then it will be deleted. If false, then
                                     the caller must handle the component's deletion
     */
-    bool addDocument(Component* component, Colour backgroundColour, bool deleteWhenRemoved);
+    bool addDocument(juce::Component* component, juce::Colour backgroundColour, bool deleteWhenRemoved);
 
     /** Closes one of the documents.
 
@@ -155,7 +154,7 @@ public:
 
         @see addDocument, closeAllDocuments
     */
-    bool closeDocument(Component* component, bool checkItsOkToCloseFirst);
+    bool closeDocument(juce::Component* component, bool checkItsOkToCloseFirst);
 
     /** Returns the number of open document windows.
 
@@ -170,7 +169,7 @@ public:
 
         @see getNumDocuments
     */
-    Component* getDocument(int index) const noexcept;
+    juce::Component* getDocument(int index) const noexcept;
 
     /** Returns the document component that is currently focused or on top.
 
@@ -181,13 +180,13 @@ public:
 
         @see setActiveDocument
     */
-    Component* getActiveDocument() const noexcept;
+    juce::Component* getActiveDocument() const noexcept;
 
     /** Makes one of the components active and brings it to the top.
 
         @see getActiveDocument
     */
-    void setActiveDocument(Component* component);
+    void setActiveDocument(juce::Component* component);
 
     /** Callback which gets invoked when the currently-active document changes. */
     virtual void activeDocumentChanged();
@@ -236,18 +235,18 @@ public:
         Each document has its own background colour, but this is the one used to fill the areas
         behind them.
     */
-    void setBackgroundColour(Colour newBackgroundColour);
+    void setBackgroundColour(juce::Colour newBackgroundColour);
 
     /** Returns the current background colour.
 
         @see setBackgroundColour
     */
-    Colour getBackgroundColour() const noexcept
+    juce::Colour getBackgroundColour() const noexcept
     {
         return backgroundColour;
     }
     /** If the panel is being used in tabbed mode, this returns the TabbedComponent that's involved. */
-    TabbedComponent* getCurrentTabbedComponent() const noexcept
+    juce::TabbedComponent* getCurrentTabbedComponent() const noexcept
     {
         return tabComponent.get();
     }
@@ -273,7 +272,7 @@ public:
 
         @see closeDocument, FileBasedDocument::saveIfNeededAndUserAgrees()
     */
-    virtual bool tryToCloseDocument(Component* component);
+    virtual bool tryToCloseDocument(juce::Component* component);
 
     /** Creates a new window to be used for a document.
 
@@ -286,18 +285,18 @@ public:
 
     //==============================================================================
     /** @internal */
-    void paint(Graphics&) override;
+    void paint(juce::Graphics&) override;
     /** @internal */
     void resized() override;
     /** @internal */
-    void componentNameChanged(Component&) override;
+    void componentNameChanged(juce::Component&) override;
 
 private:
     //==============================================================================
     LayoutMode mode = MaximisedWindowsWithTabs;
-    Array<Component*> components;
-    std::unique_ptr<TabbedComponent> tabComponent;
-    Colour backgroundColour{Colours::lightblue};
+    juce::Array<juce::Component*> components;
+    std::unique_ptr<juce::TabbedComponent> tabComponent;
+    juce::Colour backgroundColour{juce::Colours::lightblue};
     int maximumNumDocuments = 0, numDocsBeforeTabsUsed = 0;
 
     MyConstrainer m_myConstrainer;
@@ -305,9 +304,9 @@ private:
     struct TabbedComponentInternal;
     friend class MyMultiDocumentPanelWindow;
 
-    Component* getContainerComp(Component*) const;
+    juce::Component* getContainerComp(juce::Component*) const;
     void updateOrder();
-    void addWindow(Component*);
+    void addWindow(juce::Component*);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MyMultiDocumentPanel)
 };

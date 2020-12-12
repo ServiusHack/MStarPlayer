@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
-class ResizingComponent : public Component
+class ResizingComponent : public juce::Component
 {
 public:
-    virtual void childBoundsChanged(Component* child) override;
+    virtual void childBoundsChanged(juce::Component* child) override;
 };

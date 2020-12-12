@@ -6,12 +6,12 @@ int TestToneGeneratorOutputChannelsModel::getNumRows()
 }
 
 void TestToneGeneratorOutputChannelsModel::paintListBoxItem(
-    int /*rowNumber*/, Graphics& /*g*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
+    int /*rowNumber*/, juce::Graphics& /*g*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
 }
 
-Component* TestToneGeneratorOutputChannelsModel::refreshComponentForRow(
-    int rowNumber, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+juce::Component* TestToneGeneratorOutputChannelsModel::refreshComponentForRow(
+    int rowNumber, bool /*isRowSelected*/, juce::Component* existingComponentToUpdate)
 {
     if (rowNumber >= names.size())
     {
@@ -20,11 +20,11 @@ Component* TestToneGeneratorOutputChannelsModel::refreshComponentForRow(
         return nullptr;
     }
 
-    ToggleButton* button = static_cast<ToggleButton*>(existingComponentToUpdate);
+    juce::ToggleButton* button = static_cast<juce::ToggleButton*>(existingComponentToUpdate);
 
     if (!button)
     {
-        button = new ToggleButton();
+        button = new juce::ToggleButton();
         button->addListener(this);
     }
 
@@ -40,12 +40,12 @@ void TestToneGeneratorOutputChannelsModel::resizeTo(int size)
     names.resize(size);
 }
 
-void TestToneGeneratorOutputChannelsModel::setChannelName(int pos, String name)
+void TestToneGeneratorOutputChannelsModel::setChannelName(int pos, juce::String name)
 {
     names.getReference(pos).name = name;
 }
 
-void TestToneGeneratorOutputChannelsModel::buttonClicked(Button* button)
+void TestToneGeneratorOutputChannelsModel::buttonClicked(juce::Button* button)
 {
     int pos = button->getProperties()["row"];
     names.getReference(pos).enabled = button->getToggleState();

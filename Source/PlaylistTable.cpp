@@ -3,7 +3,7 @@
 #include "PlaylistModel.h"
 
 PlaylistTable::PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel)
-    : TableListBox("PlaylistTable")
+    : juce::TableListBox("PlaylistTable")
     , m_callback(callback)
     , m_playNext(false)
     , m_model(playlistModel)
@@ -12,10 +12,10 @@ PlaylistTable::PlaylistTable(const PlaylistEntryChangedCallback& callback, Playl
     getHeader().setPopupMenuActive(false);
 
     // set the table header columns
-    getHeader().addColumn(TRANS("#"), 1, 25, 25, 50, TableHeaderComponent::notResizableOrSortable);
-    getHeader().addColumn(TRANS("Name"), 2, 200, 50, -1, TableHeaderComponent::notResizableOrSortable);
-    getHeader().addColumn(TRANS("Duration"), 3, 80, 80, 100, TableHeaderComponent::notResizableOrSortable);
-    getHeader().addColumn("", 4, 25, 25, 25, TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn(TRANS("#"), 1, 25, 25, 50, juce::TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn(TRANS("Name"), 2, 200, 50, -1, juce::TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn(TRANS("Duration"), 3, 80, 80, 100, juce::TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn("", 4, 25, 25, 25, juce::TableHeaderComponent::notResizableOrSortable);
 
     m_model.addChangeListener(this);
     setModel(&m_model);
@@ -35,22 +35,22 @@ void PlaylistTable::selectedRowsChanged(int lastRowSelected)
     m_callback(trackConfigs, m_playNext, lastRowSelected);
 }
 
-void PlaylistTable::changeListenerCallback(ChangeBroadcaster* /*source*/)
+void PlaylistTable::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
     updateContent();
     repaint();
 }
 
-bool PlaylistTable::isInterestedInDragSource(const SourceDetails& dragSourceDetails)
+bool PlaylistTable::isInterestedInDragSource(const juce::DragAndDropTarget::SourceDetails& dragSourceDetails)
 {
     return dragSourceDetails.sourceComponent->getName() == getName();
 }
 
-void PlaylistTable::itemDropped(const SourceDetails& dragSourceDetails)
+void PlaylistTable::itemDropped(const juce::DragAndDropTarget::SourceDetails& dragSourceDetails)
 {
     int row = getRowContainingPosition(dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.y);
 
-    Array<var> data = *dragSourceDetails.description.getArray();
+    juce::Array<juce::var> data = *dragSourceDetails.description.getArray();
 
     if (dragSourceDetails.sourceComponent == this)
     {
@@ -65,7 +65,7 @@ void PlaylistTable::itemDropped(const SourceDetails& dragSourceDetails)
         for (int i = 4; i < data.size(); ++i)
         {
             TrackConfig config;
-            config.file = File(data[i].toString());
+            config.file = juce::File(data[i].toString());
             configs.push_back(config);
         }
 
@@ -88,9 +88,9 @@ void PlaylistTable::setCurrentDuration(double duration)
 
 void PlaylistTable::resized()
 {
-    TableListBox::resized();
+    juce::TableListBox::resized();
 
-    TableHeaderComponent& header = getHeader();
+    juce::TableHeaderComponent& header = getHeader();
     header.setColumnWidth(
         2, getVisibleRowWidth() - header.getColumnWidth(1) - header.getColumnWidth(3) - header.getColumnWidth(4));
 }

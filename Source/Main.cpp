@@ -1,56 +1,61 @@
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
+
+#include "juce_gui_basics/juce_gui_basics.h"
+
+#include "BinaryData.h"
 
 #include "CrashDumper.h"
 
-class MStarPlayerApplication : public JUCEApplication
+class MStarPlayerApplication : public juce::JUCEApplication
 {
 public:
     MStarPlayerApplication() {}
-    const String getApplicationName()
+    const juce::String getApplicationName()
     {
-        return ProjectInfo::projectName;
+        return JUCE_APPLICATION_NAME_STRING;
     }
-    const String getApplicationVersion()
+    const juce::String getApplicationVersion()
     {
-        return ProjectInfo::versionString;
+        return JUCE_APPLICATION_VERSION_STRING;
     }
     bool moreThanOneInstanceAllowed()
     {
         return true;
     }
-    void initialise(const String& /*commandLine*/)
+    void initialise(const juce::String& /*commandLine*/)
     {
 #ifdef _WIN32
         CrashDumper::init();
 #endif
 
-        PropertiesFile::Options options;
+        juce::PropertiesFile::Options options;
         options.applicationName = "MStarPlayer";
         options.filenameSuffix = ".settings";
         m_applicationProperties.setStorageParameters(options);
 
         if (m_applicationProperties.getUserSettings()->getValue("language") == "de")
         {
-            LocalisedStrings::setCurrentMappings(new LocalisedStrings(CharPointer_UTF8(BinaryData::German_txt), false));
+            juce::LocalisedStrings::setCurrentMappings(
+                new juce::LocalisedStrings(juce::CharPointer_UTF8(BinaryData::German_txt), false));
         }
         else if (m_applicationProperties.getUserSettings()->getValue("language") == "en")
         {
             // Default is English.
         }
-        else if (SystemStats::getUserLanguage() == "de")
+        else if (juce::SystemStats::getUserLanguage() == "de")
         {
-            LocalisedStrings::setCurrentMappings(new LocalisedStrings(CharPointer_UTF8(BinaryData::German_txt), false));
+            juce::LocalisedStrings::setCurrentMappings(
+                new juce::LocalisedStrings(juce::CharPointer_UTF8(BinaryData::German_txt), false));
         }
 
         MainContentComponent::initLookAndFeel();
-        LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
+        juce::LookAndFeel::setDefaultLookAndFeel(MainContentComponent::s_defaultLookAndFeel);
         m_mainWindow = std::make_unique<MainWindow>(m_applicationProperties);
 
-        StringArray parameters = JUCEApplication::getCommandLineParameterArray();
+        juce::StringArray parameters = juce::JUCEApplication::getCommandLineParameterArray();
         if (!parameters.isEmpty())
         {
-            m_mainWindow->openProject(File(parameters[0]));
+            m_mainWindow->openProject(juce::File(parameters[0]));
         }
     }
 
@@ -65,25 +70,25 @@ public:
         quit();
     }
 
-    void anotherInstanceStarted(const String& /*commandLine*/) {}
+    void anotherInstanceStarted(const juce::String& /*commandLine*/) {}
 
     /*
         This class implements the desktop window that contains an instance of
         our MainContentComponent class.
     */
-    class MainWindow : public DocumentWindow
+    class MainWindow : public juce::DocumentWindow
     {
     public:
         // the command manager object used to dispatch command events
-        ApplicationCommandManager commandManager;
+        juce::ApplicationCommandManager commandManager;
 
-        MainWindow(ApplicationProperties& properties)
-            : DocumentWindow("M*Player", Colours::lightgrey, DocumentWindow::allButtons)
+        MainWindow(juce::ApplicationProperties& properties)
+            : juce::DocumentWindow("M*Player", juce::Colours::lightgrey, juce::DocumentWindow::allButtons)
         {
             MainContentComponent* main = new MainContentComponent(properties, &commandManager);
 
             commandManager.registerAllCommandsForTarget(main);
-            commandManager.registerAllCommandsForTarget(JUCEApplication::getInstance());
+            commandManager.registerAllCommandsForTarget(juce::JUCEApplication::getInstance());
 
             addKeyListener(commandManager.getKeyMappings());
 
@@ -118,10 +123,10 @@ public:
             if (!static_cast<MainContentComponent*>(getContentComponent())->askSaveProject())
                 return;
 
-            JUCEApplication::getInstance()->systemRequestedQuit();
+            juce::JUCEApplication::getInstance()->systemRequestedQuit();
         }
 
-        void openProject(File projectFile)
+        void openProject(juce::File projectFile)
         {
             static_cast<MainContentComponent*>(getContentComponent())->openProject(projectFile);
         }
@@ -132,7 +137,7 @@ public:
 
 private:
     std::unique_ptr<MainWindow> m_mainWindow;
-    ApplicationProperties m_applicationProperties;
+    juce::ApplicationProperties m_applicationProperties;
 };
 
 // This macro generates the main() routine that launches the app.

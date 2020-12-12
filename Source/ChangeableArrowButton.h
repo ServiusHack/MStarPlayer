@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
-class ChangeableArrowButton : public Button
+class ChangeableArrowButton : public juce::Button
 {
 public:
     /** Creates an ArrowButton where the direction can be changed.
@@ -12,16 +12,16 @@ public:
                                 pointing right, 0.25 is down, 0.5 is left, 0.75 is up
         @param arrowColour      the colour to use for the arrow
     */
-    ChangeableArrowButton(const String& buttonName, float arrowDirection, Colour arrowColour);
+    ChangeableArrowButton(const juce::String& buttonName, float arrowDirection, juce::Colour arrowColour);
 
     /** @internal */
-    void paintButton(Graphics&, bool isMouseOverButton, bool isButtonDown) override;
+    void paintButton(juce::Graphics&, bool isMouseOverButton, bool isButtonDown) override;
 
     void setArrowDirection(float arrowDirection);
 
 private:
-    Colour colour;
-    Path path;
+    juce::Colour colour;
+    juce::Path path;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChangeableArrowButton)
 };

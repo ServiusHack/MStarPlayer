@@ -1,4 +1,7 @@
 #include "LevelMeter.h"
+
+#include "juce_audio_devices/juce_audio_devices.h"
+
 #include "DefaultLookAndFeel.h"
 
 namespace
@@ -10,7 +13,7 @@ LevelMeter::LevelMeter()
     : m_volume(0.0f)
     , m_peak(0.0f)
     , m_peakDurationLeft(0)
-    , m_rotationTransformation(AffineTransform::rotation(-90.0f * float_Pi / 180.0f))
+    , m_rotationTransformation(juce::AffineTransform::rotation(-90.0f * juce::float_Pi / 180.0f))
 {
 }
 
@@ -29,11 +32,11 @@ void LevelMeter::setVolume(float volume)
     }
 }
 
-void LevelMeter::paint(Graphics& g)
+void LevelMeter::paint(juce::Graphics& g)
 {
     g.saveState();
     g.addTransform(m_rotationTransformation.translated(0.0f, static_cast<float>(getHeight())));
-    static_cast<DefaultLookAndFeel&>(LookAndFeel::getDefaultLookAndFeel())
+    static_cast<DefaultLookAndFeel&>(juce::LookAndFeel::getDefaultLookAndFeel())
         .drawLevelMeter(g, getHeight(), getWidth(), m_volume, m_peak);
     g.restoreState();
 }

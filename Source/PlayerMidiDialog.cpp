@@ -2,7 +2,7 @@
 
 PlayerMidiDialogWindow::PlayerMidiDialogWindow(
     bool mtcEnabled, const MtcEnabledChangedCallback& mtcEnabledChangedCallback, const CloseCallback& closeCallback)
-    : DialogWindow(TRANS("Configure MIDI for player"), Colours::lightgrey, true, false)
+    : juce::DialogWindow(TRANS("Configure MIDI for player"), juce::Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
 {
     PlayerMidiDialogComponent* component
@@ -18,9 +18,9 @@ void PlayerMidiDialogWindow::closeButtonPressed()
     m_closeCallback();
 }
 
-bool PlayerMidiDialogWindow::keyPressed(const KeyPress& key)
+bool PlayerMidiDialogWindow::keyPressed(const juce::KeyPress& key)
 {
-    if (key == KeyPress::returnKey)
+    if (key == juce::KeyPress::returnKey)
     {
         exitModalState(0);
         return true;
@@ -29,7 +29,7 @@ bool PlayerMidiDialogWindow::keyPressed(const KeyPress& key)
     return false;
 }
 
-void PlayerMidiDialogWindow::focusGained(FocusChangeType /*cause*/) {}
+void PlayerMidiDialogWindow::focusGained(juce::DialogWindow::FocusChangeType /*cause*/) {}
 
 PlayerMidiDialogComponent::PlayerMidiDialogComponent(bool mtcEnabled,
     const PlayerMidiDialogWindow::MtcEnabledChangedCallback& mtcEnabledChangedCallback,
@@ -66,7 +66,7 @@ void PlayerMidiDialogComponent::resized()
         (getWidth() - buttonWidth) / 2, getHeight() - 2 * (buttonHeight - padding), buttonWidth, buttonHeight);
 }
 
-void PlayerMidiDialogComponent::buttonClicked(Button* buttonThatWasClicked)
+void PlayerMidiDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked)
 {
     if (buttonThatWasClicked == &m_closeButton)
         m_closeCallback();

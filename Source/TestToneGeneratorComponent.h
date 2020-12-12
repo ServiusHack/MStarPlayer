@@ -20,7 +20,6 @@
 #pragma once
 
 //[Headers]     -- You can add your own extra header files here --
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "MixerComponent.h"
 #include "OutputChannelNames.h"
 #include "TestToneGeneratorAudioSource.h"
@@ -37,10 +36,10 @@
                                                                     //[/Comments]
 */
 class TestToneGeneratorComponent
-    : public Component
-    , public ChangeListener
+    : public juce::Component
+    , public juce::ChangeListener
     , public OutputChannelNamesListener
-    , public Slider::Listener
+    , public juce::Slider::Listener
     , public juce::ComboBox::Listener
     , public juce::Button::Listener
 {
@@ -55,14 +54,14 @@ public:
     // ChangeListener
 public:
     /** Act accordingly to changes in the AudioDeviceManager. */
-    virtual void changeListenerCallback(ChangeBroadcaster* /*source*/) override;
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* /*source*/) override;
 
     // OutputChannelNamesListener
 public:
     virtual void outputChannelNamesReset() override;
-    virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
+    virtual void outputChannelNameChanged(int activeChannelIndex, const juce::String& text) override;
     virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) override;
-    virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
+    virtual void sliderValueChanged(juce::Slider* sliderThatWasMoved) override;
     //[/UserMethods]
 
     void paint(juce::Graphics& g) override;
@@ -81,7 +80,7 @@ private:
     //==============================================================================
     std::unique_ptr<juce::ComboBox> comboBox;
     std::unique_ptr<juce::TextButton> toggleButton;
-    std::unique_ptr<ListBox> component;
+    std::unique_ptr<juce::ListBox> component;
     std::unique_ptr<juce::Label> label;
     std::unique_ptr<VolumeSlider> slider;
     std::unique_ptr<juce::TextButton> textButton;

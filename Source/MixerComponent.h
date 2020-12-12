@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "ChannelVolumeAudioSource.h"
 #include "MixerFader.h"
@@ -20,27 +20,27 @@
         Players -> MixerAudioSource -> ChannelVolumeAudioSource -> AudioSourcePlayer -> AudioDeviceManager
 */
 class MixerComponent
-    : public Component
-    , public ChangeListener
+    : public juce::Component
+    , public juce::ChangeListener
     , public OutputChannelNamesListener
     , public SoloBusSettingsListener
-    , public ScrollBar::Listener
-    , public Timer
+    , public juce::ScrollBar::Listener
+    , public juce::Timer
 {
 public:
     /** Creates a new MixerComponent.
 
         @param audioDeviceManager The AudioDeviceManager used throughout the application.
     */
-    MixerComponent(AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames,
+    MixerComponent(juce::AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames,
         SoloBusSettings& soloBusSettings);
     ~MixerComponent();
 
     /** Returns the MixerAudioSource into which all Players mix their audio stream. */
-    MixerAudioSource& getMixerAudioSource();
+    juce::MixerAudioSource& getMixerAudioSource();
     ChannelVolumeAudioSource& getChannelVolumeAudioSource();
 
-    void updatePlayerColor(SubchannelPlayer* player, Colour color);
+    void updatePlayerColor(SubchannelPlayer* player, juce::Colour color);
 
     // Player registration
 public:
@@ -52,12 +52,12 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    void saveToXml(XmlElement* element) const;
+    void saveToXml(juce::XmlElement* element) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml(const XmlElement& element);
+    void restoreFromXml(const juce::XmlElement& element);
 
     // Slider for channels and players
 private:
@@ -68,8 +68,8 @@ private:
 
     std::vector<std::unique_ptr<MixerFader>> m_channelSliders;
     std::vector<std::unique_ptr<PlayerMixerFader>> m_playerSliders;
-    Component m_slidersContainer;
-    ScrollBar m_sliderScrollBar;
+    juce::Component m_slidersContainer;
+    juce::ScrollBar m_sliderScrollBar;
 
     // Component
 public:
@@ -78,12 +78,12 @@ public:
     // ChangeListener
 public:
     /** Act accordingly to changes in the AudioDeviceManager. */
-    virtual void changeListenerCallback(ChangeBroadcaster* /*source*/) override;
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* /*source*/) override;
 
     // OutputChannelNamesListener
 public:
     virtual void outputChannelNamesReset() override;
-    virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) override;
+    virtual void outputChannelNameChanged(int activeChannelIndex, const juce::String& text) override;
     virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) override;
 
     // SoloBusSettingsListener
@@ -92,7 +92,7 @@ public:
 
     // ScrollBar::Listener
 public:
-    virtual void scrollBarMoved(ScrollBar* scrollBarThatHasMoved, double newRangeStart) override;
+    virtual void scrollBarMoved(juce::ScrollBar* scrollBarThatHasMoved, double newRangeStart) override;
 
     // Timer
 public:
@@ -100,10 +100,10 @@ public:
 
 private:
     // audio output
-    MixerAudioSource m_mixerAudioSource;
+    juce::MixerAudioSource m_mixerAudioSource;
     ChannelVolumeAudioSource m_channelVolumeAudioSource;
-    AudioSourcePlayer m_audioSourcePlayer;
-    AudioDeviceManager* m_audioDeviceManager;
+    juce::AudioSourcePlayer m_audioSourcePlayer;
+    juce::AudioDeviceManager* m_audioDeviceManager;
     OutputChannelNames* m_outputChannelNames;
     SoloBusSettings& m_soloBusSettings;
 

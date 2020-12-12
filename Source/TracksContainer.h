@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include <functional>
+
+#include "juce_audio_utils/juce_audio_utils.h"
 
 #include "MTCSender.h"
 #include "MixerComponent.h"
@@ -21,8 +21,8 @@ public:
 
     TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels,
         const Track::TrackConfigChangedCallback& trackConfigChangedCallback,
-        const Track::GainChangedCallback& gainChangedCallback, AudioThumbnailCache& audioThumbnailCache,
-        TimeSliceThread& thread, MTCSender& mtcSender);
+        const Track::GainChangedCallback& gainChangedCallback, juce::AudioThumbnailCache& audioThumbnailCache,
+        juce::TimeSliceThread& thread, MTCSender& mtcSender);
     ~TracksContainer();
 
     // Playback
@@ -35,7 +35,7 @@ public:
 
 private:
     MixerComponent* m_mixer;
-    MixerAudioSource m_tracksMixer;
+    juce::MixerAudioSource m_tracksMixer;
     SoloBusSettings& m_soloBusSettings;
 
     // MTC
@@ -52,7 +52,7 @@ public:
     size_t size() const;
     Track& operator[](size_t index) const;
     void clear();
-    void addTrack(bool stereo, const XmlElement* element = nullptr);
+    void addTrack(bool stereo, const juce::XmlElement* element = nullptr);
     void removeTrack(Track* track);
 
 protected:
@@ -60,7 +60,7 @@ protected:
 
 private:
     std::vector<std::unique_ptr<Track>> m_tracks;
-    AudioThumbnailCache& m_audioThumbnailCache;
+    juce::AudioThumbnailCache& m_audioThumbnailCache;
 
     // Track configs
 public:
@@ -106,7 +106,7 @@ private:
     Track::TrackConfigChangedCallback m_trackConfigChangedCallback;
     Track::GainChangedCallback m_gainChangedCallback;
 
-    TimeSliceThread& m_timeSliceThread;
+    juce::TimeSliceThread& m_timeSliceThread;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TracksContainer)
 };

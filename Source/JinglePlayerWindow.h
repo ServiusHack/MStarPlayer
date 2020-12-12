@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "ChannelMappingDialog.h"
 #include "InterPlayerCommunication.h"
 #include "MixerComponent.h"
@@ -16,10 +15,10 @@ class Player;
         User interface with a single big button to control the playback.
 */
 class JinglePlayerWindow
-    : public Component
-    , public Button::Listener
-    , public ChangeListener
-    , public FileDragAndDropTarget
+    : public juce::Component
+    , public juce::Button::Listener
+    , public juce::ChangeListener
+    , public juce::FileDragAndDropTarget
 {
 public:
     /** Creates a new JinglePlayer.
@@ -36,30 +35,30 @@ public:
         InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback,
         InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
 
-    void setColor(const Colour& color);
+    void setColor(const juce::Colour& color);
 
-    void setUserImage(const File& file);
+    void setUserImage(const juce::File& file);
 
     // Component overrides
 public:
     virtual void resized() override;
-    virtual void paint(Graphics& g) override;
+    virtual void paint(juce::Graphics& g) override;
     /** Show the configuration menu. */
-    virtual void mouseDown(const MouseEvent& event) override;
+    virtual void mouseDown(const juce::MouseEvent& event) override;
 
     // Button::Listener
 public:
     /** Play or stop the audio playback. */
-    virtual void buttonClicked(Button* /*button*/) override;
+    virtual void buttonClicked(juce::Button* /*button*/) override;
 
     // ChangeListener
 public:
-    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     // FileDragAndDropTarget
 public:
-    bool isInterestedInFileDrag(const StringArray& files) override;
-    void filesDropped(const StringArray& files, int x, int y) override;
+    bool isInterestedInFileDrag(const juce::StringArray& files) override;
+    void filesDropped(const juce::StringArray& files, int x, int y) override;
 
 private:
     // ui values
@@ -67,14 +66,14 @@ private:
     double m_totalLength;
 
     // ui components
-    ProgressBar m_progressBar;
-    Label m_totalDurationText;
-    DrawableButton m_playButton;
-    ImageButton m_configureButton;
-    std::unique_ptr<Drawable> m_playImage;
-    std::unique_ptr<Drawable> m_stopImage;
-    std::unique_ptr<Drawable> m_userImage;
-    Label m_fileNameLabel;
+    juce::ProgressBar m_progressBar;
+    juce::Label m_totalDurationText;
+    juce::DrawableButton m_playButton;
+    juce::ImageButton m_configureButton;
+    std::unique_ptr<juce::Drawable> m_playImage;
+    std::unique_ptr<juce::Drawable> m_stopImage;
+    std::unique_ptr<juce::Drawable> m_userImage;
+    juce::Label m_fileNameLabel;
 
     // configuration menu actions
     void loadFile();
@@ -82,9 +81,9 @@ private:
     // audio output
     bool m_showRemainingTime;
 
-    Colour m_color;
+    juce::Colour m_color;
     bool m_blink;
-    Colour m_paintColor;
+    juce::Colour m_paintColor;
     void updatePointColor();
 
     Player& m_player;
@@ -97,7 +96,7 @@ private:
     InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
     InterPlayerCommunication::SetUserImageCallback m_setUserImageCallback;
 
-    AudioFormatManager m_formatManager;
+    juce::AudioFormatManager m_formatManager;
 
     Waveform m_waveform;
 

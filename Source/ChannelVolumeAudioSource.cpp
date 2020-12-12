@@ -1,6 +1,6 @@
 #include "ChannelVolumeAudioSource.h"
 
-ChannelVolumeAudioSource::ChannelVolumeAudioSource(AudioSource* const source)
+ChannelVolumeAudioSource::ChannelVolumeAudioSource(juce::AudioSource* const source)
     : m_source(source)
     , m_anySolo(false)
 {
@@ -8,7 +8,7 @@ ChannelVolumeAudioSource::ChannelVolumeAudioSource(AudioSource* const source)
 
 void ChannelVolumeAudioSource::resetAllVolumes()
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     m_setVolumes.clear();
     m_appliedGains.clear();
@@ -16,7 +16,7 @@ void ChannelVolumeAudioSource::resetAllVolumes()
 
 void ChannelVolumeAudioSource::setChannelVolume(size_t channelIndex, float gain)
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     m_setVolumes.set(channelIndex, gain);
 
@@ -25,7 +25,7 @@ void ChannelVolumeAudioSource::setChannelVolume(size_t channelIndex, float gain)
 
 float ChannelVolumeAudioSource::getChannelVolume(int channelIndex) const
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     if (channelIndex >= 0 && channelIndex < m_setVolumes.size())
         return m_setVolumes[channelIndex];
@@ -35,7 +35,7 @@ float ChannelVolumeAudioSource::getChannelVolume(int channelIndex) const
 
 void ChannelVolumeAudioSource::setChannelSolo(int channelIndex, bool solo)
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     m_setSolos.set(channelIndex, solo);
 
@@ -57,7 +57,7 @@ void ChannelVolumeAudioSource::setChannelSolo(int channelIndex, bool solo)
 
 bool ChannelVolumeAudioSource::getChannelSolo(int channelIndex) const
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     if (channelIndex >= 0 && channelIndex < m_setSolos.size())
         return m_setSolos[channelIndex];
@@ -67,7 +67,7 @@ bool ChannelVolumeAudioSource::getChannelSolo(int channelIndex) const
 
 void ChannelVolumeAudioSource::setChannelMute(int channelIndex, bool mute)
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     m_setMutes.set(channelIndex, mute);
 
@@ -76,7 +76,7 @@ void ChannelVolumeAudioSource::setChannelMute(int channelIndex, bool mute)
 
 bool ChannelVolumeAudioSource::getChannelMute(int channelIndex) const
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     if (channelIndex >= 0 && channelIndex < m_setMutes.size())
         return m_setMutes[channelIndex];
@@ -86,7 +86,7 @@ bool ChannelVolumeAudioSource::getChannelMute(int channelIndex) const
 
 float ChannelVolumeAudioSource::getActualVolume(int channelIndex) const
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     if (channelIndex >= 0 && channelIndex < m_actualVolumes.size())
     {
@@ -138,9 +138,9 @@ void ChannelVolumeAudioSource::updateGain(size_t channelIndex)
     m_appliedGains.set(channelIndex, gain);
 }
 
-void ChannelVolumeAudioSource::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
+void ChannelVolumeAudioSource::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    const ScopedLock sl(m_lock);
+    const juce::ScopedLock sl(m_lock);
 
     m_source->getNextAudioBlock(bufferToFill);
 

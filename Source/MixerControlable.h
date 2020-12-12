@@ -2,7 +2,7 @@
 
 #include <set>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_core/juce_core.h"
 
 /**
         Interface to receive changes on a mixer controlable.
@@ -18,7 +18,7 @@ public:
 
     virtual void muteChanged(bool /*mute*/){};
 
-    virtual void nameChanged(const String& /*name*/){};
+    virtual void nameChanged(const juce::String& /*name*/){};
 };
 
 /**
@@ -51,7 +51,7 @@ public:
 
     virtual float getVolume() const = 0;
 
-    virtual String getName() const = 0;
+    virtual juce::String getName() const = 0;
 
     // manage listeners
 public:

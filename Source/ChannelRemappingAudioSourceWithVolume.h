@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_basics/juce_audio_basics.h"
 
 #include "SoloBusSettings.h"
 #include "VolumeAnalyzer.h"
@@ -9,12 +9,12 @@
         Audio source which remaps channels and tracks the current volume of each channel.
 */
 class ChannelRemappingAudioSourceWithVolume
-    : public AudioSource
+    : public juce::AudioSource
     , public SoloBusSettingsListener
 {
 public:
     ChannelRemappingAudioSourceWithVolume(
-        AudioSource* source, SoloBusSettings& soloBusSettings, bool deleteSourceWhenDeleted);
+        juce::AudioSource* source, SoloBusSettings& soloBusSettings, bool deleteSourceWhenDeleted);
     ~ChannelRemappingAudioSourceWithVolume();
 
     // Channel volume
@@ -24,7 +24,7 @@ public:
     double getSampleRate() const;
 
 private:
-    Array<VolumeAnalyzer> m_volumes;
+    juce::Array<VolumeAnalyzer> m_volumes;
     float m_decayRate;
     double m_sampleRate{0.0};
 
@@ -65,29 +65,29 @@ public:
     //==============================================================================
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void releaseResources() override;
-    virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    virtual void getNextAudioBlock(const juce::AudioSourceChannelInfo&) override;
 
     //==============================================================================
     /** Returns an XML object to encapsulate the state of the mappings.
         @see restoreFromXml
     */
-    XmlElement* createXml() const;
+    juce::XmlElement* createXml() const;
 
     /** Restores the mappings from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml(const XmlElement&);
+    void restoreFromXml(const juce::XmlElement&);
 
     void setSolo(bool solo);
 
 private:
-    OptionalScopedPointer<AudioSource> source;
-    Array<std::pair<int, int>> remappedOutputs;
+    juce::OptionalScopedPointer<juce::AudioSource> source;
+    juce::Array<std::pair<int, int>> remappedOutputs;
     int requiredNumberOfChannels;
 
-    AudioSampleBuffer buffer;
-    AudioSourceChannelInfo remappedInfo;
-    CriticalSection lock;
+    juce::AudioSampleBuffer buffer;
+    juce::AudioSourceChannelInfo remappedInfo;
+    juce::CriticalSection lock;
 
     int m_soloLeftChannel = -1;
     int m_soloRightChannel = -1;

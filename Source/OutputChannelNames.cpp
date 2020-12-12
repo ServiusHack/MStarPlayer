@@ -5,7 +5,7 @@ bool DeviceIdentification::operator!=(const DeviceIdentification& other)
     return deviceTypeName != other.deviceTypeName || deviceName != other.deviceName;
 }
 
-OutputChannelNames::OutputChannelNames(AudioDeviceManager& deviceManager)
+OutputChannelNames::OutputChannelNames(juce::AudioDeviceManager& deviceManager)
     : m_audioDevice(deviceManager.getCurrentAudioDevice())
 {
     if (m_audioDevice)
@@ -19,7 +19,7 @@ OutputChannelNames::OutputChannelNames(AudioDeviceManager& deviceManager)
     deviceManager.addChangeListener(this);
 }
 
-DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(const AudioIODevice* audioDevice)
+DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(const juce::AudioIODevice* audioDevice)
 {
     if (audioDevice)
         return DeviceIdentification{audioDevice->getTypeName(), audioDevice->getName()};
@@ -27,9 +27,9 @@ DeviceIdentification OutputChannelNames::ExtractDeviceIdentification(const Audio
         return DeviceIdentification();
 }
 
-void OutputChannelNames::changeListenerCallback(ChangeBroadcaster* source)
+void OutputChannelNames::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    const AudioDeviceManager* manager = static_cast<AudioDeviceManager*>(source);
+    const juce::AudioDeviceManager* manager = static_cast<juce::AudioDeviceManager*>(source);
 
     if (m_deviceIdentification != ExtractDeviceIdentification(manager->getCurrentAudioDevice()))
     {
@@ -130,19 +130,19 @@ PairingMode OutputChannelNames::GetChannelPairing(int activeChannelIndex)
     return m_pairingModes[activeChannelIndex];
 }
 
-StringArray OutputChannelNames::getAllDeviceOutputChannelNames()
+juce::StringArray OutputChannelNames::getAllDeviceOutputChannelNames()
 {
-    StringArray names;
+    juce::StringArray names;
     for (int i = 0; i < getNumberOfChannels(); ++i)
         names.add(getInternalOutputChannelName(i));
     return names;
 }
 
-String OutputChannelNames::getDeviceOutputChannelName(int activeChannelIndex)
+juce::String OutputChannelNames::getDeviceOutputChannelName(int activeChannelIndex)
 {
     jassert(activeChannelIndex >= 0 && activeChannelIndex < m_deviceOutputChannelNames.size());
 
-    BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
+    juce::BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
 
     int outputChannel = -1;
     while (activeChannelIndex-- >= 0)
@@ -154,11 +154,11 @@ String OutputChannelNames::getDeviceOutputChannelName(int activeChannelIndex)
     return m_deviceOutputChannelNames[outputChannel];
 }
 
-String OutputChannelNames::getInternalOutputChannelName(int activeChannelIndex)
+juce::String OutputChannelNames::getInternalOutputChannelName(int activeChannelIndex)
 {
     jassert(activeChannelIndex >= 0 && activeChannelIndex < m_internalOutputChannelNames.size());
 
-    BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
+    juce::BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
 
     int outputChannel = -1;
     while (activeChannelIndex-- >= 0)
@@ -168,10 +168,11 @@ String OutputChannelNames::getInternalOutputChannelName(int activeChannelIndex)
     }
     return m_internalOutputChannelNames[outputChannel];
 }
-void OutputChannelNames::setInternalOutputChannelName(int activeChannelIndex, const String& text)
+
+void OutputChannelNames::setInternalOutputChannelName(int activeChannelIndex, const juce::String& text)
 {
     int tmpActiveChannelIndex = activeChannelIndex;
-    BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
+    juce::BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
 
     int outputChannel = -1;
     while (tmpActiveChannelIndex-- >= 0)
@@ -195,21 +196,21 @@ void OutputChannelNames::removeListener(OutputChannelNamesListener* listener)
     m_listeners.erase(std::find(m_listeners.begin(), m_listeners.end(), listener));
 }
 
-void OutputChannelNames::saveToXml(XmlElement* element) const
+void OutputChannelNames::saveToXml(juce::XmlElement* element) const
 {
     for (int i = 0; i < m_internalOutputChannelNames.size(); ++i)
     {
-        XmlElement* channelElement = new XmlElement("Name");
+        juce::XmlElement* channelElement = new juce::XmlElement("Name");
         channelElement->addTextElement(m_internalOutputChannelNames[i]);
         element->addChildElement(channelElement);
     }
 }
 
-void OutputChannelNames::restoreFromXml(const XmlElement& element)
+void OutputChannelNames::restoreFromXml(const juce::XmlElement& element)
 {
     for (int i = 0; i < element.getNumChildElements(); ++i)
     {
-        String channelName = element.getChildElement(i)->getAllSubText();
+        juce::String channelName = element.getChildElement(i)->getAllSubText();
         m_internalOutputChannelNames.set(i, channelName);
     }
 

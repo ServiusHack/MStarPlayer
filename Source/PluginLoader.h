@@ -4,8 +4,6 @@
 #include <variant>
 #include <vector>
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "MyMultiDocumentPanel.h"
 
 #include "PluginInterfaceV1.h"
@@ -40,19 +38,19 @@ public:
 
     size_t count();
 
-    String pluginName(size_t index);
+    juce::String pluginName(size_t index);
 
-    void saveConfigurations(XmlElement* element);
+    void saveConfigurations(juce::XmlElement* element);
 
-    void loadConfigurations(XmlElement* element);
+    void loadConfigurations(juce::XmlElement* element);
 
 private:
     struct PluginV1
     {
         PluginV1();
         PluginV1(PluginV1&& other);
-        String name;
-        std::unique_ptr<DynamicLibrary> dynamicLibrary;
+        juce::String name;
+        std::unique_ptr<juce::DynamicLibrary> dynamicLibrary;
         PluginInterface::V1::InitFunction initFunction;
         PluginInterface::V1::PlayingStateChangedFunction playingStateChangedFunction;
         PluginInterface::V1::NextEntrySelectedFunction nextEntrySelectedFunction;
@@ -71,8 +69,8 @@ private:
     {
         PluginV2();
         PluginV2(PluginV2&& other);
-        String name;
-        std::unique_ptr<DynamicLibrary> dynamicLibrary;
+        juce::String name;
+        std::unique_ptr<juce::DynamicLibrary> dynamicLibrary;
         PluginInterface::V2::InitFunction initFunction;
         PluginInterface::V2::PlayingStateChangedFunction playingStateChangedFunction;
         PluginInterface::V2::NextEntrySelectedFunction nextEntrySelectedFunction;
@@ -93,8 +91,8 @@ private:
     {
         PluginV3();
         PluginV3(PluginV3&& other);
-        String name;
-        std::unique_ptr<DynamicLibrary> dynamicLibrary;
+        juce::String name;
+        std::unique_ptr<juce::DynamicLibrary> dynamicLibrary;
         PluginInterface::V3::InitFunction initFunction;
         PluginInterface::V3::PlayingStateChangedFunction playingStateChangedFunction;
         PluginInterface::V3::NextEntrySelectedFunction nextEntrySelectedFunction;
@@ -112,9 +110,9 @@ private:
         PluginInterface::V3::FreeConfigurationTextFunction freeConfigurationTextFunction;
     };
 
-    std::variant<PluginV1, std::string> loadPluginV1(DynamicLibrary& library);
-    std::variant<PluginV2, std::string> loadPluginV2(DynamicLibrary& library);
-    std::variant<PluginV3, std::string> loadPluginV3(DynamicLibrary& library);
+    std::variant<PluginV1, std::string> loadPluginV1(juce::DynamicLibrary& library);
+    std::variant<PluginV2, std::string> loadPluginV2(juce::DynamicLibrary& library);
+    std::variant<PluginV3, std::string> loadPluginV3(juce::DynamicLibrary& library);
 
     std::vector<PluginV1> pluginsV1;
     std::vector<PluginV2> pluginsV2;
