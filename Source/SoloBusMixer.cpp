@@ -1,5 +1,3 @@
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "SoloBusMixer.h"
 
 SoloBusMixer::SoloBusMixer(SoloBusSettings& soloBusSettings, ChannelVolumeAudioSource& channelVolumeAudioSource)
@@ -30,26 +28,26 @@ void SoloBusMixer::resized()
     m_rightFader.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
-void SoloBusMixer::saveToXml(XmlElement* element) const
+void SoloBusMixer::saveToXml(juce::XmlElement* element) const
 {
-    XmlElement* leftElement = new XmlElement("Left");
-    leftElement->addTextElement(String(m_leftFader.getValue()));
+    juce::XmlElement* leftElement = new juce::XmlElement("Left");
+    leftElement->addTextElement(juce::String(m_leftFader.getValue()));
     element->addChildElement(leftElement);
 
-    XmlElement* rightElement = new XmlElement("Left");
-    rightElement->addTextElement(String(m_rightFader.getValue()));
+    juce::XmlElement* rightElement = new juce::XmlElement("Left");
+    rightElement->addTextElement(juce::String(m_rightFader.getValue()));
     element->addChildElement(rightElement);
 }
 
-void SoloBusMixer::restoreFromXml(const XmlElement& element)
+void SoloBusMixer::restoreFromXml(const juce::XmlElement& element)
 {
-    XmlElement* leftElement = element.getChildByName("Left");
+    juce::XmlElement* leftElement = element.getChildByName("Left");
     if (leftElement)
     {
         m_leftFader.setValue(leftElement->getAllSubText().trim().getFloatValue());
     }
 
-    XmlElement* rightElement = element.getChildByName("Left");
+    juce::XmlElement* rightElement = element.getChildByName("Left");
     if (rightElement)
     {
         m_rightFader.setValue(rightElement->getAllSubText().trim().getFloatValue());
@@ -58,7 +56,7 @@ void SoloBusMixer::restoreFromXml(const XmlElement& element)
 
 void SoloBusMixer::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(previousOutputChannel);
+    juce::ignoreUnused(previousOutputChannel);
 
     switch (channel)
     {

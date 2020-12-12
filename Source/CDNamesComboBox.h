@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
-class CDNamesComboBox : public ComboBox
+class CDNamesComboBox : public juce::ComboBox
 {
 public:
-    void selectDrive(String title);
+    void selectDrive(juce::String title);
 
 private:
     void showPopup() override;

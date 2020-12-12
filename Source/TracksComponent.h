@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "TracksContainer.h"
 
@@ -13,15 +13,15 @@
         Component containing all tracks.
 */
 class TracksComponent
-    : public Component
-    , public FileDragAndDropTarget
+    : public juce::Component
+    , public juce::FileDragAndDropTarget
 
 {
 public:
     typedef std::function<void(int)> TrackRemovedCallback;
-    typedef std::function<void(String)> FileLoadedCallback;
+    typedef std::function<void(juce::String)> FileLoadedCallback;
 
-    TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties,
+    TracksComponent(TracksContainer& container, juce::ApplicationProperties& applicationProperties,
         TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback,
         FileLoadedCallback fileLoadedCallback);
 
@@ -34,8 +34,8 @@ public:
 
     // FileDragAnDropTarget overrides
 public:
-    bool isInterestedInFileDrag(const StringArray& files) override;
-    void filesDropped(const StringArray& files, int x, int y) override;
+    bool isInterestedInFileDrag(const juce::StringArray& files) override;
+    void filesDropped(const juce::StringArray& files, int x, int y) override;
 
 private:
     void trackAdded(Track& track);
@@ -46,7 +46,7 @@ private:
 
     std::vector<std::unique_ptr<TrackUi>> m_tracks;
 
-    ApplicationProperties& m_applicationProperties;
+    juce::ApplicationProperties& m_applicationProperties;
 
     TrackUi::TrackHasFilesCallback m_trackHasFilesCallback;
     TrackRemovedCallback m_trackRemovedCallback;

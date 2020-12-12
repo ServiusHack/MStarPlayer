@@ -1,10 +1,12 @@
 #include "CDPlayer.h"
 
+#include "BinaryData.h"
+
 #include "Track.h"
 #include "Utils.h"
 
 CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
-    TimeSliceThread& thread, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
+    juce::TimeSliceThread& thread, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
@@ -25,7 +27,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
 #endif
     , m_remappingAudioSource(&m_transportSource, soloBusSettings, false)
     , m_digitalDisplay({}, "00:00:00")
-    , m_slider(Slider::LinearHorizontal, Slider::NoTextBox)
+    , m_slider(juce::Slider::LinearHorizontal, juce::Slider::NoTextBox)
     , m_tracksTable([&](int trackIndex) {
         setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
         m_transportSource.start();
@@ -34,8 +36,8 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
     })
 {
     // play button
-    Image normalImage
-        = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
+    juce::Image normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaplaybackstart_png, BinaryData::mediaplaybackstart_pngSize);
     m_playButton.addListener(this);
     m_playButton.setEnabled(false);
     m_playButton.setImages(true,
@@ -43,89 +45,93 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_playButton);
 
     // pause button
     m_pauseButton.addListener(this);
     m_pauseButton.setEnabled(false);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaplaybackpause_png, BinaryData::mediaplaybackpause_pngSize);
     m_pauseButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_pauseButton);
 
     // stop button
     m_stopButton.addListener(this);
     m_stopButton.setEnabled(false);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaplaybackstop_png, BinaryData::mediaplaybackstop_pngSize);
     m_stopButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_stopButton);
 
     // skip backward button
     m_skipBackwardButton.addListener(this);
     m_skipBackwardButton.setEnabled(false);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaskipbackward_png, BinaryData::mediaskipbackward_pngSize);
     m_skipBackwardButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_skipBackwardButton);
 
     // skip forward button
     m_skipForwardButton.addListener(this);
     m_skipForwardButton.setEnabled(false);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
+    normalImage
+        = juce::ImageFileFormat::loadFrom(BinaryData::mediaskipforward_png, BinaryData::mediaskipforward_pngSize);
     m_skipForwardButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_skipForwardButton);
 
@@ -133,37 +139,37 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
     // eject button
     m_ejectButton.addListener(this);
     m_ejectButton.setEnabled(false);
-    normalImage = ImageFileFormat::loadFrom(BinaryData::mediaeject_png, BinaryData::mediaeject_pngSize);
+    normalImage = juce::ImageFileFormat::loadFrom(BinaryData::mediaeject_png, BinaryData::mediaeject_pngSize);
     m_ejectButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_ejectButton);
 #endif
 
     // configuration button
-    normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
+    normalImage = juce::ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
     m_configureButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_configureButton);
     m_configureButton.addMouseListener(this, false);
@@ -181,7 +187,7 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
 
     // playlist
     addAndMakeVisible(m_tracksTable);
-    m_tracksTable.setColour(ListBox::outlineColourId, Colours::grey);
+    m_tracksTable.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
     m_tracksTable.setOutlineThickness(1);
 
     m_remappingAudioSource.setNumberOfChannelsToProduce(outputChannelNames->getNumberOfChannels());
@@ -241,11 +247,11 @@ void CDPlayer::previousEntry()
 {
     m_tracksTable.previous();
 }
-void CDPlayer::paint(Graphics& g)
+void CDPlayer::paint(juce::Graphics& g)
 {
     g.fillAll(m_color);
 
-    Component::paint(g);
+    juce::Component::paint(g);
 }
 
 void CDPlayer::resized()
@@ -273,12 +279,12 @@ void CDPlayer::resized()
     m_tracksTable.setBounds(0, buttonHeight * 2, getWidth(), getHeight() - buttonHeight * 2);
 }
 
-void CDPlayer::mouseDown(const MouseEvent& event)
+void CDPlayer::mouseDown(const juce::MouseEvent& event)
 {
     if (event.eventComponent != &m_configureButton)
         return;
 
-    PopupMenu m;
+    juce::PopupMenu m;
     m.addItem(1, TRANS("configure channels"));
     m.addItem(2, TRANS("configure appearance"));
     const int result = m.show();
@@ -360,14 +366,14 @@ float CDPlayer::getVolume() const
     return m_remappingAudioSource.getVolume();
 }
 
-String CDPlayer::getName() const
+juce::String CDPlayer::getName() const
 {
     return Component::getName();
 }
 
-void CDPlayer::setName(const String& newName)
+void CDPlayer::setName(const juce::String& newName)
 {
-    Component::setName(newName);
+    juce::Component::setName(newName);
     std::for_each(m_listeners.begin(),
         m_listeners.end(),
         std::bind(&MixerControlableChangeListener::nameChanged, std::placeholders::_1, newName));
@@ -381,20 +387,22 @@ void CDPlayer::updateGain()
     m_transportSource.setGain(mute ? 0.0f : m_gain);
 }
 
-void CDPlayer::setColor(const Colour& color)
+void CDPlayer::setColor(const juce::Colour& color)
 {
     m_color = color;
 
     m_mixer->updatePlayerColor(this, m_color);
-    m_tracksTable.setColour(ListBox::backgroundColourId, m_color);
-    m_digitalDisplay.setColour(Label::textColourId, m_color.isTransparent() ? Colours::black : m_color.contrasting());
-    m_availableCDsComboBox.setColour(Label::backgroundColourId, m_color);
+    m_tracksTable.setColour(juce::ListBox::backgroundColourId, m_color);
+    m_digitalDisplay.setColour(
+        juce::Label::textColourId, m_color.isTransparent() ? juce::Colours::black : m_color.contrasting());
+    m_availableCDsComboBox.setColour(juce::Label::backgroundColourId, m_color);
     repaint();
 }
 
-XmlElement* CDPlayer::saveToXml(const File& /*projectDirectory*/, MyMultiDocumentPanel::LayoutMode layoutMode) const
+juce::XmlElement* CDPlayer::saveToXml(
+    const juce::File& /*projectDirectory*/, MyMultiDocumentPanel::LayoutMode layoutMode) const
 {
-    XmlElement* element = new XmlElement("CDPlayer");
+    juce::XmlElement* element = new juce::XmlElement("CDPlayer");
     element->setAttribute("gain", getGain());
     element->setAttribute("mute", m_mute);
     element->setAttribute("solo", m_solo);
@@ -404,8 +412,8 @@ XmlElement* CDPlayer::saveToXml(const File& /*projectDirectory*/, MyMultiDocumen
     {
     case MyMultiDocumentPanel::FloatingWindows:
     {
-        Rectangle<int> parentBounds = getParentComponent()->getBounds();
-        XmlElement* boundsXml = new XmlElement("Bounds");
+        juce::Rectangle<int> parentBounds = getParentComponent()->getBounds();
+        juce::XmlElement* boundsXml = new juce::XmlElement("Bounds");
         boundsXml->setAttribute("x", parentBounds.getX());
         boundsXml->setAttribute("y", parentBounds.getY());
         boundsXml->setAttribute("width", parentBounds.getWidth());
@@ -415,52 +423,52 @@ XmlElement* CDPlayer::saveToXml(const File& /*projectDirectory*/, MyMultiDocumen
     break;
     case MyMultiDocumentPanel::MaximisedWindowsWithTabs:
     {
-        XmlElement* mdiDocumentPosXml = new XmlElement("MdiDocumentPos");
+        juce::XmlElement* mdiDocumentPosXml = new juce::XmlElement("MdiDocumentPos");
         mdiDocumentPosXml->addTextElement(getProperties()["mdiDocumentPos_"]);
         element->addChildElement(mdiDocumentPosXml);
     }
     break;
     }
 
-    XmlElement* nameXml = new XmlElement("Name");
-    nameXml->addTextElement(Component::getName());
+    juce::XmlElement* nameXml = new juce::XmlElement("Name");
+    nameXml->addTextElement(juce::Component::getName());
     element->addChildElement(nameXml);
 
-    XmlElement* driveXml = new XmlElement("Drive");
+    juce::XmlElement* driveXml = new juce::XmlElement("Drive");
     driveXml->addTextElement(m_availableCDsComboBox.getText());
     element->addChildElement(driveXml);
 
     return element;
 }
 
-void CDPlayer::restoreFromXml(const XmlElement& element, const File& /*projectDirectory*/)
+void CDPlayer::restoreFromXml(const juce::XmlElement& element, const juce::File& /*projectDirectory*/)
 {
-    setColor(Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
+    setColor(juce::Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
     repaint();
 
-    XmlElement* boundsXml = element.getChildByName("Bounds");
+    juce::XmlElement* boundsXml = element.getChildByName("Bounds");
 
     if (boundsXml)
     {
-        String x = boundsXml->getStringAttribute("x", "0");
-        String y = boundsXml->getStringAttribute("y", "0");
-        String width = boundsXml->getStringAttribute("width", "150");
-        String height = boundsXml->getStringAttribute("height", "150");
+        juce::String x = boundsXml->getStringAttribute("x", "0");
+        juce::String y = boundsXml->getStringAttribute("y", "0");
+        juce::String width = boundsXml->getStringAttribute("width", "150");
+        juce::String height = boundsXml->getStringAttribute("height", "150");
         getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
     }
     else
     {
-        XmlElement* mdiDocumentPosXml = element.getChildByName("MdiDocumentPos");
+        juce::XmlElement* mdiDocumentPosXml = element.getChildByName("MdiDocumentPos");
         if (mdiDocumentPosXml->getNumChildElements() > 0 && mdiDocumentPosXml->getFirstChildElement()->isTextElement())
         {
             getProperties().set("mdiDocumentPos_", mdiDocumentPosXml->getFirstChildElement()->getText());
         }
     }
 
-    XmlElement* nameXml = element.getChildByName("Name");
+    juce::XmlElement* nameXml = element.getChildByName("Name");
     setName(nameXml->getAllSubText().trim());
 
-    XmlElement* driveXml = element.getChildByName("Drive");
+    juce::XmlElement* driveXml = element.getChildByName("Drive");
     m_availableCDsComboBox.selectDrive(driveXml->getAllSubText().trim());
 }
 
@@ -477,7 +485,7 @@ void CDPlayer::showEditDialog()
         m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(
             getName(),
             m_color,
-            String(),
+            juce::String(),
             std::bind(&CDPlayer::setName, this, std::placeholders::_1),
             std::bind(&CDPlayer::setColor, this, std::placeholders::_1),
             [&]() {
@@ -515,16 +523,16 @@ void CDPlayer::configureChannels()
     m_channelMappingWindow->toFront(true);
 }
 
-void CDPlayer::setNextReadPosition(int64 sampleInCDSampleRate)
+void CDPlayer::setNextReadPosition(juce::int64 sampleInCDSampleRate)
 {
-    int64 sampleInPlaybackSampleRate
-        = static_cast<int64>(sampleInCDSampleRate * m_remappingAudioSource.getSampleRate() / m_reader->sampleRate);
+    juce::int64 sampleInPlaybackSampleRate = static_cast<juce::int64>(
+        sampleInCDSampleRate * m_remappingAudioSource.getSampleRate() / m_reader->sampleRate);
     m_transportSource.setNextReadPosition(sampleInPlaybackSampleRate);
 }
 
-bool CDPlayer::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
+bool CDPlayer::keyPressed(const juce::KeyPress& key, juce::Component* /*originatingComponent*/)
 {
-    if (key == KeyPress::spaceKey)
+    if (key == juce::KeyPress::spaceKey)
     {
         return true;
     }
@@ -532,7 +540,7 @@ bool CDPlayer::keyPressed(const KeyPress& key, Component* /*originatingComponent
     return false;
 }
 
-void CDPlayer::buttonClicked(Button* button)
+void CDPlayer::buttonClicked(juce::Button* button)
 {
     if (button == &m_playButton)
     {
@@ -565,10 +573,10 @@ void CDPlayer::buttonClicked(Button* button)
     }
 }
 
-void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void CDPlayer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
-    std::unique_ptr<AudioCDReader> newReader(
-        AudioCDReader::createReaderForCD(comboBoxThatHasChanged->getSelectedItemIndex()));
+    std::unique_ptr<juce::AudioCDReader> newReader(
+        juce::AudioCDReader::createReaderForCD(comboBoxThatHasChanged->getSelectedItemIndex()));
 
     // Update UI state.
     const bool cdPresent = newReader && newReader->isCDStillPresent();
@@ -592,7 +600,7 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     {
         newReader->refreshTrackLengths();
 
-        m_source = std::make_unique<AudioFormatReaderSource>(newReader.get(), false);
+        m_source = std::make_unique<juce::AudioFormatReaderSource>(newReader.get(), false);
 
         m_transportSource.setSource(m_source.get(),
             32768, // tells it to buffer this many samples ahead
@@ -609,26 +617,26 @@ void CDPlayer::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
     }
 }
 
-void CDPlayer::sliderValueChanged(Slider* sliderThatWasMoved)
+void CDPlayer::sliderValueChanged(juce::Slider* sliderThatWasMoved)
 {
     // Possible loss of precision is acceptable for very large values because user can't select specific value that
     // precise.
-    setNextReadPosition(static_cast<int64>(sliderThatWasMoved->getValue()));
+    setNextReadPosition(static_cast<juce::int64>(sliderThatWasMoved->getValue()));
 }
 
 void CDPlayer::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(channel, outputChannel, previousOutputChannel);
+    juce::ignoreUnused(channel, outputChannel, previousOutputChannel);
     updateGain();
 }
 
 void CDPlayer::timerCallback()
 {
-    m_digitalDisplay.setText(Utils::formatSeconds(m_transportSource.getCurrentPosition()), sendNotification);
+    m_digitalDisplay.setText(Utils::formatSeconds(m_transportSource.getCurrentPosition()), juce::sendNotification);
 
-    int64 currentSample = m_source->getNextReadPosition();
+    juce::int64 currentSample = m_source->getNextReadPosition();
 
-    const Array<int>& offsets = m_reader->getTrackOffsets();
+    const juce::Array<int>& offsets = m_reader->getTrackOffsets();
     // offsets[0] != 0 is possible, there might be a track before the first.
     // offsets.getLast() is not the start of the last track but the end sample of the CD.
 
@@ -638,7 +646,7 @@ void CDPlayer::timerCallback()
         m_slider.setEnabled(false);
         m_slider.setValue(m_slider.getMinimum(), juce::dontSendNotification);
         m_currentTrack = -1;
-        SparseSet<int> rows;
+        juce::SparseSet<int> rows;
         m_tracksTable.setSelectedRows(rows, juce::dontSendNotification);
         return;
     }
@@ -657,8 +665,8 @@ void CDPlayer::timerCallback()
             / m_reader->sampleRate;
         m_pluginLoader.playlistEntrySelected(
             getName().toRawUTF8(), m_currentTrack, std::to_string(m_currentTrack + 1).c_str(), duration);
-        SparseSet<int> rows;
-        rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
+        juce::SparseSet<int> rows;
+        rows.addRange(juce::Range<int>(m_currentTrack, m_currentTrack + 1));
         m_tracksTable.setSelectedRows(rows, juce::dontSendNotification);
         return;
     }
@@ -676,8 +684,8 @@ void CDPlayer::timerCallback()
 
     // We are within another track.
 
-    int64 firstSample = -1;
-    int64 lastSample = -1;
+    juce::int64 firstSample = -1;
+    juce::int64 lastSample = -1;
 
     if (currentSample < offsets[m_currentTrack])
     {
@@ -744,8 +752,8 @@ void CDPlayer::timerCallback()
     // precise.
     m_slider.setRange(static_cast<double>(firstSample), static_cast<double>(lastSample));
     m_slider.setValue(static_cast<double>(currentSample), juce::dontSendNotification);
-    SparseSet<int> rows;
-    rows.addRange(Range<int>(m_currentTrack, m_currentTrack + 1));
+    juce::SparseSet<int> rows;
+    rows.addRange(juce::Range<int>(m_currentTrack, m_currentTrack + 1));
     m_tracksTable.setSelectedRows(rows, juce::dontSendNotification);
     m_pluginLoader.positionChanged(getName().toRawUTF8(), m_transportSource.getCurrentPosition());
 }

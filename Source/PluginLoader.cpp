@@ -37,7 +37,7 @@ MixerControlable* getTrack(const PlayerComponent* player, const char* trackName)
 void listPlayersV1(PluginInterface::V1::ListPlayersCallbackFunction callback, void* userData)
 {
     const int components_count = component->getNumDocuments();
-    std::vector<String> names;
+    std::vector<juce::String> names;
     for (int i = 0; i < components_count; ++i)
     {
         const PlayerComponent* player = static_cast<PlayerComponent*>(component->getDocument(i));
@@ -48,7 +48,7 @@ void listPlayersV1(PluginInterface::V1::ListPlayersCallbackFunction callback, vo
 void listPlayersV2(PluginInterface::V2::ListPlayersCallbackFunction callback, void* userData)
 {
     const int components_count = component->getNumDocuments();
-    std::vector<String> names;
+    std::vector<juce::String> names;
     for (int i = 0; i < components_count; ++i)
     {
         const PlayerComponent* player = static_cast<PlayerComponent*>(component->getDocument(i));
@@ -59,7 +59,7 @@ void listPlayersV2(PluginInterface::V2::ListPlayersCallbackFunction callback, vo
 void listPlayersV3(PluginInterface::V3::ListPlayersCallbackFunction callback, void* userData)
 {
     const int components_count = component->getNumDocuments();
-    std::vector<String> names;
+    std::vector<juce::String> names;
     for (int i = 0; i < components_count; ++i)
     {
         const PlayerComponent* player = static_cast<PlayerComponent*>(component->getDocument(i));
@@ -69,7 +69,7 @@ void listPlayersV3(PluginInterface::V3::ListPlayersCallbackFunction callback, vo
 
 void play(const char* playerName)
 {
-    const MessageManagerLock mmLock;
+    const juce::MessageManagerLock mmLock;
     PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->play();
@@ -77,7 +77,7 @@ void play(const char* playerName)
 
 void stop(const char* playerName)
 {
-    const MessageManagerLock mmLock;
+    const juce::MessageManagerLock mmLock;
     PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->stop();
@@ -85,7 +85,7 @@ void stop(const char* playerName)
 
 void nextEntry(const char* playerName)
 {
-    const MessageManagerLock mmLock;
+    const juce::MessageManagerLock mmLock;
     PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->nextEntry();
@@ -93,7 +93,7 @@ void nextEntry(const char* playerName)
 
 void previousEntry(const char* playerName)
 {
-    const MessageManagerLock mmLock;
+    const juce::MessageManagerLock mmLock;
     PlayerComponent* player = getPlayer(playerName);
     if (player != nullptr)
         player->previousEntry();
@@ -134,7 +134,7 @@ void listTracksV3(const char* playerName, PluginInterface::V3::ListTracksCallbac
 
 void playerVolume(const char* playerName, float volume)
 {
-    const MessageManagerLock mmLock;
+    const juce::MessageManagerLock mmLock;
     PlayerComponent* player = getPlayer(playerName);
     if (player == nullptr)
         return;
@@ -144,7 +144,7 @@ void playerVolume(const char* playerName, float volume)
 
 void trackVolume(const char* playerName, const char* trackName, float volume)
 {
-    const MessageManagerLock mmLock;
+    const juce::MessageManagerLock mmLock;
     PlayerComponent* player = getPlayer(playerName);
     if (player == nullptr)
         return;
@@ -160,19 +160,19 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 {
     component = pComponent;
 
-    RangedDirectoryIterator directoryIterator(
-        File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("plugins"), false, "*.dll");
-    std::vector<File> dlls;
+    juce::RangedDirectoryIterator directoryIterator(
+        juce::File::getSpecialLocation(juce::File::currentExecutableFile).getSiblingFile("plugins"), false, "*.dll");
+    std::vector<juce::File> dlls;
 
     struct LoadFailure
     {
-        String file;
-        String error;
+        juce::String file;
+        juce::String error;
     };
-    Array<LoadFailure> failedPlugins;
-    for (DirectoryEntry dirEntry : directoryIterator)
+    juce::Array<LoadFailure> failedPlugins;
+    for (juce::DirectoryEntry dirEntry : directoryIterator)
     {
-        auto dynamicLibrary = std::make_unique<DynamicLibrary>(dirEntry.getFile().getFullPathName());
+        auto dynamicLibrary = std::make_unique<juce::DynamicLibrary>(dirEntry.getFile().getFullPathName());
 
         if (dynamicLibrary->getNativeHandle() == nullptr)
         {
@@ -264,7 +264,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
         }
         default:
             failedPlugins.add({dirEntry.getFile().getFileName(),
-                "Plugin has version " + String(version) + " but M*Player requires version 1, 2 or 3."});
+                "Plugin has version " + juce::String(version) + " but M*Player requires version 1, 2 or 3."});
             continue;
         }
     }
@@ -320,12 +320,12 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 
     if (failedPlugins.size() > 0)
     {
-        String lines;
+        juce::String lines;
         for (const LoadFailure& failure : failedPlugins)
         {
             lines += "\n" + failure.file + " (" + failure.error + ")";
         }
-        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
             TRANS("Problems while loading plugins"),
             TRANS("The following plugins failed to load:\n") + lines);
     }
@@ -352,7 +352,7 @@ size_t PluginLoader::count()
     return pluginsV1.size() + pluginsV2.size() + pluginsV3.size();
 }
 
-String PluginLoader::pluginName(size_t index)
+juce::String PluginLoader::pluginName(size_t index)
 {
     if (index < pluginsV1.size())
         return pluginsV1[index].name;
@@ -504,44 +504,44 @@ void PluginLoader::positionChanged(const char* playerName, double position)
     }
 }
 
-void PluginLoader::saveConfigurations(XmlElement* pluginsElement)
+void PluginLoader::saveConfigurations(juce::XmlElement* pluginsElement)
 {
     for (auto&& plugin : pluginsV1)
     {
-        XmlElement* pluginElement = new XmlElement("Plugin");
+        juce::XmlElement* pluginElement = new juce::XmlElement("Plugin");
         pluginElement->setAttribute("name", plugin.name);
         const char* data = plugin.getConfigurationFunction();
-        pluginElement->addTextElement(String::fromUTF8(data));
+        pluginElement->addTextElement(juce::String::fromUTF8(data));
         plugin.freeConfigurationTextFunction(data);
         pluginsElement->addChildElement(pluginElement);
     }
     for (auto&& plugin : pluginsV2)
     {
-        XmlElement* pluginElement = new XmlElement("Plugin");
+        juce::XmlElement* pluginElement = new juce::XmlElement("Plugin");
         pluginElement->setAttribute("name", plugin.name);
         const char* data = plugin.getConfigurationFunction();
-        pluginElement->addTextElement(String::fromUTF8(data));
+        pluginElement->addTextElement(juce::String::fromUTF8(data));
         plugin.freeConfigurationTextFunction(data);
         pluginsElement->addChildElement(pluginElement);
     }
     for (auto&& plugin : pluginsV3)
     {
-        XmlElement* pluginElement = new XmlElement("Plugin");
+        juce::XmlElement* pluginElement = new juce::XmlElement("Plugin");
         pluginElement->setAttribute("name", plugin.name);
         const char* data = plugin.getConfigurationFunction();
-        pluginElement->addTextElement(String::fromUTF8(data));
+        pluginElement->addTextElement(juce::String::fromUTF8(data));
         plugin.freeConfigurationTextFunction(data);
         pluginsElement->addChildElement(pluginElement);
     }
 }
 
-void PluginLoader::loadConfigurations(XmlElement* pluginsElement)
+void PluginLoader::loadConfigurations(juce::XmlElement* pluginsElement)
 {
     for (int i = 0; i < pluginsElement->getNumChildElements(); ++i)
     {
-        XmlElement* pluginElement = pluginsElement->getChildElement(i);
-        String configurationText = pluginElement->getAllSubText();
-        String pluginName = pluginElement->getStringAttribute("name");
+        juce::XmlElement* pluginElement = pluginsElement->getChildElement(i);
+        juce::String configurationText = pluginElement->getAllSubText();
+        juce::String pluginName = pluginElement->getStringAttribute("name");
         auto it = std::find_if(pluginsV1.begin(), pluginsV1.end(), [pluginName](const PluginV1& plugin) {
             return plugin.name == pluginName;
         });
@@ -567,7 +567,7 @@ void PluginLoader::loadConfigurations(XmlElement* pluginsElement)
     }
 }
 
-std::variant<PluginLoader::PluginV1, std::string> PluginLoader::loadPluginV1(DynamicLibrary& dynamicLibrary)
+std::variant<PluginLoader::PluginV1, std::string> PluginLoader::loadPluginV1(juce::DynamicLibrary& dynamicLibrary)
 {
     PluginV1 plugin;
 
@@ -657,7 +657,7 @@ std::variant<PluginLoader::PluginV1, std::string> PluginLoader::loadPluginV1(Dyn
     return plugin;
 }
 
-std::variant<PluginLoader::PluginV2, std::string> PluginLoader::loadPluginV2(DynamicLibrary& dynamicLibrary)
+std::variant<PluginLoader::PluginV2, std::string> PluginLoader::loadPluginV2(juce::DynamicLibrary& dynamicLibrary)
 {
     PluginV2 plugin;
 
@@ -762,7 +762,7 @@ std::variant<PluginLoader::PluginV2, std::string> PluginLoader::loadPluginV2(Dyn
     return plugin;
 }
 
-std::variant<PluginLoader::PluginV3, std::string> PluginLoader::loadPluginV3(DynamicLibrary& dynamicLibrary)
+std::variant<PluginLoader::PluginV3, std::string> PluginLoader::loadPluginV3(juce::DynamicLibrary& dynamicLibrary)
 {
     PluginV3 plugin;
 

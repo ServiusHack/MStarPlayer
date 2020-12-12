@@ -3,8 +3,6 @@
 #include <functional>
 #include <memory>
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "ChangeableArrowButton.h"
 #include "LevelMeter.h"
 #include "MixerControlable.h"
@@ -21,8 +19,8 @@
         - pan slider (not fully implemented yet)
 */
 class MixerFader
-    : public Component
-    , public Button::Listener
+    : public juce::Component
+    , public juce::Button::Listener
     , public juce::Slider::Listener
     , public MixerControlableChangeListener
 {
@@ -40,9 +38,9 @@ public:
     void setMute(bool mute);
     void setSolo(bool solo);
 
-    void setColor(const Colour& color);
+    void setColor(const juce::Colour& color);
 
-    void setLabel(const String& text);
+    void setLabel(const juce::String& text);
 
     void setMixSettings(std::vector<MixerControlable*> mixSettings);
 
@@ -52,16 +50,16 @@ public:
 
     // Component
 public:
-    virtual void paint(Graphics&) override;
+    virtual void paint(juce::Graphics&) override;
     virtual void resized() override;
 
     // Button::Listener
 public:
-    virtual void buttonClicked(Button* buttonThatWasClicked) override;
+    virtual void buttonClicked(juce::Button* buttonThatWasClicked) override;
 
     // Slider::Listener
 public:
-    virtual void sliderValueChanged(Slider* sliderThatWasMoved) override;
+    virtual void sliderValueChanged(juce::Slider* sliderThatWasMoved) override;
 
     // MixerControlableChangeListener
 public:
@@ -73,17 +71,17 @@ public:
 
     virtual void muteChanged(bool mute) override;
 
-    virtual void nameChanged(const String& name) override;
+    virtual void nameChanged(const juce::String& name) override;
 
 protected:
     std::unique_ptr<VolumeSlider> m_volumeSlider;
 
 private:
-    std::unique_ptr<Label> m_label;
-    std::unique_ptr<TextButton> m_soloButton;
-    std::unique_ptr<TextButton> m_muteButton;
+    std::unique_ptr<juce::Label> m_label;
+    std::unique_ptr<juce::TextButton> m_soloButton;
+    std::unique_ptr<juce::TextButton> m_muteButton;
     std::unique_ptr<ChangeableArrowButton> m_expandButton;
-    std::unique_ptr<Slider> m_panSlider;
+    std::unique_ptr<juce::Slider> m_panSlider;
     std::unique_ptr<LevelMeter> m_levelMeter;
 
     ResizeCallback m_resizeCallback;
@@ -92,7 +90,7 @@ private:
 
     MixerControlable* m_mixerControlable;
 
-    Colour m_color;
+    juce::Colour m_color;
 
     MixerFader* m_pairedFader{nullptr};
 

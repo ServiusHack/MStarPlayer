@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "PlaylistModel.h"
 
@@ -10,9 +10,9 @@
         The playlist table component.
 */
 class PlaylistTable
-    : public TableListBox
-    , public ChangeListener
-    , public DragAndDropTarget
+    : public juce::TableListBox
+    , public juce::ChangeListener
+    , public juce::DragAndDropTarget
 {
 public:
     typedef std::function<void(const std::vector<TrackConfig>& trackConfigs, bool, int)> PlaylistEntryChangedCallback;
@@ -31,12 +31,12 @@ public:
 
     // ChangeListener
 public:
-    virtual void changeListenerCallback(ChangeBroadcaster* source) override;
+    virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     // DragAndDropTarget
 public:
-    virtual bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
-    virtual void itemDropped(const SourceDetails& dragSourceDetails) override;
+    virtual bool isInterestedInDragSource(const juce::DragAndDropTarget::SourceDetails& dragSourceDetails) override;
+    virtual void itemDropped(const juce::DragAndDropTarget::SourceDetails& dragSourceDetails) override;
 
 private:
     void forceSelectRow(int rowIndex);

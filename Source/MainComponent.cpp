@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#include "BinaryData.h"
+
 #include "CDPlayer.h"
 #include "Player.h"
 
@@ -30,30 +32,30 @@ void MainContentComponent::destroyLookAndFeel()
 
 void MainContentComponent::switchToDefaultLookAndFeel()
 {
-    LookAndFeel::setDefaultLookAndFeel(s_defaultLookAndFeel);
-    m_multiDocumentPanel->setBackgroundColour(Colours::lightblue);
-    static_cast<DocumentWindow*>(getParentComponent())->setBackgroundColour(Colours::lightgrey);
+    juce::LookAndFeel::setDefaultLookAndFeel(s_defaultLookAndFeel);
+    m_multiDocumentPanel->setBackgroundColour(juce::Colours::lightblue);
+    static_cast<juce::DocumentWindow*>(getParentComponent())->setBackgroundColour(juce::Colours::lightgrey);
 }
 
 void MainContentComponent::switchToDarkLookAndFeel()
 {
-    LookAndFeel::setDefaultLookAndFeel(s_darkLookAndFeel);
+    juce::LookAndFeel::setDefaultLookAndFeel(s_darkLookAndFeel);
     m_multiDocumentPanel->setBackgroundColour(
-        s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId).darker());
-    static_cast<DocumentWindow*>(getParentComponent())
-        ->setBackgroundColour(s_darkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
+        s_darkLookAndFeel->findColour(juce::ResizableWindow::backgroundColourId).darker());
+    static_cast<juce::DocumentWindow*>(getParentComponent())
+        ->setBackgroundColour(s_darkLookAndFeel->findColour(juce::ResizableWindow::backgroundColourId));
 }
 
 void MainContentComponent::switchToPinkLookAndFeel()
 {
-    LookAndFeel::setDefaultLookAndFeel(s_pinkLookAndFeel);
-    m_multiDocumentPanel->setBackgroundColour(Colours::lightpink);
-    static_cast<DocumentWindow*>(getParentComponent())
-        ->setBackgroundColour(s_pinkLookAndFeel->findColour(ResizableWindow::backgroundColourId));
+    juce::LookAndFeel::setDefaultLookAndFeel(s_pinkLookAndFeel);
+    m_multiDocumentPanel->setBackgroundColour(juce::Colours::lightpink);
+    static_cast<juce::DocumentWindow*>(getParentComponent())
+        ->setBackgroundColour(s_pinkLookAndFeel->findColour(juce::ResizableWindow::backgroundColourId));
 }
 
 MainContentComponent::MainContentComponent(
-    ApplicationProperties& applicationPropeties, ApplicationCommandManager* commandManager)
+    juce::ApplicationProperties& applicationPropeties, juce::ApplicationCommandManager* commandManager)
     : m_timeSliceThread("read ahead")
     , m_commandManager(commandManager)
     , m_projectModified(false)
@@ -134,18 +136,18 @@ void MainContentComponent::resized()
     m_multiDocumentPanel->setBounds(bounds);
 }
 
-StringArray MainContentComponent::getMenuBarNames()
+juce::StringArray MainContentComponent::getMenuBarNames()
 {
-    static const String menuBarNames[] = {TRANS("Project"), TRANS("Player"), TRANS("View"), TRANS("Options")};
-    StringArray names(menuBarNames, 4);
+    static const juce::String menuBarNames[] = {TRANS("Project"), TRANS("Player"), TRANS("View"), TRANS("Options")};
+    juce::StringArray names(menuBarNames, 4);
     if (m_pluginLoader.count() > 0)
         names.add("Plugins");
     return names;
 }
 
-PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*menuName*/)
+juce::PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce::String& /*menuName*/)
 {
-    PopupMenu menu;
+    juce::PopupMenu menu;
 
     switch (menuIndex)
     {
@@ -160,7 +162,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
             m_recentlyOpenedFiles.createPopupMenuItems(menu, projectRecentlyUsedFiles, false, false);
         }
         menu.addSeparator();
-        menu.addCommandItem(m_commandManager, StandardApplicationCommandIDs::quit);
+        menu.addCommandItem(m_commandManager, juce::StandardApplicationCommandIDs::quit);
         break;
     case 1:
         menu.addCommandItem(m_commandManager, addJinglePlayer);
@@ -175,7 +177,7 @@ PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const String& /*m
         menu.addCommandItem(m_commandManager, layoutModeFloating);
         menu.addCommandItem(m_commandManager, layoutModeTabs);
 
-        PopupMenu stylePopupMenu;
+        juce::PopupMenu stylePopupMenu;
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDefault);
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelDark);
         stylePopupMenu.addCommandItem(m_commandManager, lookAndFeelPink);
@@ -216,17 +218,17 @@ void MainContentComponent::menuItemSelected(int menuItemID, int /*topLevelMenuIn
 // this window to publish a set of actions it can perform, and which can be mapped
 // onto menus, keypresses, etc.
 
-ApplicationCommandTarget* MainContentComponent::getNextCommandTarget()
+juce::ApplicationCommandTarget* MainContentComponent::getNextCommandTarget()
 {
     // this will return the next parent component that is an ApplicationCommandTarget (in this
     // case, there probably isn't one, but it's best to use this method in your own apps).
     return findFirstTargetParentComponent();
 }
 
-void MainContentComponent::getAllCommands(Array<CommandID>& commands)
+void MainContentComponent::getAllCommands(juce::Array<juce::CommandID>& commands)
 {
     // this returns the set of all commands that this target can perform..
-    const CommandID ids[] = {projectNew,
+    const juce::CommandID ids[] = {projectNew,
         projectOpen,
         projectSave,
         projectSaveAs,
@@ -245,7 +247,7 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
         lookAndFeelDark,
         lookAndFeelPink};
 
-    commands.addArray(ids, numElementsInArray(ids));
+    commands.addArray(ids, juce::numElementsInArray(ids));
 
     const size_t numberOfPlugins = m_pluginLoader.count();
     for (size_t i = 0; i < numberOfPlugins; ++i)
@@ -254,29 +256,29 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands)
 
 // This method is used when something needs to find out the details about one of the commands
 // that this object can perform..
-void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationCommandInfo& result)
+void MainContentComponent::getCommandInfo(juce::CommandID commandID, juce::ApplicationCommandInfo& result)
 {
-    static const String projectCategory("Project");
-    static const String playerCategory("Player");
-    static const String viewCategory("View");
-    static const String optionsCategory("Options");
-    static const String pluginsCategory("Plugins");
+    static const juce::String projectCategory("Project");
+    static const juce::String playerCategory("Player");
+    static const juce::String viewCategory("View");
+    static const juce::String optionsCategory("Options");
+    static const juce::String pluginsCategory("Plugins");
 
     switch (commandID)
     {
     case projectNew:
         result.setInfo(TRANS("New"), TRANS("Create a new project"), projectCategory, 0);
-        result.addDefaultKeypress('N', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('N', juce::ModifierKeys::commandModifier);
         break;
 
     case projectOpen:
         result.setInfo(TRANS("Open"), TRANS("Open an existing project"), projectCategory, 0);
-        result.addDefaultKeypress('O', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('O', juce::ModifierKeys::commandModifier);
         break;
 
     case projectSave:
         result.setInfo(TRANS("Save"), TRANS("Save the current project"), projectCategory, 0);
-        result.addDefaultKeypress('S', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('S', juce::ModifierKeys::commandModifier);
         break;
 
     case projectSaveAs:
@@ -285,22 +287,22 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 
     case addJinglePlayer:
         result.setInfo(TRANS("Add Jingle Player"), TRANS("Add a simple player"), playerCategory, 0);
-        result.addDefaultKeypress('J', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('J', juce::ModifierKeys::commandModifier);
         break;
 
     case addMultitrackPlayer:
         result.setInfo(TRANS("Add Multitrack Player"), TRANS("Add a player with multiple tracks"), playerCategory, 0);
-        result.addDefaultKeypress('M', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('M', juce::ModifierKeys::commandModifier);
         break;
 
     case addPlaylistPlayer:
         result.setInfo(TRANS("Add Playlist Player"), TRANS("Add a player with a playlist"), playerCategory, 0);
-        result.addDefaultKeypress('P', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('P', juce::ModifierKeys::commandModifier);
         break;
 
     case addCDPlayer:
         result.setInfo(TRANS("Add CD Player"), TRANS("Add a player for audio CDs"), playerCategory, 0);
-        result.addDefaultKeypress('A', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('A', juce::ModifierKeys::commandModifier);
         break;
 
     case showTestToneGenerator:
@@ -308,7 +310,7 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
             TRANS("Show a window from which test tones can be generated on the output channels"),
             playerCategory,
             0);
-        result.addDefaultKeypress('T', ModifierKeys::commandModifier);
+        result.addDefaultKeypress('T', juce::ModifierKeys::commandModifier);
         break;
 
     case layoutModeFloating:
@@ -340,29 +342,29 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 
     case lookAndFeelDefault:
         result.setInfo(TRANS("Standard"), TRANS("Use the default look and feel"), viewCategory, 0);
-        result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel);
+        result.setTicked(&juce::LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel);
         break;
 
     case lookAndFeelDark:
         result.setInfo(TRANS("Dark"), TRANS("Use a dark look and feel"), viewCategory, 0);
-        result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel);
+        result.setTicked(&juce::LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel);
         break;
 
     case lookAndFeelPink:
         result.setInfo(TRANS("Pink"), TRANS("Use a pink look and feel"), viewCategory, 0);
-        result.setTicked(&LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel);
+        result.setTicked(&juce::LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel);
         break;
     };
 
     if (commandID >= basePlugin)
     {
-        String pluginName = m_pluginLoader.pluginName(commandID - basePlugin);
-        result.setInfo(pluginName, String("Configure ") + pluginName, pluginsCategory, 0);
+        juce::String pluginName = m_pluginLoader.pluginName(commandID - basePlugin);
+        result.setInfo(pluginName, juce::String("Configure ") + pluginName, pluginsCategory, 0);
     }
 }
 
 // this is the ApplicationCommandTarget method that is used to actually perform one of our commands..
-bool MainContentComponent::perform(const InvocationInfo& info)
+bool MainContentComponent::perform(const juce::ApplicationCommandTarget::InvocationInfo& info)
 {
     switch (info.commandID)
     {
@@ -391,7 +393,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
             m_pluginLoader);
         player->setName("Jingle Player");
         player->addChangeListener(this);
-        m_multiDocumentPanel->addDocument(player, Colours::white, true);
+        m_multiDocumentPanel->addDocument(player, juce::Colours::white, true);
         m_projectModified = true;
     }
     break;
@@ -408,7 +410,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
             m_pluginLoader);
         player->setName("Multitrack Player");
         player->addChangeListener(this);
-        m_multiDocumentPanel->addDocument(player, Colours::white, true);
+        m_multiDocumentPanel->addDocument(player, juce::Colours::white, true);
         m_projectModified = true;
     }
     break;
@@ -425,7 +427,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
             m_pluginLoader);
         player->setName("Playlist Player");
         player->addChangeListener(this);
-        m_multiDocumentPanel->addDocument(player, Colours::white, true);
+        m_multiDocumentPanel->addDocument(player, juce::Colours::white, true);
         m_projectModified = true;
     }
     break;
@@ -435,7 +437,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
             m_mixerComponent.get(), m_outputChannelNames.get(), m_soloBusSettings, m_timeSliceThread, m_pluginLoader);
         player->setName("CD Player");
         player->addChangeListener(this);
-        m_multiDocumentPanel->addDocument(player, Colours::white, true);
+        m_multiDocumentPanel->addDocument(player, juce::Colours::white, true);
         m_projectModified = true;
     }
     break;
@@ -443,7 +445,7 @@ bool MainContentComponent::perform(const InvocationInfo& info)
     {
         if (!m_testToneGeneratorWindow)
         {
-            DialogWindow::LaunchOptions options;
+            juce::DialogWindow::LaunchOptions options;
             options.dialogTitle = TRANS("Test Tone Generator");
             options.resizable = false;
             options.content.setNonOwned(m_testToneGenerator.get());
@@ -511,7 +513,7 @@ void MainContentComponent::newProject()
     m_projectModified = false;
 }
 
-void MainContentComponent::openProject(File projectFile)
+void MainContentComponent::openProject(juce::File projectFile)
 {
     m_projectFile = projectFile;
     m_recentlyOpenedFiles.addFile(m_projectFile);
@@ -524,7 +526,7 @@ void MainContentComponent::openProject()
     if (!askSaveProject())
         return;
 
-    FileChooser myChooser(TRANS("Please select the project file you want to load ..."), File(), "*.aupp");
+    juce::FileChooser myChooser(TRANS("Please select the project file you want to load ..."), juce::File(), "*.aupp");
     if (myChooser.browseForFileToOpen())
     {
         openProject(myChooser.getResult());
@@ -536,7 +538,7 @@ bool MainContentComponent::askSaveProject()
     if (!m_projectModified)
         return true;
 
-    switch (AlertWindow::showYesNoCancelBox(AlertWindow::QuestionIcon,
+    switch (juce::AlertWindow::showYesNoCancelBox(juce::AlertWindow::QuestionIcon,
         TRANS("Save project?"),
         TRANS("Do you want to save the current project?"),
         TRANS("Yes"),
@@ -555,7 +557,7 @@ bool MainContentComponent::askSaveProject()
 
 bool MainContentComponent::saveProject()
 {
-    if (m_projectFile == File())
+    if (m_projectFile == juce::File())
         return saveAsProject();
 
     writeProjectFile();
@@ -564,11 +566,11 @@ bool MainContentComponent::saveProject()
 
 bool MainContentComponent::saveAsProject()
 {
-    FileChooser myChooser(TRANS("Please select the project file you want to save ..."), File(), "*.aupp");
+    juce::FileChooser myChooser(TRANS("Please select the project file you want to save ..."), juce::File(), "*.aupp");
     if (!myChooser.browseForFileToSave(true))
         return false;
 
-    m_projectFile = File(myChooser.getResult());
+    m_projectFile = juce::File(myChooser.getResult());
     m_recentlyOpenedFiles.addFile(m_projectFile);
     m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
     writeProjectFile();
@@ -581,9 +583,9 @@ void MainContentComponent::readProjectFile()
 
     getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
-    StringArray loadWarnings;
+    juce::StringArray loadWarnings;
 
-    FileInputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension() + ".aupc"));
+    juce::FileInputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension() + ".aupc"));
     if (stream.failedToOpen())
     {
         loadWarnings.add(TRANS("Unable to open audio thumbnail cache file."));
@@ -596,28 +598,29 @@ void MainContentComponent::readProjectFile()
 
     try
     {
-        XmlDocument document(m_projectFile);
+        juce::XmlDocument document(m_projectFile);
 
-        std::unique_ptr<XmlElement> root{document.getDocumentElement()};
+        std::unique_ptr<juce::XmlElement> root{document.getDocumentElement()};
 
         if (!root)
         {
-            String error = document.getLastParseError();
-            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, TRANS("Failed to open project file"), error);
+            juce::String error = document.getLastParseError();
+            juce::AlertWindow::showMessageBoxAsync(
+                juce::AlertWindow::WarningIcon, TRANS("Failed to open project file"), error);
             return;
         }
 
-        XmlElement* view = root->getChildByName("View");
+        juce::XmlElement* view = root->getChildByName("View");
         if (view == nullptr)
             loadWarnings.add(TRANS("No view settings found, using default."));
         else
         {
-            XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
+            juce::XmlElement* layoutModeElement = view->getChildByName("LayoutMode");
             if (layoutModeElement == nullptr)
                 loadWarnings.add(TRANS("No layout mode settings found, using default."));
             else
             {
-                String layoutMode = layoutModeElement->getAllSubText().trim();
+                juce::String layoutMode = layoutModeElement->getAllSubText().trim();
                 if (layoutMode == "windows")
                     m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
                 else if (layoutMode == "tabs")
@@ -626,31 +629,31 @@ void MainContentComponent::readProjectFile()
                     loadWarnings.add(TRANS("Unknown view layout, using default."));
             }
 
-            XmlElement* styleElement = view->getChildByName("Style");
+            juce::XmlElement* styleElement = view->getChildByName("Style");
             if (styleElement == nullptr)
                 loadWarnings.add(TRANS("No style settings found, using default."));
             else
             {
-                String style = styleElement->getAllSubText().trim();
+                juce::String style = styleElement->getAllSubText().trim();
                 if (style == "default")
-                    perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDefault));
+                    perform(juce::ApplicationCommandTarget::InvocationInfo(lookAndFeelDefault));
                 else if (style == "dark")
-                    perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
+                    perform(juce::ApplicationCommandTarget::InvocationInfo(lookAndFeelDark));
                 else if (style == "pink")
-                    perform(ApplicationCommandTarget::InvocationInfo(lookAndFeelPink));
+                    perform(juce::ApplicationCommandTarget::InvocationInfo(lookAndFeelPink));
                 else
                     loadWarnings.add(TRANS("Unknown style, using default."));
             }
         }
 
-        XmlElement* audio = root->getChildByName("Audio");
+        juce::XmlElement* audio = root->getChildByName("Audio");
         if (audio == nullptr)
             loadWarnings.add(TRANS("No audio settings found, using current."));
         else
         {
             if (audio->getNumChildElements() > 0)
             {
-                String error = m_audioDeviceManager.initialise(0, 64, audio->getChildElement(0), false, {}, 0);
+                juce::String error = m_audioDeviceManager.initialise(0, 64, audio->getChildElement(0), false, {}, 0);
                 if (error != "")
                 {
                     loadWarnings.add(error);
@@ -668,10 +671,10 @@ void MainContentComponent::readProjectFile()
             }
         }
 
-        XmlElement* midi = root->getChildByName("MIDI");
+        juce::XmlElement* midi = root->getChildByName("MIDI");
         if (midi != nullptr)
         {
-            StringArray names;
+            juce::StringArray names;
             if (midi->getNumChildElements() == 1 && midi->getChildElement(0)->isTextElement())
             {
                 // XML file is in the old format that stored only one device.
@@ -685,14 +688,14 @@ void MainContentComponent::readProjectFile()
                 }
             }
 
-            Array<MidiDeviceInfo> deviceInfos = MidiOutput::getAvailableDevices();
+            juce::Array<juce::MidiDeviceInfo> deviceInfos = juce::MidiOutput::getAvailableDevices();
             deviceInfos.removeIf(
-                [&names](const MidiDeviceInfo& deviceInfo) { return !names.contains(deviceInfo.name); });
+                [&names](const juce::MidiDeviceInfo& deviceInfo) { return !names.contains(deviceInfo.name); });
 
             m_mtcSender.setDevices(deviceInfos);
         }
 
-        XmlElement* channelNames = root->getChildByName("ChannelNames");
+        juce::XmlElement* channelNames = root->getChildByName("ChannelNames");
         if (channelNames == nullptr)
             loadWarnings.add(TRANS("No channel names found, using device defaults."));
         else
@@ -700,7 +703,7 @@ void MainContentComponent::readProjectFile()
             m_outputChannelNames->restoreFromXml(*channelNames);
         }
 
-        XmlElement* soloBusSettings = root->getChildByName("SoloBusSettings");
+        juce::XmlElement* soloBusSettings = root->getChildByName("SoloBusSettings");
         if (soloBusSettings == nullptr)
             loadWarnings.add(TRANS("No solo bus settings found, using no solo bus."));
         else
@@ -708,7 +711,7 @@ void MainContentComponent::readProjectFile()
             m_soloBusSettings.restoreFromXml(*soloBusSettings);
         }
 
-        XmlElement* soloMixer = root->getChildByName("SoloBusMixer");
+        juce::XmlElement* soloMixer = root->getChildByName("SoloBusMixer");
         if (soloMixer == nullptr)
             loadWarnings.add(TRANS("No solo mixer settings found, using default volumes."));
         else
@@ -716,14 +719,14 @@ void MainContentComponent::readProjectFile()
             m_soloComponent->restoreFromXml(*soloMixer);
         }
 
-        XmlElement* mixer = root->getChildByName("Mixer");
+        juce::XmlElement* mixer = root->getChildByName("Mixer");
 
         if (mixer == nullptr)
             loadWarnings.add(TRANS("No mixer settings found, using current."));
         else
             m_mixerComponent->restoreFromXml(*mixer);
 
-        XmlElement* players = root->getChildByName("Players");
+        juce::XmlElement* players = root->getChildByName("Players");
 
         if (players == nullptr)
             loadWarnings.add(TRANS("No players found. None will be loaded."));
@@ -733,14 +736,14 @@ void MainContentComponent::readProjectFile()
             {
                 using namespace InterPlayerCommunication;
 
-                XmlElement* player = players->getChildElement(i);
+                juce::XmlElement* player = players->getChildElement(i);
                 if (player->getTagName() == "Player")
                 {
                     const float gain = static_cast<float>(player->getDoubleAttribute("gain", 1.0));
                     const bool solo = player->getBoolAttribute("solo");
                     const bool mute = player->getBoolAttribute("mute");
                     PlayerType playerType = PlayerType::Playlist;
-                    String type = player->getStringAttribute("type", "");
+                    juce::String type = player->getStringAttribute("type", "");
                     if (type == "jingle")
                     {
                         playerType = PlayerType::Jingle;
@@ -751,7 +754,7 @@ void MainContentComponent::readProjectFile()
                     }
                     else if (type != "playlist")
                     {
-                        loadWarnings.add(String::formatted(TRANS("Unknown player type '%s'."), type));
+                        loadWarnings.add(juce::String::formatted(TRANS("Unknown player type '%s'."), type));
                         continue;
                     }
                     Player* window = new Player(m_mixerComponent.get(),
@@ -768,7 +771,7 @@ void MainContentComponent::readProjectFile()
                         mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
-                    m_multiDocumentPanel->addDocument(window, Colours::white, true);
+                    m_multiDocumentPanel->addDocument(window, juce::Colours::white, true);
                     window->restoreFromXml(*player, m_projectFile.getParentDirectory());
                 }
                 else if (player->getTagName() == "CDPlayer")
@@ -786,13 +789,13 @@ void MainContentComponent::readProjectFile()
                         mute);
                     window->addChangeListener(this);
                     window->setName(" "); // Satisfy JUCE, we set the actual name later.
-                    m_multiDocumentPanel->addDocument(window, Colours::white, true);
+                    m_multiDocumentPanel->addDocument(window, juce::Colours::white, true);
                     window->restoreFromXml(*player, m_projectFile.getParentDirectory());
                 }
                 else
                 {
                     loadWarnings.add(
-                        String::formatted(TRANS("Unknown tag '%s' in players list."), player->getTagName()));
+                        juce::String::formatted(TRANS("Unknown tag '%s' in players list."), player->getTagName()));
                 }
             }
 
@@ -800,7 +803,7 @@ void MainContentComponent::readProjectFile()
             soloChanged(false);
         }
 
-        XmlElement* plugins = root->getChildByName("Plugins");
+        juce::XmlElement* plugins = root->getChildByName("Plugins");
         if (plugins)
         {
             m_pluginLoader.loadConfigurations(plugins);
@@ -809,14 +812,14 @@ void MainContentComponent::readProjectFile()
         m_projectModified = false;
 
         if (loadWarnings.size() > 0)
-            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
                 TRANS("Problems while opening the project"),
                 loadWarnings.joinIntoString("\n"));
     }
     catch (const std::exception& e)
     {
-        AlertWindow::showMessageBoxAsync(
-            AlertWindow::WarningIcon, TRANS("Failed opening the project"), String::fromUTF8(e.what()));
+        juce::AlertWindow::showMessageBoxAsync(
+            juce::AlertWindow::WarningIcon, TRANS("Failed opening the project"), juce::String::fromUTF8(e.what()));
         m_projectModified = false;
         m_multiDocumentPanel->closeAllDocuments(false);
     }
@@ -826,66 +829,66 @@ void MainContentComponent::writeProjectFile()
 {
     getParentComponent()->setName(m_projectFile.getFileNameWithoutExtension());
 
-    std::unique_ptr<XmlElement> root = std::make_unique<XmlElement>("Project");
+    std::unique_ptr<juce::XmlElement> root = std::make_unique<juce::XmlElement>("Project");
 
-    XmlElement* view = new XmlElement("View");
+    juce::XmlElement* view = new juce::XmlElement("View");
 
-    XmlElement* layoutMode = new XmlElement("LayoutMode");
+    juce::XmlElement* layoutMode = new juce::XmlElement("LayoutMode");
     switch (m_multiDocumentPanel->getLayoutMode())
     {
-    case MultiDocumentPanel::FloatingWindows:
+    case juce::MultiDocumentPanel::FloatingWindows:
         layoutMode->addTextElement("windows");
         break;
-    case MultiDocumentPanel::MaximisedWindowsWithTabs:
+    case juce::MultiDocumentPanel::MaximisedWindowsWithTabs:
         layoutMode->addTextElement("tabs");
         break;
     }
     view->addChildElement(layoutMode);
 
-    XmlElement* style = new XmlElement("Style");
-    if (&LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel)
+    juce::XmlElement* style = new juce::XmlElement("Style");
+    if (&juce::LookAndFeel::getDefaultLookAndFeel() == s_defaultLookAndFeel)
         style->addTextElement("default");
-    else if (&LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel)
+    else if (&juce::LookAndFeel::getDefaultLookAndFeel() == s_darkLookAndFeel)
         style->addTextElement("dark");
-    else if (&LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel)
+    else if (&juce::LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel)
         style->addTextElement("pink");
     view->addChildElement(style);
 
     root->addChildElement(view);
 
-    XmlElement* audio = new XmlElement("Audio");
+    juce::XmlElement* audio = new juce::XmlElement("Audio");
     audio->addChildElement(m_audioDeviceManager.createStateXml().release());
     root->addChildElement(audio);
 
     if (auto devices = m_mtcSender.getDevices(); !devices.isEmpty())
     {
-        XmlElement* midi = new XmlElement("MIDI");
+        juce::XmlElement* midi = new juce::XmlElement("MIDI");
         for (auto& device : devices)
         {
-            XmlElement* element = new XmlElement("device");
+            juce::XmlElement* element = new juce::XmlElement("device");
             element->addTextElement(device.name);
             midi->addChildElement(element);
         }
         root->addChildElement(midi);
     }
 
-    XmlElement* channelNames = new XmlElement("ChannelNames");
+    juce::XmlElement* channelNames = new juce::XmlElement("ChannelNames");
     m_outputChannelNames->saveToXml(channelNames);
     root->addChildElement(channelNames);
 
-    XmlElement* soloBusSettings = new XmlElement("SoloBusSettings");
+    juce::XmlElement* soloBusSettings = new juce::XmlElement("SoloBusSettings");
     m_soloBusSettings.saveToXml(soloBusSettings);
     root->addChildElement(soloBusSettings);
 
-    XmlElement* soloBusMixer = new XmlElement("SoloBusMixer");
+    juce::XmlElement* soloBusMixer = new juce::XmlElement("SoloBusMixer");
     m_soloComponent->saveToXml(soloBusMixer);
     root->addChildElement(soloBusMixer);
 
-    XmlElement* mixer = new XmlElement("Mixer");
+    juce::XmlElement* mixer = new juce::XmlElement("Mixer");
     m_mixerComponent->saveToXml(mixer);
     root->addChildElement(mixer);
 
-    XmlElement* players = new XmlElement("Players");
+    juce::XmlElement* players = new juce::XmlElement("Players");
 
     for (int i = 0; i < m_multiDocumentPanel->getNumDocuments(); ++i)
     {
@@ -903,21 +906,22 @@ void MainContentComponent::writeProjectFile()
 
     if (m_pluginLoader.count() > 0)
     {
-        XmlElement* plugins = new XmlElement("Plugins");
+        juce::XmlElement* plugins = new juce::XmlElement("Plugins");
         m_pluginLoader.saveConfigurations(plugins);
         root->addChildElement(plugins);
     }
 
     if (!root->writeTo(m_projectFile))
-        AlertWindow::showMessageBoxAsync(
-            AlertWindow::WarningIcon, TRANS("Failed to save project file"), TRANS("Failed to save project file."));
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+            TRANS("Failed to save project file"),
+            TRANS("Failed to save project file."));
     else
         m_projectModified = false;
 
-    FileOutputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension() + ".aupc"));
+    juce::FileOutputStream stream(m_projectFile.getSiblingFile(m_projectFile.getFileNameWithoutExtension() + ".aupc"));
     if (stream.failedToOpen())
     {
-        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon,
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
             TRANS("Failed to save project"),
             TRANS("Failed to open audio thumbnail cache file."));
         return;
@@ -927,8 +931,8 @@ void MainContentComponent::writeProjectFile()
     m_audioThumbnailCache.writeToStream(stream);
     if (stream.getStatus().failed())
     {
-        AlertWindow::showMessageBoxAsync(
-            AlertWindow::WarningIcon, TRANS("Failed to save project"), TRANS("Failed to save audio thumbnails."));
+        juce::AlertWindow::showMessageBoxAsync(
+            juce::AlertWindow::WarningIcon, TRANS("Failed to save project"), TRANS("Failed to save audio thumbnails."));
     }
 }
 
@@ -964,7 +968,7 @@ void MainContentComponent::soloChanged(bool /*solo*/)
 
 void MainContentComponent::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(channel, outputChannel, previousOutputChannel);
+    juce::ignoreUnused(channel, outputChannel, previousOutputChannel);
 
     resized();
 }

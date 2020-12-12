@@ -1,7 +1,8 @@
 #include "PlaylistEntryDialog.h"
 
-PlaylistEntryDialogWindow::PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback)
-    : DialogWindow(TRANS("Edit playlist entry"), Colours::lightgrey, true, true)
+PlaylistEntryDialogWindow::PlaylistEntryDialogWindow(
+    juce::String name, PlaylistEntrySettingsChangedCallback changedCallback)
+    : DialogWindow(TRANS("Edit playlist entry"), juce::Colours::lightgrey, true, true)
 {
     PlaylistEntryDialogComponent* component = new PlaylistEntryDialogComponent(name, changedCallback, this);
     setContentOwned(component, true);
@@ -15,9 +16,9 @@ void PlaylistEntryDialogWindow::closeButtonPressed()
     setVisible(false);
 }
 
-bool PlaylistEntryDialogWindow::keyPressed(const KeyPress& key)
+bool PlaylistEntryDialogWindow::keyPressed(const juce::KeyPress& key)
 {
-    if (key == KeyPress::returnKey)
+    if (key == juce::KeyPress::returnKey)
     {
         exitModalState(0);
         return true;
@@ -26,29 +27,29 @@ bool PlaylistEntryDialogWindow::keyPressed(const KeyPress& key)
     return false;
 }
 
-void PlaylistEntryDialogWindow::focusGained(FocusChangeType /*cause*/)
+void PlaylistEntryDialogWindow::focusGained(juce::DialogWindow::FocusChangeType /*cause*/)
 {
     static_cast<PlaylistEntryDialogComponent*>(getContentComponent())->m_nameEditor.grabKeyboardFocus();
 }
 
-void PlaylistEntryDialogWindow::buttonClicked(Button* /*buttonThatWasClicked*/)
+void PlaylistEntryDialogWindow::buttonClicked(juce::Button* /*buttonThatWasClicked*/)
 {
     closeButtonPressed();
 }
 
-PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(
-    const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent)
+PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(const juce::String& name,
+    const PlaylistEntrySettingsChangedCallback& changedCallback, PlaylistEntryDialogWindow* parent)
     : m_changedCallback(changedCallback)
     , m_nameLabel("name label", TRANS("Name of the entry:"))
     , m_nameEditor("name editor")
     , m_closeButton("close")
 {
     addAndMakeVisible(m_nameLabel);
-    m_nameLabel.setFont(Font(15.00f, Font::plain));
-    m_nameLabel.setJustificationType(Justification::centredLeft);
+    m_nameLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_nameLabel.setJustificationType(juce::Justification::centredLeft);
     m_nameLabel.setEditable(false, false, false);
-    m_nameLabel.setColour(TextEditor::textColourId, Colours::black);
-    m_nameLabel.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    m_nameLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    m_nameLabel.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(m_nameEditor);
     m_nameEditor.setMultiLine(false);
@@ -85,7 +86,7 @@ void PlaylistEntryDialogComponent::resized()
         (getWidth() - buttonWidth) / 2, getHeight() - 2 * (rowHeight - padding), buttonWidth, rowHeight);
 }
 
-void PlaylistEntryDialogComponent::textEditorTextChanged(TextEditor&)
+void PlaylistEntryDialogComponent::textEditorTextChanged(juce::TextEditor&)
 {
     m_changedCallback(m_nameEditor.getText());
 }

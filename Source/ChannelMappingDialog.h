@@ -3,7 +3,7 @@
 #include <functional>
 #include <vector>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "OutputChannelNames.h"
 #include "SoloBusSettings.h"
@@ -22,8 +22,8 @@ typedef std::function<void()> CloseCallback;
     for the combo box component.
 */
 class ChannelMapping
-    : public TableListBoxModel
-    , public ComboBox::Listener
+    : public juce::TableListBoxModel
+    , public juce::ComboBox::Listener
 {
 public:
     /** A component to view and edit the channel mapping.
@@ -64,15 +64,16 @@ public:
     // TableListBoxModel overrides
 public:
     virtual int getNumRows() override;
-    virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
+    virtual void paintRowBackground(
+        juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
     virtual void paintCell(
-        Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
-    virtual Component* refreshComponentForCell(
-        int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) override;
+        juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+    virtual juce::Component* refreshComponentForCell(
+        int rowNumber, int columnId, bool isRowSelected, juce::Component* existingComponentToUpdate) override;
 
     // ComboBox::Listener overrides
 public:
-    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+    virtual void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
 private:
     OutputChannelNames* m_outputChannelNames;
@@ -87,8 +88,8 @@ private:
         The actual component containing controls to change the mapping from playback channels to output channels.
 */
 class ChannelMappingComponent
-    : public Component
-    , public Button::Listener
+    : public juce::Component
+    , public juce::Button::Listener
 {
 public:
     ChannelMappingComponent(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
@@ -103,16 +104,16 @@ public:
 
     // Button::Listener
 public:
-    void buttonClicked(Button* buttonThatWasClicked);
+    void buttonClicked(juce::Button* buttonThatWasClicked);
 
 private:
     OutputChannelNames* m_outputChannelNames;
     SoloBusSettings& m_soloBusSettings;
     const ChangeMappingCallback m_changeCallback;
     const CloseCallback m_closeCallback;
-    TableListBox m_tableListBox;
+    juce::TableListBox m_tableListBox;
     std::unique_ptr<ChannelMapping> m_channelMapping;
-    TextButton m_closeButton;
+    juce::TextButton m_closeButton;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMappingComponent)
 };
@@ -120,7 +121,7 @@ private:
 /**
     Wrapper window to show the ChannelMapping component.
 */
-class ChannelMappingWindow : public DialogWindow
+class ChannelMappingWindow : public juce::DialogWindow
 {
 public:
     /** Creates a window to view and edit the channel mapping.

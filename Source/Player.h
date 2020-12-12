@@ -2,6 +2,8 @@
 
 #include <set>
 
+#include "juce_gui_basics/juce_gui_basics.h"
+
 #include "MixerComponent.h"
 #include "MixerControlable.h"
 
@@ -22,13 +24,13 @@
 */
 class Player
     : public PlayerComponent
-    , public KeyListener
+    , public juce::KeyListener
     , public SoloBusSettingsListener
 {
 public:
     Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
-        InterPlayerCommunication::PlayerType type, ApplicationProperties& applicationProperties,
-        AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread, MTCSender& mtcSender,
+        InterPlayerCommunication::PlayerType type, juce::ApplicationProperties& applicationProperties,
+        juce::AudioThumbnailCache& audioThumbnailCache, juce::TimeSliceThread& thread, MTCSender& mtcSender,
         PluginLoader& pluginLoader, float gain = 1.0f, bool solo = false, bool mute = false);
     ~Player();
 
@@ -46,12 +48,12 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    XmlElement* saveToXml(const File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const;
+    juce::XmlElement* saveToXml(const juce::File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml(const XmlElement& element, const File& projectDirectory);
+    void restoreFromXml(const juce::XmlElement& element, const juce::File& projectDirectory);
 
     // Component overrides
 public:
@@ -70,14 +72,14 @@ public:
     virtual void setMute(bool mute) override;
     virtual bool getMute() const override;
     virtual float getVolume() const override;
-    virtual String getName() const override;
-    virtual void setName(const String& newName) override;
+    virtual juce::String getName() const override;
+    virtual void setName(const juce::String& newName) override;
     virtual void SetChannelCountChangedCallback(const Track::ChannelCountChangedCallback& callback) override;
     virtual std::vector<MixerControlable*> getSubMixerControlables() const override;
 
     // KeyListener
 public:
-    virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+    virtual bool keyPressed(const juce::KeyPress& key, juce::Component* originatingComponent) override;
 
     // SoloBusListener
 public:
@@ -94,8 +96,8 @@ public:
 private:
     void updateGain();
 
-    void setColor(const Colour& color);
-    void setUserImage(const File& file);
+    void setColor(const juce::Colour& color);
+    void setUserImage(const juce::File& file);
 
     void showEditDialog();
     void configureChannels();
@@ -122,8 +124,8 @@ private:
     bool m_mute;
     InterPlayerCommunication::PlayerType m_type;
 
-    Colour m_color;
-    File m_userImage;
+    juce::Colour m_color;
+    juce::File m_userImage;
 
     Track::ChannelCountChangedCallback m_channelCountChanged;
     std::unique_ptr<PlayerEditDialogWindow> m_PlayerEditDialog;

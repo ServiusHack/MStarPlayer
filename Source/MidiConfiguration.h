@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "MTCSender.h"
 
 class MidiConfigurationWindow
-    : public DialogWindow
-    , public Button::Listener
+    : public juce::DialogWindow
+    , public juce::Button::Listener
 {
 public:
     MidiConfigurationWindow(MTCSender& mtcSender);
@@ -15,7 +15,7 @@ public:
     virtual void closeButtonPressed() override;
 
     // Button::Listener
-    virtual void buttonClicked(Button* buttonThatWasClicked) override;
+    virtual void buttonClicked(juce::Button* buttonThatWasClicked) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationWindow)
@@ -23,26 +23,26 @@ private:
 
 // This is built after ChannelSelectorListBox of AudioDeviceSelectorComponent
 class MidiDeviceSelectorListBox
-    : public ListBox
-    , private ListBoxModel
+    : public juce::ListBox
+    , private juce::ListBoxModel
 {
 public:
     MidiDeviceSelectorListBox(MTCSender& mtcSender);
     int getNumRows() override;
-    void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) override;
-    void listBoxItemClicked(int row, const MouseEvent& e) override;
-    void listBoxItemDoubleClicked(int row, const MouseEvent&) override;
+    void paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected) override;
+    void listBoxItemClicked(int row, const juce::MouseEvent& e) override;
+    void listBoxItemDoubleClicked(int row, const juce::MouseEvent&) override;
     void returnKeyPressed(int row) override;
     void flipEnablement(int row);
     int getTickX();
 
 private:
-    Array<MidiDeviceInfo> devices;
-    SparseSet<int> indexes;
+    juce::Array<juce::MidiDeviceInfo> devices;
+    juce::SparseSet<int> indexes;
     MTCSender& mtcSender;
 };
 
-class MidiConfigurationComponent : public Component
+class MidiConfigurationComponent : public juce::Component
 {
 public:
     MidiConfigurationComponent(MidiConfigurationWindow* parent, MTCSender& mtcSender);
@@ -53,6 +53,6 @@ public:
 
 private:
     MidiDeviceSelectorListBox deviceSelector;
-    std::unique_ptr<TextButton> m_closeButton;
+    std::unique_ptr<juce::TextButton> m_closeButton;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationComponent)
 };

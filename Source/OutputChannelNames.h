@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_devices/juce_audio_devices.h"
+#include "juce_events/juce_events.h"
 
 enum class PairingMode
 {
@@ -16,7 +17,7 @@ class OutputChannelNamesListener
 {
 public:
     virtual void outputChannelNamesReset() = 0;
-    virtual void outputChannelNameChanged(int activeChannelIndex, const String& text) = 0;
+    virtual void outputChannelNameChanged(int activeChannelIndex, const juce::String& text) = 0;
     virtual void outputChannelPairingModeChanged(int activeChannelIndex, PairingMode mode) = 0;
 };
 
@@ -29,8 +30,8 @@ public:
 */
 struct DeviceIdentification
 {
-    String deviceTypeName;
-    String deviceName;
+    juce::String deviceTypeName;
+    juce::String deviceName;
 
     inline bool operator!=(const DeviceIdentification& other);
 };
@@ -39,17 +40,17 @@ struct DeviceIdentification
         Maintains the user defined output channel names.
 */
 class OutputChannelNames
-    : public ChangeListener
-    , public ChangeBroadcaster
+    : public juce::ChangeListener
+    , public juce::ChangeBroadcaster
 {
 public:
-    OutputChannelNames(AudioDeviceManager& deviceManager);
+    OutputChannelNames(juce::AudioDeviceManager& deviceManager);
 
     int getNumberOfChannels();
 
 private:
-    DeviceIdentification ExtractDeviceIdentification(const AudioIODevice* audioDevice);
-    AudioIODevice* m_audioDevice;
+    DeviceIdentification ExtractDeviceIdentification(const juce::AudioIODevice* audioDevice);
+    juce::AudioIODevice* m_audioDevice;
     DeviceIdentification m_deviceIdentification;
 
     // channel pairing
@@ -58,23 +59,23 @@ public:
     PairingMode GetChannelPairing(int activeChannelIndex);
 
 private:
-    Array<PairingMode> m_pairingModes;
+    juce::Array<PairingMode> m_pairingModes;
 
     // output device names and their internal names
 public:
-    String getDeviceOutputChannelName(int activeChannelIndex);
-    StringArray getAllDeviceOutputChannelNames();
-    String getInternalOutputChannelName(int activeChannelIndex);
-    void setInternalOutputChannelName(int activeChannelIndex, const String& text);
+    juce::String getDeviceOutputChannelName(int activeChannelIndex);
+    juce::StringArray getAllDeviceOutputChannelNames();
+    juce::String getInternalOutputChannelName(int activeChannelIndex);
+    void setInternalOutputChannelName(int activeChannelIndex, const juce::String& text);
 
 private:
-    StringArray m_deviceOutputChannelNames;
-    StringArray m_internalOutputChannelNames;
+    juce::StringArray m_deviceOutputChannelNames;
+    juce::StringArray m_internalOutputChannelNames;
 
     // XML serialization
 public:
-    void saveToXml(XmlElement* element) const;
-    void restoreFromXml(const XmlElement& element);
+    void saveToXml(juce::XmlElement* element) const;
+    void restoreFromXml(const juce::XmlElement& element);
 
     // OutputChannelNamesListener management
 public:

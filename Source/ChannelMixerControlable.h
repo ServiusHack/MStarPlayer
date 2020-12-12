@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "ChannelVolumeAudioSource.h"
 #include "Player.h"
 
@@ -11,7 +9,8 @@
 class ChannelMixerControlable : public MixerControlable
 {
 public:
-    ChannelMixerControlable(int channel, ChannelVolumeAudioSource* audioSource, const String& name = String());
+    ChannelMixerControlable(
+        int channel, ChannelVolumeAudioSource* audioSource, const juce::String& name = juce::String());
 
     void setChannel(int channel);
 
@@ -37,10 +36,10 @@ public:
 
     virtual float getVolume() const override;
 
-    virtual String getName() const override;
+    virtual juce::String getName() const override;
 
 private:
     int channelNumber;
     ChannelVolumeAudioSource* m_channelVolumeAudioSource;
-    String m_name;
+    juce::String m_name;
 };

@@ -2,9 +2,9 @@
 
 #include <functional>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
-typedef std::function<void(String)> PlaylistEntrySettingsChangedCallback;
+typedef std::function<void(juce::String)> PlaylistEntrySettingsChangedCallback;
 
 /**
     Window wrapper for the PlaylistEntryDialogComponent.
@@ -12,21 +12,21 @@ typedef std::function<void(String)> PlaylistEntrySettingsChangedCallback;
     This allows the component to be shown in its own window.
 */
 class PlaylistEntryDialogWindow
-    : public DialogWindow
-    , public Button::Listener
+    : public juce::DialogWindow
+    , public juce::Button::Listener
 {
 public:
-    PlaylistEntryDialogWindow(String name, PlaylistEntrySettingsChangedCallback changedCallback);
+    PlaylistEntryDialogWindow(juce::String name, PlaylistEntrySettingsChangedCallback changedCallback);
 
     // DialogWindow
 public:
     virtual void closeButtonPressed() override;
-    virtual bool keyPressed(const KeyPress& key) override;
-    virtual void focusGained(FocusChangeType cause) override;
+    virtual bool keyPressed(const juce::KeyPress& key) override;
+    virtual void focusGained(juce::DialogWindow::FocusChangeType cause) override;
 
     // Button::Listener
 public:
-    virtual void buttonClicked(Button* buttonThatWasClicked) override;
+    virtual void buttonClicked(juce::Button* buttonThatWasClicked) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistEntryDialogWindow)
@@ -36,13 +36,13 @@ private:
         The actual component containing controls to edit a playlist entry.
 */
 class PlaylistEntryDialogComponent
-    : public Component
+    : public juce::Component
     , public juce::TextEditor::Listener
 {
     friend class PlaylistEntryDialogWindow;
 
 public:
-    PlaylistEntryDialogComponent(const String& name, const PlaylistEntrySettingsChangedCallback& changedCallback,
+    PlaylistEntryDialogComponent(const juce::String& name, const PlaylistEntrySettingsChangedCallback& changedCallback,
         PlaylistEntryDialogWindow* parent);
 
     // Component
@@ -51,12 +51,12 @@ public:
 
     // TextEditor::Listener
 public:
-    virtual void textEditorTextChanged(TextEditor&) override;
+    virtual void textEditorTextChanged(juce::TextEditor&) override;
 
 private:
-    Label m_nameLabel;
-    TextEditor m_nameEditor;
-    TextButton m_closeButton;
+    juce::Label m_nameLabel;
+    juce::TextEditor m_nameEditor;
+    juce::TextButton m_closeButton;
 
     PlaylistEntrySettingsChangedCallback m_changedCallback;
 

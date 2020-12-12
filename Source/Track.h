@@ -3,7 +3,8 @@
 #include <functional>
 #include <list>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_formats/juce_audio_formats.h"
+#include "juce_audio_utils/juce_audio_utils.h"
 
 #include "ChannelRemappingAudioSourceWithVolume.h"
 #include "MixerControlable.h"
@@ -15,24 +16,25 @@
 class Track
     : public MixerControlable
     , public SoloBusSettingsListener
-    , private Timer
+    , private juce::Timer
 {
 public:
     typedef std::function<void()> DurationChangedCallback;
     typedef std::function<void(double, bool)> PositionCallback;
     typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
     typedef std::function<void()> ChannelCountChangedCallback;
-    typedef std::function<void(const File&, bool)> FileChangedCallback;
+    typedef std::function<void(const juce::File&, bool)> FileChangedCallback;
     typedef std::function<void(bool)> PlayingStateChangedCallback;
     typedef std::function<void()> TrackConfigChangedCallback;
     typedef std::function<void(const char*, float)> GainChangedCallback;
 
-    Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
+    Track(juce::MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
         int outputChannels, DurationChangedCallback callback, bool soloMute,
         DurationChangedCallback soloChangedCallback, float gain, bool mute,
         ChannelCountChangedCallback channelCountChangedCallback,
         PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback,
-        GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread);
+        GainChangedCallback gainChangedCallback, juce::AudioThumbnailCache& audioThumbnailCache,
+        juce::TimeSliceThread& thread);
     ~Track();
 
     void play();
@@ -53,7 +55,7 @@ public:
     void timerCallback() override;
     void callPositionCallbacks(double position, bool hasStreamFinished);
 
-    void loadFileIntoTransport(const File& audioFile);
+    void loadFileIntoTransport(const juce::File& audioFile);
     void reloadFile();
     void unloadFile();
 
@@ -61,8 +63,8 @@ public:
     void unregisterPositionCallback(PositionCallbackRegistrationToken& token);
     void setFileChangedCallback(FileChangedCallback fileChangedCallback);
 
-    void saveToXml(XmlElement* element) const;
-    void restoreFromXml(const XmlElement& element);
+    void saveToXml(juce::XmlElement* element) const;
+    void restoreFromXml(const juce::XmlElement& element);
 
     void loadTrackConfig(const TrackConfig& config);
     TrackConfig getTrackConfig();
@@ -133,18 +135,18 @@ public:
 
     // MixerControlable name
 public:
-    void setName(String name);
-    String getName() const override;
+    void setName(juce::String name);
+    juce::String getName() const override;
 
 private:
-    String m_name;
+    juce::String m_name;
 
     // AudioFormat
 public:
-    AudioFormatManager& getAudioFormatManager();
+    juce::AudioFormatManager& getAudioFormatManager();
 
 private:
-    AudioFormatManager m_formatManager;
+    juce::AudioFormatManager m_formatManager;
 
     // stereo
 public:
@@ -164,11 +166,11 @@ private:
 
     // Audio Thumbnail
 public:
-    AudioThumbnail& getAudioThumbnail();
+    juce::AudioThumbnail& getAudioThumbnail();
 
 private:
-    AudioThumbnailCache& m_audioThumbnailCache;
-    AudioThumbnail m_audioThumbnail;
+    juce::AudioThumbnailCache& m_audioThumbnailCache;
+    juce::AudioThumbnail m_audioThumbnail;
 
     // SoloBusListener
 public:
@@ -177,11 +179,11 @@ public:
 private:
     void updateGain();
 
-    File m_audioFile;
-    MixerAudioSource& m_tracksMixer;
-    TimeSliceThread& m_thread;
-    std::unique_ptr<AudioFormatReaderSource> m_currentAudioFileSource;
-    AudioTransportSource m_transportSource;
+    juce::File m_audioFile;
+    juce::MixerAudioSource& m_tracksMixer;
+    juce::TimeSliceThread& m_thread;
+    std::unique_ptr<juce::AudioFormatReaderSource> m_currentAudioFileSource;
+    juce::AudioTransportSource m_transportSource;
     SoloBusSettings& m_soloBusSettings;
     ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 

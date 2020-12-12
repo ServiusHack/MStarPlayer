@@ -9,8 +9,8 @@ CDTracksTable::CDTracksTable(const TrackChangedCallback& callback)
     getHeader().setPopupMenuActive(false);
 
     // set the table header columns
-    getHeader().addColumn(TRANS("Track"), 1, 25, 25, -1, TableHeaderComponent::notResizableOrSortable);
-    getHeader().addColumn(TRANS("Duration"), 2, 100, 25, 100, TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn(TRANS("Track"), 1, 25, 25, -1, juce::TableHeaderComponent::notResizableOrSortable);
+    getHeader().addColumn(TRANS("Duration"), 2, 100, 25, 100, juce::TableHeaderComponent::notResizableOrSortable);
     getHeader().setStretchToFitActive(true);
 
     updateContent();
@@ -24,7 +24,7 @@ void CDTracksTable::selectedRowsChanged(int lastRowSelected)
     m_callback(lastRowSelected);
 }
 
-void CDTracksTable::changeListenerCallback(ChangeBroadcaster* /*source*/)
+void CDTracksTable::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
     updateContent();
     repaint();

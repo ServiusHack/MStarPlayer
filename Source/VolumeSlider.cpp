@@ -1,36 +1,38 @@
 #include "VolumeSlider.h"
 
+#include "juce_audio_basics/juce_audio_basics.h"
+
 VolumeSlider::VolumeSlider()
     : m_snapDistance(0.2)
 {
-    setRange(0.0, Decibels::decibelsToGain(10.0), 0.001);
+    setRange(0.0, juce::Decibels::decibelsToGain(10.0), 0.001);
     setSkewFactor(0.3);
-    setSliderStyle(Slider::LinearVertical);
-    setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    setSliderStyle(juce::Slider::LinearVertical);
+    setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 }
 
-VolumeSlider::VolumeSlider(const String& componentName)
-    : Slider(componentName)
+VolumeSlider::VolumeSlider(const juce::String& componentName)
+    : juce::Slider(componentName)
     , m_snapDistance(0.2)
 {
-    setRange(0.0, Decibels::decibelsToGain(10.0), 0.001);
+    setRange(0.0, juce::Decibels::decibelsToGain(10.0), 0.001);
     setSkewFactor(0.3);
-    setSliderStyle(Slider::LinearVertical);
-    setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    setSliderStyle(juce::Slider::LinearVertical);
+    setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 }
 
-void VolumeSlider::paint(Graphics& g)
+void VolumeSlider::paint(juce::Graphics& g)
 {
-    const int indent = LookAndFeel::getDefaultLookAndFeel().getSliderThumbRadius(*this);
+    const int indent = juce::LookAndFeel::getDefaultLookAndFeel().getSliderThumbRadius(*this);
     const float zeroPosition = static_cast<float>((1.0 - valueToProportionOfLength(1.0)) * (getHeight() - 2 * indent));
 
-    g.setColour(Colours::black);
+    g.setColour(juce::Colours::black);
     g.drawLine(0.0f, indent + zeroPosition, static_cast<float>(getWidth()), indent + zeroPosition);
 
-    Slider::paint(g);
+    juce::Slider::paint(g);
 }
 
-double VolumeSlider::snapValue(double attemptedValue, DragMode /*dragMode*/)
+double VolumeSlider::snapValue(double attemptedValue, juce::Slider::DragMode /*dragMode*/)
 {
     if (std::abs(1.0 - attemptedValue) < m_snapDistance)
         return 1.0;

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_core/juce_core.h"
 
 /**
         Track configuration stored for each playlist entry.
 */
 struct TrackConfig
 {
-    File file;
+    juce::File file;
 };
 
 /**
@@ -16,12 +16,12 @@ struct TrackConfig
 class PlaylistEntry
 {
 public:
-    String name;
+    juce::String name;
     double durationInSeconds{0.0};
     bool playNext{false};
     std::vector<TrackConfig> trackConfigs;
 
-    XmlElement* saveToXml(const File& projectDirectory) const;
+    juce::XmlElement* saveToXml(const juce::File& projectDirectory) const;
 
-    static PlaylistEntry createFromXml(const XmlElement& element, const File& projectDirectory);
+    static PlaylistEntry createFromXml(const juce::XmlElement& element, const juce::File& projectDirectory);
 };

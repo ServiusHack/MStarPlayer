@@ -1,13 +1,13 @@
 #include "Track.h"
-#include "../JuceLibraryCode/JuceHeader.h"
 
 #include <sstream>
 
-Track::Track(MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
+Track::Track(juce::MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
     int outputChannels, DurationChangedCallback callback, bool soloMute, DurationChangedCallback soloChangedCallback,
     float gain, bool mute, ChannelCountChangedCallback channelCountChangedCallback,
     PlayingStateChangedCallback playingStateChangedCallback, TrackConfigChangedCallback trackConfigChangedCallback,
-    GainChangedCallback gainChangedCallback, AudioThumbnailCache& audioThumbnailCache, TimeSliceThread& thread)
+    GainChangedCallback gainChangedCallback, juce::AudioThumbnailCache& audioThumbnailCache,
+    juce::TimeSliceThread& thread)
     : m_trackIndex(trackIndex)
     , m_stereo(stereo)
     , m_tracksMixer(tracksMixer)
@@ -49,14 +49,14 @@ Track::~Track()
     m_soloBusSettings.removeListener(this);
 }
 
-void Track::setName(String name)
+void Track::setName(juce::String name)
 {
     m_name = name;
     for (MixerControlableChangeListener* listener : m_listeners)
         listener->nameChanged(name);
 }
 
-String Track::getName() const
+juce::String Track::getName() const
 {
     return m_name;
 }
@@ -224,7 +224,7 @@ void Track::setFileChangedCallback(FileChangedCallback fileChangedCallback)
 void Track::loadTrackConfig(const TrackConfig& config)
 {
     m_loadingTrackConfig = true;
-    loadFileIntoTransport(File(config.file));
+    loadFileIntoTransport(juce::File(config.file));
     m_loadingTrackConfig = false;
 }
 
@@ -251,19 +251,19 @@ bool Track::getSolo() const
     return m_solo;
 }
 
-void Track::loadFileIntoTransport(const File& audioFile)
+void Track::loadFileIntoTransport(const juce::File& audioFile)
 {
     m_audioFile = audioFile;
 
-    std::unique_ptr<AudioFormatReader> reader(m_formatManager.createReaderFor(m_audioFile));
+    std::unique_ptr<juce::AudioFormatReader> reader(m_formatManager.createReaderFor(m_audioFile));
 
     m_transportSource.setSource(nullptr);
 
-    m_audioThumbnail.setSource(new FileInputSource(m_audioFile));
+    m_audioThumbnail.setSource(new juce::FileInputSource(m_audioFile));
 
     if (reader != nullptr)
     {
-        m_currentAudioFileSource = std::make_unique<AudioFormatReaderSource>(reader.release(), true);
+        m_currentAudioFileSource = std::make_unique<juce::AudioFormatReaderSource>(reader.release(), true);
         // ..and plug it into our transport source
         m_transportSource.setSource(m_currentAudioFileSource.get(),
             32768, // tells it to buffer this many samples ahead
@@ -294,7 +294,7 @@ void Track::reloadFile()
 
 void Track::unloadFile()
 {
-    loadFileIntoTransport(File());
+    loadFileIntoTransport(juce::File());
 }
 
 void Track::timerCallback()
@@ -319,38 +319,38 @@ void Track::callPositionCallbacks(double position, bool hasStreamFinished)
         callback(position, hasStreamFinished);
 }
 
-void Track::saveToXml(XmlElement* element) const
+void Track::saveToXml(juce::XmlElement* element) const
 {
     element->setAttribute("stereo", m_stereo ? "true" : "false");
     element->setAttribute("mute", m_mute ? "true" : "false");
     element->setAttribute("solo", m_solo ? "true" : "false");
     element->setAttribute("gain", m_trackGain);
 
-    XmlElement* nameXml = new XmlElement("Name");
+    juce::XmlElement* nameXml = new juce::XmlElement("Name");
     nameXml->addTextElement(getName());
     element->addChildElement(nameXml);
 
     element->addChildElement(m_remappingAudioSource.createXml());
 }
 
-void Track::restoreFromXml(const XmlElement& element)
+void Track::restoreFromXml(const juce::XmlElement& element)
 {
     m_stereo = element.getStringAttribute("stereo", "false") == "true";
     setMute(element.getStringAttribute("mute", "false") == "true");
     setSolo(element.getStringAttribute("solo", "false") == "true");
     setGain(static_cast<float>(element.getDoubleAttribute("gain", 1.0)));
 
-    XmlElement* nameXml = element.getChildByName("Name");
+    juce::XmlElement* nameXml = element.getChildByName("Name");
     if (nameXml != nullptr)
         setName(nameXml->getAllSubText().trim());
 
     // Element name is forced upon us by ChannelRemappingAudioSource from juce_ChannelRemappingAudioSource.cpp
-    XmlElement* mappingsXml = element.getChildByName("MAPPINGS");
+    juce::XmlElement* mappingsXml = element.getChildByName("MAPPINGS");
     if (mappingsXml != nullptr)
         m_remappingAudioSource.restoreFromXml(*mappingsXml);
 }
 
-AudioFormatManager& Track::getAudioFormatManager()
+juce::AudioFormatManager& Track::getAudioFormatManager()
 {
     return m_formatManager;
 }
@@ -376,13 +376,13 @@ void Track::setTrackIndex(int index)
     m_trackIndex = index;
 }
 
-AudioThumbnail& Track::getAudioThumbnail()
+juce::AudioThumbnail& Track::getAudioThumbnail()
 {
     return m_audioThumbnail;
 }
 
 void Track::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(channel, outputChannel, previousOutputChannel);
+    juce::ignoreUnused(channel, outputChannel, previousOutputChannel);
     setSolo(m_solo);
 }

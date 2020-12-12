@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "ChannelMixerControlable.h"
 #include "ChannelVolumeAudioSource.h"
@@ -12,9 +12,9 @@
 #include <memory>
 
 class SoloBusMixer
-    : public Component
+    : public juce::Component
     , public SoloBusSettingsListener
-    , public Timer
+    , public juce::Timer
 {
 public:
     SoloBusMixer(SoloBusSettings& soloBusSettings, ChannelVolumeAudioSource& channelVolumeAudioSource);
@@ -25,12 +25,12 @@ public:
     /** Returns an XML object to encapsulate the state of the volumes.
         @see restoreFromXml
     */
-    void saveToXml(XmlElement* element) const;
+    void saveToXml(juce::XmlElement* element) const;
 
     /** Restores the volumes from an XML object created by createXML().
         @see createXml
     */
-    void restoreFromXml(const XmlElement& element);
+    void restoreFromXml(const juce::XmlElement& element);
 
     // Slider for channels and players
 private:

@@ -1,5 +1,7 @@
 #include "VolumeAnalyzer.h"
 
+#include <cmath>
+
 VolumeAnalyzer::VolumeAnalyzer(float decayRate)
     : m_decayRate(decayRate)
 {

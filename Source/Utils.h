@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_core/juce_core.h"
 
 /**
         Class with some static utility functions.
@@ -10,5 +10,5 @@ class Utils
 public:
     /* Return seconds in the common mm:ss:zzz format.
      */
-    static String formatSeconds(double totalSeconds);
+    static juce::String formatSeconds(double totalSeconds);
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "ChannelMappingDialog.h"
 #include "InterPlayerCommunication.h"
@@ -15,9 +15,9 @@ class Player;
         User interface with an optional playlist and a list of tracks.
 */
 class PlaylistPlayerWindow
-    : public Component
-    , public Button::Listener
-    , public DragAndDropContainer
+    : public juce::Component
+    , public juce::Button::Listener
+    , public juce::DragAndDropContainer
 {
 public:
     /** Creates a new PlaylistPlayer.
@@ -32,9 +32,9 @@ public:
         const InterPlayerCommunication::ConfigureChannelsCallback& configureChannelsCallback,
         const InterPlayerCommunication::ConfigureMidiCallback& configureMidiCallback,
         const InterPlayerCommunication::ChangePlayerTypeCallback& changePlayerTypeCallback,
-        PlaylistModel& playlistModel, ApplicationProperties& applicationProperties);
+        PlaylistModel& playlistModel, juce::ApplicationProperties& applicationProperties);
 
-    void setColor(const Colour& color);
+    void setColor(const juce::Colour& color);
 
     void setShowPlaylist(bool showPlaylist);
 
@@ -50,40 +50,40 @@ public:
 
     // Component overrides
 public:
-    virtual void paint(Graphics&) override;
+    virtual void paint(juce::Graphics&) override;
     virtual void resized() override;
-    virtual void mouseDown(const MouseEvent& event) override;
+    virtual void mouseDown(const juce::MouseEvent& event) override;
 
     // Button::Listener
 public:
-    virtual void buttonClicked(Button* /*button*/) override;
+    virtual void buttonClicked(juce::Button* /*button*/) override;
 
 private:
-    void fileLoaded(const String& filename);
+    void fileLoaded(const juce::String& filename);
 
     Player& m_player;
     TracksContainer* m_tracksContainer;
 
-    ImageButton m_playButton;
-    ImageButton m_pauseButton;
-    ImageButton m_stopButton;
-    ImageButton m_skipBackwardButton;
-    ImageButton m_skipForwardButton;
-    ImageButton m_configureButton;
-    Label m_digitalDisplay;
+    juce::ImageButton m_playButton;
+    juce::ImageButton m_pauseButton;
+    juce::ImageButton m_stopButton;
+    juce::ImageButton m_skipBackwardButton;
+    juce::ImageButton m_skipForwardButton;
+    juce::ImageButton m_configureButton;
+    juce::Label m_digitalDisplay;
     TracksComponent m_tracks;
-    Viewport m_tracksViewport;
+    juce::Viewport m_tracksViewport;
     PlaylistTable m_tableListBox;
-    StretchableLayoutResizerBar m_resizeBar;
+    juce::StretchableLayoutResizerBar m_resizeBar;
 
-    Colour m_color;
+    juce::Colour m_color;
 
     InterPlayerCommunication::ShowEditDialogCallback m_showEditDialogCallback;
     InterPlayerCommunication::ConfigureChannelsCallback m_configureChannelsCallback;
     InterPlayerCommunication::ConfigureMidiCallback m_configureMidiCallback;
     InterPlayerCommunication::ChangePlayerTypeCallback m_changePlayerTypeCallback;
 
-    StretchableLayoutManager m_layout;
+    juce::StretchableLayoutManager m_layout;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistPlayerWindow)
 };

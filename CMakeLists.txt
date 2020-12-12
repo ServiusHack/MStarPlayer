@@ -18,8 +18,6 @@ set_property(TARGET MStarPlayer PROPERTY CXX_STANDARD 17)
 set_property(TARGET MStarPlayer PROPERTY
   MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-juce_generate_juce_header(MStarPlayer)
-
 target_sources(MStarPlayer PRIVATE
     Source/AudioConfiguration.cpp
     Source/AudioConfiguration.h
@@ -140,6 +138,8 @@ target_compile_definitions(MStarPlayer PRIVATE
     JUCE_USE_CURL=0 
     JUCE_USE_CDREADER=1
     JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:MStarPlayer,JUCE_PROJECT_NAME>"
+    JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:MStarPlayer,JUCE_VERSION>"
 )
 
 if (ASIO_PATH)

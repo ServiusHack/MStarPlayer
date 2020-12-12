@@ -1,7 +1,7 @@
 #include "Waveform.h"
 #include "DefaultLookAndFeel.h"
 
-Waveform::Waveform(Colour color)
+Waveform::Waveform(juce::Colour color)
     : m_color(color)
     , m_audioThumbnail(nullptr)
 {
@@ -9,7 +9,7 @@ Waveform::Waveform(Colour color)
     setInterceptsMouseClicks(false, false);
 }
 
-void Waveform::setAudioThumbnail(AudioThumbnail* audioThumbnail)
+void Waveform::setAudioThumbnail(juce::AudioThumbnail* audioThumbnail)
 {
     if (m_audioThumbnail == audioThumbnail)
         return;
@@ -24,13 +24,13 @@ void Waveform::setAudioThumbnail(AudioThumbnail* audioThumbnail)
     repaint();
 }
 
-void Waveform::paint(Graphics& g)
+void Waveform::paint(juce::Graphics& g)
 {
     g.setColour(m_color);
     m_audioThumbnail->drawChannels(g, getLocalBounds(), 0, m_audioThumbnail->getTotalLength(), 1.0f);
 }
 
-void Waveform::changeListenerCallback(ChangeBroadcaster* source)
+void Waveform::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     repaint();
 }

@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 // clang-format off
 #include <Windows.h>
@@ -12,7 +12,7 @@
 /**
         Show a dialog and write a crash dump when the application crashes.
 */
-class CrashDumper : public ThreadWithProgressWindow
+class CrashDumper : public juce::ThreadWithProgressWindow
 {
 public:
     CrashDumper(EXCEPTION_POINTERS* e);

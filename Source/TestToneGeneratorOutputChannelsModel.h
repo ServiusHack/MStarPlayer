@@ -1,21 +1,22 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 class TestToneGeneratorOutputChannelsModel
-    : public ListBoxModel
-    , public TextButton::Listener
+    : public juce::ListBoxModel
+    , public juce::TextButton::Listener
 {
 public:
     using ChangeCallback = std::function<void(int, bool)>;
     int getNumRows() override;
 
-    void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) override;
-    Component* refreshComponentForRow(int rowNumber, bool isRowSelected, Component* existingComponentToUpdate);
+    void paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected) override;
+    juce::Component* refreshComponentForRow(
+        int rowNumber, bool isRowSelected, juce::Component* existingComponentToUpdate);
 
     void resizeTo(int size);
 
-    void setChannelName(int pos, String name);
+    void setChannelName(int pos, juce::String name);
     ChangeCallback m_changeCallback;
 
     void selectAll();
@@ -24,11 +25,11 @@ public:
 private:
     struct Data
     {
-        String name;
+        juce::String name;
         bool enabled{false};
     };
-    Array<Data> names;
+    juce::Array<Data> names;
 
     // Inherited via Listener
-    virtual void buttonClicked(Button*) override;
+    virtual void buttonClicked(juce::Button*) override;
 };

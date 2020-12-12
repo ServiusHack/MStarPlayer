@@ -39,23 +39,23 @@ bool SoloBusSettings::isConfigured() const
     return m_leftChannel != -1 || m_rightChannel != -1;
 }
 
-void SoloBusSettings::saveToXml(XmlElement* element) const
+void SoloBusSettings::saveToXml(juce::XmlElement* element) const
 {
-    XmlElement* leftChannelElement = new XmlElement("Left");
-    leftChannelElement->addTextElement(String(m_leftChannel));
+    juce::XmlElement* leftChannelElement = new juce::XmlElement("Left");
+    leftChannelElement->addTextElement(juce::String(m_leftChannel));
     element->addChildElement(leftChannelElement);
 
-    XmlElement* rightChannelElement = new XmlElement("Right");
-    rightChannelElement->addTextElement(String(m_rightChannel));
+    juce::XmlElement* rightChannelElement = new juce::XmlElement("Right");
+    rightChannelElement->addTextElement(juce::String(m_rightChannel));
     element->addChildElement(rightChannelElement);
 }
 
-void SoloBusSettings::restoreFromXml(const XmlElement& element)
+void SoloBusSettings::restoreFromXml(const juce::XmlElement& element)
 {
-    XmlElement* leftChannelElement = element.getChildByName("Left");
+    juce::XmlElement* leftChannelElement = element.getChildByName("Left");
     m_leftChannel = leftChannelElement->getAllSubText().trim().getIntValue();
 
-    XmlElement* rightChannelElement = element.getChildByName("Right");
+    juce::XmlElement* rightChannelElement = element.getChildByName("Right");
     m_rightChannel = rightChannelElement->getAllSubText().trim().getIntValue();
 
     for (SoloBusSettingsListener* listener : m_listeners)

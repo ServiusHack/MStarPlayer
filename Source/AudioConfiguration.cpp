@@ -1,14 +1,14 @@
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "AudioConfiguration.h"
 
-class ChannelNameTextEditor : public TextEditor
+#include "juce_audio_utils/juce_audio_utils.h"
+
+class ChannelNameTextEditor : public juce::TextEditor
 {
 public:
     ChannelNameTextEditor()
         : m_row(0)
     {
-        setBoundsInset(BorderSize<int>(2));
+        setBoundsInset(juce::BorderSize<int>(2));
     }
 
     void setRow(const int newRow)
@@ -25,7 +25,7 @@ private:
     int m_row;
 };
 
-class ChannelNameComboBox : public ComboBox
+class ChannelNameComboBox : public juce::ComboBox
 {
 public:
     ChannelNameComboBox()
@@ -47,9 +47,9 @@ private:
     int m_row;
 };
 
-AudioConfigurationWindow::AudioConfigurationWindow(
-    AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
-    : DialogWindow(TRANS("Configure Audio"), Colours::lightgrey, true, true)
+AudioConfigurationWindow::AudioConfigurationWindow(juce::AudioDeviceManager& audioDeviceManager,
+    OutputChannelNames& outputChannelNames, SoloBusSettings& soloBusSettings)
+    : juce::DialogWindow(TRANS("Configure Audio"), juce::Colours::lightgrey, true, true)
 {
     setContentOwned(
         new AudioConfigurationComponent(this, audioDeviceManager, outputChannelNames, soloBusSettings), true);
@@ -63,7 +63,7 @@ void AudioConfigurationWindow::closeButtonPressed()
     setVisible(false);
 }
 
-void AudioConfigurationWindow::buttonClicked(Button*)
+void AudioConfigurationWindow::buttonClicked(juce::Button*)
 {
     closeButtonPressed();
 }
@@ -79,13 +79,14 @@ int ChannelNames::getNumRows()
 }
 
 void ChannelNames::paintRowBackground(
-    Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
+    juce::Graphics& /*g*/, int /*rowNumber*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {
 }
 
-void ChannelNames::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
+void ChannelNames::paintCell(
+    juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/)
 {
-    g.setColour(Colours::black);
+    g.setColour(juce::Colours::black);
 
     if (columnId == 1)
         g.drawText(m_outputChannelName.getDeviceOutputChannelName(rowNumber),
@@ -93,15 +94,15 @@ void ChannelNames::paintCell(Graphics& g, int rowNumber, int columnId, int width
             0,
             width - 4,
             height,
-            Justification::centredLeft,
+            juce::Justification::centredLeft,
             true);
 
-    g.setColour(Colours::black.withAlpha(0.2f));
+    g.setColour(juce::Colours::black.withAlpha(0.2f));
     g.fillRect(width - 1, 0, 1, height);
 }
 
-Component* ChannelNames::refreshComponentForCell(
-    int rowNumber, int columnId, bool /*isRowSelected*/, Component* existingComponentToUpdate)
+juce::Component* ChannelNames::refreshComponentForCell(
+    int rowNumber, int columnId, bool /*isRowSelected*/, juce::Component* existingComponentToUpdate)
 {
     if (columnId == 3)
     {
@@ -140,7 +141,7 @@ Component* ChannelNames::refreshComponentForCell(
         }
 
         editor->setRow(rowNumber);
-        editor->setText(m_outputChannelName.getInternalOutputChannelName(rowNumber), dontSendNotification);
+        editor->setText(m_outputChannelName.getInternalOutputChannelName(rowNumber), juce::dontSendNotification);
 
         return editor;
     }
@@ -151,13 +152,13 @@ Component* ChannelNames::refreshComponentForCell(
     }
 }
 
-void ChannelNames::textEditorTextChanged(TextEditor& textEditor)
+void ChannelNames::textEditorTextChanged(juce::TextEditor& textEditor)
 {
     const ChannelNameTextEditor& channelNameTextEditor = static_cast<ChannelNameTextEditor&>(textEditor);
     m_outputChannelName.setInternalOutputChannelName(channelNameTextEditor.getRow(), channelNameTextEditor.getText());
 }
 
-void ChannelNames::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void ChannelNames::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     const ChannelNameComboBox* channelNameComboBox = static_cast<ChannelNameComboBox*>(comboBoxThatHasChanged);
     const bool changed = m_outputChannelName.SetChannelPairing(
@@ -167,9 +168,10 @@ void ChannelNames::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 }
 
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent,
-    AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName, SoloBusSettings& soloBusSettings)
-    : m_tabbedComponent(std::make_unique<TabbedComponent>(TabbedButtonBar::TabsAtTop))
-    , m_closeButton(std::make_unique<TextButton>("close"))
+    juce::AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName,
+    SoloBusSettings& soloBusSettings)
+    : m_tabbedComponent(std::make_unique<juce::TabbedComponent>(juce::TabbedButtonBar::TabsAtTop))
+    , m_closeButton(std::make_unique<juce::TextButton>("close"))
     , m_channelNames(std::make_unique<ChannelNames>(outputChannelName))
     , m_outputChannelName(outputChannelName)
     , m_soloBusComponent(std::make_unique<SoloBusComponent>(outputChannelName, soloBusSettings))
@@ -178,23 +180,25 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 
     addAndMakeVisible(m_tabbedComponent.get());
 
-    AudioDeviceSelectorComponent* selector
-        = new AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
-    m_tabbedComponent->addTab(TRANS("Audio Device"), Colour(0xffffffff), selector, true);
+    juce::AudioDeviceSelectorComponent* selector
+        = new juce::AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
+    m_tabbedComponent->addTab(TRANS("Audio Device"), juce::Colour(0xffffffff), selector, true);
 
-    m_tableListBox = std::make_unique<TableListBox>();
-    m_tabbedComponent->addTab(TRANS("Channel Names"), Colour(0xffffffff), m_tableListBox.get(), false);
-    m_tableListBox->setColour(ListBox::outlineColourId, Colours::grey);
+    m_tableListBox = std::make_unique<juce::TableListBox>();
+    m_tabbedComponent->addTab(TRANS("Channel Names"), juce::Colour(0xffffffff), m_tableListBox.get(), false);
+    m_tableListBox->setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
     m_tableListBox->setOutlineThickness(1);
     m_tableListBox->setModel(m_channelNames.get());
-    m_channelNames->updateCallback = std::bind(&TableListBox::updateContent, m_tableListBox.get());
+    m_channelNames->updateCallback = std::bind(&juce::TableListBox::updateContent, m_tableListBox.get());
 
     // set the table header columns
-    m_tableListBox->getHeader().addColumn(TRANS("Device Channel"), 1, 170, 50, 400, TableHeaderComponent::defaultFlags);
-    m_tableListBox->getHeader().addColumn(TRANS("Channel Name"), 2, 170, 50, 400, TableHeaderComponent::defaultFlags);
-    m_tableListBox->getHeader().addColumn(TRANS("Mode"), 3, 120, 50, 400, TableHeaderComponent::defaultFlags);
+    m_tableListBox->getHeader().addColumn(
+        TRANS("Device Channel"), 1, 170, 50, 400, juce::TableHeaderComponent::defaultFlags);
+    m_tableListBox->getHeader().addColumn(
+        TRANS("Channel Name"), 2, 170, 50, 400, juce::TableHeaderComponent::defaultFlags);
+    m_tableListBox->getHeader().addColumn(TRANS("Mode"), 3, 120, 50, 400, juce::TableHeaderComponent::defaultFlags);
 
-    m_tabbedComponent->addTab(TRANS("Solo Bus"), Colour(0xffffffff), m_soloBusComponent.get(), true);
+    m_tabbedComponent->addTab(TRANS("Solo Bus"), juce::Colour(0xffffffff), m_soloBusComponent.get(), true);
 
     addAndMakeVisible(m_closeButton.get());
     m_closeButton->setButtonText(TRANS("Close"));
@@ -222,7 +226,7 @@ void AudioConfigurationComponent::resized()
         (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }
 
-void AudioConfigurationComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
+void AudioConfigurationComponent::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
     m_tableListBox->updateContent();
 }

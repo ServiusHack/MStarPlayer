@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "ChannelVolumeAudioSource.h"
 #include "MixerFader.h"
 

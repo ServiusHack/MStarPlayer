@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "OutputChannelNames.h"
 
@@ -10,11 +10,12 @@
     This allows the component to be shown in its own window.
 */
 class EditSettingsWindow
-    : public DialogWindow
-    , public Button::Listener
+    : public juce::DialogWindow
+    , public juce::Button::Listener
 {
 public:
-    EditSettingsWindow(ApplicationProperties& applicationProperties, const std::function<void()>& snapToGridChanged);
+    EditSettingsWindow(
+        juce::ApplicationProperties& applicationProperties, const std::function<void()>& snapToGridChanged);
 
     // DialogWindow overrides
 public:
@@ -22,7 +23,7 @@ public:
 
     // Button::Listener
 public:
-    virtual void buttonClicked(Button* buttonThatWasClicked) override;
+    virtual void buttonClicked(juce::Button* buttonThatWasClicked) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditSettingsWindow)
@@ -32,29 +33,29 @@ private:
         The actual component.
 */
 class EditSettingsComponent
-    : public Component
-    , public FilenameComponentListener
-    , public ComboBox::Listener
-    , public ToggleButton::Listener
-    , public TextEditor::Listener
+    : public juce::Component
+    , public juce::FilenameComponentListener
+    , public juce::ComboBox::Listener
+    , public juce::ToggleButton::Listener
+    , public juce::TextEditor::Listener
 {
 public:
-    EditSettingsComponent(EditSettingsWindow* parent, ApplicationProperties& applicationProperties,
+    EditSettingsComponent(EditSettingsWindow* parent, juce::ApplicationProperties& applicationProperties,
         const std::function<void()>& snapToGridChanged);
 
 private:
-    ApplicationProperties& m_applicationProperties;
-    Label m_nameLabel;
-    FilenameComponent m_audioEditorFilenameComponent;
-    Label m_languageLabel;
-    ComboBox m_languageComboBox;
-    TextButton m_closeButton;
+    juce::ApplicationProperties& m_applicationProperties;
+    juce::Label m_nameLabel;
+    juce::FilenameComponent m_audioEditorFilenameComponent;
+    juce::Label m_languageLabel;
+    juce::ComboBox m_languageComboBox;
+    juce::TextButton m_closeButton;
 
-    ToggleButton m_snapToGridButton;
-    Label m_snapToGridWidthLabel;
-    TextEditor m_snapToGridWidthEditor;
-    Label m_snapToGridHeightLabel;
-    TextEditor m_snapToGridHeightEditor;
+    juce::ToggleButton m_snapToGridButton;
+    juce::Label m_snapToGridWidthLabel;
+    juce::TextEditor m_snapToGridWidthEditor;
+    juce::Label m_snapToGridHeightLabel;
+    juce::TextEditor m_snapToGridHeightEditor;
     std::function<void()> m_snapToGridChanged;
 
     // Component overrides
@@ -63,19 +64,19 @@ public:
 
     // FilenameComponentListener
 public:
-    virtual void filenameComponentChanged(FilenameComponent* fileComponentThatHasChanged) override;
+    virtual void filenameComponentChanged(juce::FilenameComponent* fileComponentThatHasChanged) override;
 
     // ComboBox::Listener
 public:
-    virtual void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+    virtual void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
 
     // ToggleButton::Listener
 public:
-    virtual void buttonClicked(Button*) override;
+    virtual void buttonClicked(juce::Button*) override;
 
     // TextEditor::Listener
 public:
-    virtual void textEditorTextChanged(TextEditor&) override;
+    virtual void textEditorTextChanged(juce::TextEditor&) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditSettingsComponent)

@@ -1,9 +1,12 @@
 #include "PlayerEditDialog.h"
 
-PlayerEditDialogWindow::PlayerEditDialogWindow(const String& playerName, const Colour& color, const String& imagePath,
-    const StringChangedCallback& stringCallback, const PlayerEditDialogWindow::ColourChangedCallback& colourCallback,
-    const CloseCallback& closeCallback, const ImageChangedCallback& imageCallback)
-    : DialogWindow(TRANS("Rename player"), Colours::lightgrey, true, false)
+#include "juce_gui_extra/juce_gui_extra.h"
+
+PlayerEditDialogWindow::PlayerEditDialogWindow(const juce::String& playerName, const juce::Colour& color,
+    const juce::String& imagePath, const StringChangedCallback& stringCallback,
+    const PlayerEditDialogWindow::ColourChangedCallback& colourCallback, const CloseCallback& closeCallback,
+    const ImageChangedCallback& imageCallback)
+    : juce::DialogWindow(TRANS("Rename player"), juce::Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
 {
     PlayerEditDialogComponent* component = new PlayerEditDialogComponent(
@@ -19,14 +22,14 @@ void PlayerEditDialogWindow::closeButtonPressed()
     m_closeCallback();
 }
 
-String PlayerEditDialogWindow::getPlayerName() const
+juce::String PlayerEditDialogWindow::getPlayerName() const
 {
     return static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor.getText();
 }
 
-bool PlayerEditDialogWindow::keyPressed(const KeyPress& key)
+bool PlayerEditDialogWindow::keyPressed(const juce::KeyPress& key)
 {
-    if (key == KeyPress::returnKey)
+    if (key == juce::KeyPress::returnKey)
     {
         exitModalState(0);
         return true;
@@ -35,13 +38,13 @@ bool PlayerEditDialogWindow::keyPressed(const KeyPress& key)
     return false;
 }
 
-void PlayerEditDialogWindow::focusGained(FocusChangeType /*cause*/)
+void PlayerEditDialogWindow::focusGained(juce::DialogWindow::FocusChangeType /*cause*/)
 {
     static_cast<PlayerEditDialogComponent*>(getContentComponent())->m_textEditor.grabKeyboardFocus();
 }
 
-PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, const Colour& color,
-    const String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback,
+PlayerEditDialogComponent::PlayerEditDialogComponent(const juce::String& playerName, const juce::Colour& color,
+    const juce::String& imagePath, const PlayerEditDialogWindow::StringChangedCallback& stringCallback,
     const PlayerEditDialogWindow::ColourChangedCallback& colourCallback,
     const PlayerEditDialogWindow::CloseCallback& closeCallback,
     const PlayerEditDialogWindow::ImageChangedCallback& imageCallback)
@@ -50,18 +53,18 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
     , m_stringCallback(stringCallback)
     , m_closeCallback(closeCallback)
     , m_imageCallback(imageCallback)
-    , m_imageFile(imagePath == "" ? File() : File(imagePath))
+    , m_imageFile(imagePath == "" ? juce::File() : juce::File(imagePath))
     , m_label("new label", TRANS("Name of the player:"))
     , m_textEditor("new text editor")
     , m_colorButton("color")
     , m_closeButton("close")
 {
     addAndMakeVisible(m_label);
-    m_label.setFont(Font(15.00f, Font::plain));
-    m_label.setJustificationType(Justification::centredLeft);
+    m_label.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_label.setJustificationType(juce::Justification::centredLeft);
     m_label.setEditable(false, false, false);
-    m_label.setColour(TextEditor::textColourId, Colours::black);
-    m_label.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    m_label.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    m_label.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(m_textEditor);
     m_textEditor.setMultiLine(false);
@@ -82,20 +85,20 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const String& playerName, c
 
     if (imageCallback)
     {
-        m_imageSelectorButton = std::make_unique<TextButton>("imagebutton");
+        m_imageSelectorButton = std::make_unique<juce::TextButton>("imagebutton");
         addAndMakeVisible(m_imageSelectorButton.get());
         m_imageSelectorButton->setButtonText(TRANS("Choose image"));
         m_imageSelectorButton->addListener(this);
         m_imageSelectorButton->setWantsKeyboardFocus(false);
-        m_imageSelectorButton->setConnectedEdges(Button::ConnectedOnRight);
+        m_imageSelectorButton->setConnectedEdges(juce::Button::ConnectedOnRight);
 
-        m_imageResetButton = std::make_unique<TextButton>("imageresetbutton");
+        m_imageResetButton = std::make_unique<juce::TextButton>("imageresetbutton");
         addAndMakeVisible(m_imageResetButton.get());
         m_imageResetButton->setButtonText(TRANS("Reeset image"));
         m_imageResetButton->addListener(this);
         m_imageResetButton->setWantsKeyboardFocus(false);
-        m_imageResetButton->setConnectedEdges(Button::ConnectedOnLeft);
-        m_imageResetButton->setEnabled(m_imageFile != File());
+        m_imageResetButton->setConnectedEdges(juce::Button::ConnectedOnLeft);
+        m_imageResetButton->setEnabled(m_imageFile != juce::File());
     }
 
     addAndMakeVisible(m_closeButton);
@@ -133,13 +136,13 @@ void PlayerEditDialogComponent::resized()
         (getWidth() - buttonWidth) / 2, getHeight() - rowIndex * (buttonHeight - padding), buttonWidth, buttonHeight);
 }
 
-void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
+void PlayerEditDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked)
 {
     if (buttonThatWasClicked == &m_closeButton)
         m_closeCallback();
     else if (buttonThatWasClicked == m_imageSelectorButton.get())
     {
-        FileChooser myChooser("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
+        juce::FileChooser myChooser("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
 
         if (!myChooser.browseForFileToOpen())
             return;
@@ -147,36 +150,36 @@ void PlayerEditDialogComponent::buttonClicked(Button* buttonThatWasClicked)
         m_imageFile = myChooser.getResult();
         m_imageCallback(m_imageFile);
 
-        m_imageResetButton->setEnabled(m_imageFile != File());
+        m_imageResetButton->setEnabled(m_imageFile != juce::File());
     }
     else if (buttonThatWasClicked == m_imageResetButton.get())
     {
-        m_imageFile = File();
-        m_imageCallback(File());
+        m_imageFile = juce::File();
+        m_imageCallback(juce::File());
 
-        m_imageResetButton->setEnabled(m_imageFile != File());
+        m_imageResetButton->setEnabled(m_imageFile != juce::File());
     }
     else if (buttonThatWasClicked == &m_colorButton)
     {
-        ColourSelector* selector = new ColourSelector(ColourSelector::showColourspace);
+        juce::ColourSelector* selector = new juce::ColourSelector(juce::ColourSelector::showColourspace);
         selector->setName(TRANS("color chooser"));
         selector->setCurrentColour(m_color);
-        selector->setColour(ColourSelector::backgroundColourId, Colours::transparentBlack);
+        selector->setColour(juce::ColourSelector::backgroundColourId, juce::Colours::transparentBlack);
         selector->setSize(300, 400);
         selector->addChangeListener(this);
 
-        CallOutBox::launchAsynchronously(selector, m_colorButton.getScreenBounds(), nullptr);
+        juce::CallOutBox::launchAsynchronously(selector, m_colorButton.getScreenBounds(), nullptr);
     }
 }
 
-void PlayerEditDialogComponent::changeListenerCallback(ChangeBroadcaster* source)
+void PlayerEditDialogComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    ColourSelector* selector = static_cast<ColourSelector*>(source);
+    juce::ColourSelector* selector = static_cast<juce::ColourSelector*>(source);
     m_color = selector->getCurrentColour();
     m_colorCallback(m_color);
 }
 
-void PlayerEditDialogComponent::textEditorTextChanged(TextEditor&)
+void PlayerEditDialogComponent::textEditorTextChanged(juce::TextEditor&)
 {
     m_stringCallback(m_textEditor.getText());
 }

@@ -3,7 +3,7 @@
 #include <algorithm>
 
 ChannelRemappingAudioSourceWithVolume::ChannelRemappingAudioSourceWithVolume(
-    AudioSource* const source_, SoloBusSettings& soloBusSettings, const bool deleteSourceWhenDeleted)
+    juce::AudioSource* const source_, SoloBusSettings& soloBusSettings, const bool deleteSourceWhenDeleted)
     : source(source_, deleteSourceWhenDeleted)
     , requiredNumberOfChannels(2)
     , m_decayRate(0)
@@ -21,7 +21,7 @@ ChannelRemappingAudioSourceWithVolume::~ChannelRemappingAudioSourceWithVolume()
 
 void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int requiredNumberOfChannels_)
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
     requiredNumberOfChannels = requiredNumberOfChannels_;
 
     if (requiredNumberOfChannels > m_volumes.size())
@@ -31,14 +31,14 @@ void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int req
 
 void ChannelRemappingAudioSourceWithVolume::clearAllMappings()
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
 
     remappedOutputs.clear();
 }
 
 int ChannelRemappingAudioSourceWithVolume::getRemappedOutputChannel(const int outputChannelIndex) const
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
 
     if (outputChannelIndex >= 0 && outputChannelIndex < remappedOutputs.size())
         return remappedOutputs[outputChannelIndex].first;
@@ -50,7 +50,7 @@ void ChannelRemappingAudioSourceWithVolume::prepareToPlay(int samplesPerBlockExp
 {
     source->prepareToPlay(samplesPerBlockExpected, sampleRate);
 
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
     m_decayRate = static_cast<float>(sampleRate / 10);
     auto numberOfChannels = m_volumes.size();
     m_volumes.clear();
@@ -64,9 +64,9 @@ void ChannelRemappingAudioSourceWithVolume::releaseResources()
     source->releaseResources();
 }
 
-void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
+void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
 
     buffer.setSize(requiredNumberOfChannels, bufferToFill.numSamples, false, false, true);
 
@@ -117,12 +117,12 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const AudioSourceC
     }
 }
 
-XmlElement* ChannelRemappingAudioSourceWithVolume::createXml() const
+juce::XmlElement* ChannelRemappingAudioSourceWithVolume::createXml() const
 {
-    XmlElement* e = new XmlElement("MAPPINGS");
-    String outs;
+    juce::XmlElement* e = new juce::XmlElement("MAPPINGS");
+    juce::String outs;
 
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
 
     for (int i = 0; i < remappedOutputs.size(); ++i)
         outs << remappedOutputs[i].first << ' ';
@@ -135,15 +135,15 @@ XmlElement* ChannelRemappingAudioSourceWithVolume::createXml() const
     return e;
 }
 
-void ChannelRemappingAudioSourceWithVolume::restoreFromXml(const XmlElement& e)
+void ChannelRemappingAudioSourceWithVolume::restoreFromXml(const juce::XmlElement& e)
 {
     if (e.hasTagName("MAPPINGS"))
     {
-        const ScopedLock sl(lock);
+        const juce::ScopedLock sl(lock);
 
         clearAllMappings();
 
-        StringArray outs;
+        juce::StringArray outs;
         outs.addTokens(e.getStringAttribute("outputs"), false);
 
         for (int i = 0; i < outs.size(); ++i)
@@ -156,7 +156,7 @@ void ChannelRemappingAudioSourceWithVolume::restoreFromXml(const XmlElement& e)
 
 float ChannelRemappingAudioSourceWithVolume::getVolume() const
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
     float maxVolume = 0;
     for (auto&& volume : m_volumes)
         maxVolume = std::max(maxVolume, volume.getVolume());
@@ -171,7 +171,7 @@ double ChannelRemappingAudioSourceWithVolume::getSampleRate() const
 
 void ChannelRemappingAudioSourceWithVolume::setOutputChannelMapping(int sourceChannelIndex, int destChannelIndex)
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
     setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex, false);
 }
 
@@ -189,7 +189,7 @@ void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(
 
 void ChannelRemappingAudioSourceWithVolume::setSolo(bool solo)
 {
-    const ScopedLock sl(lock);
+    const juce::ScopedLock sl(lock);
 
     m_solo = solo;
     if (solo)
@@ -207,8 +207,8 @@ void ChannelRemappingAudioSourceWithVolume::setSolo(bool solo)
 void ChannelRemappingAudioSourceWithVolume::soloBusChannelChanged(
     SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(previousOutputChannel);
-    const ScopedLock sl(lock);
+    juce::ignoreUnused(previousOutputChannel);
+    const juce::ScopedLock sl(lock);
 
     switch (channel)
     {

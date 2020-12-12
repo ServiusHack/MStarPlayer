@@ -1,23 +1,24 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_utils/juce_audio_utils.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 /**
         Draw a waveform.
 */
 class Waveform
-    : public Component
-    , public ChangeListener
+    : public juce::Component
+    , public juce::ChangeListener
 {
 public:
-    Waveform(Colour color = Colours::black);
+    Waveform(juce::Colour color = juce::Colours::black);
 
-    void setAudioThumbnail(AudioThumbnail* audioThumbnail);
+    void setAudioThumbnail(juce::AudioThumbnail* audioThumbnail);
 
-    virtual void paint(Graphics& g) override;
+    virtual void paint(juce::Graphics& g) override;
 
 private:
-    void changeListenerCallback(ChangeBroadcaster* source) override;
-    Colour m_color;
-    AudioThumbnail* m_audioThumbnail;
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+    juce::Colour m_color;
+    juce::AudioThumbnail* m_audioThumbnail;
 };

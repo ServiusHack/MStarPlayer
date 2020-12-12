@@ -1,11 +1,10 @@
 #include "TracksComponent.h"
-#include "../JuceLibraryCode/JuceHeader.h"
 
 namespace
 {
-bool isAudioFile(const String& filePath)
+bool isAudioFile(const juce::String& filePath)
 {
-    AudioFormatManager formatManager;
+    juce::AudioFormatManager formatManager;
     formatManager.registerBasicFormats();
 
     for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
@@ -23,7 +22,7 @@ bool isAudioFile(const String& filePath)
 }
 }
 
-TracksComponent::TracksComponent(TracksContainer& container, ApplicationProperties& applicationProperties,
+TracksComponent::TracksComponent(TracksContainer& container, juce::ApplicationProperties& applicationProperties,
     TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback,
     FileLoadedCallback fileLoadedCallback)
     : m_container(container)
@@ -57,12 +56,12 @@ void TracksComponent::resized()
     setBounds(getX(), getY(), getWidth(), y);
 }
 
-bool TracksComponent::isInterestedInFileDrag(const StringArray& /*files*/)
+bool TracksComponent::isInterestedInFileDrag(const juce::StringArray& /*files*/)
 {
     return true;
 }
 
-void TracksComponent::filesDropped(const StringArray& files, int x, int y)
+void TracksComponent::filesDropped(const juce::StringArray& files, int x, int y)
 {
     Component* component = getComponentAt(x, y);
 
@@ -86,7 +85,7 @@ void TracksComponent::filesDropped(const StringArray& files, int x, int y)
         if (fileIt == files.end())
             break;
 
-        (*trackUiIt)->loadFile(File(*fileIt));
+        (*trackUiIt)->loadFile(juce::File(*fileIt));
     }
 }
 

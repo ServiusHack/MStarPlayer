@@ -1,6 +1,6 @@
 #include "ResizingComponent.h"
 
-void ResizingComponent::childBoundsChanged(Component* /*child*/)
+void ResizingComponent::childBoundsChanged(juce::Component* /*child*/)
 {
     int maxWidth = 0;
     int maxHeight = 0;

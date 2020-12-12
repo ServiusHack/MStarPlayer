@@ -2,7 +2,7 @@
 #include <memory>
 #include <stdint.h>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "BinaryData.h"
 
 #include "JinglePlayerWindow.h"
 #include "Player.h"
@@ -11,9 +11,9 @@ using namespace InterPlayerCommunication;
 
 namespace
 {
-bool isAudioFile(const String& filePath)
+bool isAudioFile(const juce::String& filePath)
 {
-    AudioFormatManager formatManager;
+    juce::AudioFormatManager formatManager;
     formatManager.registerBasicFormats();
 
     for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
@@ -30,7 +30,7 @@ bool isAudioFile(const String& filePath)
     return false;
 }
 
-bool isImageFile(const String& filePath)
+bool isImageFile(const juce::String& filePath)
 {
     return filePath.endsWithIgnoreCase(".jpg") || filePath.endsWithIgnoreCase(".png");
 }
@@ -44,8 +44,8 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     SetUserImageCallback setUserImageCallback)
     : m_player(player)
     , m_tracksContainer(tracksContainer)
-    , m_playImage(Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
-    , m_stopImage(Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
+    , m_playImage(juce::Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
+    , m_stopImage(juce::Drawable::createFromImageData(BinaryData::stop_svg, BinaryData::stop_svgSize))
     , m_showRemainingTime(false)
     , m_blink(false)
     , m_paintColor(m_color)
@@ -57,10 +57,10 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     , m_totalLength(0)
     , m_progress(0)
     , m_progressBar(m_progress)
-    , m_playButton("Play", DrawableButton::ImageFitted)
+    , m_playButton("Play", juce::DrawableButton::ImageFitted)
     , m_configureButton("Configure")
     , m_fileNameLabel("filename label")
-    , m_waveform(Colour(0x55000000))
+    , m_waveform(juce::Colour(0x55000000))
 {
     m_formatManager.registerBasicFormats();
 
@@ -70,13 +70,13 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_progressBar.setPercentageDisplay(false);
     m_progressBar.setTextToDisplay("00:00:000");
     m_progressBar.addMouseListener(this, false);
-    m_progressBar.setColour(ProgressBar::backgroundColourId, Colours::transparentBlack);
+    m_progressBar.setColour(juce::ProgressBar::backgroundColourId, juce::Colours::transparentBlack);
     addAndMakeVisible(m_progressBar);
 
     // total duration text
     addAndMakeVisible(m_totalDurationText);
-    m_totalDurationText.setJustificationType(Justification::centredRight);
-    m_totalDurationText.setText("00:00:000", sendNotification);
+    m_totalDurationText.setJustificationType(juce::Justification::centredRight);
+    m_totalDurationText.setText("00:00:000", juce::sendNotification);
 
     // play button
     addAndMakeVisible(m_playButton);
@@ -85,26 +85,26 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_playButton.setEdgeIndent(30);
 
     // configuration button
-    Image normalImage = ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
+    juce::Image normalImage = juce::ImageFileFormat::loadFrom(BinaryData::configure_png, BinaryData::configure_pngSize);
     m_configureButton.setImages(true,
         true,
         true,
         normalImage,
         0.7f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::transparentBlack,
+        juce::Colours::transparentBlack,
         normalImage,
         1.0f,
-        Colours::pink.withAlpha(0.8f),
+        juce::Colours::pink.withAlpha(0.8f),
         0.0f);
     addAndMakeVisible(m_configureButton);
     m_configureButton.addMouseListener(this, false);
 
     // filename label
-    m_fileNameLabel.setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
-    m_fileNameLabel.setJustificationType(Justification::centred);
+    m_fileNameLabel.setColour(juce::Label::textColourId, m_paintColor.contrasting(1.0f));
+    m_fileNameLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(m_fileNameLabel);
 
     Track::PositionCallback positionCallback = [&](double position, bool finished) {
@@ -113,7 +113,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
         m_progress = finished ? 0.0 : position / m_totalLength;
 
         m_progressBar.setTextToDisplay(Utils::formatSeconds(m_showRemainingTime ? remainingTime : position));
-        m_totalDurationText.setText(Utils::formatSeconds(m_totalLength), sendNotification);
+        m_totalDurationText.setText(Utils::formatSeconds(m_totalLength), juce::sendNotification);
 
         if (remainingTime < 10)
         {
@@ -133,7 +133,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_tracksContainer->addPositionCallback(positionCallback);
 
     TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
-        m_totalDurationText.setText(Utils::formatSeconds(duration), sendNotification);
+        m_totalDurationText.setText(Utils::formatSeconds(duration), juce::sendNotification);
         m_totalLength = duration;
     };
     m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
@@ -147,17 +147,17 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
 }
 
-void JinglePlayerWindow::changeListenerCallback(ChangeBroadcaster* /*source*/)
+void JinglePlayerWindow::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
     repaint();
 }
 
-bool JinglePlayerWindow::isInterestedInFileDrag(const StringArray& /*files*/)
+bool JinglePlayerWindow::isInterestedInFileDrag(const juce::StringArray& /*files*/)
 {
     return true;
 }
 
-void JinglePlayerWindow::filesDropped(const StringArray& files, int /*x*/, int /*y*/)
+void JinglePlayerWindow::filesDropped(const juce::StringArray& files, int /*x*/, int /*y*/)
 {
     auto fileIt = files.begin();
 
@@ -206,19 +206,19 @@ void JinglePlayerWindow::resized()
         ProgressBarHeight);
 }
 
-void JinglePlayerWindow::paint(Graphics& g)
+void JinglePlayerWindow::paint(juce::Graphics& g)
 {
     g.fillAll(m_paintColor);
 
     if (m_userImage)
-        m_userImage->drawWithin(g, getLocalBounds().toFloat(), RectanglePlacement::centred, 1.0f);
+        m_userImage->drawWithin(g, getLocalBounds().toFloat(), juce::RectanglePlacement::centred, 1.0f);
 
     m_waveform.setAudioThumbnail(&(*m_tracksContainer)[0].getAudioThumbnail());
 
-    Component::paint(g);
+    juce::Component::paint(g);
 }
 
-void JinglePlayerWindow::mouseDown(const MouseEvent& event)
+void JinglePlayerWindow::mouseDown(const juce::MouseEvent& event)
 {
     if (event.eventComponent == &m_progressBar)
     {
@@ -226,7 +226,7 @@ void JinglePlayerWindow::mouseDown(const MouseEvent& event)
     }
     if (event.eventComponent == &m_configureButton)
     {
-        PopupMenu m;
+        juce::PopupMenu m;
         m.addItem(1, TRANS("load file"));
         m.addItem(2, TRANS("configure channels"));
         m.addItem(3, TRANS("configure appearance"));
@@ -267,17 +267,18 @@ void JinglePlayerWindow::mouseDown(const MouseEvent& event)
 
 void JinglePlayerWindow::loadFile()
 {
-    FileChooser myChooser(
-        TRANS("Please select the audio file you want to load ..."), File(), m_formatManager.getWildcardForAllFormats());
+    juce::FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
+        juce::File(),
+        m_formatManager.getWildcardForAllFormats());
 
     if (!myChooser.browseForFileToOpen())
         return;
 
-    File audioFile = File(myChooser.getResult());
+    juce::File audioFile = juce::File(myChooser.getResult());
     (*m_tracksContainer)[0].loadFileIntoTransport(audioFile);
 }
 
-void JinglePlayerWindow::buttonClicked(Button* /*button*/)
+void JinglePlayerWindow::buttonClicked(juce::Button* /*button*/)
 {
     if (m_tracksContainer->isPlaying())
     {
@@ -295,21 +296,21 @@ void JinglePlayerWindow::updatePointColor()
 {
     m_paintColor = m_blink ? m_color.contrasting(0.5f) : m_color;
 
-    m_fileNameLabel.setColour(Label::textColourId, m_paintColor.contrasting(1.0f));
+    m_fileNameLabel.setColour(juce::Label::textColourId, m_paintColor.contrasting(1.0f));
 }
 
-void JinglePlayerWindow::setColor(const Colour& color)
+void JinglePlayerWindow::setColor(const juce::Colour& color)
 {
     m_color = color;
     updatePointColor();
     repaint();
 }
 
-void JinglePlayerWindow::setUserImage(const File& file)
+void JinglePlayerWindow::setUserImage(const juce::File& file)
 {
-    if (file == File())
+    if (file == juce::File())
         m_userImage.reset();
     else
-        m_userImage = Drawable::createFromImageFile(file);
+        m_userImage = juce::Drawable::createFromImageFile(file);
     repaint();
 }

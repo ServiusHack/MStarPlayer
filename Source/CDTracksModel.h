@@ -1,27 +1,30 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_utils/juce_audio_utils.h"
+#include "juce_events/juce_events.h"
+#include "juce_gui_basics/juce_gui_basics.h"
 
 /**
     Table model for CD tracks.
 */
 class CDTracksModel
-    : public TableListBoxModel
-    , public ChangeBroadcaster
+    : public juce::TableListBoxModel
+    , public juce::ChangeBroadcaster
 {
 public:
     typedef std::function<void()> ReloadedCallback;
-    CDTracksModel(AudioCDReader& reader);
+    CDTracksModel(juce::AudioCDReader& reader);
 
     // TableListBoxModel
 public:
     virtual int getNumRows() override;
-    virtual void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
+    virtual void paintRowBackground(
+        juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override;
     virtual void paintCell(
-        Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
+        juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override;
 
 private:
-    AudioCDReader& m_reader;
+    juce::AudioCDReader& m_reader;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CDTracksModel)
 };

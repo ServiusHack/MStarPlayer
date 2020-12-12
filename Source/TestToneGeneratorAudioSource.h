@@ -2,12 +2,12 @@
 
 #include <random>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_basics/juce_audio_basics.h"
 
 /**
         Audio source which generates test tones on selected output channels.
 */
-class TestToneGeneratorAudioSource : public AudioSource
+class TestToneGeneratorAudioSource : public juce::AudioSource
 {
 public:
     enum class Mode
@@ -30,15 +30,15 @@ public:
 public:
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     virtual void releaseResources() override;
-    virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    virtual void getNextAudioBlock(const juce::AudioSourceChannelInfo&) override;
 
 private:
-    CriticalSection m_lock;
+    juce::CriticalSection m_lock;
     int m_samplesPerBlockExpected;
     double m_sampleRate;
     double currentAngle{0.0};
     double angleDelta;
-    Array<bool> channels;
+    juce::Array<bool> channels;
     std::vector<float> prepared;
     std::uniform_real_distribution<float> dis;
     std::mt19937 gen;

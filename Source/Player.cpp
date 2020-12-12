@@ -6,8 +6,8 @@
 using namespace InterPlayerCommunication;
 
 Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
-    PlayerType type, ApplicationProperties& applicationProperties, AudioThumbnailCache& audioThumbnailCache,
-    TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
+    PlayerType type, juce::ApplicationProperties& applicationProperties, juce::AudioThumbnailCache& audioThumbnailCache,
+    juce::TimeSliceThread& thread, MTCSender& mtcSender, PluginLoader& pluginLoader, float gain, bool solo, bool mute)
     : m_mixer(mixer)
     , m_outputChannelNames(outputChannelNames)
     , m_soloBusSettings(soloBusSettings)
@@ -64,7 +64,7 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
     };
     m_tracksContainer.addLongestDurationChangedCallback(longestDurationCallback);
 
-    playlistModel.setNameChangedCallback([&](int rowNumber, const String& name) {
+    playlistModel.setNameChangedCallback([&](int rowNumber, const juce::String& name) {
         m_pluginLoader.playlistEntryNameChanged(getName().toRawUTF8(), rowNumber, name.toRawUTF8());
     });
 }
@@ -168,12 +168,12 @@ float Player::getVolume() const
     return maxVolume;
 }
 
-String Player::getName() const
+juce::String Player::getName() const
 {
     return Component::getName();
 }
 
-void Player::setName(const String& newName)
+void Player::setName(const juce::String& newName)
 {
     Component::setName(newName);
     std::for_each(m_listeners.begin(),
@@ -191,7 +191,7 @@ void Player::setOutputChannels(int outputChannels)
     m_tracksContainer.setOutputChannels(outputChannels);
 }
 
-void Player::setColor(const Colour& color)
+void Player::setColor(const juce::Colour& color)
 {
     m_color = color;
 
@@ -200,15 +200,16 @@ void Player::setColor(const Colour& color)
     m_jinglePlayer.setColor(m_color);
 }
 
-void Player::setUserImage(const File& file)
+void Player::setUserImage(const juce::File& file)
 {
     m_userImage = file;
     m_jinglePlayer.setUserImage(file);
 }
 
-XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const
+juce::XmlElement* Player::saveToXml(
+    const juce::File& projectDirectory, MyMultiDocumentPanel::LayoutMode layoutMode) const
 {
-    XmlElement* element = new XmlElement("Player");
+    juce::XmlElement* element = new juce::XmlElement("Player");
     switch (m_type)
     {
     case PlayerType::Jingle:
@@ -226,7 +227,7 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
     element->setAttribute("mute", m_mute);
     element->setAttribute("solo", m_solo);
     element->setAttribute("color", m_color.toString());
-    if (m_userImage != File())
+    if (m_userImage != juce::File())
     {
         if (m_userImage.isAChildOf(projectDirectory))
             element->setAttribute("userImage", m_userImage.getRelativePathFrom(projectDirectory));
@@ -238,8 +239,8 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
     {
     case MyMultiDocumentPanel::FloatingWindows:
     {
-        Rectangle<int> parentBounds = getParentComponent()->getBounds();
-        XmlElement* boundsXml = new XmlElement("Bounds");
+        juce::Rectangle<int> parentBounds = getParentComponent()->getBounds();
+        juce::XmlElement* boundsXml = new juce::XmlElement("Bounds");
         boundsXml->setAttribute("x", parentBounds.getX());
         boundsXml->setAttribute("y", parentBounds.getY());
         boundsXml->setAttribute("width", parentBounds.getWidth());
@@ -249,25 +250,25 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
     break;
     case MyMultiDocumentPanel::MaximisedWindowsWithTabs:
     {
-        XmlElement* mdiDocumentPosXml = new XmlElement("MdiDocumentPos");
+        juce::XmlElement* mdiDocumentPosXml = new juce::XmlElement("MdiDocumentPos");
         mdiDocumentPosXml->addTextElement(getProperties()["mdiDocumentPos_"]);
         element->addChildElement(mdiDocumentPosXml);
     }
     break;
     }
 
-    XmlElement* viewXml = new XmlElement("View");
+    juce::XmlElement* viewXml = new juce::XmlElement("View");
     viewXml->setAttribute("playlistResizerPosition", m_playlistPlayer.getResizerBarPosition());
     element->addChildElement(viewXml);
 
-    XmlElement* nameXml = new XmlElement("Name");
+    juce::XmlElement* nameXml = new juce::XmlElement("Name");
     nameXml->addTextElement(Component::getName());
     element->addChildElement(nameXml);
 
-    XmlElement* tracksXml = new XmlElement("Tracks");
+    juce::XmlElement* tracksXml = new juce::XmlElement("Tracks");
     for (size_t i = 0; i < m_tracksContainer.size(); ++i)
     {
-        XmlElement* trackElement = new XmlElement("Track");
+        juce::XmlElement* trackElement = new juce::XmlElement("Track");
         m_tracksContainer[i].saveToXml(trackElement);
         tracksXml->addChildElement(trackElement);
     }
@@ -278,47 +279,47 @@ XmlElement* Player::saveToXml(const File& projectDirectory, MyMultiDocumentPanel
     return element;
 }
 
-void Player::restoreFromXml(const XmlElement& element, const File& projectDirectory)
+void Player::restoreFromXml(const juce::XmlElement& element, const juce::File& projectDirectory)
 {
-    setColor(Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
+    setColor(juce::Colour::fromString(element.getStringAttribute("color", "0xffffffff")));
     if (element.hasAttribute("userImage"))
         setUserImage(projectDirectory.getChildFile(element.getStringAttribute("userImage")));
     repaint();
 
     m_tracksContainer.setMtcEnabled(element.getBoolAttribute("mtcEnabled"));
 
-    XmlElement* boundsXml = element.getChildByName("Bounds");
+    juce::XmlElement* boundsXml = element.getChildByName("Bounds");
 
     if (boundsXml)
     {
-        String x = boundsXml->getStringAttribute("x", "0");
-        String y = boundsXml->getStringAttribute("y", "0");
-        String width = boundsXml->getStringAttribute("width", "150");
-        String height = boundsXml->getStringAttribute("height", "150");
+        juce::String x = boundsXml->getStringAttribute("x", "0");
+        juce::String y = boundsXml->getStringAttribute("y", "0");
+        juce::String width = boundsXml->getStringAttribute("width", "150");
+        juce::String height = boundsXml->getStringAttribute("height", "150");
         getParentComponent()->setBounds(x.getIntValue(), y.getIntValue(), width.getIntValue(), height.getIntValue());
     }
     else
     {
-        XmlElement* mdiDocumentPosXml = element.getChildByName("MdiDocumentPos");
+        juce::XmlElement* mdiDocumentPosXml = element.getChildByName("MdiDocumentPos");
         if (mdiDocumentPosXml->getNumChildElements() > 0 && mdiDocumentPosXml->getFirstChildElement()->isTextElement())
         {
             getProperties().set("mdiDocumentPos_", mdiDocumentPosXml->getFirstChildElement()->getText());
         }
     }
 
-    XmlElement* viewXml = element.getChildByName("View");
-    String playlistResizerPosition = viewXml->getStringAttribute("playlistResizerPosition", "100");
+    juce::XmlElement* viewXml = element.getChildByName("View");
+    juce::String playlistResizerPosition = viewXml->getStringAttribute("playlistResizerPosition", "100");
     m_playlistPlayer.setResizerBarPosition(playlistResizerPosition.getIntValue());
 
-    XmlElement* nameXml = element.getChildByName("Name");
+    juce::XmlElement* nameXml = element.getChildByName("Name");
     setName(nameXml->getAllSubText().trim());
 
-    XmlElement* tracksXml = element.getChildByName("Tracks");
+    juce::XmlElement* tracksXml = element.getChildByName("Tracks");
     m_tracksContainer.clear();
     for (int i = 0; i < tracksXml->getNumChildElements(); ++i)
         m_tracksContainer.addTrack(false, tracksXml->getChildElement(i));
 
-    XmlElement* playlistXml = element.getChildByName("Playlist");
+    juce::XmlElement* playlistXml = element.getChildByName("Playlist");
     playlistModel.restoreFromXml(*playlistXml, projectDirectory);
 }
 
@@ -429,7 +430,7 @@ void Player::playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, 
 {
     currentPlaylistEntry = index;
     m_tracksContainer.setTrackConfigs(trackConfigs);
-    const String playlistEntryName = playlistModel.getTrackName(index);
+    const juce::String playlistEntryName = playlistModel.getTrackName(index);
     const double duration = playlistModel.getTrackDuration(index);
     m_pluginLoader.playlistEntrySelected(getName().toRawUTF8(), index, playlistEntryName.toRawUTF8(), duration);
     if (play)
@@ -441,9 +442,9 @@ void Player::gainChangedCallback(const char* track_name, float gain)
     m_pluginLoader.trackVolumeChanged(getName().toRawUTF8(), track_name, gain);
 };
 
-bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
+bool Player::keyPressed(const juce::KeyPress& key, juce::Component* /*originatingComponent*/)
 {
-    if (key == KeyPress::spaceKey)
+    if (key == juce::KeyPress::spaceKey)
     {
         if (m_tracksContainer.isPlaying())
             stop();
@@ -457,7 +458,7 @@ bool Player::keyPressed(const KeyPress& key, Component* /*originatingComponent*/
 
 void Player::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(channel, outputChannel, previousOutputChannel);
+    juce::ignoreUnused(channel, outputChannel, previousOutputChannel);
     updateGain();
 }
 

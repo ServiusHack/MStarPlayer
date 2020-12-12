@@ -1,5 +1,7 @@
 #include "ChannelMixerFader.h"
 
+#include "juce_gui_basics/juce_gui_basics.h"
+
 #include "ChannelMixerControlable.h"
 
 ChannelMixerFader::ChannelMixerFader(
@@ -7,5 +9,5 @@ ChannelMixerFader::ChannelMixerFader(
     : MixerFader(
         new ChannelMixerControlable(channel, audioSource), std::vector<MixerControlable*>(), false, resizeCallback)
 {
-    m_volumeSlider->setColour(Slider::thumbColourId, Colour(0xffaf0000));
+    m_volumeSlider->setColour(juce::Slider::thumbColourId, juce::Colour(0xffaf0000));
 }

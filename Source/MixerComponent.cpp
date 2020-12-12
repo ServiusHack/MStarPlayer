@@ -1,10 +1,9 @@
-#include "../JuceLibraryCode/JuceHeader.h"
-
-#include "ChannelMixerFader.h"
 #include "MixerComponent.h"
 
-MixerComponent::MixerComponent(
-    AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings)
+#include "ChannelMixerFader.h"
+
+MixerComponent::MixerComponent(juce::AudioDeviceManager* audioDeviceManager, OutputChannelNames* outputChannelNames,
+    SoloBusSettings& soloBusSettings)
     : m_mixerAudioSource()
     , m_channelVolumeAudioSource(&m_mixerAudioSource)
     , m_audioDeviceManager(audioDeviceManager)
@@ -60,7 +59,7 @@ void MixerComponent::unregisterPlayer(SubchannelPlayer* player)
     resized();
 }
 
-void MixerComponent::updatePlayerColor(SubchannelPlayer* player, Colour color)
+void MixerComponent::updatePlayerColor(SubchannelPlayer* player, juce::Colour color)
 {
     auto it = std::find_if(m_playerSliders.begin(),
         m_playerSliders.end(),
@@ -89,7 +88,7 @@ void MixerComponent::resized()
     auto updateBounds = [&x, sliderHeight](const auto& fader) {
         if (!fader->isVisible())
             return;
-        Rectangle<int> bounds = fader->getBounds();
+        juce::Rectangle<int> bounds = fader->getBounds();
         bounds.setX(x);
         bounds.setHeight(sliderHeight);
         fader->setBounds(bounds);
@@ -105,7 +104,7 @@ void MixerComponent::resized()
     m_sliderScrollBar.setCurrentRange(m_slidersContainer.getX(), getWidth());
 
     {
-        Rectangle<int> containerBounds = m_slidersContainer.getBounds();
+        juce::Rectangle<int> containerBounds = m_slidersContainer.getBounds();
         containerBounds.setWidth(x);
         containerBounds.setHeight(sliderHeight);
         m_slidersContainer.setBounds(containerBounds);
@@ -129,7 +128,7 @@ void MixerComponent::addChannelSlider()
     m_channelSliders.push_back(std::move(slider));
 }
 
-void MixerComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
+void MixerComponent::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
     size_t numberOfChannels = m_outputChannelNames->getNumberOfChannels();
 
@@ -157,7 +156,7 @@ void MixerComponent::changeListenerCallback(ChangeBroadcaster* /*source*/)
     resized();
 }
 
-MixerAudioSource& MixerComponent::getMixerAudioSource()
+juce::MixerAudioSource& MixerComponent::getMixerAudioSource()
 {
     return m_mixerAudioSource;
 }
@@ -167,23 +166,23 @@ ChannelVolumeAudioSource& MixerComponent::getChannelVolumeAudioSource()
     return m_channelVolumeAudioSource;
 }
 
-void MixerComponent::saveToXml(XmlElement* element) const
+void MixerComponent::saveToXml(juce::XmlElement* element) const
 {
     for (int i = 0; i < m_channelVolumeAudioSource.channelCount(); i++)
     {
-        XmlElement* sliderXml = new XmlElement("ChannelSlider");
+        juce::XmlElement* sliderXml = new juce::XmlElement("ChannelSlider");
         sliderXml->setAttribute("solo", m_channelVolumeAudioSource.getChannelSolo(i) ? "true" : "false");
         sliderXml->setAttribute("mute", m_channelVolumeAudioSource.getChannelMute(i) ? "true" : "false");
-        sliderXml->addTextElement(String(m_channelVolumeAudioSource.getChannelVolume(i)));
+        sliderXml->addTextElement(juce::String(m_channelVolumeAudioSource.getChannelVolume(i)));
         element->addChildElement(sliderXml);
     }
 }
 
-void MixerComponent::restoreFromXml(const XmlElement& element)
+void MixerComponent::restoreFromXml(const juce::XmlElement& element)
 {
     for (size_t i = 0; i < m_channelSliders.size(); i++)
     {
-        String value = element.getChildElement(i)->getAllSubText().trim();
+        juce::String value = element.getChildElement(i)->getAllSubText().trim();
         m_channelSliders[i]->setValue(value.getFloatValue());
         m_channelSliders[i]->setSolo(element.getChildElement(i)->getBoolAttribute("solo"));
         m_channelSliders[i]->setMute(element.getChildElement(i)->getBoolAttribute("mute"));
@@ -191,7 +190,7 @@ void MixerComponent::restoreFromXml(const XmlElement& element)
 }
 void MixerComponent::outputChannelNamesReset() {}
 
-void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const String& text)
+void MixerComponent::outputChannelNameChanged(int activeChannelIndex, const juce::String& text)
 {
     m_channelSliders.at(activeChannelIndex)->setLabel(text);
 }
@@ -214,7 +213,7 @@ void MixerComponent::outputChannelPairingModeChanged(int activeChannelIndex, Pai
 
 void MixerComponent::soloBusChannelChanged(SoloBusChannel channel, int outputChannel, int previousOutputChannel)
 {
-    ignoreUnused(channel);
+    juce::ignoreUnused(channel);
 
     if (previousOutputChannel != -1)
         m_channelSliders[previousOutputChannel]->setVisible(true);
@@ -223,7 +222,7 @@ void MixerComponent::soloBusChannelChanged(SoloBusChannel channel, int outputCha
     resized();
 }
 
-void MixerComponent::scrollBarMoved(ScrollBar* /*scrollBarThatHasMoved*/, double newRangeStart)
+void MixerComponent::scrollBarMoved(juce::ScrollBar* /*scrollBarThatHasMoved*/, double newRangeStart)
 {
     m_slidersContainer.setTopLeftPosition(-static_cast<int>(newRangeStart), 0);
 }

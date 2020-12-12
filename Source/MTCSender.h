@@ -1,24 +1,24 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include <mutex>
 
-class MTCSender : HighResolutionTimer
+#include "juce_audio_devices/juce_audio_devices.h"
+
+class MTCSender : juce::HighResolutionTimer
 {
 public:
     MTCSender();
     ~MTCSender();
 
-    void setDevices(Array<MidiDeviceInfo> deviceInfos);
-    Array<MidiDeviceInfo> getDevices();
+    void setDevices(juce::Array<juce::MidiDeviceInfo> deviceInfos);
+    juce::Array<juce::MidiDeviceInfo> getDevices();
     void start();
     void pause();
     void stop();
     void setPosition(double position);
 
 private:
-    std::vector<std::unique_ptr<MidiOutput>> outputs;
+    std::vector<std::unique_ptr<juce::MidiOutput>> outputs;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MTCSender)
 
     // Used only in separate thread!

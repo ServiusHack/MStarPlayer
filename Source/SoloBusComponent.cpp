@@ -6,29 +6,29 @@ SoloBusComponent::SoloBusComponent(OutputChannelNames& outputChannelNames, SoloB
     , label2({}, TRANS("right channel"))
 {
     addAndMakeVisible(label);
-    label.setFont(Font(15.00f, Font::plain));
-    label.setJustificationType(Justification::centredRight);
+    label.setFont(juce::Font(15.00f, juce::Font::plain));
+    label.setJustificationType(juce::Justification::centredRight);
     label.setEditable(false, false, false);
-    label.setColour(TextEditor::textColourId, Colours::black);
-    label.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    label.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    label.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(label2);
-    label2.setFont(Font(15.00f, Font::plain));
-    label2.setJustificationType(Justification::centredRight);
+    label2.setFont(juce::Font(15.00f, juce::Font::plain));
+    label2.setJustificationType(juce::Justification::centredRight);
     label2.setEditable(false, false, false);
-    label2.setColour(TextEditor::textColourId, Colours::black);
-    label2.setColour(TextEditor::backgroundColourId, Colour(0x00000000));
+    label2.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    label2.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(comboBox);
     comboBox.setEditableText(false);
-    comboBox.setJustificationType(Justification::centredLeft);
-    comboBox.setTextWhenNothingSelected(String());
+    comboBox.setJustificationType(juce::Justification::centredLeft);
+    comboBox.setTextWhenNothingSelected(juce::String());
     comboBox.setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
 
     addAndMakeVisible(comboBox2);
     comboBox2.setEditableText(false);
-    comboBox2.setJustificationType(Justification::centredLeft);
-    comboBox2.setTextWhenNothingSelected(String());
+    comboBox2.setJustificationType(juce::Justification::centredLeft);
+    comboBox2.setTextWhenNothingSelected(juce::String());
     comboBox2.setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
 
     comboBox.addItem(TRANS("none"), 1);
@@ -46,9 +46,9 @@ SoloBusComponent::SoloBusComponent(OutputChannelNames& outputChannelNames, SoloB
 }
 
 //==============================================================================
-void SoloBusComponent::paint(Graphics& g)
+void SoloBusComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(Colours::white);
+    g.fillAll(juce::Colours::white);
 }
 
 void SoloBusComponent::resized()
@@ -59,7 +59,7 @@ void SoloBusComponent::resized()
     comboBox2.setBounds(136, 40, 150, 24);
 }
 
-void SoloBusComponent::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+void SoloBusComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 {
     if (comboBoxThatHasChanged == &comboBox)
     {

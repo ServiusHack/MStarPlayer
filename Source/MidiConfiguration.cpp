@@ -9,10 +9,9 @@
 */
 
 #include "MidiConfiguration.h"
-#include "../JuceLibraryCode/JuceHeader.h"
 
 MidiConfigurationWindow::MidiConfigurationWindow(MTCSender& mtcSender)
-    : DialogWindow(TRANS("Configure MIDI"), Colours::lightgrey, true, true)
+    : juce::DialogWindow(TRANS("Configure MIDI"), juce::Colours::lightgrey, true, true)
 {
     setContentOwned(new MidiConfigurationComponent(this, mtcSender), true);
     centreWithSize(getWidth(), getHeight());
@@ -25,21 +24,21 @@ void MidiConfigurationWindow::closeButtonPressed()
     setVisible(false);
 }
 
-void MidiConfigurationWindow::buttonClicked(Button*)
+void MidiConfigurationWindow::buttonClicked(juce::Button*)
 {
     closeButtonPressed();
 }
 
 MidiDeviceSelectorListBox::MidiDeviceSelectorListBox(MTCSender& mtcSender)
-    : devices(MidiOutput::getAvailableDevices())
+    : devices(juce::MidiOutput::getAvailableDevices())
     , mtcSender(mtcSender)
 {
     setModel(this);
 
-    for (const MidiDeviceInfo& info : mtcSender.getDevices())
+    for (const juce::MidiDeviceInfo& info : mtcSender.getDevices())
     {
         int index = devices.indexOf(info);
-        indexes.addRange(Range(index, index + 1));
+        indexes.addRange(juce::Range(index, index + 1));
     }
 }
 
@@ -48,7 +47,8 @@ int MidiDeviceSelectorListBox::getNumRows()
     return devices.size();
 }
 
-void MidiDeviceSelectorListBox::paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected)
+void MidiDeviceSelectorListBox::paintListBoxItem(
+    int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected)
 {
     auto enabled = indexes.contains(rowNumber);
 
@@ -57,11 +57,11 @@ void MidiDeviceSelectorListBox::paintListBoxItem(int rowNumber, Graphics& g, int
     getLookAndFeel().drawTickBox(
         g, *this, (float)x - tickW, ((float)height - tickW) * 0.5f, tickW, tickW, enabled, true, true, false);
     g.setFont((float)height * 0.6f);
-    g.setColour(findColour(ListBox::textColourId, true).withMultipliedAlpha(enabled ? 1.0f : 0.6f));
-    g.drawText(devices[rowNumber].name, x + 5, 0, width - x - 5, height, Justification::centredLeft, true);
+    g.setColour(findColour(juce::ListBox::textColourId, true).withMultipliedAlpha(enabled ? 1.0f : 0.6f));
+    g.drawText(devices[rowNumber].name, x + 5, 0, width - x - 5, height, juce::Justification::centredLeft, true);
 }
 
-void MidiDeviceSelectorListBox::listBoxItemClicked(int row, const MouseEvent& e)
+void MidiDeviceSelectorListBox::listBoxItemClicked(int row, const juce::MouseEvent& e)
 {
     selectRow(row);
 
@@ -69,7 +69,7 @@ void MidiDeviceSelectorListBox::listBoxItemClicked(int row, const MouseEvent& e)
         flipEnablement(row);
 }
 
-void MidiDeviceSelectorListBox::listBoxItemDoubleClicked(int row, const MouseEvent&)
+void MidiDeviceSelectorListBox::listBoxItemDoubleClicked(int row, const juce::MouseEvent&)
 {
     flipEnablement(row);
 }
@@ -82,11 +82,11 @@ void MidiDeviceSelectorListBox::returnKeyPressed(int row)
 void MidiDeviceSelectorListBox::flipEnablement(int row)
 {
     if (indexes.contains(row))
-        indexes.removeRange(Range(row, row + 1));
+        indexes.removeRange(juce::Range(row, row + 1));
     else
-        indexes.addRange(Range(row, row + 1));
+        indexes.addRange(juce::Range(row, row + 1));
 
-    Array<MidiDeviceInfo> deviceInfos;
+    juce::Array<juce::MidiDeviceInfo> deviceInfos;
     for (int i = 0; i < indexes.size(); ++i)
     {
         deviceInfos.add(devices[indexes[i]]);
@@ -103,7 +103,7 @@ int MidiDeviceSelectorListBox::getTickX()
 
 MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* parent, MTCSender& mtcSender)
     : deviceSelector(mtcSender)
-    , m_closeButton(std::make_unique<TextButton>("close"))
+    , m_closeButton(std::make_unique<juce::TextButton>("close"))
 {
     addAndMakeVisible(m_closeButton.get());
     m_closeButton->setButtonText(TRANS("Close"));

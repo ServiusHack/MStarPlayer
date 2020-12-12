@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "juce_audio_basics/juce_audio_basics.h"
 
 #include "VolumeAnalyzer.h"
 
 /**
         Audio source which applies a gain, solo and mute state to individual channels.
 */
-class ChannelVolumeAudioSource : public AudioSource
+class ChannelVolumeAudioSource : public juce::AudioSource
 {
 public:
     /** Creates a volume changing source that will pass on audio from the given input.
@@ -24,8 +24,8 @@ public:
     int channelCount() const;
 
 private:
-    AudioSource* m_source;
-    CriticalSection m_lock;
+    juce::AudioSource* m_source;
+    juce::CriticalSection m_lock;
 
     // volume
 public:
@@ -51,7 +51,7 @@ public:
     float getChannelVolume(int channelIndex) const;
 
 private:
-    Array<float> m_setVolumes;
+    juce::Array<float> m_setVolumes;
 
     // solo
 public:
@@ -59,7 +59,7 @@ public:
     bool getChannelSolo(int channelIndex) const;
 
 private:
-    Array<bool> m_setSolos;
+    juce::Array<bool> m_setSolos;
     bool m_anySolo;
 
     // mute
@@ -68,26 +68,26 @@ public:
     bool getChannelMute(int channelIndex) const;
 
 private:
-    Array<bool> m_setMutes;
+    juce::Array<bool> m_setMutes;
 
     // actual output volume
 public:
     float getActualVolume(int channelIndex) const;
 
 private:
-    Array<VolumeAnalyzer> m_actualVolumes;
+    juce::Array<VolumeAnalyzer> m_actualVolumes;
     float m_decayRate{0};
 
     // gain to apply
 private:
     void updateGain(size_t channelIndex);
-    Array<float> m_appliedGains;
+    juce::Array<float> m_appliedGains;
 
     // AudioSource
 public:
     virtual void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     virtual void releaseResources() override;
-    virtual void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    virtual void getNextAudioBlock(const juce::AudioSourceChannelInfo&) override;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelVolumeAudioSource)
