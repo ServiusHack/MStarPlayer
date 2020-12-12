@@ -8,8 +8,8 @@
 #include "OutputChannelNames.h"
 #include "SoloBusSettings.h"
 
-typedef std::function<void(int, int)> ChangeMappingCallback;
-typedef std::function<void()> CloseCallback;
+using ChangeMappingCallback = std::function<void(int, int)>;
+using CloseCallback = std::function<void()>;
 
 /** Show a mapping from audio source channels to output channels.
 

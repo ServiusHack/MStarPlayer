@@ -16,9 +16,9 @@ enum class PlayerType
     Playlist
 };
 
-typedef std::function<void()> ShowEditDialogCallback;
-typedef std::function<void()> ConfigureChannelsCallback;
-typedef std::function<void()> ConfigureMidiCallback;
-typedef std::function<void(PlayerType)> ChangePlayerTypeCallback;
-typedef std::function<void(juce::String)> SetUserImageCallback;
+using ShowEditDialogCallback = std::function<void()>;
+using ConfigureChannelsCallback = std::function<void()>;
+using ConfigureMidiCallback = std::function<void()>;
+using ChangePlayerTypeCallback = std::function<void(PlayerType)>;
+using SetUserImageCallback = std::function<void(juce::String)>;
 }

@@ -14,10 +14,10 @@
 class TracksContainer
 {
 public:
-    typedef std::function<void(double)> LongestDurationChangedCallback;
-    typedef std::function<void(Track&)> TrackAddedCallback;
-    typedef std::function<void()> TracksClearedCallback;
-    typedef std::function<void(int)> TrackRemovedCallback;
+    using LongestDurationChangedCallback = std::function<void(double)>;
+    using TrackAddedCallback = std::function<void(Track&)>;
+    using TracksClearedCallback = std::function<void()>;
+    using TrackRemovedCallback = std::function<void(int)>;
 
     TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels,
         const Track::TrackConfigChangedCallback& trackConfigChangedCallback,

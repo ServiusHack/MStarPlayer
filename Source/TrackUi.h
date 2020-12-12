@@ -19,10 +19,10 @@ class TrackUi
     , public MixerControlableChangeListener
 {
 public:
-    typedef std::function<void(double)> SetPositionCallback;
-    typedef std::function<void(Track*)> RemoveTrackCallback;
-    typedef std::function<bool(int)> TrackHasFilesCallback;
-    typedef std::function<void(juce::String)> FileLoadedCallback;
+    using SetPositionCallback = std::function<void(double)>;
+    using RemoveTrackCallback = std::function<void(Track*)>;
+    using TrackHasFilesCallback = std::function<bool(int)>;
+    using FileLoadedCallback = std::function<void(juce::String)>;
 
     TrackUi(Track& track, juce::ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback,
         RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback,

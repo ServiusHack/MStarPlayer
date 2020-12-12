@@ -6,8 +6,8 @@
 
 #include "VolumeSlider.h"
 
-typedef std::function<void(juce::String)> TrackSettingsChangedCallback;
-typedef std::function<void(float)> VolumeChangedCallback;
+using TrackSettingsChangedCallback = std::function<void(juce::String)>;
+using VolumeChangedCallback = std::function<void(float)>;
 
 /**
     Window wrapper for the TrackEditDialogComponent.

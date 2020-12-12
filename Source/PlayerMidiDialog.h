@@ -12,8 +12,8 @@
 class PlayerMidiDialogWindow : public juce::DialogWindow
 {
 public:
-    typedef std::function<void(bool)> MtcEnabledChangedCallback;
-    typedef std::function<void()> CloseCallback;
+    using MtcEnabledChangedCallback = std::function<void(bool)>;
+    using CloseCallback = std::function<void()>;
 
     PlayerMidiDialogWindow(bool mtcEnabled, const MtcEnabledChangedCallback& mtcEnabledChangedCallback,
         const CloseCallback& closeCallback);

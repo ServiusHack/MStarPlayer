@@ -25,8 +25,8 @@ class MixerFader
     , public MixerControlableChangeListener
 {
 public:
-    typedef std::function<void(bool)> SoloChangedCallback;
-    typedef std::function<void()> ResizeCallback;
+    using SoloChangedCallback = std::function<void(bool)>;
+    using ResizeCallback = std::function<void()>;
 
     MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable, bool panEnabled,
         ResizeCallback resizeCallback, bool soloEnabled = true, bool muteEnabled = true);

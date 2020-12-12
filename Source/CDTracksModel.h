@@ -12,7 +12,7 @@ class CDTracksModel
     , public juce::ChangeBroadcaster
 {
 public:
-    typedef std::function<void()> ReloadedCallback;
+    using ReloadedCallback = std::function<void()>;
     CDTracksModel(juce::AudioCDReader& reader);
 
     // TableListBoxModel
