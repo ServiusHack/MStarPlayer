@@ -18,8 +18,8 @@ class TracksComponent
 
 {
 public:
-    typedef std::function<void(int)> TrackRemovedCallback;
-    typedef std::function<void(juce::String)> FileLoadedCallback;
+    using TrackRemovedCallback = std::function<void(int)>;
+    using FileLoadedCallback = std::function<void(juce::String)>;
 
     TracksComponent(TracksContainer& container, juce::ApplicationProperties& applicationProperties,
         TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback,

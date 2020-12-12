@@ -15,7 +15,7 @@ class PlaylistTable
     , public juce::DragAndDropTarget
 {
 public:
-    typedef std::function<void(const std::vector<TrackConfig>& trackConfigs, bool, int)> PlaylistEntryChangedCallback;
+    using PlaylistEntryChangedCallback = std::function<void(const std::vector<TrackConfig>& trackConfigs, bool, int)>;
 
     PlaylistTable(const PlaylistEntryChangedCallback& callback, PlaylistModel& playlistModel);
 

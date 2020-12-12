@@ -12,10 +12,10 @@
 class PlayerEditDialogWindow : public juce::DialogWindow
 {
 public:
-    typedef std::function<void(juce::Colour)> ColourChangedCallback;
-    typedef std::function<void(juce::String)> StringChangedCallback;
-    typedef std::function<void(juce::File)> ImageChangedCallback;
-    typedef std::function<void()> CloseCallback;
+    using ColourChangedCallback = std::function<void(juce::Colour)>;
+    using StringChangedCallback = std::function<void(juce::String)>;
+    using ImageChangedCallback = std::function<void(juce::File)>;
+    using CloseCallback = std::function<void()>;
 
     PlayerEditDialogWindow(const juce::String& playerName, const juce::Colour& color, const juce::String& imagePath,
         const StringChangedCallback& stringCallback, const ColourChangedCallback& colourCallback,

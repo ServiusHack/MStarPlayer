@@ -12,7 +12,7 @@ class CDTracksTable
     , public juce::ChangeListener
 {
 public:
-    typedef std::function<void(int sampleIndex)> TrackChangedCallback;
+    using TrackChangedCallback = std::function<void(int sampleIndex)>;
 
     CDTracksTable(const TrackChangedCallback& callback);
 

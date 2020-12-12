@@ -14,8 +14,8 @@ class PlaylistModel
     , public juce::Button::Listener
 {
 public:
-    typedef std::function<void()> ReloadedCallback;
-    typedef std::function<void(int rowNumber, const juce::String& name)> NameChangedCallback;
+    using ReloadedCallback = std::function<void()>;
+    using NameChangedCallback = std::function<void(int rowNumber, const juce::String& name)>;
     PlaylistModel();
 
     void setReloadedCallback(ReloadedCallback);

@@ -19,14 +19,14 @@ class Track
     , private juce::Timer
 {
 public:
-    typedef std::function<void()> DurationChangedCallback;
-    typedef std::function<void(double, bool)> PositionCallback;
-    typedef std::list<PositionCallback>::const_iterator PositionCallbackRegistrationToken;
-    typedef std::function<void()> ChannelCountChangedCallback;
-    typedef std::function<void(const juce::File&, bool)> FileChangedCallback;
-    typedef std::function<void(bool)> PlayingStateChangedCallback;
-    typedef std::function<void()> TrackConfigChangedCallback;
-    typedef std::function<void(const char*, float)> GainChangedCallback;
+    using DurationChangedCallback = std::function<void()>;
+    using PositionCallback = std::function<void(double, bool)>;
+    using PositionCallbackRegistrationToken = std::list<PositionCallback>::const_iterator;
+    using ChannelCountChangedCallback = std::function<void()>;
+    using FileChangedCallback = std::function<void(const juce::File&, bool)>;
+    using PlayingStateChangedCallback = std::function<void(bool)>;
+    using TrackConfigChangedCallback = std::function<void()>;
+    using GainChangedCallback = std::function<void(const char*, float)>;
 
     Track(juce::MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
         int outputChannels, DurationChangedCallback callback, bool soloMute,

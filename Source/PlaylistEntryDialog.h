@@ -4,7 +4,7 @@
 
 #include "juce_gui_basics/juce_gui_basics.h"
 
-typedef std::function<void(juce::String)> PlaylistEntrySettingsChangedCallback;
+using PlaylistEntrySettingsChangedCallback = std::function<void(juce::String)>;
 
 /**
     Window wrapper for the PlaylistEntryDialogComponent.
