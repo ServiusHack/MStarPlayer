@@ -340,16 +340,13 @@ void Player::showEditDialog()
 {
     if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(
+        m_PlayerEditDialog.emplace(
             getName(),
             m_color,
             m_userImage.getFullPathName(),
             std::bind(&Player::setName, this, std::placeholders::_1),
             std::bind(&Player::setColor, this, std::placeholders::_1),
-            [&]() {
-                // clear is not working
-                delete m_PlayerEditDialog.release();
-            },
+            [&]() { m_PlayerEditDialog.reset(); },
             std::bind(&Player::setUserImage, this, std::placeholders::_1));
     }
     m_PlayerEditDialog->addToDesktop();
@@ -360,7 +357,7 @@ void Player::configureChannels()
 {
     if (!m_channelMappingWindow)
     {
-        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(
+        m_channelMappingWindow.emplace(
             m_outputChannelNames,
             m_soloBusSettings,
             m_tracksContainer.createMapping(),
@@ -375,10 +372,7 @@ void Player::configureChannels()
                     source -= m_tracksContainer[i].getNumChannels();
                 }
             },
-            [&]() {
-                // clear is not working
-                delete m_channelMappingWindow.release();
-            });
+            [&]() { m_channelMappingWindow.reset(); });
     }
     m_channelMappingWindow->addToDesktop();
     m_channelMappingWindow->toFront(true);
@@ -388,12 +382,9 @@ void Player::configureMidi()
 {
     if (!m_PlayerMidiDialog)
     {
-        m_PlayerMidiDialog = std::make_unique<PlayerMidiDialogWindow>(m_tracksContainer.getMtcEnabled(),
+        m_PlayerMidiDialog.emplace(m_tracksContainer.getMtcEnabled(),
             std::bind(&TracksContainer::setMtcEnabled, &m_tracksContainer, std::placeholders::_1),
-            [&]() {
-                // clear is not working
-                delete m_PlayerMidiDialog.release();
-            });
+            [&]() { m_PlayerMidiDialog.reset(); });
     }
     m_PlayerMidiDialog->addToDesktop();
     m_PlayerMidiDialog->toFront(true);

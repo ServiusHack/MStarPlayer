@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "juce_events/juce_events.h"
 
 #include "PlaylistEntry.h"
@@ -71,7 +73,7 @@ private:
     void showEditDialog(int rowNumber);
 
     std::vector<PlaylistEntry> m_playlist;
-    std::unique_ptr<PlaylistEntryDialogWindow> m_editDialog;
+    std::optional<PlaylistEntryDialogWindow> m_editDialog;
     ReloadedCallback m_reloadedCallback;
     NameChangedCallback m_nameChangedCallback;
 

@@ -170,40 +170,39 @@ void ChannelNames::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindow* parent,
     juce::AudioDeviceManager& audioDeviceManager, OutputChannelNames& outputChannelName,
     SoloBusSettings& soloBusSettings)
-    : m_tabbedComponent(std::make_unique<juce::TabbedComponent>(juce::TabbedButtonBar::TabsAtTop))
-    , m_closeButton(std::make_unique<juce::TextButton>("close"))
-    , m_channelNames(std::make_unique<ChannelNames>(outputChannelName))
+    : m_tabbedComponent(juce::TabbedButtonBar::TabsAtTop)
+    , m_closeButton("close")
+    , m_channelNames(outputChannelName)
     , m_outputChannelName(outputChannelName)
-    , m_soloBusComponent(std::make_unique<SoloBusComponent>(outputChannelName, soloBusSettings))
+    , m_soloBusComponent(outputChannelName, soloBusSettings)
 {
     m_outputChannelName.addChangeListener(this);
 
-    addAndMakeVisible(m_tabbedComponent.get());
+    addAndMakeVisible(&m_tabbedComponent);
 
     juce::AudioDeviceSelectorComponent* selector
         = new juce::AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
-    m_tabbedComponent->addTab(TRANS("Audio Device"), juce::Colour(0xffffffff), selector, true);
+    m_tabbedComponent.addTab(TRANS("Audio Device"), juce::Colour(0xffffffff), selector, true);
 
-    m_tableListBox = std::make_unique<juce::TableListBox>();
-    m_tabbedComponent->addTab(TRANS("Channel Names"), juce::Colour(0xffffffff), m_tableListBox.get(), false);
-    m_tableListBox->setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
-    m_tableListBox->setOutlineThickness(1);
-    m_tableListBox->setModel(m_channelNames.get());
-    m_channelNames->updateCallback = std::bind(&juce::TableListBox::updateContent, m_tableListBox.get());
+    m_tabbedComponent.addTab(TRANS("Channel Names"), juce::Colour(0xffffffff), &m_tableListBox, false);
+    m_tableListBox.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
+    m_tableListBox.setOutlineThickness(1);
+    m_tableListBox.setModel(&m_channelNames);
+    m_channelNames.updateCallback = std::bind(&juce::TableListBox::updateContent, &m_tableListBox);
 
     // set the table header columns
-    m_tableListBox->getHeader().addColumn(
+    m_tableListBox.getHeader().addColumn(
         TRANS("Device Channel"), 1, 170, 50, 400, juce::TableHeaderComponent::defaultFlags);
-    m_tableListBox->getHeader().addColumn(
+    m_tableListBox.getHeader().addColumn(
         TRANS("Channel Name"), 2, 170, 50, 400, juce::TableHeaderComponent::defaultFlags);
-    m_tableListBox->getHeader().addColumn(TRANS("Mode"), 3, 120, 50, 400, juce::TableHeaderComponent::defaultFlags);
+    m_tableListBox.getHeader().addColumn(TRANS("Mode"), 3, 120, 50, 400, juce::TableHeaderComponent::defaultFlags);
 
-    m_tabbedComponent->addTab(TRANS("Solo Bus"), juce::Colour(0xffffffff), m_soloBusComponent.get(), true);
+    m_tabbedComponent.addTab(TRANS("Solo Bus"), juce::Colour(0xffffffff), &m_soloBusComponent, true);
 
-    addAndMakeVisible(m_closeButton.get());
-    m_closeButton->setButtonText(TRANS("Close"));
-    m_closeButton->addListener(parent);
-    m_closeButton->setWantsKeyboardFocus(false);
+    addAndMakeVisible(&m_closeButton);
+    m_closeButton.setButtonText(TRANS("Close"));
+    m_closeButton.addListener(parent);
+    m_closeButton.setWantsKeyboardFocus(false);
 
     setSize(500, 400);
 
@@ -221,12 +220,12 @@ void AudioConfigurationComponent::resized()
     const static int buttonHeight = 24;
     const static int padding = 10;
 
-    m_tabbedComponent->setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
-    m_closeButton->setBounds(
+    m_tabbedComponent.setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
+    m_closeButton.setBounds(
         (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }
 
 void AudioConfigurationComponent::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
 {
-    m_tableListBox->updateContent();
+    m_tableListBox.updateContent();
 }

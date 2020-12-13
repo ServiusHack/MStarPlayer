@@ -103,12 +103,12 @@ int MidiDeviceSelectorListBox::getTickX()
 
 MidiConfigurationComponent::MidiConfigurationComponent(MidiConfigurationWindow* parent, MTCSender& mtcSender)
     : deviceSelector(mtcSender)
-    , m_closeButton(std::make_unique<juce::TextButton>("close"))
+    , m_closeButton("close")
 {
-    addAndMakeVisible(m_closeButton.get());
-    m_closeButton->setButtonText(TRANS("Close"));
-    m_closeButton->addListener(parent);
-    m_closeButton->setWantsKeyboardFocus(false);
+    addAndMakeVisible(&m_closeButton);
+    m_closeButton.setButtonText(TRANS("Close"));
+    m_closeButton.addListener(parent);
+    m_closeButton.setWantsKeyboardFocus(false);
 
     addAndMakeVisible(&deviceSelector);
 
@@ -122,7 +122,7 @@ void MidiConfigurationComponent::resized()
     const static int padding = 10;
 
     deviceSelector.setBounds(padding, padding, getWidth() - 2 * padding, getHeight() - buttonHeight - 3 * padding);
-    m_closeButton->setBounds(
+    m_closeButton.setBounds(
         (getWidth() - buttonWidth) / 2, getHeight() - buttonHeight - padding, buttonWidth, buttonHeight);
 }
 

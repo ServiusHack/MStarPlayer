@@ -9,23 +9,22 @@ static int baseWidth = 70;
 
 MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerControlable*> subControlable,
     bool panEnabled, ResizeCallback resizeCallback, bool soloEnabled, bool muteEnabled)
-    : m_label(std::make_unique<juce::Label>("label"))
+    : m_label("label")
     , m_soloButton(soloEnabled ? std::make_unique<juce::TextButton>("solo") : nullptr)
     , m_muteButton(muteEnabled ? std::make_unique<juce::TextButton>("mute") : nullptr)
-    , m_expandButton(std::make_unique<ChangeableArrowButton>("expand", 0.0f, juce::Colour(0xff000000)))
+    , m_expandButton("expand", 0.0f, juce::Colour(0xff000000))
     , m_panSlider(panEnabled ? std::make_unique<juce::Slider>() : nullptr)
-    , m_levelMeter(std::make_unique<LevelMeter>())
     , m_volumeSlider(std::make_unique<VolumeSlider>())
     , m_resizeCallback(resizeCallback)
     , m_mixerControlable(mainControlable)
 {
-    addAndMakeVisible(m_label.get());
-    m_label->setText(mainControlable->getName(), juce::sendNotification);
-    m_label->setFont(juce::Font(10.00f, juce::Font::plain));
-    m_label->setJustificationType(juce::Justification::centredLeft);
-    m_label->setEditable(false, false, false);
-    m_label->setColour(juce::TextEditor::textColourId, juce::Colours::black);
-    m_label->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
+    addAndMakeVisible(&m_label);
+    m_label.setText(mainControlable->getName(), juce::sendNotification);
+    m_label.setFont(juce::Font(10.00f, juce::Font::plain));
+    m_label.setJustificationType(juce::Justification::centredLeft);
+    m_label.setEditable(false, false, false);
+    m_label.setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    m_label.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     if (m_soloButton)
     {
@@ -64,10 +63,10 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
     m_volumeSlider->setValue(m_mixerControlable->getGain(), juce::dontSendNotification);
     m_volumeSlider->addListener(this);
 
-    addAndMakeVisible(m_levelMeter.get());
+    addAndMakeVisible(&m_levelMeter);
 
-    addChildComponent(m_expandButton.get());
-    m_expandButton->addListener(this);
+    addChildComponent(&m_expandButton);
+    m_expandButton.addListener(this);
 
     setSize(100, 112);
 
@@ -118,7 +117,7 @@ void MixerFader::muteChanged(bool mute)
 
 void MixerFader::nameChanged(const juce::String& name)
 {
-    m_label->setText(name, juce::sendNotification);
+    m_label.setText(name, juce::sendNotification);
 }
 
 void MixerFader::paint(juce::Graphics& g)
@@ -135,7 +134,7 @@ void MixerFader::resized()
 
     static const int buttonWidth = 50;
 
-    m_label->setBounds(padding, padding, 2 * buttonWidth - 2 * padding, labelHeight);
+    m_label.setBounds(padding, padding, 2 * buttonWidth - 2 * padding, labelHeight);
 
     if (m_soloButton != nullptr)
     {
@@ -169,10 +168,10 @@ void MixerFader::resized()
     }
     else
     {
-        panBounds = getLocalArea(m_label.get(), m_label->getLocalBounds());
+        panBounds = getLocalArea(&m_label, m_label.getLocalBounds());
     }
 
-    m_levelMeter->setBounds(padding,
+    m_levelMeter.setBounds(padding,
         panBounds.getBottomLeft().getY(),
         (baseWidth - 2 * padding) / 3,
         getHeight() - panBounds.getBottomLeft().getY() - padding);
@@ -180,7 +179,7 @@ void MixerFader::resized()
         panBounds.getBottomLeft().getY(),
         (baseWidth - 2 * padding) / 3,
         getHeight() - panBounds.getBottomLeft().getY() - padding);
-    m_expandButton->setBounds(padding + 2 * (baseWidth - 2 * padding) / 3,
+    m_expandButton.setBounds(padding + 2 * (baseWidth - 2 * padding) / 3,
         panBounds.getBottomLeft().getY(),
         (baseWidth - 2 * padding) / 3,
         getHeight() - panBounds.getBottomLeft().getY() - padding);
@@ -199,13 +198,13 @@ void MixerFader::buttonClicked(juce::Button* buttonThatWasClicked)
     {
         m_mixerControlable->setMute(m_muteButton->getToggleState());
     }
-    else if (buttonThatWasClicked == m_expandButton.get())
+    else if (buttonThatWasClicked == &m_expandButton)
     {
         juce::Rectangle<int> bounds = getBounds();
         const bool expand = bounds.getWidth() == baseWidth;
         bounds.setWidth(expand ? (m_subfaders.size() + 1) * baseWidth : baseWidth);
         setBounds(bounds);
-        m_expandButton->setArrowDirection(expand ? 0.5f : 0.0f);
+        m_expandButton.setArrowDirection(expand ? 0.5f : 0.0f);
         m_resizeCallback();
     }
 }
@@ -253,7 +252,7 @@ void MixerFader::setColor(const juce::Colour& color)
 
 void MixerFader::setLabel(const juce::String& text)
 {
-    m_label->setText(text, juce::sendNotification);
+    m_label.setText(text, juce::sendNotification);
 }
 
 void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
@@ -264,7 +263,7 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
     }
     m_subfaders.clear();
 
-    m_expandButton->setVisible(mixSettings.size() > 0);
+    m_expandButton.setVisible(mixSettings.size() > 0);
     for (size_t i = 0; i < mixSettings.size(); ++i)
     {
         m_subfaders.push_back(
@@ -284,7 +283,7 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
 
 void MixerFader::updateLevel()
 {
-    m_levelMeter->setVolume(m_mixerControlable->getVolume());
+    m_levelMeter.setVolume(m_mixerControlable->getVolume());
     for (const auto& fader : m_subfaders)
         fader->updateLevel();
 }
