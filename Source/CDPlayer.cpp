@@ -482,15 +482,12 @@ void CDPlayer::showEditDialog()
 {
     if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(),
+        m_PlayerEditDialog.emplace(getName(),
             m_color,
             juce::String(),
             std::bind(&CDPlayer::setName, this, std::placeholders::_1),
             std::bind(&CDPlayer::setColor, this, std::placeholders::_1),
-            [&]() {
-                // clear is not working
-                delete m_PlayerEditDialog.release();
-            });
+            [&]() { m_PlayerEditDialog.reset(); });
     }
     m_PlayerEditDialog->addToDesktop();
     m_PlayerEditDialog->toFront(true);
@@ -505,17 +502,14 @@ std::vector<std::pair<char, int>> CDPlayer::createMapping()
 
 void CDPlayer::configureChannels()
 {
-    if (m_channelMappingWindow)
+    if (!m_channelMappingWindow)
     {
-        m_channelMappingWindow = std::make_unique<ChannelMappingWindow>(
+        m_channelMappingWindow.emplace(
             m_outputChannelNames,
             m_soloBusSettings,
             createMapping(),
             [&](int source, int target) { m_remappingAudioSource.setOutputChannelMapping(source, target); },
-            [&]() {
-                // clear is not working
-                delete m_channelMappingWindow.release();
-            });
+            [&]() { m_channelMappingWindow.reset(); });
     }
     m_channelMappingWindow->addToDesktop();
     m_channelMappingWindow->toFront(true);
@@ -589,7 +583,7 @@ void CDPlayer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
 
     // Clear out objects for previous CD.
     m_tracksTable.setModel(nullptr);
-    m_model.release();
+    m_model.reset();
     m_source = nullptr;
     m_reader.release();
 
@@ -605,12 +599,8 @@ void CDPlayer::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
             &m_thread, // this is the background thread to use for reading-ahead
             newReader->sampleRate);
 
-        {
-            std::unique_ptr<CDTracksModel> model = std::make_unique<CDTracksModel>(*newReader.get());
-            m_tracksTable.setModel(model.get());
-            m_model = std::move(model);
-        }
-
+        m_model.emplace(*newReader);
+        m_tracksTable.setModel(&m_model.value());
         m_reader = std::move(newReader);
     }
 }

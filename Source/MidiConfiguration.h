@@ -53,6 +53,6 @@ public:
 
 private:
     MidiDeviceSelectorListBox deviceSelector;
-    std::unique_ptr<juce::TextButton> m_closeButton;
+    juce::TextButton m_closeButton;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiConfigurationComponent)
 };

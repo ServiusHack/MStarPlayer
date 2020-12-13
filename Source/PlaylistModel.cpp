@@ -265,7 +265,7 @@ void PlaylistModel::showEditDialog(int rowNumber)
         m_nameChangedCallback(rowNumber, name);
         sendChangeMessage();
     };
-    m_editDialog = std::make_unique<PlaylistEntryDialogWindow>(m_playlist[rowNumber].name, callback);
+    m_editDialog.emplace(m_playlist[rowNumber].name, callback);
 }
 
 void PlaylistModel::remove(int rowNumber)

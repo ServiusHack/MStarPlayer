@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <set>
 
 #include "juce_gui_basics/juce_gui_basics.h"
@@ -128,9 +129,9 @@ private:
     juce::File m_userImage;
 
     Track::ChannelCountChangedCallback m_channelCountChanged;
-    std::unique_ptr<PlayerEditDialogWindow> m_PlayerEditDialog;
-    std::unique_ptr<ChannelMappingWindow> m_channelMappingWindow;
-    std::unique_ptr<PlayerMidiDialogWindow> m_PlayerMidiDialog;
+    std::optional<PlayerEditDialogWindow> m_PlayerEditDialog;
+    std::optional<ChannelMappingWindow> m_channelMappingWindow;
+    std::optional<PlayerMidiDialogWindow> m_PlayerMidiDialog;
 
     MTCSender& m_mtcSender;
 

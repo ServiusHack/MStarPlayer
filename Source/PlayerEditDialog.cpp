@@ -85,15 +85,15 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const juce::String& playerN
 
     if (imageCallback)
     {
-        m_imageSelectorButton = std::make_unique<juce::TextButton>("imagebutton");
-        addAndMakeVisible(m_imageSelectorButton.get());
+        m_imageSelectorButton.emplace("imagebutton");
+        addAndMakeVisible(&m_imageSelectorButton.value());
         m_imageSelectorButton->setButtonText(TRANS("Choose image"));
         m_imageSelectorButton->addListener(this);
         m_imageSelectorButton->setWantsKeyboardFocus(false);
         m_imageSelectorButton->setConnectedEdges(juce::Button::ConnectedOnRight);
 
-        m_imageResetButton = std::make_unique<juce::TextButton>("imageresetbutton");
-        addAndMakeVisible(m_imageResetButton.get());
+        m_imageResetButton.emplace("imageresetbutton");
+        addAndMakeVisible(&m_imageResetButton.value());
         m_imageResetButton->setButtonText(TRANS("Reeset image"));
         m_imageResetButton->addListener(this);
         m_imageResetButton->setWantsKeyboardFocus(false);
@@ -140,25 +140,6 @@ void PlayerEditDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked
 {
     if (buttonThatWasClicked == &m_closeButton)
         m_closeCallback();
-    else if (buttonThatWasClicked == m_imageSelectorButton.get())
-    {
-        juce::FileChooser myChooser("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
-
-        if (!myChooser.browseForFileToOpen())
-            return;
-
-        m_imageFile = myChooser.getResult();
-        m_imageCallback(m_imageFile);
-
-        m_imageResetButton->setEnabled(m_imageFile != juce::File());
-    }
-    else if (buttonThatWasClicked == m_imageResetButton.get())
-    {
-        m_imageFile = juce::File();
-        m_imageCallback(juce::File());
-
-        m_imageResetButton->setEnabled(m_imageFile != juce::File());
-    }
     else if (buttonThatWasClicked == &m_colorButton)
     {
         juce::ColourSelector* selector = new juce::ColourSelector(juce::ColourSelector::showColourspace);
@@ -169,6 +150,28 @@ void PlayerEditDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked
         selector->addChangeListener(this);
 
         juce::CallOutBox::launchAsynchronously(selector, m_colorButton.getScreenBounds(), nullptr);
+    }
+    else if (m_imageSelectorButton)
+    {
+        if (buttonThatWasClicked == &m_imageSelectorButton.value())
+        {
+            juce::FileChooser myChooser("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
+
+            if (!myChooser.browseForFileToOpen())
+                return;
+
+            m_imageFile = myChooser.getResult();
+            m_imageCallback(m_imageFile);
+
+            m_imageResetButton->setEnabled(m_imageFile != juce::File());
+        }
+        else if (buttonThatWasClicked == &m_imageResetButton.value())
+        {
+            m_imageFile = juce::File();
+            m_imageCallback(juce::File());
+
+            m_imageResetButton->setEnabled(m_imageFile != juce::File());
+        }
     }
 }
 

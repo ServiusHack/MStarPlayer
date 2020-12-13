@@ -140,10 +140,9 @@ ChannelMappingWindow::ChannelMappingWindow(OutputChannelNames* outputChannelName
     const CloseCallback& closeCallback)
     : juce::DialogWindow(TRANS("Configure Channels"), juce::Colours::lightgrey, true, false)
     , m_closeCallback(closeCallback)
-    , m_component(std::make_unique<ChannelMappingComponent>(
-          outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback))
+    , m_component(outputChannelNames, soloBusSettings, mapping, changeCallback, closeCallback)
 {
-    setContentNonOwned(m_component.get(), true);
+    setContentNonOwned(&m_component, true);
     centreWithSize(getWidth(), getHeight());
     setVisible(true);
     setResizable(true, true);
@@ -161,13 +160,12 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
     , m_soloBusSettings(soloBusSettings)
     , m_changeCallback(changeCallback)
     , m_closeCallback(closeCallback)
-    , m_channelMapping(
-          std::make_unique<ChannelMapping>(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback))
+    , m_channelMapping(m_outputChannelNames, soloBusSettings, mapping, m_changeCallback)
     , m_closeButton("close")
 {
     addAndMakeVisible(m_tableListBox);
 
-    m_tableListBox.setModel(m_channelMapping.get());
+    m_tableListBox.setModel(&m_channelMapping);
 
     // m_tableListBox the table component a border
     m_tableListBox.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
@@ -179,7 +177,7 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
     m_tableListBox.getHeader().addColumn(
         TRANS("Output Channel"), 2, 220, 50, 400, juce::TableHeaderComponent::defaultFlags);
 
-    addAndMakeVisible(m_closeButton);
+    addAndMakeVisible(&m_closeButton);
     m_closeButton.setButtonText(TRANS("Close"));
     m_closeButton.addListener(this);
     m_closeButton.setWantsKeyboardFocus(false);

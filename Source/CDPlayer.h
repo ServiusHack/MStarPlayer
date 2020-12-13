@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "MixerComponent.h"
 #include "MixerControlable.h"
 
@@ -139,13 +141,13 @@ private:
     juce::Slider m_slider;
     std::unique_ptr<juce::AudioCDReader> m_reader;
     std::unique_ptr<juce::AudioFormatReaderSource> m_source;
-    std::unique_ptr<CDTracksModel> m_model;
+    std::optional<CDTracksModel> m_model;
     CDTracksTable m_tracksTable;
     juce::AudioTransportSource m_transportSource;
     ChannelRemappingAudioSourceWithVolume m_remappingAudioSource;
 
-    std::unique_ptr<PlayerEditDialogWindow> m_PlayerEditDialog;
-    std::unique_ptr<ChannelMappingWindow> m_channelMappingWindow;
+    std::optional<PlayerEditDialogWindow> m_PlayerEditDialog;
+    std::optional<ChannelMappingWindow> m_channelMappingWindow;
 
     int m_currentTrack = -1;
 

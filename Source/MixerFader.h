@@ -77,12 +77,12 @@ protected:
     std::unique_ptr<VolumeSlider> m_volumeSlider;
 
 private:
-    std::unique_ptr<juce::Label> m_label;
+    juce::Label m_label;
     std::unique_ptr<juce::TextButton> m_soloButton;
     std::unique_ptr<juce::TextButton> m_muteButton;
-    std::unique_ptr<ChangeableArrowButton> m_expandButton;
+    ChangeableArrowButton m_expandButton;
     std::unique_ptr<juce::Slider> m_panSlider;
-    std::unique_ptr<LevelMeter> m_levelMeter;
+    LevelMeter m_levelMeter;
 
     ResizeCallback m_resizeCallback;
 

@@ -81,12 +81,12 @@ public:
     virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
 private:
-    std::unique_ptr<juce::TabbedComponent> m_tabbedComponent;
-    std::unique_ptr<juce::TextButton> m_closeButton;
-    std::unique_ptr<ChannelNames> m_channelNames;
-    std::unique_ptr<juce::TableListBox> m_tableListBox;
+    juce::TabbedComponent m_tabbedComponent;
+    juce::TextButton m_closeButton;
+    ChannelNames m_channelNames;
+    juce::TableListBox m_tableListBox;
     OutputChannelNames& m_outputChannelName;
-    std::unique_ptr<SoloBusComponent> m_soloBusComponent;
+    SoloBusComponent m_soloBusComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioConfigurationComponent)
 };

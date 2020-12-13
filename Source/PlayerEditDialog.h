@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 
 #include "juce_gui_basics/juce_gui_basics.h"
 
@@ -76,8 +77,8 @@ private:
     juce::TextButton m_closeButton;
 
     juce::TextButton m_colorButton;
-    std::unique_ptr<juce::TextButton> m_imageSelectorButton;
-    std::unique_ptr<juce::TextButton> m_imageResetButton;
+    std::optional<juce::TextButton> m_imageSelectorButton;
+    std::optional<juce::TextButton> m_imageResetButton;
 
     juce::Colour m_color;
     juce::File m_imageFile;
