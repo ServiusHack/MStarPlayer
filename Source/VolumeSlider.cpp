@@ -11,16 +11,6 @@ VolumeSlider::VolumeSlider()
     setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
 }
 
-VolumeSlider::VolumeSlider(const juce::String& componentName)
-    : juce::Slider(componentName)
-    , m_snapDistance(0.2)
-{
-    setRange(0.0, juce::Decibels::decibelsToGain(10.0), 0.001);
-    setSkewFactor(0.3);
-    setSliderStyle(juce::Slider::LinearVertical);
-    setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-}
-
 void VolumeSlider::paint(juce::Graphics& g)
 {
     const int indent = juce::LookAndFeel::getDefaultLookAndFeel().getSliderThumbRadius(*this);

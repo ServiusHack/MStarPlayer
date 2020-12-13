@@ -154,11 +154,6 @@ void ChannelMappingWindow::closeButtonPressed()
     m_closeCallback();
 }
 
-void ChannelMappingWindow::setMapping(const std::vector<std::pair<char, int>>& mapping)
-{
-    m_component->setMapping(mapping);
-}
-
 ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChannelNames,
     SoloBusSettings& soloBusSettings, std::vector<std::pair<char, int>> mapping,
     const ChangeMappingCallback& changeCallback, const CloseCallback& closeCallback)
@@ -190,13 +185,6 @@ ChannelMappingComponent::ChannelMappingComponent(OutputChannelNames* outputChann
     m_closeButton.setWantsKeyboardFocus(false);
 
     setSize(400, 400);
-}
-
-void ChannelMappingComponent::setMapping(const std::vector<std::pair<char, int>>& mapping)
-{
-    m_channelMapping
-        = std::make_unique<ChannelMapping>(m_outputChannelNames, m_soloBusSettings, mapping, m_changeCallback);
-    m_tableListBox.setModel(m_channelMapping.get());
 }
 
 void ChannelMappingComponent::buttonClicked(juce::Button* /*buttonThatWasClicked*/)

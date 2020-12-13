@@ -11,7 +11,6 @@ class VolumeSlider : public juce::Slider
 {
 public:
     VolumeSlider();
-    explicit VolumeSlider(const juce::String& componentName);
 
 protected:
     // Distance in gain from 0 when to snap to 0.

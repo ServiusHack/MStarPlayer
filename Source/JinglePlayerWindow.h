@@ -17,7 +17,6 @@ class Player;
 class JinglePlayerWindow
     : public juce::Component
     , public juce::Button::Listener
-    , public juce::ChangeListener
     , public juce::FileDragAndDropTarget
 {
 public:
@@ -50,10 +49,6 @@ public:
 public:
     /** Play or stop the audio playback. */
     virtual void buttonClicked(juce::Button* /*button*/) override;
-
-    // ChangeListener
-public:
-    virtual void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     // FileDragAndDropTarget
 public:

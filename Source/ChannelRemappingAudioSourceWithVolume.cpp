@@ -29,13 +29,6 @@ void ChannelRemappingAudioSourceWithVolume::setNumberOfChannelsToProduce(int req
             m_volumes.size(), VolumeAnalyzer(m_decayRate), requiredNumberOfChannels_ - m_volumes.size());
 }
 
-void ChannelRemappingAudioSourceWithVolume::clearAllMappings()
-{
-    const juce::ScopedLock sl(lock);
-
-    remappedOutputs.clear();
-}
-
 int ChannelRemappingAudioSourceWithVolume::getRemappedOutputChannel(const int outputChannelIndex) const
 {
     const juce::ScopedLock sl(lock);
@@ -141,7 +134,7 @@ void ChannelRemappingAudioSourceWithVolume::restoreFromXml(const juce::XmlElemen
     {
         const juce::ScopedLock sl(lock);
 
-        clearAllMappings();
+        remappedOutputs.clear();
 
         juce::StringArray outs;
         outs.addTokens(e.getStringAttribute("outputs"), false);

@@ -147,11 +147,6 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_tracksContainer->addPlayingStateChangedCallback(playingStateChangedCallback);
 }
 
-void JinglePlayerWindow::changeListenerCallback(juce::ChangeBroadcaster* /*source*/)
-{
-    repaint();
-}
-
 bool JinglePlayerWindow::isInterestedInFileDrag(const juce::StringArray& /*files*/)
 {
     return true;

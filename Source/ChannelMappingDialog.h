@@ -96,8 +96,6 @@ public:
         std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& changeCallback,
         const CloseCallback& closeCallback);
 
-    void setMapping(const std::vector<std::pair<char, int>>& mapping);
-
     // Component overrides
 public:
     virtual void resized() override;
@@ -133,8 +131,6 @@ public:
     ChannelMappingWindow(OutputChannelNames* outputChannelNames, SoloBusSettings& soloBusSettings,
         std::vector<std::pair<char, int>> mapping, const ChangeMappingCallback& callback,
         const CloseCallback& closeCallback);
-
-    void setMapping(const std::vector<std::pair<char, int>>& mapping);
 
     // DialogWindow
 public:

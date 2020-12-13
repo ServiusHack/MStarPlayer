@@ -97,8 +97,6 @@ target_sources(MStarPlayer PRIVATE
     Source/PluginInterfaceV3.h
     Source/PluginLoader.cpp
     Source/PluginLoader.h
-    Source/ResizingComponent.cpp
-    Source/ResizingComponent.h
     Source/SoloBusComponent.cpp
     Source/SoloBusComponent.h
     Source/SoloBusMixer.cpp

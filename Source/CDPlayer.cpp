@@ -482,8 +482,7 @@ void CDPlayer::showEditDialog()
 {
     if (!m_PlayerEditDialog)
     {
-        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(
-            getName(),
+        m_PlayerEditDialog = std::make_unique<PlayerEditDialogWindow>(getName(),
             m_color,
             juce::String(),
             std::bind(&CDPlayer::setName, this, std::placeholders::_1),
@@ -491,8 +490,7 @@ void CDPlayer::showEditDialog()
             [&]() {
                 // clear is not working
                 delete m_PlayerEditDialog.release();
-            },
-            PlayerEditDialogWindow::ImageChangedCallback());
+            });
     }
     m_PlayerEditDialog->addToDesktop();
     m_PlayerEditDialog->toFront(true);

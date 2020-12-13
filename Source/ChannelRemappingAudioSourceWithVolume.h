@@ -36,13 +36,6 @@ public:
     */
     void setNumberOfChannelsToProduce(int requiredNumberOfChannels);
 
-    /** Clears any mapped channels.
-
-        After this, no channels are mapped, so this object will produce silence. Create
-        some mappings with setInputChannelMapping() and setOutputChannelMapping().
-    */
-    void clearAllMappings();
-
     /** Creates an output channel mapping.
 
         When the getNextAudioBlock() method is called, the data returned in channel sourceChannelIndex by
