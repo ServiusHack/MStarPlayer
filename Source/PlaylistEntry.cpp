@@ -40,8 +40,10 @@ PlaylistEntry PlaylistEntry::createFromXml(const juce::XmlElement& element, cons
     for (int i = 0; i < trackConfigsXml->getNumChildElements(); ++i)
     {
         TrackConfig config;
-        config.file = juce::File(projectDirectory.getChildFile(
-            trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim()));
+        const juce::String filename
+            = trackConfigsXml->getChildElement(i)->getChildByName("File")->getAllSubText().trim();
+        if (!filename.isEmpty())
+            config.file = juce::File(projectDirectory.getChildFile(filename));
         entry.trackConfigs.push_back(config);
     }
 
