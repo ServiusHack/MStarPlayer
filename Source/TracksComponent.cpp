@@ -1,26 +1,6 @@
 #include "TracksComponent.h"
 
-namespace
-{
-bool isAudioFile(const juce::String& filePath)
-{
-    juce::AudioFormatManager formatManager;
-    formatManager.registerBasicFormats();
-
-    for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
-    {
-        for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
-        {
-            if (filePath.endsWithIgnoreCase(extension))
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-}
+#include "Utils.h"
 
 TracksComponent::TracksComponent(TracksContainer& container, juce::ApplicationProperties& applicationProperties,
     TrackUi::TrackHasFilesCallback trackHasFilesCallback, TrackRemovedCallback trackRemovedCallback,
@@ -77,7 +57,7 @@ void TracksComponent::filesDropped(const juce::StringArray& files, int x, int y)
 
     for (; trackUiIt != m_tracks.end(); ++trackUiIt)
     {
-        while (fileIt != files.end() && !isAudioFile(*fileIt))
+        while (fileIt != files.end() && !Utils::isAudioFile(*fileIt))
         {
             ++fileIt;
         }

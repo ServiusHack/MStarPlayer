@@ -6,34 +6,13 @@
 
 #include "JinglePlayerWindow.h"
 #include "Player.h"
+#include "Utils.h"
 
 using namespace InterPlayerCommunication;
 
 namespace
 {
-bool isAudioFile(const juce::String& filePath)
-{
-    juce::AudioFormatManager formatManager;
-    formatManager.registerBasicFormats();
 
-    for (int i = 0; i < formatManager.getNumKnownFormats(); ++i)
-    {
-        for (auto&& extension : formatManager.getKnownFormat(i)->getFileExtensions())
-        {
-            if (filePath.endsWithIgnoreCase(extension))
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-bool isImageFile(const juce::String& filePath)
-{
-    return filePath.endsWithIgnoreCase(".jpg") || filePath.endsWithIgnoreCase(".png");
-}
 const int ProgressBarHeight = 26;
 const int TotalDurationTextWidth = 70;
 }
@@ -158,7 +137,7 @@ void JinglePlayerWindow::filesDropped(const juce::StringArray& files, int /*x*/,
 
     for (size_t trackIndex = 0; trackIndex < m_tracksContainer->size(); ++trackIndex)
     {
-        while (fileIt != files.end() && !isAudioFile(*fileIt))
+        while (fileIt != files.end() && !Utils::isAudioFile(*fileIt))
         {
             ++fileIt;
         }
@@ -170,7 +149,7 @@ void JinglePlayerWindow::filesDropped(const juce::StringArray& files, int /*x*/,
     }
 
     fileIt = files.begin();
-    while (fileIt != files.end() && !isImageFile(*fileIt))
+    while (fileIt != files.end() && !Utils::isImageFile(*fileIt))
     {
         ++fileIt;
     }
