@@ -327,6 +327,7 @@ void TrackUi::loadFile(const juce::File& audioFile)
     m_track.loadFileIntoTransport(audioFile);
 
     repaint();
+    resized();
 }
 
 void TrackUi::paint(juce::Graphics& g)
@@ -334,10 +335,6 @@ void TrackUi::paint(juce::Graphics& g)
     if (m_track.getTrackIndex() > 1)
         g.drawVerticalLine(0, 0.0f, static_cast<float>(getWidth()));
 
-    const static int componentWidth = 100 + 40 + 20;
-    int drawWidth = getWidth() - componentWidth;
-    if (m_longestDuration != 0)
-        drawWidth = static_cast<int>(drawWidth * m_track.getAudioThumbnail().getTotalLength() / m_longestDuration);
     m_waveform.setAudioThumbnail(&m_track.getAudioThumbnail());
 }
 
@@ -359,6 +356,9 @@ void TrackUi::resized()
     static const int buttonWidth = 40;
     const static int componentWidth = 100 + 40 + 20;
     int drawWidth = getWidth() - componentWidth;
+
+    if (m_longestDuration != 0)
+        drawWidth = static_cast<int>(drawWidth * m_track.getAudioThumbnail().getTotalLength() / m_longestDuration);
 
     m_volumeSlider.setBounds(100 + 3, 3, 20, getHeight() - 6);
 
