@@ -142,14 +142,14 @@ void PlayerEditDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked
         m_closeCallback();
     else if (buttonThatWasClicked == &m_colorButton)
     {
-        juce::ColourSelector* selector = new juce::ColourSelector(juce::ColourSelector::showColourspace);
+        auto selector = std::make_unique<juce::ColourSelector>(juce::ColourSelector::showColourspace);
         selector->setName(TRANS("color chooser"));
         selector->setCurrentColour(m_color);
         selector->setColour(juce::ColourSelector::backgroundColourId, juce::Colours::transparentBlack);
         selector->setSize(300, 400);
         selector->addChangeListener(this);
 
-        juce::CallOutBox::launchAsynchronously(selector, m_colorButton.getScreenBounds(), nullptr);
+        juce::CallOutBox::launchAsynchronously(std::move(selector), m_colorButton.getScreenBounds(), nullptr);
     }
     else if (m_imageSelectorButton)
     {
