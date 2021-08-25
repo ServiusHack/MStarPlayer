@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+#include <future>
+
 #include "juce_gui_basics/juce_gui_basics.h"
 
 // clang-format off
@@ -15,7 +17,7 @@
 class CrashDumper : public juce::ThreadWithProgressWindow
 {
 public:
-    CrashDumper(EXCEPTION_POINTERS* e);
+    CrashDumper(std::promise<void>&& promise, EXCEPTION_POINTERS* e);
 
     static void init();
 
@@ -24,6 +26,7 @@ public:
     virtual void run() override;
 
 private:
+    std::promise<void> promise;
     EXCEPTION_POINTERS* e;
 };
 

@@ -155,15 +155,18 @@ void PlayerEditDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked
     {
         if (buttonThatWasClicked == &m_imageSelectorButton.value())
         {
-            juce::FileChooser myChooser("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
+            m_currentFileChooser.emplace("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
 
-            if (!myChooser.browseForFileToOpen())
-                return;
+            m_currentFileChooser->launchAsync(
+                juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
+                    if (chooser.getResult() == juce::File())
+                        return;
 
-            m_imageFile = myChooser.getResult();
-            m_imageCallback(m_imageFile);
+                    m_imageFile = chooser.getResult();
+                    m_imageCallback(m_imageFile);
 
-            m_imageResetButton->setEnabled(m_imageFile != juce::File());
+                    m_imageResetButton->setEnabled(m_imageFile != juce::File());
+                });
         }
         else if (buttonThatWasClicked == &m_imageResetButton.value())
         {

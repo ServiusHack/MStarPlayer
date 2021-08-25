@@ -89,5 +89,7 @@ private:
 
     PlayerEditDialogWindow::CloseCallback m_closeCallback;
 
+    std::optional<juce::FileChooser> m_currentFileChooser;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerEditDialogComponent)
 };

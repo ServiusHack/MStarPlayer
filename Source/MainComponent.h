@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "juce_gui_basics/juce_gui_basics.h"
 #include "juce_gui_extra/juce_gui_extra.h"
 
@@ -33,9 +35,12 @@ class MainContentComponent
     , public SoloBusSettingsListener
 {
 public:
+    using ContinueCallback = void (MainContentComponent::*)();
     MainContentComponent(
         juce::ApplicationProperties& applicationProperties, juce::ApplicationCommandManager* commandManager);
     ~MainContentComponent();
+
+    void quit();
 
 private:
     juce::ApplicationProperties& m_applicationProperties;
@@ -130,14 +135,18 @@ public:
 
     // Project file related methods and fields
 public:
-    bool askSaveProject();
+    void askSaveProject(ContinueCallback callback);
     void openProject(juce::File projectFile);
 
 private:
-    void newProject();
-    void openProject();
-    bool saveProject();
-    bool saveAsProject();
+    void requestNewProject();
+    void uncheckedNewProject();
+
+    void requestOpenProject();
+    void uncheckedOpenProject();
+
+    void saveProject(std::optional<ContinueCallback> callback = std::nullopt);
+    void saveAsProject(std::optional<ContinueCallback> callback = std::nullopt);
 
     void readProjectFile();
     void writeProjectFile();
@@ -146,6 +155,8 @@ private:
     bool m_projectModified;
 
     juce::RecentlyOpenedFilesList m_recentlyOpenedFiles;
+
+    std::optional<juce::FileChooser> m_currentFileChooser;
 
 private:
     PluginLoader m_pluginLoader;

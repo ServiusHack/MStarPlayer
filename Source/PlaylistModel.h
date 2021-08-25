@@ -77,5 +77,7 @@ private:
     ReloadedCallback m_reloadedCallback;
     NameChangedCallback m_nameChangedCallback;
 
+    std::optional<juce::FileChooser> m_currentFileChooser;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlaylistModel)
 };

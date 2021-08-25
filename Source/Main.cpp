@@ -120,10 +120,7 @@ public:
 
         void closeButtonPressed()
         {
-            if (!static_cast<MainContentComponent*>(getContentComponent())->askSaveProject())
-                return;
-
-            juce::JUCEApplication::getInstance()->systemRequestedQuit();
+            static_cast<MainContentComponent*>(getContentComponent())->askSaveProject(&MainContentComponent::quit);
         }
 
         void openProject(juce::File projectFile)
