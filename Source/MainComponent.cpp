@@ -114,6 +114,11 @@ void MainContentComponent::reconfigSnapToGrid()
     m_multiDocumentPanel->reconfigSnapToGrid(snapToGrid, gridWidth, gridHeight);
 }
 
+void MainContentComponent::quit()
+{
+    juce::JUCEApplication::getInstance()->systemRequestedQuit();
+}
+
 void MainContentComponent::resized()
 {
     auto bounds = getLocalBounds();
@@ -369,10 +374,10 @@ bool MainContentComponent::perform(const juce::ApplicationCommandTarget::Invocat
     switch (info.commandID)
     {
     case projectNew:
-        newProject();
+        requestNewProject();
         break;
     case projectOpen:
-        openProject();
+        requestOpenProject();
         break;
     case projectSave:
         saveProject();
@@ -503,11 +508,13 @@ bool MainContentComponent::perform(const juce::ApplicationCommandTarget::Invocat
     return true;
 }
 
-void MainContentComponent::newProject()
+void MainContentComponent::requestNewProject()
 {
-    if (!askSaveProject())
-        return;
+    askSaveProject(&MainContentComponent::uncheckedNewProject);
+}
 
+void MainContentComponent::uncheckedNewProject()
+{
     getParentComponent()->setName("M*Player");
     m_multiDocumentPanel->closeAllDocuments(true);
     m_projectModified = false;
@@ -521,60 +528,82 @@ void MainContentComponent::openProject(juce::File projectFile)
     readProjectFile();
 }
 
-void MainContentComponent::openProject()
+void MainContentComponent::requestOpenProject()
 {
-    if (!askSaveProject())
-        return;
-
-    juce::FileChooser myChooser(TRANS("Please select the project file you want to load ..."), juce::File(), "*.aupp");
-    if (myChooser.browseForFileToOpen())
-    {
-        openProject(myChooser.getResult());
-    }
+    askSaveProject(&MainContentComponent::uncheckedOpenProject);
 }
 
-bool MainContentComponent::askSaveProject()
+void MainContentComponent::uncheckedOpenProject()
+{
+    m_currentFileChooser.emplace(TRANS("Please select the project file you want to load ..."), juce::File(), "*.aupp");
+
+    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
+        if (chooser.getResult() == juce::File())
+            return;
+
+        openProject(chooser.getResult());
+    });
+}
+
+void MainContentComponent::askSaveProject(ContinueCallback callback)
 {
     if (!m_projectModified)
-        return true;
-
-    switch (juce::AlertWindow::showYesNoCancelBox(juce::AlertWindow::QuestionIcon,
-        TRANS("Save project?"),
-        TRANS("Do you want to save the current project?"),
-        TRANS("Yes"),
-        TRANS("No"),
-        TRANS("Cancel"),
-        this))
     {
-    case 1:
-        return saveProject();
-    case 2:
-        return true;
-    default:
-        return false;
+        std::invoke(callback, this);
+        return;
     }
+
+    juce::AlertWindow::showAsync(juce::MessageBoxOptions()
+                                     .withIconType(juce::AlertWindow::QuestionIcon)
+                                     .withTitle(TRANS("Save project?"))
+                                     .withMessage(TRANS("Do you want to save the current project?"))
+                                     .withButton(TRANS("Yes"))
+                                     .withButton(TRANS("No"))
+                                     .withButton(TRANS("Cancel"))
+                                     .withAssociatedComponent(this),
+        [this, callback](int result) {
+            switch (result)
+            {
+            case 1:
+                saveProject(callback);
+                break;
+            case 2:
+                std::invoke(callback, this);
+                break;
+            }
+        });
 }
 
-bool MainContentComponent::saveProject()
+void MainContentComponent::saveProject(std::optional<ContinueCallback> callback)
 {
     if (m_projectFile == juce::File())
-        return saveAsProject();
+    {
+        saveAsProject(callback);
+        return;
+    }
 
     writeProjectFile();
-    return true;
+    if (callback)
+        std::invoke(*callback, this);
 }
 
-bool MainContentComponent::saveAsProject()
+void MainContentComponent::saveAsProject(std::optional<ContinueCallback> callback)
 {
-    juce::FileChooser myChooser(TRANS("Please select the project file you want to save ..."), juce::File(), "*.aupp");
-    if (!myChooser.browseForFileToSave(true))
-        return false;
+    m_currentFileChooser.emplace(TRANS("Please select the project file you want to save ..."), juce::File(), "*.aupp");
 
-    m_projectFile = juce::File(myChooser.getResult());
-    m_recentlyOpenedFiles.addFile(m_projectFile);
-    m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
-    writeProjectFile();
-    return true;
+    m_currentFileChooser->launchAsync(
+        juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::warnAboutOverwriting,
+        [this, callback](const juce::FileChooser& chooser) {
+            if (chooser.getResult() == juce::File())
+                return;
+
+            m_projectFile = juce::File(chooser.getResult());
+            m_recentlyOpenedFiles.addFile(m_projectFile);
+            m_applicationProperties.getUserSettings()->setValue("recentlyUsed", m_recentlyOpenedFiles.toString());
+            writeProjectFile();
+            if (callback)
+                std::invoke(*callback, this);
+        });
 }
 
 void MainContentComponent::readProjectFile()

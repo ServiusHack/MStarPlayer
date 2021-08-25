@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "juce_gui_basics/juce_gui_basics.h"
 
 #include "MixerControlable.h"
@@ -66,6 +68,8 @@ private:
     FileLoadedCallback m_fileLoadedCallback;
 
     Waveform m_waveform;
+
+    std::optional<juce::FileChooser> m_currentFileChooser;
 
     // Button::Listener
 public:

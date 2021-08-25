@@ -213,49 +213,39 @@ juce::var PlaylistModel::getDragSourceDescription(const juce::SparseSet<int>& cu
 void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelete)
 {
     juce::PopupMenu popup;
-    popup.addItem(1, TRANS("append"));
-    popup.addItem(5, TRANS("append files"));
-    popup.addItem(2, TRANS("insert"), enableInsert);
-    popup.addItem(3, TRANS("edit"), enableInsert);
-    popup.addItem(4, TRANS("delete"), enableDelete);
-
-    switch (popup.show())
-    {
-    case 1:
-        add("", 0);
-        break;
-    case 2:
-        insert(rowNumber, "", 0);
-        break;
-    case 3:
-    {
-        showEditDialog(rowNumber);
-        break;
-    }
-    case 4:
-        remove(rowNumber);
-        break;
-    case 5:
-    {
+    popup.addItem(TRANS("append"), true, false, [this]() { add("", 0); });
+    popup.addItem(TRANS("append files"), true, false, [this]() {
         juce::AudioFormatManager formatManager;
         formatManager.registerBasicFormats();
-        juce::FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
+        m_currentFileChooser.emplace(TRANS("Please select the audio file you want to load ..."),
             juce::File(),
             formatManager.getWildcardForAllFormats());
 
-        if (!myChooser.browseForMultipleFilesToOpen())
-            return;
+        m_currentFileChooser->launchAsync(
+            juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectMultipleItems,
+            [this](const juce::FileChooser& chooser) {
+                if (chooser.getResults().isEmpty())
+                    return;
 
-        for (const juce::File& file : myChooser.getResults())
-        {
-            std::vector<TrackConfig> trackConfigs;
-            trackConfigs.push_back({file});
-            const std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(trackConfigs[0].file));
-            double duration = reader->lengthInSamples / reader->sampleRate;
-            add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
-        }
-    }
-    }
+                juce::AudioFormatManager formatManager;
+                formatManager.registerBasicFormats();
+
+                for (const juce::File& file : chooser.getResults())
+                {
+                    std::vector<TrackConfig> trackConfigs;
+                    trackConfigs.push_back({file});
+                    const std::unique_ptr<juce::AudioFormatReader> reader(
+                        formatManager.createReaderFor(trackConfigs[0].file));
+                    double duration = reader->lengthInSamples / reader->sampleRate;
+                    add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
+                }
+            });
+    });
+    popup.addItem(TRANS("insert"), enableInsert, false, [this, rowNumber]() { insert(rowNumber, "", 0); });
+    popup.addItem(TRANS("edit"), enableInsert, false, [this, rowNumber]() { showEditDialog(rowNumber); });
+    popup.addItem(TRANS("delete"), enableDelete, false, [this, rowNumber]() { remove(rowNumber); });
+
+    popup.showMenuAsync(juce::PopupMenu::Options());
 }
 
 void PlaylistModel::showEditDialog(int rowNumber)

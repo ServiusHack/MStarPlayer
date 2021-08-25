@@ -285,19 +285,9 @@ void CDPlayer::mouseDown(const juce::MouseEvent& event)
         return;
 
     juce::PopupMenu m;
-    m.addItem(1, TRANS("configure channels"));
-    m.addItem(2, TRANS("configure appearance"));
-    const int result = m.show();
-
-    switch (result)
-    {
-    case 1:
-        configureChannels();
-        break;
-    case 2:
-        showEditDialog();
-        break;
-    }
+    m.addItem(TRANS("configure channels"), true, false, [this]() { configureChannels(); });
+    m.addItem(TRANS("configure appearance"), true, false, [this]() { showEditDialog(); });
+    m.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(m_configureButton));
 }
 
 void CDPlayer::setGain(float gain)

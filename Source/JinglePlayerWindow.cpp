@@ -201,55 +201,33 @@ void JinglePlayerWindow::mouseDown(const juce::MouseEvent& event)
     if (event.eventComponent == &m_configureButton)
     {
         juce::PopupMenu m;
-        m.addItem(1, TRANS("load file"));
-        m.addItem(2, TRANS("configure channels"));
-        m.addItem(3, TRANS("configure appearance"));
-        m.addItem(7, TRANS("configure MIDI"));
+        m.addItem(TRANS("load file"), true, false, [this]() { loadFile(); });
+        m.addItem(TRANS("configure channels"), true, false, [this]() { m_configureChannelsCallback(); });
+        m.addItem(TRANS("configure appearance"), true, false, [this]() { m_showEditDialogCallback(); });
+        m.addItem(TRANS("configure MIDI"), true, false, [this]() { m_configureMidiCallback(); });
         m.addSeparator();
-        m.addItem(4, TRANS("Jingle Mode"), true, true);
-        m.addItem(5, TRANS("Multitrack Mode"));
-        m.addItem(6, TRANS("Playlist Mode"));
+        m.addItem(TRANS("Jingle Mode"), true, true, [this]() { m_changePlayerTypeCallback(PlayerType::Jingle); });
+        m.addItem(
+            TRANS("Multitrack Mode"), true, false, [this]() { m_changePlayerTypeCallback(PlayerType::Multitrack); });
+        m.addItem(TRANS("Playlist Mode"), true, false, [this]() { m_changePlayerTypeCallback(PlayerType::Playlist); });
 
-        const int result = m.show();
-
-        switch (result)
-        {
-        case 1:
-            loadFile();
-            break;
-        case 2:
-            m_configureChannelsCallback();
-            break;
-        case 3:
-            m_showEditDialogCallback();
-            break;
-        case 4:
-            m_changePlayerTypeCallback(PlayerType::Jingle);
-            break;
-        case 5:
-            m_changePlayerTypeCallback(PlayerType::Multitrack);
-            break;
-        case 6:
-            m_changePlayerTypeCallback(PlayerType::Playlist);
-            break;
-        case 7:
-            m_configureMidiCallback();
-            break;
-        }
+        m.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(m_configureButton));
     }
 }
 
 void JinglePlayerWindow::loadFile()
 {
-    juce::FileChooser myChooser(TRANS("Please select the audio file you want to load ..."),
+    m_currentFileChooser.emplace(TRANS("Please select the audio file you want to load ..."),
         juce::File(),
         m_formatManager.getWildcardForAllFormats());
 
-    if (!myChooser.browseForFileToOpen())
-        return;
+    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
+        if (chooser.getResult() == juce::File())
+            return;
 
-    juce::File audioFile = juce::File(myChooser.getResult());
-    (*m_tracksContainer)[0].loadFileIntoTransport(audioFile);
+        juce::File audioFile = juce::File(chooser.getResult());
+        (*m_tracksContainer)[0].loadFileIntoTransport(audioFile);
+    });
 }
 
 void JinglePlayerWindow::buttonClicked(juce::Button* /*button*/)

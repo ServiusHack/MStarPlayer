@@ -236,47 +236,28 @@ void PlaylistPlayerWindow::mouseDown(const juce::MouseEvent& event)
         return;
 
     juce::PopupMenu m;
-    m.addItem(1, TRANS("add stereo track"));
-    m.addItem(2, TRANS("add mono track"));
-    m.addItem(3, TRANS("configure channels"));
-    m.addItem(4, TRANS("configure appearance"));
-    m.addItem(8, TRANS("configure MIDI"));
-    m.addSeparator();
-    m.addItem(5, TRANS("Jingle Mode"));
-    m.addItem(6, TRANS("Multitrack Mode"), true, !m_tableListBox.isVisible());
-    m.addItem(7, TRANS("Playlist Mode"), true, m_tableListBox.isVisible());
-    const int result = m.show();
-
-    switch (result)
-    {
-    case 1:
+    m.addItem(TRANS("add stereo track"), true, false, [this]() {
         m_tracks.addStereoTrack();
         repaint();
         parentSizeChanged();
-        break;
-    case 2:
+    });
+    m.addItem(TRANS("add mono track"), true, false, [this]() {
         m_tracks.addMonoTrack();
         repaint();
-        break;
-    case 3:
-        m_configureChannelsCallback();
-        break;
-    case 4:
-        m_showEditDialogCallback();
-        break;
-    case 5:
-        m_changePlayerTypeCallback(PlayerType::Jingle);
-        break;
-    case 6:
+    });
+    m.addItem(TRANS("configure channels"), true, false, [this]() { m_configureChannelsCallback(); });
+    m.addItem(TRANS("configure appearance"), true, false, [this]() { m_showEditDialogCallback(); });
+    m.addItem(TRANS("configure MIDI"), true, false, [this]() { m_configureMidiCallback(); });
+    m.addSeparator();
+    m.addItem(TRANS("Jingle Mode"), true, false, [this]() { m_changePlayerTypeCallback(PlayerType::Jingle); });
+    m.addItem(TRANS("Multitrack Mode"), true, !m_tableListBox.isVisible(), [this]() {
         m_changePlayerTypeCallback(PlayerType::Multitrack);
-        break;
-    case 7:
+    });
+    m.addItem(TRANS("Playlist Mode"), true, m_tableListBox.isVisible(), [this]() {
         m_changePlayerTypeCallback(PlayerType::Playlist);
-        break;
-    case 8:
-        m_configureMidiCallback();
-        break;
-    }
+    });
+
+    m.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(m_configureButton));
 }
 
 void PlaylistPlayerWindow::buttonClicked(juce::Button* button)

@@ -4,15 +4,19 @@
 
 LONG CALLBACK unhandledExceptionFilter(EXCEPTION_POINTERS* e)
 {
-    CrashDumper crashDumper(e);
+    std::promise<void> done;
+    auto future = done.get_future();
+    CrashDumper crashDumper(std::move(done), e);
 
-    crashDumper.runThread();
+    crashDumper.launchThread();
+    future.wait();
 
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
-CrashDumper::CrashDumper(EXCEPTION_POINTERS* e)
+CrashDumper::CrashDumper(std::promise<void>&& promise, EXCEPTION_POINTERS* e)
     : ThreadWithProgressWindow(TRANS("Application crashed.\n\nWriting crash dump ..."), true, false)
+    , promise(std::move(promise))
     , e(e)
 {
     setProgress(-1.0);
@@ -76,6 +80,8 @@ void CrashDumper::run()
         NULL);
 
     CloseHandle(dumpFile);
+
+    promise.set_value();
 }
 
 void CrashDumper::init()
