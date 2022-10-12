@@ -158,9 +158,10 @@ void TracksContainer::setTrackConfigs(const std::vector<TrackConfig>& trackConfi
 std::vector<TrackConfig> TracksContainer::getTrackConfigs() const
 {
     std::vector<TrackConfig> configs(m_tracks.size());
-    std::transform(m_tracks.cbegin(), m_tracks.cend(), configs.begin(), [](const std::unique_ptr<Track>& track) {
-        return track->getTrackConfig();
-    });
+    std::transform(m_tracks.cbegin(),
+        m_tracks.cend(),
+        configs.begin(),
+        [](const std::unique_ptr<Track>& track) { return track->getTrackConfig(); });
 
     return configs;
 }
@@ -169,14 +170,16 @@ void TracksContainer::addTrack(bool stereo, const juce::XmlElement* element)
     bool soloMute = std::any_of(
         m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) { return track->getSolo(); });
 
-    auto updateSoloMute = [&]() {
+    auto updateSoloMute = [&]()
+    {
         bool soloMute = std::any_of(
             m_tracks.begin(), m_tracks.end(), [](const std::unique_ptr<Track>& track) { return track->getSolo(); });
         std::for_each(
             m_tracks.begin(), m_tracks.end(), std::bind(&Track::setSoloMute, std::placeholders::_1, soloMute));
     };
 
-    auto updateLongestDuration = [&]() {
+    auto updateLongestDuration = [&]()
+    {
         if (m_longestTrack)
         {
             std::for_each(m_positionCallbackRegistrationTokens.begin(),
@@ -206,12 +209,14 @@ void TracksContainer::addTrack(bool stereo, const juce::XmlElement* element)
             callback(longestDuration);
     };
 
-    Track::ChannelCountChangedCallback channelCountChanged = [&]() {
+    Track::ChannelCountChangedCallback channelCountChanged = [&]()
+    {
         for (const auto& callback : m_channelCountChangedCallbacks)
             callback();
     };
 
-    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
+    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying)
+    {
         if (isPlaying)
             for (const auto& callback : m_playingStateChangedCallback)
                 callback(true);
@@ -298,9 +303,9 @@ bool TracksContainer::getMtcEnabled() const
 
 void TracksContainer::removeTrack(Track* track)
 {
-    auto it = std::find_if(m_tracks.begin(), m_tracks.end(), [track](const std::unique_ptr<Track>& probe) {
-        return probe.get() == track;
-    });
+    auto it = std::find_if(m_tracks.begin(),
+        m_tracks.end(),
+        [track](const std::unique_ptr<Track>& probe) { return probe.get() == track; });
     jassert(it != m_tracks.cend());
 
     for (auto it2 = it; it2 != m_tracks.end(); ++it2)

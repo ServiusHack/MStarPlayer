@@ -5,11 +5,13 @@ PlayerMixerFader::PlayerMixerFader(SubchannelPlayer* player, std::vector<MixerCo
     : MixerFader(player, subControlable, panEnabled, resizeCallback)
     , player(player)
 {
-    player->SetChannelCountChangedCallback([this]() {
-        std::vector<MixerControlable*> mixSettings = this->player->getSubMixerControlables();
+    player->SetChannelCountChangedCallback(
+        [this]()
+        {
+            std::vector<MixerControlable*> mixSettings = this->player->getSubMixerControlables();
 
-        setMixSettings(mixSettings);
-    });
+            setMixSettings(mixSettings);
+        });
 }
 
 SubchannelPlayer* PlayerMixerFader::getPlayer() const

@@ -140,55 +140,69 @@ void TrackUi::buttonClicked(juce::Button* button)
     else if (button == &m_editButton)
     {
         juce::PopupMenu m;
-        m.addItem(TRANS("edit track"), true, false, [this]() {
-            m_editDialog = std::make_unique<TrackEditDialogWindow>(m_track.getName(),
-                m_track.getGain(),
-                std::bind(&Track::setName, &m_track, std::placeholders::_1),
-                std::bind(&Track::setGain, &m_track, std::placeholders::_1));
-        });
-        m.addItem(TRANS("delete track"), !m_trackHasFilesCallback(m_track.getTrackIndex()), false, [this]() {
-            m_removeTrackCallback(&m_track);
-        });
+        m.addItem(TRANS("edit track"),
+            true,
+            false,
+            [this]()
+            {
+                m_editDialog = std::make_unique<TrackEditDialogWindow>(m_track.getName(),
+                    m_track.getGain(),
+                    std::bind(&Track::setName, &m_track, std::placeholders::_1),
+                    std::bind(&Track::setGain, &m_track, std::placeholders::_1));
+            });
+        m.addItem(TRANS("delete track"),
+            !m_trackHasFilesCallback(m_track.getTrackIndex()),
+            false,
+            [this]() { m_removeTrackCallback(&m_track); });
         m.addItem(TRANS("open file"), true, false, [this]() { loadFile(); });
-        m.addItem(TRANS("edit file"), m_track.getTrackConfig().file != juce::File(), false, [this]() {
-            if (!juce::File(m_applicationProperties.getUserSettings()->getValue("audioEditor")).existsAsFile())
+        m.addItem(TRANS("edit file"),
+            m_track.getTrackConfig().file != juce::File(),
+            false,
+            [this]()
             {
-                juce::AlertWindow::showMessageBoxAsync(
-                    juce::AlertWindow::WarningIcon, TRANS("No audio editor"), TRANS("No audio editor was configured."));
-                return;
-            }
+                if (!juce::File(m_applicationProperties.getUserSettings()->getValue("audioEditor")).existsAsFile())
+                {
+                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                        TRANS("No audio editor"),
+                        TRANS("No audio editor was configured."));
+                    return;
+                }
 
-            juce::ChildProcess process;
-            juce::StringArray arguments(m_applicationProperties.getUserSettings()->getValue("audioEditor"));
-            arguments.add(m_track.getTrackConfig().file.getFullPathName());
-            if (!process.start(arguments))
-            {
-                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
-                    TRANS("Failed launch audio editor"),
-                    TRANS("Failed to start the audio editor."));
-                return;
-            }
+                juce::ChildProcess process;
+                juce::StringArray arguments(m_applicationProperties.getUserSettings()->getValue("audioEditor"));
+                arguments.add(m_track.getTrackConfig().file.getFullPathName());
+                if (!process.start(arguments))
+                {
+                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                        TRANS("Failed launch audio editor"),
+                        TRANS("Failed to start the audio editor."));
+                    return;
+                }
 
-            juce::File file(m_track.getTrackConfig().file);
-            m_track.unloadFile();
-            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::NoIcon,
-                TRANS("Audio editor launched"),
-                TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it "
-                      "again."));
-            m_track.loadFileIntoTransport(file);
-        });
-        m.addItem(TRANS("remove file"), m_track.getTrackConfig().file != juce::File(), false, [this]() {
-            int alertResult = juce::AlertWindow::showOkCancelBox(juce::AlertWindow::QuestionIcon,
-                TRANS("Confirm"),
-                TRANS("Do you really want to remove the audio file from this track?"),
-                TRANS("Yes"),
-                TRANS("No"),
-                this,
-                nullptr);
-
-            if (alertResult == 1)
+                juce::File file(m_track.getTrackConfig().file);
                 m_track.unloadFile();
-        });
+                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::NoIcon,
+                    TRANS("Audio editor launched"),
+                    TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it "
+                          "again."));
+                m_track.loadFileIntoTransport(file);
+            });
+        m.addItem(TRANS("remove file"),
+            m_track.getTrackConfig().file != juce::File(),
+            false,
+            [this]()
+            {
+                int alertResult = juce::AlertWindow::showOkCancelBox(juce::AlertWindow::QuestionIcon,
+                    TRANS("Confirm"),
+                    TRANS("Do you really want to remove the audio file from this track?"),
+                    TRANS("Yes"),
+                    TRANS("No"),
+                    this,
+                    nullptr);
+
+                if (alertResult == 1)
+                    m_track.unloadFile();
+            });
         m.addSeparator();
         m.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(m_editButton));
     }
@@ -270,12 +284,14 @@ void TrackUi::loadFile()
         juce::File(),
         m_track.getAudioFormatManager().getWildcardForAllFormats());
 
-    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
-        if (chooser.getResult() == juce::File())
-            return;
+    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode,
+        [this](const juce::FileChooser& chooser)
+        {
+            if (chooser.getResult() == juce::File())
+                return;
 
-        loadFile(juce::File(chooser.getResult()));
-    });
+            loadFile(juce::File(chooser.getResult()));
+        });
 }
 
 void TrackUi::loadFile(const juce::File& audioFile)

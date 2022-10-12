@@ -28,12 +28,14 @@ CDPlayer::CDPlayer(MixerComponent* mixer, OutputChannelNames* outputChannelNames
     , m_remappingAudioSource(&m_transportSource, soloBusSettings, false)
     , m_digitalDisplay({}, "00:00:00")
     , m_slider(juce::Slider::LinearHorizontal, juce::Slider::NoTextBox)
-    , m_tracksTable([&](int trackIndex) {
-        setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
-        m_transportSource.start();
-        startTimer(50);
-        m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
-    })
+    , m_tracksTable(
+          [&](int trackIndex)
+          {
+              setNextReadPosition(m_reader->getPositionOfTrackStart(trackIndex));
+              m_transportSource.start();
+              startTimer(50);
+              m_pluginLoader.playingStateChanged(getName().toRawUTF8(), true);
+          })
 {
     // play button
     juce::Image normalImage

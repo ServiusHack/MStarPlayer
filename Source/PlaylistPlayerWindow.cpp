@@ -32,8 +32,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
           std::bind(&PlaylistModel::trackHasFiles, &playlistModel, std::placeholders::_1),
           std::bind(&PlaylistModel::removeTrack, &playlistModel, std::placeholders::_1),
           std::bind(&PlaylistPlayerWindow::fileLoaded, this, std::placeholders::_1))
-    , m_tableListBox([&](const std::vector<TrackConfig>& trackConfigs, bool play,
-                         int index) { m_player.playlistEntryChanged(trackConfigs, play, index); },
+    , m_tableListBox([&](const std::vector<TrackConfig>& trackConfigs, bool play, int index)
+          { m_player.playlistEntryChanged(trackConfigs, play, index); },
           playlistModel)
     , m_resizeBar(&m_layout, 1, false)
 {
@@ -165,9 +165,8 @@ PlaylistPlayerWindow::PlaylistPlayerWindow(Player& player, TracksContainer* trac
     m_tableListBox.selectRow(0);
 
     // tracks
-    Track::PositionCallback positionCallback = [&](double position, bool /*finished*/) {
-        m_digitalDisplay.setText(Utils::formatSeconds(position), juce::sendNotification);
-    };
+    Track::PositionCallback positionCallback = [&](double position, bool /*finished*/)
+    { m_digitalDisplay.setText(Utils::formatSeconds(position), juce::sendNotification); };
     m_tracksContainer->addPositionCallback(positionCallback);
 
     m_tracksContainer->addLongestDurationChangedCallback(
@@ -236,26 +235,36 @@ void PlaylistPlayerWindow::mouseDown(const juce::MouseEvent& event)
         return;
 
     juce::PopupMenu m;
-    m.addItem(TRANS("add stereo track"), true, false, [this]() {
-        m_tracks.addStereoTrack();
-        repaint();
-        parentSizeChanged();
-    });
-    m.addItem(TRANS("add mono track"), true, false, [this]() {
-        m_tracks.addMonoTrack();
-        repaint();
-    });
+    m.addItem(TRANS("add stereo track"),
+        true,
+        false,
+        [this]()
+        {
+            m_tracks.addStereoTrack();
+            repaint();
+            parentSizeChanged();
+        });
+    m.addItem(TRANS("add mono track"),
+        true,
+        false,
+        [this]()
+        {
+            m_tracks.addMonoTrack();
+            repaint();
+        });
     m.addItem(TRANS("configure channels"), true, false, [this]() { m_configureChannelsCallback(); });
     m.addItem(TRANS("configure appearance"), true, false, [this]() { m_showEditDialogCallback(); });
     m.addItem(TRANS("configure MIDI"), true, false, [this]() { m_configureMidiCallback(); });
     m.addSeparator();
     m.addItem(TRANS("Jingle Mode"), true, false, [this]() { m_changePlayerTypeCallback(PlayerType::Jingle); });
-    m.addItem(TRANS("Multitrack Mode"), true, !m_tableListBox.isVisible(), [this]() {
-        m_changePlayerTypeCallback(PlayerType::Multitrack);
-    });
-    m.addItem(TRANS("Playlist Mode"), true, m_tableListBox.isVisible(), [this]() {
-        m_changePlayerTypeCallback(PlayerType::Playlist);
-    });
+    m.addItem(TRANS("Multitrack Mode"),
+        true,
+        !m_tableListBox.isVisible(),
+        [this]() { m_changePlayerTypeCallback(PlayerType::Multitrack); });
+    m.addItem(TRANS("Playlist Mode"),
+        true,
+        m_tableListBox.isVisible(),
+        [this]() { m_changePlayerTypeCallback(PlayerType::Playlist); });
 
     m.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(m_configureButton));
 }

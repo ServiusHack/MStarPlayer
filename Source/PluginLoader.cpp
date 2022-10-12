@@ -542,24 +542,24 @@ void PluginLoader::loadConfigurations(juce::XmlElement* pluginsElement)
         juce::XmlElement* pluginElement = pluginsElement->getChildElement(i);
         juce::String configurationText = pluginElement->getAllSubText();
         juce::String pluginName = pluginElement->getStringAttribute("name");
-        auto it = std::find_if(pluginsV1.begin(), pluginsV1.end(), [pluginName](const PluginV1& plugin) {
-            return plugin.name == pluginName;
-        });
+        auto it = std::find_if(pluginsV1.begin(),
+            pluginsV1.end(),
+            [pluginName](const PluginV1& plugin) { return plugin.name == pluginName; });
         if (it != pluginsV1.end())
         {
             it->loadConfigurationFunction(configurationText.toRawUTF8());
             continue;
         }
-        auto it2 = std::find_if(pluginsV2.begin(), pluginsV2.end(), [pluginName](const PluginV2& plugin) {
-            return plugin.name == pluginName;
-        });
+        auto it2 = std::find_if(pluginsV2.begin(),
+            pluginsV2.end(),
+            [pluginName](const PluginV2& plugin) { return plugin.name == pluginName; });
         if (it2 != pluginsV2.end())
         {
             it2->loadConfigurationFunction(configurationText.toRawUTF8());
         }
-        auto it3 = std::find_if(pluginsV3.begin(), pluginsV3.end(), [pluginName](const PluginV3& plugin) {
-            return plugin.name == pluginName;
-        });
+        auto it3 = std::find_if(pluginsV3.begin(),
+            pluginsV3.end(),
+            [pluginName](const PluginV3& plugin) { return plugin.name == pluginName; });
         if (it3 != pluginsV3.end())
         {
             it3->loadConfigurationFunction(configurationText.toRawUTF8());

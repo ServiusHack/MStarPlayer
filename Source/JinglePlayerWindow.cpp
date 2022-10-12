@@ -86,7 +86,8 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     m_fileNameLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(m_fileNameLabel);
 
-    Track::PositionCallback positionCallback = [&](double position, bool finished) {
+    Track::PositionCallback positionCallback = [&](double position, bool finished)
+    {
         const double remainingTime = m_totalLength - position;
 
         m_progress = finished ? 0.0 : position / m_totalLength;
@@ -111,13 +112,15 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     };
     m_tracksContainer->addPositionCallback(positionCallback);
 
-    TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
+    TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration)
+    {
         m_totalDurationText.setText(Utils::formatSeconds(duration), juce::sendNotification);
         m_totalLength = duration;
     };
     m_tracksContainer->addLongestDurationChangedCallback(longestDurationCallback);
 
-    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying) {
+    Track::PlayingStateChangedCallback playingStateChangedCallback = [&](bool isPlaying)
+    {
         m_playButton.setImages(isPlaying ? m_stopImage.get() : m_playImage.get());
         m_blink = false;
         updatePointColor();
@@ -221,13 +224,15 @@ void JinglePlayerWindow::loadFile()
         juce::File(),
         m_formatManager.getWildcardForAllFormats());
 
-    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
-        if (chooser.getResult() == juce::File())
-            return;
+    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode,
+        [this](const juce::FileChooser& chooser)
+        {
+            if (chooser.getResult() == juce::File())
+                return;
 
-        juce::File audioFile = juce::File(chooser.getResult());
-        (*m_tracksContainer)[0].loadFileIntoTransport(audioFile);
-    });
+            juce::File audioFile = juce::File(chooser.getResult());
+            (*m_tracksContainer)[0].loadFileIntoTransport(audioFile);
+        });
 }
 
 void JinglePlayerWindow::buttonClicked(juce::Button* /*button*/)

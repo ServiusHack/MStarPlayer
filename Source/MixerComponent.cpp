@@ -85,7 +85,8 @@ void MixerComponent::resized()
 
     int x = 0;
 
-    auto updateBounds = [&x, sliderHeight](const auto& fader) {
+    auto updateBounds = [&x, sliderHeight](const auto& fader)
+    {
         if (!fader->isVisible())
             return;
         juce::Rectangle<int> bounds = fader->getBounds();

@@ -537,12 +537,14 @@ void MainContentComponent::uncheckedOpenProject()
 {
     m_currentFileChooser.emplace(TRANS("Please select the project file you want to load ..."), juce::File(), "*.aupp");
 
-    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
-        if (chooser.getResult() == juce::File())
-            return;
+    m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode,
+        [this](const juce::FileChooser& chooser)
+        {
+            if (chooser.getResult() == juce::File())
+                return;
 
-        openProject(chooser.getResult());
-    });
+            openProject(chooser.getResult());
+        });
 }
 
 void MainContentComponent::askSaveProject(ContinueCallback callback)
@@ -561,7 +563,8 @@ void MainContentComponent::askSaveProject(ContinueCallback callback)
                                      .withButton(TRANS("No"))
                                      .withButton(TRANS("Cancel"))
                                      .withAssociatedComponent(this),
-        [this, callback](int result) {
+        [this, callback](int result)
+        {
             switch (result)
             {
             case 1:
@@ -593,7 +596,8 @@ void MainContentComponent::saveAsProject(std::optional<ContinueCallback> callbac
 
     m_currentFileChooser->launchAsync(
         juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::warnAboutOverwriting,
-        [this, callback](const juce::FileChooser& chooser) {
+        [this, callback](const juce::FileChooser& chooser)
+        {
             if (chooser.getResult() == juce::File())
                 return;
 
