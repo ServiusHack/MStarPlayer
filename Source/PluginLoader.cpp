@@ -160,8 +160,13 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
 {
     component = pComponent;
 
+#ifdef WIN32
+    constexpr const char* pattern = "*.dll";
+#else
+    constexpr const char* pattern = "*.so";
+#endif
     juce::RangedDirectoryIterator directoryIterator(
-        juce::File::getSpecialLocation(juce::File::currentExecutableFile).getSiblingFile("plugins"), false, "*.dll");
+        juce::File::getSpecialLocation(juce::File::currentExecutableFile).getSiblingFile("plugins"), false, pattern);
     std::vector<juce::File> dlls;
 
     struct LoadFailure
