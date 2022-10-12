@@ -214,33 +214,38 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 {
     juce::PopupMenu popup;
     popup.addItem(TRANS("append"), true, false, [this]() { add("", 0); });
-    popup.addItem(TRANS("append files"), true, false, [this]() {
-        juce::AudioFormatManager formatManager;
-        formatManager.registerBasicFormats();
-        m_currentFileChooser.emplace(TRANS("Please select the audio file you want to load ..."),
-            juce::File(),
-            formatManager.getWildcardForAllFormats());
+    popup.addItem(TRANS("append files"),
+        true,
+        false,
+        [this]()
+        {
+            juce::AudioFormatManager formatManager;
+            formatManager.registerBasicFormats();
+            m_currentFileChooser.emplace(TRANS("Please select the audio file you want to load ..."),
+                juce::File(),
+                formatManager.getWildcardForAllFormats());
 
-        m_currentFileChooser->launchAsync(
-            juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectMultipleItems,
-            [this](const juce::FileChooser& chooser) {
-                if (chooser.getResults().isEmpty())
-                    return;
-
-                juce::AudioFormatManager formatManager;
-                formatManager.registerBasicFormats();
-
-                for (const juce::File& file : chooser.getResults())
+            m_currentFileChooser->launchAsync(
+                juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectMultipleItems,
+                [this](const juce::FileChooser& chooser)
                 {
-                    std::vector<TrackConfig> trackConfigs;
-                    trackConfigs.push_back({file});
-                    const std::unique_ptr<juce::AudioFormatReader> reader(
-                        formatManager.createReaderFor(trackConfigs[0].file));
-                    double duration = reader->lengthInSamples / reader->sampleRate;
-                    add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
-                }
-            });
-    });
+                    if (chooser.getResults().isEmpty())
+                        return;
+
+                    juce::AudioFormatManager formatManager;
+                    formatManager.registerBasicFormats();
+
+                    for (const juce::File& file : chooser.getResults())
+                    {
+                        std::vector<TrackConfig> trackConfigs;
+                        trackConfigs.push_back({file});
+                        const std::unique_ptr<juce::AudioFormatReader> reader(
+                            formatManager.createReaderFor(trackConfigs[0].file));
+                        double duration = reader->lengthInSamples / reader->sampleRate;
+                        add(file.getFileNameWithoutExtension(), duration, false, trackConfigs);
+                    }
+                });
+        });
     popup.addItem(TRANS("insert"), enableInsert, false, [this, rowNumber]() { insert(rowNumber, "", 0); });
     popup.addItem(TRANS("edit"), enableInsert, false, [this, rowNumber]() { showEditDialog(rowNumber); });
     popup.addItem(TRANS("delete"), enableDelete, false, [this, rowNumber]() { remove(rowNumber); });
@@ -250,7 +255,8 @@ void PlaylistModel::showPopup(int rowNumber, bool enableInsert, bool enableDelet
 
 void PlaylistModel::showEditDialog(int rowNumber)
 {
-    PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](juce::String name) {
+    PlaylistEntrySettingsChangedCallback callback = [this, rowNumber](juce::String name)
+    {
         m_playlist[rowNumber].name = name;
         m_nameChangedCallback(rowNumber, name);
         sendChangeMessage();
@@ -348,18 +354,24 @@ void PlaylistModel::restoreFromXml(const juce::XmlElement& element, const juce::
 bool PlaylistModel::trackHasFiles(size_t trackIndex) const
 {
     trackIndex -= 1; // adjust index to zero-based
-    return std::any_of(m_playlist.cbegin(), m_playlist.cend(), [trackIndex](const PlaylistEntry& entry) {
-        if (trackIndex < entry.trackConfigs.size())
-            return entry.trackConfigs.at(trackIndex).file != juce::File();
-        else
-            return false;
-    });
+    return std::any_of(m_playlist.cbegin(),
+        m_playlist.cend(),
+        [trackIndex](const PlaylistEntry& entry)
+        {
+            if (trackIndex < entry.trackConfigs.size())
+                return entry.trackConfigs.at(trackIndex).file != juce::File();
+            else
+                return false;
+        });
 }
 
 void PlaylistModel::removeTrack(size_t trackIndex)
 {
-    std::for_each(m_playlist.begin(), m_playlist.end(), [trackIndex](PlaylistEntry& entry) {
-        if (trackIndex < entry.trackConfigs.size())
-            entry.trackConfigs.erase(std::next(entry.trackConfigs.begin(), trackIndex));
-    });
+    std::for_each(m_playlist.begin(),
+        m_playlist.end(),
+        [trackIndex](PlaylistEntry& entry)
+        {
+            if (trackIndex < entry.trackConfigs.size())
+                entry.trackConfigs.erase(std::next(entry.trackConfigs.begin(), trackIndex));
+        });
 }

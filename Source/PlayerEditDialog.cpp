@@ -157,8 +157,9 @@ void PlayerEditDialogComponent::buttonClicked(juce::Button* buttonThatWasClicked
         {
             m_currentFileChooser.emplace("Please select the image you want to use ...", m_imageFile, "*.jpg;*.png");
 
-            m_currentFileChooser->launchAsync(
-                juce::FileBrowserComponent::openMode, [this](const juce::FileChooser& chooser) {
+            m_currentFileChooser->launchAsync(juce::FileBrowserComponent::openMode,
+                [this](const juce::FileChooser& chooser)
+                {
                     if (chooser.getResult() == juce::File())
                         return;
 

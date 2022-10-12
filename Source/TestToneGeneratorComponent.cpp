@@ -117,7 +117,8 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
     m_audioSource.setNumChannels(m_outputChannelNames->getNumberOfChannels());
     component->updateContent();
 
-    m_listBoxModel.m_changeCallback = [this](int row, bool enable) {
+    m_listBoxModel.m_changeCallback = [this](int row, bool enable)
+    {
         component->selectRow(row, true, false);
         m_audioSource.setEnable(row, enable);
     };

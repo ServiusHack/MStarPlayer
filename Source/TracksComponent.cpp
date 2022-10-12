@@ -13,10 +13,12 @@ TracksComponent::TracksComponent(TracksContainer& container, juce::ApplicationPr
 {
     trackAdded(m_container[0]);
     m_container.setTrackAddedCallback(std::bind(&TracksComponent::trackAdded, this, std::placeholders::_1));
-    m_container.addLongestDurationChangedCallback([&](double duration) {
-        for (const auto& track : m_tracks)
-            track->setLongestDuration(duration);
-    });
+    m_container.addLongestDurationChangedCallback(
+        [&](double duration)
+        {
+            for (const auto& track : m_tracks)
+                track->setLongestDuration(duration);
+        });
     m_container.setTracksClearedCallback(std::bind(&TracksComponent::tracksCleared, this));
 
     m_container.addTrackRemovedCallback(std::bind(&TracksComponent::trackRemoved, this, std::placeholders::_1));

@@ -16,7 +16,8 @@ void MTCSender::setDevices(juce::Array<juce::MidiDeviceInfo> deviceInfos)
 {
     outputs.erase(std::remove_if(outputs.begin(),
                       outputs.end(),
-                      [&deviceInfos](const std::unique_ptr<juce::MidiOutput>& output) {
+                      [&deviceInfos](const std::unique_ptr<juce::MidiOutput>& output)
+                      {
                           // Remove devices that are no longer requested.
                           // At the same time remove already open devices from the list of devices to open.
                           bool deviceWasRequested = deviceInfos.removeAllInstancesOf(output->getDeviceInfo()) > 0;

@@ -35,10 +35,12 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
 
     addChildComponent(&m_jinglePlayer);
 
-    m_tracksContainer.addChannelCountChangedCallback([&]() {
-        if (m_channelCountChanged)
-            m_channelCountChanged();
-    });
+    m_tracksContainer.addChannelCountChangedCallback(
+        [&]()
+        {
+            if (m_channelCountChanged)
+                m_channelCountChanged();
+        });
 
     mixer->registerPlayer(this);
     setGain(gain);
@@ -52,21 +54,20 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
 
     m_soloBusSettings.addListener(this);
 
-    Track::PositionCallback positionCallback = [&](double position, bool finished) {
+    Track::PositionCallback positionCallback = [&](double position, bool finished)
+    {
         m_pluginLoader.positionChanged(getName().toRawUTF8(), position);
         if (finished && m_playlistPlayer.isVisible())
             nextEntry(true);
     };
     m_tracksContainer.addPositionCallback(positionCallback);
 
-    TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration) {
-        m_pluginLoader.playlistEntryDurationChanged(getName().toRawUTF8(), currentPlaylistEntry, duration);
-    };
+    TracksContainer::LongestDurationChangedCallback longestDurationCallback = [&](double duration)
+    { m_pluginLoader.playlistEntryDurationChanged(getName().toRawUTF8(), currentPlaylistEntry, duration); };
     m_tracksContainer.addLongestDurationChangedCallback(longestDurationCallback);
 
-    playlistModel.setNameChangedCallback([&](int rowNumber, const juce::String& name) {
-        m_pluginLoader.playlistEntryNameChanged(getName().toRawUTF8(), rowNumber, name.toRawUTF8());
-    });
+    playlistModel.setNameChangedCallback([&](int rowNumber, const juce::String& name)
+        { m_pluginLoader.playlistEntryNameChanged(getName().toRawUTF8(), rowNumber, name.toRawUTF8()); });
 }
 
 Player::~Player()
@@ -361,7 +362,8 @@ void Player::configureChannels()
             m_outputChannelNames,
             m_soloBusSettings,
             m_tracksContainer.createMapping(),
-            [&](int source, int target) {
+            [&](int source, int target)
+            {
                 for (size_t i = 0; i < m_tracksContainer.size(); ++i)
                 {
                     if (source - m_tracksContainer[i].getNumChannels() < 0)
