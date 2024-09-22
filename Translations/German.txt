@@ -28,6 +28,10 @@ countries:de
 "Audio buffer size:" = "Größe des Audiobuffers:"
 "Audio device type:" = "Typ des Audiogeräts:"
 
+// AudioDeviceComponent
+"activate all channels" = "alle Kanäle aktivieren"
+"deactivate all but first channel" = "alle außer erstem Kanal deaktivieren"
+
 // General
 "Close" = "Schließen"
 

@@ -21,6 +21,8 @@ set_property(TARGET MStarPlayer PROPERTY
 target_sources(MStarPlayer PRIVATE
     Source/AudioConfiguration.cpp
     Source/AudioConfiguration.h
+    Source/AudioDeviceComponent.cpp
+    Source/AudioDeviceComponent.h
     Source/CDNamesComboBox.cpp
     Source/CDNamesComboBox.h
     Source/CDPlayer.cpp
