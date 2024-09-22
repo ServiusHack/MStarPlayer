@@ -128,10 +128,17 @@ float Track::getVolume() const
 
 void Track::play()
 {
-    setPosition(0);
-    m_transportSource.start();
-    startTimer(50);
-    m_playingStateChangedCallback(true);
+    if (m_currentAudioFileSource)
+    {
+        setPosition(0);
+        m_transportSource.start();
+        startTimer(50);
+        m_playingStateChangedCallback(true);
+    }
+    else
+    {
+        m_playingStateChangedCallback(false);
+    }
 }
 
 void Track::pause()
@@ -142,18 +149,25 @@ void Track::pause()
         stopTimer();
         m_playingStateChangedCallback(false);
     }
-    else
+    else if (m_currentAudioFileSource)
     {
         m_transportSource.start();
         startTimer(50);
         m_playingStateChangedCallback(true);
     }
+    else
+    {
+        m_playingStateChangedCallback(false);
+    }
 }
 
 void Track::stop()
 {
-    m_transportSource.stop();
-    setPosition(0);
+    if (m_currentAudioFileSource)
+    {
+        m_transportSource.stop();
+        setPosition(0);
+    }
     stopTimer();
     m_playingStateChangedCallback(false);
 }
