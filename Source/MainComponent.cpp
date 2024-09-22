@@ -146,6 +146,7 @@ juce::StringArray MainContentComponent::getMenuBarNames()
     juce::StringArray names(menuBarNames, 4);
     if (m_pluginLoader.count() > 0)
         names.add("Plugins");
+    names.add("Info");
     return names;
 }
 
@@ -195,13 +196,16 @@ juce::PopupMenu MainContentComponent::getMenuForIndex(int menuIndex, const juce:
         menu.addCommandItem(m_commandManager, configureMidi);
         menu.addCommandItem(m_commandManager, editSettings);
         break;
-    case 4:
+    }
+    if (menuIndex == 4 && m_pluginLoader.count() > 0)
     {
         const size_t numberOfPlugins = m_pluginLoader.count();
         for (size_t i = 0; i < numberOfPlugins; ++i)
             menu.addCommandItem(m_commandManager, basePlugin + i);
     }
-    break;
+    else if (menuIndex == 4 && m_pluginLoader.count() == 0 || menuIndex == 5)
+    {
+        menu.addCommandItem(m_commandManager, applicationInfo);
     }
 
     return menu;
@@ -256,6 +260,8 @@ void MainContentComponent::getAllCommands(juce::Array<juce::CommandID>& commands
     const size_t numberOfPlugins = m_pluginLoader.count();
     for (size_t i = 0; i < numberOfPlugins; ++i)
         commands.add(basePlugin + i);
+
+    commands.add(applicationInfo);
 }
 
 // This method is used when something needs to find out the details about one of the commands
@@ -267,6 +273,7 @@ void MainContentComponent::getCommandInfo(juce::CommandID commandID, juce::Appli
     static const juce::String viewCategory("View");
     static const juce::String optionsCategory("Options");
     static const juce::String pluginsCategory("Plugins");
+    static const juce::String infoCategory("Info");
 
     switch (commandID)
     {
@@ -357,6 +364,10 @@ void MainContentComponent::getCommandInfo(juce::CommandID commandID, juce::Appli
     case lookAndFeelPink:
         result.setInfo(TRANS("Pink"), TRANS("Use a pink look and feel"), viewCategory, 0);
         result.setTicked(&juce::LookAndFeel::getDefaultLookAndFeel() == s_pinkLookAndFeel);
+        break;
+
+    case applicationInfo:
+        result.setInfo(TRANS("About"), TRANS("Show information about the application"), infoCategory, 0);
         break;
     };
 
@@ -494,6 +505,12 @@ bool MainContentComponent::perform(const juce::ApplicationCommandTarget::Invocat
     case lookAndFeelPink:
         switchToPinkLookAndFeel();
         m_applicationProperties.getUserSettings()->setValue("lookAndFeel", "pink");
+        break;
+    case applicationInfo:
+        juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon,
+            "M*Player",
+            TRANS("Multi-channel, multi-track, multi-player player for audio files.") + "\n\n" + TRANS("Version: ")
+                + JUCE_APPLICATION_VERSION_STRING);
         break;
     default:
         if (info.commandID >= basePlugin)
