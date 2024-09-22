@@ -60,7 +60,7 @@ PlayerEditDialogComponent::PlayerEditDialogComponent(const juce::String& playerN
     , m_closeButton("close")
 {
     addAndMakeVisible(m_label);
-    m_label.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_label.setFont(juce::Font(juce::FontOptions(15.00f, juce::Font::plain)));
     m_label.setJustificationType(juce::Justification::centredLeft);
     m_label.setEditable(false, false, false);
     m_label.setColour(juce::TextEditor::textColourId, juce::Colours::black);

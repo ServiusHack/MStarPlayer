@@ -34,8 +34,10 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent,
     , m_snapToGridHeightLabel("grid height label", TRANS("grid height:"))
     , m_snapToGridChanged(snapToGridChanged)
 {
+    const juce::FontOptions fontOptions(15.00f, juce::Font::plain);
+
     addAndMakeVisible(m_nameLabel);
-    m_nameLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_nameLabel.setFont(juce::Font(fontOptions));
     m_nameLabel.setJustificationType(juce::Justification::centredLeft);
     m_nameLabel.setEditable(false, false, false);
     m_nameLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);
@@ -46,7 +48,7 @@ EditSettingsComponent::EditSettingsComponent(EditSettingsWindow* parent,
         juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory));
     m_audioEditorFilenameComponent.addListener(this);
 
-    m_languageLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_languageLabel.setFont(juce::Font(fontOptions));
     m_languageLabel.setJustificationType(juce::Justification::centredLeft);
     m_languageLabel.setEditable(false, false, false);
     m_languageLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);

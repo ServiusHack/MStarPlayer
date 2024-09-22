@@ -32,6 +32,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
     : m_mixerComponent(mixerComponent)
     , m_outputChannelNames(outputChannelNames)
 {
+    const juce::FontOptions fontOptions(15.00f, juce::Font::plain);
     //[Constructor_pre] You can add your own custom stuff here..
     m_outputChannelNames->addListener(this);
     m_outputChannelNames->addChangeListener(this);
@@ -62,7 +63,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
 
     label.reset(new juce::Label("new label", TRANS("Tone:")));
     addAndMakeVisible(label.get());
-    label->setFont(juce::Font(15.00f, juce::Font::plain).withTypefaceStyle("Regular"));
+    label->setFont(juce::Font(fontOptions).withTypefaceStyle("Regular"));
     label->setJustificationType(juce::Justification::centredLeft);
     label->setEditable(false, false, false);
     label->setColour(juce::TextEditor::textColourId, juce::Colours::black);
@@ -90,7 +91,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
 
     dbLabel.reset(new juce::Label("new label", TRANS("0 dB")));
     addAndMakeVisible(dbLabel.get());
-    dbLabel->setFont(juce::Font(15.00f, juce::Font::plain).withTypefaceStyle("Regular"));
+    dbLabel->setFont(juce::Font(fontOptions).withTypefaceStyle("Regular"));
     dbLabel->setJustificationType(juce::Justification::centredLeft);
     dbLabel->setEditable(false, false, false);
     dbLabel->setColour(juce::TextEditor::textColourId, juce::Colours::black);

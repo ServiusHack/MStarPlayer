@@ -307,7 +307,7 @@ int PlaylistPlayerWindow::getSelectedRow() const
 
 void PlaylistPlayerWindow::fileLoaded(const juce::String& filename)
 {
-    static_cast<PlaylistModel*>(m_tableListBox.getModel())->setTrackNameIfEmpty(getSelectedRow(), filename);
+    static_cast<PlaylistModel*>(m_tableListBox.getTableListBoxModel())->setTrackNameIfEmpty(getSelectedRow(), filename);
 }
 
 void PlaylistPlayerWindow::nextPlaylistEntry(bool onlyIfEntrySaysSo)
