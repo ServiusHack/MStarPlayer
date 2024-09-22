@@ -130,7 +130,9 @@ public:
         lookAndFeelDark = 0x6001,
         lookAndFeelPink = 0x6002,
 
-        basePlugin = 0x7000,
+        applicationInfo = 0x7000,
+
+        basePlugin = 0x8000,
     };
 
     // Project file related methods and fields

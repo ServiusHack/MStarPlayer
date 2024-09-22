@@ -10,5 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Output channels can be activated and deactivated with one button click
+* Show *about* dialog with version number.
 
 ## [1.1.111] - 2022-10-12
