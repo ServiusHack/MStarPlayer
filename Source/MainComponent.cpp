@@ -84,8 +84,7 @@ MainContentComponent::MainContentComponent(
     addAndMakeVisible(m_multiDocumentPanel.get());
     m_multiDocumentPanel->setLayoutMode(MyMultiDocumentPanel::FloatingWindows);
 
-    m_timeSliceThread.startThread(3);
-    m_audioThumbnailCache.getTimeSliceThread().setPriority(0);
+    m_timeSliceThread.startThread(juce::Thread::Priority::low);
 
     setSize(700, 600);
 
