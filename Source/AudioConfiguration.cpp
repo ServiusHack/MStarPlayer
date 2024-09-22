@@ -2,6 +2,8 @@
 
 #include "juce_audio_utils/juce_audio_utils.h"
 
+#include "AudioDeviceComponent.h"
+
 class ChannelNameTextEditor : public juce::TextEditor
 {
 public:
@@ -180,9 +182,8 @@ AudioConfigurationComponent::AudioConfigurationComponent(AudioConfigurationWindo
 
     addAndMakeVisible(&m_tabbedComponent);
 
-    juce::AudioDeviceSelectorComponent* selector
-        = new juce::AudioDeviceSelectorComponent(audioDeviceManager, 0, 0, 1, 64, false, false, false, false);
-    m_tabbedComponent.addTab(TRANS("Audio Device"), juce::Colour(0xffffffff), selector, true);
+    AudioDeviceComponent* audioDevice = new AudioDeviceComponent(audioDeviceManager);
+    m_tabbedComponent.addTab(TRANS("Audio Device"), juce::Colour(0xffffffff), audioDevice, true);
 
     m_tabbedComponent.addTab(TRANS("Channel Names"), juce::Colour(0xffffffff), &m_tableListBox, false);
     m_tableListBox.setColour(juce::ListBox::outlineColourId, juce::Colours::grey);
