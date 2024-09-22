@@ -20,7 +20,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
 {
     addAndMakeVisible(&m_label);
     m_label.setText(mainControlable->getName(), juce::sendNotification);
-    m_label.setFont(juce::Font(10.00f, juce::Font::plain));
+    m_label.setFont(juce::Font(juce::FontOptions(10.00f, juce::Font::plain)));
     m_label.setJustificationType(juce::Justification::centredLeft);
     m_label.setEditable(false, false, false);
     m_label.setColour(juce::TextEditor::textColourId, juce::Colours::black);

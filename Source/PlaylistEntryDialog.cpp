@@ -45,7 +45,7 @@ PlaylistEntryDialogComponent::PlaylistEntryDialogComponent(const juce::String& n
     , m_closeButton("close")
 {
     addAndMakeVisible(m_nameLabel);
-    m_nameLabel.setFont(juce::Font(15.00f, juce::Font::plain));
+    m_nameLabel.setFont(juce::Font(juce::FontOptions(15.00f, juce::Font::plain)));
     m_nameLabel.setJustificationType(juce::Justification::centredLeft);
     m_nameLabel.setEditable(false, false, false);
     m_nameLabel.setColour(juce::TextEditor::textColourId, juce::Colours::black);

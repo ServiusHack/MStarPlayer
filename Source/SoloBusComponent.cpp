@@ -5,15 +5,17 @@ SoloBusComponent::SoloBusComponent(OutputChannelNames& outputChannelNames, SoloB
     , label({}, TRANS("left channel / mono:"))
     , label2({}, TRANS("right channel"))
 {
+    const juce::FontOptions fontOptions(15.00f, juce::Font::plain);
+
     addAndMakeVisible(label);
-    label.setFont(juce::Font(15.00f, juce::Font::plain));
+    label.setFont(juce::Font(fontOptions));
     label.setJustificationType(juce::Justification::centredRight);
     label.setEditable(false, false, false);
     label.setColour(juce::TextEditor::textColourId, juce::Colours::black);
     label.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x00000000));
 
     addAndMakeVisible(label2);
-    label2.setFont(juce::Font(15.00f, juce::Font::plain));
+    label2.setFont(juce::Font(fontOptions));
     label2.setJustificationType(juce::Justification::centredRight);
     label2.setEditable(false, false, false);
     label2.setColour(juce::TextEditor::textColourId, juce::Colours::black);
