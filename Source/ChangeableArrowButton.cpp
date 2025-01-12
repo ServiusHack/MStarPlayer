@@ -6,7 +6,8 @@ ChangeableArrowButton::ChangeableArrowButton(
     , colour(arrowColour)
 {
     path.addTriangle(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f);
-    path.applyTransform(juce::AffineTransform::rotation(juce::float_Pi * 2.0f * arrowDirectionInRadians, 0.5f, 0.5f));
+    path.applyTransform(
+        juce::AffineTransform::rotation(juce::MathConstants<float>::pi * 2.0f * arrowDirectionInRadians, 0.5f, 0.5f));
 }
 
 void ChangeableArrowButton::paintButton(juce::Graphics& g, bool /*isMouseOverButton*/, bool isButtonDown)
@@ -26,6 +27,7 @@ void ChangeableArrowButton::setArrowDirection(float arrowDirectionInRadians)
 {
     path.clear();
     path.addTriangle(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f);
-    path.applyTransform(juce::AffineTransform::rotation(juce::float_Pi * 2.0f * arrowDirectionInRadians, 0.5f, 0.5f));
+    path.applyTransform(
+        juce::AffineTransform::rotation(juce::MathConstants<float>::pi * 2.0f * arrowDirectionInRadians, 0.5f, 0.5f));
     repaint();
 }
