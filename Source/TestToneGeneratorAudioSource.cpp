@@ -17,7 +17,7 @@ void TestToneGeneratorAudioSource::prepareToPlay(int samplesPerBlockExpected, do
     m_sampleRate = sampleRate;
 
     const double cyclesPerSample = 1000 / m_sampleRate; // [2]
-    angleDelta = cyclesPerSample * 2.0 * juce::double_Pi; // [3]
+    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // [3]
 
     prepared.resize(m_samplesPerBlockExpected);
 }

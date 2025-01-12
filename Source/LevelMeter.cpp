@@ -13,7 +13,7 @@ LevelMeter::LevelMeter()
     : m_volume(0.0f)
     , m_peak(0.0f)
     , m_peakDurationLeft(0)
-    , m_rotationTransformation(juce::AffineTransform::rotation(-90.0f * juce::float_Pi / 180.0f))
+    , m_rotationTransformation(juce::AffineTransform::rotation(-90.0f * juce::MathConstants<float>::pi / 180.0f))
 {
 }
 
