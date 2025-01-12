@@ -225,7 +225,7 @@ void TrackUi::updateIdText()
 void TrackUi::fileChanged(const juce::File& file, bool updatePlaylist)
 {
     m_fileNameLabel.setText(file.getFileName(), juce::sendNotification);
-    int textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText())
+    int textWidth = juce::GlyphArrangement::getStringWidthInt(m_fileNameLabel.getFont(), m_fileNameLabel.getText())
         + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
     m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 
@@ -371,7 +371,7 @@ void TrackUi::resized()
 
     int textWidth = 0;
     if (m_fileNameLabel.getText() != "")
-        textWidth = m_fileNameLabel.getFont().getStringWidth(m_fileNameLabel.getText())
+        textWidth = juce::GlyphArrangement::getStringWidthInt(m_fileNameLabel.getFont(), m_fileNameLabel.getText())
             + m_fileNameLabel.getBorderSize().getLeft() + m_fileNameLabel.getBorderSize().getRight();
     m_fileNameLabel.setBounds(getWidth() - textWidth, getHeight() - 20, textWidth, 20);
 
