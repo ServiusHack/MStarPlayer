@@ -509,8 +509,8 @@ bool MainContentComponent::perform(const juce::ApplicationCommandTarget::Invocat
     case applicationInfo:
         juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon,
             "M*Player",
-            TRANS("Multi-channel, multi-track, multi-player player for audio files.") + "\n\n" + TRANS("Version: ")
-                + JUCE_APPLICATION_VERSION_STRING);
+            TRANS("Multi-channel, multi-track, multi-player") + "\n" + TRANS("player for audio files") + "\n\n"
+                + TRANS("Version: ") + JUCE_APPLICATION_VERSION_STRING);
         break;
     default:
         if (info.commandID >= basePlugin)
