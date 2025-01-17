@@ -126,12 +126,12 @@ private:
 
     // MixerControlable pan
 public:
-    virtual void setPan(float) override{};
-    virtual float getPan() const override
-    {
-        return 0;
-    };
+    virtual void setPan(float pan) override;
+    virtual float getPan() const override;
     virtual float getVolume() const override;
+
+private:
+    float m_pan;
 
     // MixerControlable name
 public:

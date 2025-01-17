@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Output channels can be activated and deactivated with one button click
 * Show *about* dialog with version number.
+* Support panning of stereo tracks.
 
 ### Fixed
 
