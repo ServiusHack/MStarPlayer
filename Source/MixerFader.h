@@ -6,6 +6,7 @@
 #include "ChangeableArrowButton.h"
 #include "LevelMeter.h"
 #include "MixerControlable.h"
+#include "PanSlider.h"
 #include "VolumeSlider.h"
 
 /**
@@ -81,7 +82,7 @@ private:
     std::unique_ptr<juce::TextButton> m_soloButton;
     std::unique_ptr<juce::TextButton> m_muteButton;
     ChangeableArrowButton m_expandButton;
-    std::unique_ptr<juce::Slider> m_panSlider;
+    std::unique_ptr<PanSlider> m_panSlider;
     LevelMeter m_levelMeter;
 
     ResizeCallback m_resizeCallback;

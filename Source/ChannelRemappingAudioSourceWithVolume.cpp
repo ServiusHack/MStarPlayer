@@ -83,8 +83,11 @@ void ChannelRemappingAudioSourceWithVolume::getNextAudioBlock(const juce::AudioS
 
             if (remappedChan >= 0 && remappedChan < numChans)
             {
+                float gain = 1.0f;
+                if (remappedChan < sourceChannelGain.size())
+                    gain = sourceChannelGain.getReference(remappedChan);
                 bufferToFill.buffer->addFrom(
-                    remappedChan, bufferToFill.startSample, buffer, i, 0, bufferToFill.numSamples);
+                    remappedChan, bufferToFill.startSample, buffer, i, 0, bufferToFill.numSamples, gain);
             }
         }
 
@@ -166,6 +169,14 @@ void ChannelRemappingAudioSourceWithVolume::setOutputChannelMapping(int sourceCh
 {
     const juce::ScopedLock sl(lock);
     setOutputChannelMappingInternal(sourceChannelIndex, destChannelIndex, false);
+}
+
+void ChannelRemappingAudioSourceWithVolume::setSourceChannelGain(int sourceIndex, float gain)
+{
+    while (sourceChannelGain.size() < sourceIndex + 1)
+        sourceChannelGain.add(1.0f);
+
+    sourceChannelGain.getReference(sourceIndex) = gain;
 }
 
 void ChannelRemappingAudioSourceWithVolume::setOutputChannelMappingInternal(

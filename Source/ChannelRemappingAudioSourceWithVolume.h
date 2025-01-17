@@ -48,6 +48,8 @@ public:
     */
     void setOutputChannelMapping(int sourceChannelIndex, int destChannelIndex);
 
+    void setSourceChannelGain(int sourceChannelIndex, float gain);
+
     void setOutputChannelMappingInternal(const int sourceIndex, const int destIndex, const bool solo);
 
     /** Returns the output channel to which channel outputChannelIndex of our input audio
@@ -76,6 +78,7 @@ public:
 private:
     juce::OptionalScopedPointer<juce::AudioSource> source;
     juce::Array<std::pair<int, int>> remappedOutputs;
+    juce::Array<float> sourceChannelGain;
     int requiredNumberOfChannels;
 
     juce::AudioSampleBuffer buffer;

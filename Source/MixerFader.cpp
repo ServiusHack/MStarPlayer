@@ -13,7 +13,7 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
     , m_soloButton(soloEnabled ? std::make_unique<juce::TextButton>("solo") : nullptr)
     , m_muteButton(muteEnabled ? std::make_unique<juce::TextButton>("mute") : nullptr)
     , m_expandButton("expand", 0.0f, juce::Colour(0xff000000))
-    , m_panSlider(panEnabled ? std::make_unique<juce::Slider>() : nullptr)
+    , m_panSlider(panEnabled ? std::make_unique<PanSlider>() : nullptr)
     , m_volumeSlider(std::make_unique<VolumeSlider>())
     , m_resizeCallback(resizeCallback)
     , m_mixerControlable(mainControlable)
@@ -51,12 +51,8 @@ MixerFader::MixerFader(MixerControlable* mainControlable, std::vector<MixerContr
     if (m_panSlider)
     {
         addAndMakeVisible(m_panSlider.get());
-        m_panSlider->setRange(0, 2, 0.1);
-        m_panSlider->setValue(1.0);
-        m_panSlider->setSliderStyle(juce::Slider::LinearHorizontal);
-        m_panSlider->setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+        m_panSlider->setValue(m_mixerControlable->getPan(), juce::dontSendNotification);
         m_panSlider->addListener(this);
-        m_panSlider->setTransform(juce::AffineTransform().scaled(0.7f));
     }
 
     addAndMakeVisible(m_volumeSlider.get());
@@ -130,11 +126,17 @@ void MixerFader::resized()
     static const int padding = 2;
     static const int labelHeight = 24;
     static const int buttonHeight = 24;
-    static const int panHeight = 24;
 
     static const int buttonWidth = 50;
 
-    m_label.setBounds(padding, padding, 2 * buttonWidth - 2 * padding, labelHeight);
+    if (m_panSlider)
+    {
+        m_panSlider->setBounds(padding, padding, 2 * buttonWidth - 2 * padding, labelHeight);
+    }
+    else
+    {
+        m_label.setBounds(padding, padding, 2 * buttonWidth - 2 * padding, labelHeight);
+    }
 
     if (m_soloButton != nullptr)
     {
@@ -147,18 +149,9 @@ void MixerFader::resized()
             padding + buttonWidth - padding, padding + labelHeight, buttonWidth - padding, buttonHeight);
     }
 
-    if (m_panSlider)
-    {
-        m_panSlider->setBounds(padding, padding + labelHeight + buttonHeight, 2 * buttonWidth - 2 * padding, panHeight);
-    }
-
     juce::Rectangle<int> panBounds;
 
-    if (m_panSlider)
-    {
-        panBounds = getLocalArea(m_panSlider.get(), m_panSlider->getLocalBounds());
-    }
-    else if (m_muteButton)
+    if (m_muteButton)
     {
         panBounds = getLocalArea(m_muteButton.get(), m_muteButton->getLocalBounds());
     }
@@ -266,8 +259,9 @@ void MixerFader::setMixSettings(std::vector<MixerControlable*> mixSettings)
     m_expandButton.setVisible(mixSettings.size() > 0);
     for (size_t i = 0; i < mixSettings.size(); ++i)
     {
+        const bool panEnabled = !std::isnan(mixSettings[i]->getPan());
         m_subfaders.push_back(
-            std::make_unique<MixerFader>(mixSettings[i], std::vector<MixerControlable*>(), false, []() {}));
+            std::make_unique<MixerFader>(mixSettings[i], std::vector<MixerControlable*>(), panEnabled, []() {}));
         addAndMakeVisible(m_subfaders.back().get());
     }
 

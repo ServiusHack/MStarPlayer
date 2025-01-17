@@ -72,6 +72,8 @@ target_sources(MStarPlayer PRIVATE
     Source/MyMultiDocumentPanel.h
     Source/OutputChannelNames.cpp
     Source/OutputChannelNames.h
+    Source/PanSlider.cpp
+    Source/PanSlider.h
     Source/PinkLookAndFeel.cpp
     Source/PinkLookAndFeel.h
     Source/Player.cpp

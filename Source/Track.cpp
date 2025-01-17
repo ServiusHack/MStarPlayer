@@ -1,5 +1,6 @@
 #include "Track.h"
 
+#include <cassert>
 #include <sstream>
 
 Track::Track(juce::MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettings, int trackIndex, bool stereo,
@@ -24,6 +25,7 @@ Track::Track(juce::MixerAudioSource& tracksMixer, SoloBusSettings& soloBusSettin
     , m_gainChangedCallback(gainChangedCallback)
     , m_mute(false)
     , m_solo(false)
+    , m_pan(stereo ? 0.0f : NAN)
     , m_playerSolo(false)
     , m_audioThumbnailCache(audioThumbnailCache)
     , m_soloBusSettings(soloBusSettings)
@@ -219,6 +221,27 @@ bool Track::getSoloMute() const
     return m_soloMute;
 }
 
+void Track::setPan(const float pan)
+{
+    m_pan = pan;
+    assert(-1.0f <= m_pan && m_pan <= 1.0f);
+    // Mapping of the value range:
+    // m_pan =  -1.0 ... 0.3 ... 0.0 ... 0.3 ... 1.0
+    // clmp1 =   0.0 ... 0.0 ... 0.0 ... 0.3 ... 1.0 # clamp(0.0, 1.0)
+    // left  =   1.0 ... 1.0 ... 1.0 ... 0.7 ... 0.0 # 1.0 - clmp1
+    // clmp2 =  -1.0 ... 0.3 ... 0.0 ... 0.0 ... 0.0 # clamp(-1.0, 0.0)
+    // right =   0.0 ... 0.7 ... 1.0 ... 1.0 ... 1.0 # 1.0 - clmp2
+    const float gainLeft = 1.0 - std::clamp(m_pan, 0.0f, 1.0f);
+    const float gainRight = 1.0 + std::clamp(m_pan, -1.0f, 0.0f);
+    m_remappingAudioSource.setSourceChannelGain(0, gainLeft);
+    m_remappingAudioSource.setSourceChannelGain(1, gainRight);
+}
+
+float Track::getPan() const
+{
+    return m_pan;
+}
+
 Track::PositionCallbackRegistrationToken Track::addPositionCallback(PositionCallback callback)
 {
     this->m_positionCallbacks.push_front(callback);
@@ -338,6 +361,7 @@ void Track::saveToXml(juce::XmlElement* element) const
     element->setAttribute("stereo", m_stereo ? "true" : "false");
     element->setAttribute("mute", m_mute ? "true" : "false");
     element->setAttribute("solo", m_solo ? "true" : "false");
+    element->setAttribute("pan", m_pan);
     element->setAttribute("gain", m_trackGain);
 
     juce::XmlElement* nameXml = new juce::XmlElement("Name");
@@ -352,6 +376,7 @@ void Track::restoreFromXml(const juce::XmlElement& element)
     m_stereo = element.getStringAttribute("stereo", "false") == "true";
     setMute(element.getStringAttribute("mute", "false") == "true");
     setSolo(element.getStringAttribute("solo", "false") == "true");
+    setPan(element.getDoubleAttribute("pan", m_stereo ? 0.0f : NAN));
     setGain(static_cast<float>(element.getDoubleAttribute("gain", 1.0)));
 
     juce::XmlElement* nameXml = element.getChildByName("Name");
