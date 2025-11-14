@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* **Breaking Change**: Respect `XDG_CONFIG_HOME` on Linux.
+
 ## [1.2.0] - 2025-04-15
 
 ### Added

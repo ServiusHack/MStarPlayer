@@ -31,6 +31,16 @@ public:
         juce::PropertiesFile::Options options;
         options.applicationName = "MStarPlayer";
         options.filenameSuffix = ".settings";
+#ifdef JUCE_LINUX
+        if (const char* path = std::getenv("XDG_CONFIG_HOME"))
+        {
+            options.folderName = path + juce::String("/MStarPlayer");
+        }
+        else if (const char* home = std::getenv("HOME"))
+        {
+            options.folderName = home + juce::String("/.config/MStarPlayer");
+        }
+#endif
         m_applicationProperties.setStorageParameters(options);
 
         if (m_applicationProperties.getUserSettings()->getValue("language") == "de")
