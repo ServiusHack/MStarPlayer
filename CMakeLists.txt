@@ -143,14 +143,9 @@ target_compile_definitions(MStarPlayer PRIVATE
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:MStarPlayer,JUCE_VERSION>"
 )
 
-if (ASIO_PATH)
 target_compile_definitions(MStarPlayer PRIVATE
     JUCE_ASIO=1
 )
-target_include_directories(MStarPlayer PRIVATE
-    ${ASIO_PATH}
-)
-endif()
 
 juce_add_binary_data(BinaryData SOURCES 
     Icons/oxygen/media-eject.png
