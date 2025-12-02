@@ -26,12 +26,6 @@ Pull requests are always welcome to improve the current code or add new features
 4. Call cmake like this: `cmake -S . -B build_dir`
 5. Build: `cmake --build build_dir`
 
-### Format Source Code
-
-The format the source code according to the .clang-format file:
-
-      powershell -executionpolicy bypass -file .\format-source.ps1
-
 ## License
 
 M\*Player's own code is historically dual-licensed for ASIO support.
