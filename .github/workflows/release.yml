@@ -24,9 +24,17 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+    - name: Read the changelog
+      id: changelog
+      uses: 3liz/changelog-release@0.2.0
+      with:
+        INPUT_CHANGELOG_FILE: Changelog.md
+        ADD_EMOJIS: false
+
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
+        body: ${{ steps.changelog.outputs.markdown }}
         files: |
           ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.exe
           ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.pdb
