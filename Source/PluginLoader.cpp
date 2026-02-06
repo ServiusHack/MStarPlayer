@@ -437,7 +437,7 @@ void PluginLoader::previousEntrySelected(const char* playerName)
 }
 
 void PluginLoader::playlistEntrySelected(
-    const char* playerName, size_t entryIndex, const char* playlistEntryName, double duration)
+    const char* playerName, int entryIndex, const char* playlistEntryName, double duration)
 {
     for (const auto& plugin : pluginsV1)
     {
@@ -453,7 +453,7 @@ void PluginLoader::playlistEntrySelected(
     }
 }
 
-void PluginLoader::playlistEntryNameChanged(const char* playerName, size_t entryIndex, const char* playlistEntryName)
+void PluginLoader::playlistEntryNameChanged(const char* playerName, int entryIndex, const char* playlistEntryName)
 {
     for (const auto& plugin : pluginsV2)
     {
@@ -465,7 +465,7 @@ void PluginLoader::playlistEntryNameChanged(const char* playerName, size_t entry
     }
 }
 
-void PluginLoader::playlistEntryDurationChanged(const char* playerName, size_t entryIndex, double duration)
+void PluginLoader::playlistEntryDurationChanged(const char* playerName, int entryIndex, double duration)
 {
     for (const auto& plugin : pluginsV2)
     {
