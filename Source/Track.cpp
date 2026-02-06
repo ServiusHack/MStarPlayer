@@ -231,8 +231,8 @@ void Track::setPan(const float pan)
     // left  =   1.0 ... 1.0 ... 1.0 ... 0.7 ... 0.0 # 1.0 - clmp1
     // clmp2 =  -1.0 ... 0.3 ... 0.0 ... 0.0 ... 0.0 # clamp(-1.0, 0.0)
     // right =   0.0 ... 0.7 ... 1.0 ... 1.0 ... 1.0 # 1.0 - clmp2
-    const float gainLeft = 1.0 - std::clamp(m_pan, 0.0f, 1.0f);
-    const float gainRight = 1.0 + std::clamp(m_pan, -1.0f, 0.0f);
+    const float gainLeft = 1.0f - std::clamp(m_pan, 0.0f, 1.0f);
+    const float gainRight = 1.0f + std::clamp(m_pan, -1.0f, 0.0f);
     m_remappingAudioSource.setSourceChannelGain(0, gainLeft);
     m_remappingAudioSource.setSourceChannelGain(1, gainRight);
 }
@@ -376,7 +376,7 @@ void Track::restoreFromXml(const juce::XmlElement& element)
     m_stereo = element.getStringAttribute("stereo", "false") == "true";
     setMute(element.getStringAttribute("mute", "false") == "true");
     setSolo(element.getStringAttribute("solo", "false") == "true");
-    setPan(element.getDoubleAttribute("pan", m_stereo ? 0.0f : NAN));
+    setPan(static_cast<float>(element.getDoubleAttribute("pan", m_stereo ? 0.0f : NAN)));
     setGain(static_cast<float>(element.getDoubleAttribute("gain", 1.0)));
 
     juce::XmlElement* nameXml = element.getChildByName("Name");
