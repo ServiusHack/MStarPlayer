@@ -183,10 +183,11 @@ void MixerComponent::restoreFromXml(const juce::XmlElement& element)
 {
     for (size_t i = 0; i < m_channelSliders.size(); i++)
     {
-        juce::String value = element.getChildElement(i)->getAllSubText().trim();
+        const juce::XmlElement* childElement = element.getChildElement(i);
+        juce::String value = childElement->getAllSubText().trim();
         m_channelSliders[i]->setValue(value.getFloatValue());
-        m_channelSliders[i]->setSolo(element.getChildElement(i)->getBoolAttribute("solo"));
-        m_channelSliders[i]->setMute(element.getChildElement(i)->getBoolAttribute("mute"));
+        m_channelSliders[i]->setSolo(childElement->getBoolAttribute("solo"));
+        m_channelSliders[i]->setMute(childElement->getBoolAttribute("mute"));
     }
 }
 void MixerComponent::outputChannelNamesReset() {}
