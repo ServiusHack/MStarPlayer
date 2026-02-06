@@ -25,12 +25,11 @@ public:
 
     void previousEntrySelected(const char* playerName);
 
-    void playlistEntrySelected(
-        const char* playerName, size_t entryIndex, const char* playlistEntryName, double duration);
+    void playlistEntrySelected(const char* playerName, int entryIndex, const char* playlistEntryName, double duration);
 
-    void playlistEntryNameChanged(const char* playerName, size_t entryIndex, const char* playlistEntryName);
+    void playlistEntryNameChanged(const char* playerName, int entryIndex, const char* playlistEntryName);
 
-    void playlistEntryDurationChanged(const char* playerName, size_t entryIndex, double duration);
+    void playlistEntryDurationChanged(const char* playerName, int entryIndex, double duration);
 
     void trackVolumeChanged(const char* playerName, const char* trackName, float volume);
 

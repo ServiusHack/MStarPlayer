@@ -44,7 +44,7 @@ public:
                                     source specified when this object was created).
         @param gain                 the gain to multiply the samples with during our getNextAudioBlock() callback
     */
-    void setChannelVolume(size_t channelIndex, float gain);
+    void setChannelVolume(int channelIndex, float gain);
 
     /** Returns the volume from a channel.
      */
@@ -80,7 +80,7 @@ private:
 
     // gain to apply
 private:
-    void updateGain(size_t channelIndex);
+    void updateGain(int channelIndex);
     juce::Array<float> m_appliedGains;
 
     // AudioSource

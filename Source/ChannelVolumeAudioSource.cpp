@@ -14,7 +14,7 @@ void ChannelVolumeAudioSource::resetAllVolumes()
     m_appliedGains.clear();
 }
 
-void ChannelVolumeAudioSource::setChannelVolume(size_t channelIndex, float gain)
+void ChannelVolumeAudioSource::setChannelVolume(int channelIndex, float gain)
 {
     const juce::ScopedLock sl(m_lock);
 
@@ -130,7 +130,7 @@ int ChannelVolumeAudioSource::channelCount() const
     return m_setVolumes.size();
 }
 
-void ChannelVolumeAudioSource::updateGain(size_t channelIndex)
+void ChannelVolumeAudioSource::updateGain(int channelIndex)
 {
     bool mute = m_setMutes[channelIndex];
     bool solo = m_setSolos[channelIndex];
