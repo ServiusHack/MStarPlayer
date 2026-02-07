@@ -24,6 +24,26 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+    - name: Archive executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: MStarPlayer
+        path: ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.exe
+
+    - name: Archive PDB
+      uses: actions/upload-artifact@v4
+      with:
+        name: PDB
+        path: ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.pdb
+
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/download-artifacts@v4
+      with:
+        merge-multiple: true
+
     - name: Read the changelog
       id: changelog
       uses: 3liz/changelog-release@0.2.0
@@ -36,5 +56,5 @@ jobs:
       with:
         body: ${{ steps.changelog.outputs.markdown }}
         files: |
-          ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.exe
-          ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.pdb
+          ${{github.workspace}}/MStarPlayer.exe
+          ${{github.workspace}}/MStarPlayer.pdb
