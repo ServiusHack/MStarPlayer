@@ -154,9 +154,9 @@ juce::String OutputChannelNames::getDeviceOutputChannelName(int activeChannelInd
     return m_deviceOutputChannelNames[outputChannel];
 }
 
-juce::String OutputChannelNames::getInternalOutputChannelName(size_t activeChannelIndex)
+juce::String OutputChannelNames::getInternalOutputChannelName(int activeChannelIndex)
 {
-    jassert(activeChannelIndex < m_internalOutputChannelNames.size());
+    jassert(activeChannelIndex >= 0 && activeChannelIndex < m_internalOutputChannelNames.size());
 
     juce::BigInteger activeOutputChannels = m_audioDevice->getActiveOutputChannels();
 

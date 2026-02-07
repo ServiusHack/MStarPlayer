@@ -65,7 +65,7 @@ private:
 public:
     juce::String getDeviceOutputChannelName(int activeChannelIndex);
     juce::StringArray getAllDeviceOutputChannelNames();
-    juce::String getInternalOutputChannelName(size_t activeChannelIndex);
+    juce::String getInternalOutputChannelName(int activeChannelIndex);
     void setInternalOutputChannelName(int activeChannelIndex, const juce::String& text);
 
 private:
