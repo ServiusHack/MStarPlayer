@@ -49,8 +49,8 @@ jobs:
       id: changelog
       uses: 3liz/changelog-release@0.2.0
       with:
-        INPUT_CHANGELOG_FILE: Changelog.md
-        ADD_EMOJIS: false
+        changelog_file: Changelog.md
+        add_emojis: false
 
     - name: Release
       uses: softprops/action-gh-release@v2
