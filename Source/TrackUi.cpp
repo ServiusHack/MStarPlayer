@@ -181,7 +181,7 @@ void TrackUi::buttonClicked(juce::Button* button)
 
                 juce::File file(m_track.getTrackConfig().file);
                 m_track.unloadFile();
-                juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::NoIcon,
+                juce::AlertWindow::showMessageBox(juce::AlertWindow::NoIcon,
                     TRANS("Audio editor launched"),
                     TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it "
                           "again."));
