@@ -192,7 +192,7 @@ void TrackUi::buttonClicked(juce::Button* button)
             false,
             [this]()
             {
-                int alertResult = juce::AlertWindow::showOkCancelBox(juce::AlertWindow::QuestionIcon,
+                const bool alertResult = juce::AlertWindow::showOkCancelBox(juce::AlertWindow::QuestionIcon,
                     TRANS("Confirm"),
                     TRANS("Do you really want to remove the audio file from this track?"),
                     TRANS("Yes"),
@@ -200,7 +200,7 @@ void TrackUi::buttonClicked(juce::Button* button)
                     this,
                     nullptr);
 
-                if (alertResult == 1)
+                if (alertResult)
                     m_track.unloadFile();
             });
         m.addSeparator();
