@@ -249,6 +249,10 @@ void CDPlayer::previousEntry()
 {
     m_tracksTable.previous();
 }
+void CDPlayer::selectEntry(int playlist_index)
+{
+    m_tracksTable.selectRow(playlist_index);
+}
 void CDPlayer::paint(juce::Graphics& g)
 {
     g.fillAll(m_color);
@@ -296,8 +300,7 @@ void CDPlayer::setGain(float gain)
 {
     m_gain = gain;
     updateGain();
-    m_pluginLoader.trackVolumeChanged(getName().toRawUTF8(), "", m_gain);
-    m_pluginLoader.playerVolumeChanged(getName().toRawUTF8(), gain);
+    m_pluginLoader.cdPlayerVolumeChanged(getName().toRawUTF8(), gain);
     std::for_each(m_listeners.begin(),
         m_listeners.end(),
         std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));

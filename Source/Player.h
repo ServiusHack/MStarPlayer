@@ -41,6 +41,7 @@ public:
     void stop() override;
     void nextEntry(bool onlyIfEntrySaysSo = false) override;
     void previousEntry() override;
+    void selectEntry(int playlist_index) override;
     void playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index);
     void gainChangedCallback(const char* track_name, float gain);
 

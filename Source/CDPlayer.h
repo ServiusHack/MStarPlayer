@@ -40,6 +40,7 @@ public:
     void stop() override;
     void nextEntry(bool onlyIfEntrySaysSo = false) override;
     void previousEntry() override;
+    void selectEntry(int playlist_index) override;
 
     // XML serialization
 public:

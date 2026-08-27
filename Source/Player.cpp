@@ -420,6 +420,11 @@ void Player::previousEntry()
     m_pluginLoader.previousEntrySelected(getName().toRawUTF8());
 }
 
+void Player::selectEntry(int playlist_index)
+{
+    m_playlistPlayer.selectPlaylistEntry(playlist_index);
+}
+
 void Player::playlistEntryChanged(const std::vector<TrackConfig>& trackConfigs, bool play, int index)
 {
     currentPlaylistEntry = index;

@@ -319,3 +319,8 @@ void PlaylistPlayerWindow::previousPlaylistEntry()
 {
     m_tableListBox.previous();
 }
+
+void PlaylistPlayerWindow::selectPlaylistEntry(int playlist_index)
+{
+    m_tableListBox.selectRow(playlist_index);
+}
