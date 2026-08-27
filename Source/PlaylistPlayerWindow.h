@@ -44,6 +44,8 @@ public:
 
     void previousPlaylistEntry();
 
+    void selectPlaylistEntry(int playlist_index);
+
     int getResizerBarPosition() const;
 
     void setResizerBarPosition(int position);

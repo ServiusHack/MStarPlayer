@@ -14,4 +14,5 @@ public:
     virtual void stop() = 0;
     virtual void nextEntry(bool onlyIfEntrySaysSo = false) = 0;
     virtual void previousEntry() = 0;
+    virtual void selectEntry(int playlist_index) = 0;
 };

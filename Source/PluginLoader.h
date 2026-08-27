@@ -9,6 +9,7 @@
 #include "PluginInterfaceV1.h"
 #include "PluginInterfaceV2.h"
 #include "PluginInterfaceV3.h"
+#include "PluginInterfaceV4.h"
 
 class PluginLoader
 {
@@ -34,6 +35,8 @@ public:
     void trackVolumeChanged(const char* playerName, const char* trackName, float volume);
 
     void playerVolumeChanged(const char* playerName, float volume);
+
+    void cdPlayerVolumeChanged(const char* playerName, float volume);
 
     void positionChanged(const char* playerName, double position);
 
@@ -111,11 +114,36 @@ private:
         PluginInterface::V3::FreeConfigurationTextFunction freeConfigurationTextFunction;
     };
 
+    struct PluginV4
+    {
+        PluginV4();
+        PluginV4(PluginV4&& other);
+        juce::String name;
+        std::unique_ptr<juce::DynamicLibrary> dynamicLibrary;
+        PluginInterface::V4::InitFunction initFunction;
+        PluginInterface::V4::PlayingStateChangedFunction playingStateChangedFunction;
+        PluginInterface::V4::NextEntrySelectedFunction nextEntrySelectedFunction;
+        PluginInterface::V4::PreviousEntrySelectedFunction previousEntrySelectedFunction;
+        PluginInterface::V4::PlaylistEntrySelectedFunction playlistEntrySelectedFunction;
+        PluginInterface::V4::PlaylistEntryDurationChangedFunction playlistEntryDurationChangedFunction;
+        PluginInterface::V4::PlaylistEntryNameChangedFunction playlistEntryNameChangedFunction;
+        PluginInterface::V4::PlayerVolumeChangedFunction playerVolumeChangedFunction;
+        PluginInterface::V4::TrackVolumeChangedFunction trackVolumeChangedFunction;
+        PluginInterface::V4::PositionChangedFunction positionChangedFunction;
+        PluginInterface::V4::ConfigureFunction configureFunction;
+        PluginInterface::V4::ShutdownFunction shutdownFunction;
+        PluginInterface::V4::LoadConfigurationFunction loadConfigurationFunction;
+        PluginInterface::V4::GetConfigurationFunction getConfigurationFunction;
+        PluginInterface::V4::FreeConfigurationTextFunction freeConfigurationTextFunction;
+    };
+
     std::variant<PluginV1, std::string> loadPluginV1(juce::DynamicLibrary& library);
     std::variant<PluginV2, std::string> loadPluginV2(juce::DynamicLibrary& library);
     std::variant<PluginV3, std::string> loadPluginV3(juce::DynamicLibrary& library);
+    std::variant<PluginV4, std::string> loadPluginV4(juce::DynamicLibrary& library);
 
     std::vector<PluginV1> pluginsV1;
     std::vector<PluginV2> pluginsV2;
     std::vector<PluginV3> pluginsV3;
+    std::vector<PluginV4> pluginsV4;
 };
