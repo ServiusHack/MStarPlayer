@@ -99,6 +99,7 @@ void Player::setType(PlayerType type)
 void Player::setGain(float gain)
 {
     m_tracksContainer.setGain(gain);
+    m_pluginLoader.playerVolumeChanged(getName().toRawUTF8(), gain);
     std::for_each(m_listeners.begin(),
         m_listeners.end(),
         std::bind(&MixerControlableChangeListener::gainChanged, std::placeholders::_1, gain));

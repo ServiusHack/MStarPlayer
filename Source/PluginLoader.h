@@ -33,6 +33,8 @@ public:
 
     void trackVolumeChanged(const char* playerName, const char* trackName, float volume);
 
+    void playerVolumeChanged(const char* playerName, float volume);
+
     void positionChanged(const char* playerName, double position);
 
     size_t count();
