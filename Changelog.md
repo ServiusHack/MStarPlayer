@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixes
 
 * The dialogs to edit or remove files of a track work again.
+* Actually call `mstarPlayerVolumeChanged` for plugins.
 
 ## [1.3.0] - 2026-02-07
 

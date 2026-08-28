@@ -493,6 +493,14 @@ void PluginLoader::trackVolumeChanged(const char* playerName, const char* trackN
     }
 }
 
+void PluginLoader::playerVolumeChanged(const char* playerName, float volume)
+{
+    for (const auto& plugin : pluginsV3)
+    {
+        plugin.playerVolumeChangedFunction(playerName, volume);
+    }
+}
+
 void PluginLoader::positionChanged(const char* playerName, double position)
 {
     for (const auto& plugin : pluginsV1)
