@@ -134,7 +134,5 @@ private:
     std::optional<ChannelMappingWindow> m_channelMappingWindow;
     std::optional<PlayerMidiDialogWindow> m_PlayerMidiDialog;
 
-    MTCSender& m_mtcSender;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Player)
 };

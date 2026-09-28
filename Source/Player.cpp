@@ -29,7 +29,6 @@ Player::Player(MixerComponent* mixer, OutputChannelNames* outputChannelNames, So
           std::bind(&Player::configureChannels, this), std::bind(&Player::configureMidi, this),
           std::bind(&Player::setType, this, std::placeholders::_1),
           std::bind(&Player::setUserImage, this, std::placeholders::_1))
-    , m_mtcSender(mtcSender)
 {
     addChildComponent(&m_playlistPlayer);
 
