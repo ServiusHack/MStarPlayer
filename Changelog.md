@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Support Plugin V4 API which allows selecting a playlist entry by index.
   **Note:** The CD Player volume will use the new `mstarPlayerVolumeChanged` instead of `mstarTrackVolumeChanged` like in previous API versions.
+* Support per-player offsets for MTC.
 
 ### Fixes
 

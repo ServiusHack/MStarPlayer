@@ -1,5 +1,6 @@
 #include "Player.h"
 
+#include "MTCSender.h"
 #include "Track.h"
 #include "TracksComponent.h"
 
@@ -225,6 +226,16 @@ juce::XmlElement* Player::saveToXml(
     }
     element->setAttribute("gain", m_tracksContainer.getGain());
     element->setAttribute("mtcEnabled", m_tracksContainer.getMtcEnabled());
+
+    {
+        juce::XmlElement* mtcOffset = new juce::XmlElement("MtcOffset");
+        MTCSender::Position position = m_tracksContainer.getMtcOffset();
+        mtcOffset->setAttribute("hour", position.hour);
+        mtcOffset->setAttribute("minute", position.minute);
+        mtcOffset->setAttribute("second", position.second);
+        element->addChildElement(mtcOffset);
+    }
+
     element->setAttribute("mute", m_mute);
     element->setAttribute("solo", m_solo);
     element->setAttribute("color", m_color.toString());
@@ -288,6 +299,16 @@ void Player::restoreFromXml(const juce::XmlElement& element, const juce::File& p
     repaint();
 
     m_tracksContainer.setMtcEnabled(element.getBoolAttribute("mtcEnabled"));
+
+    juce::XmlElement* mtcOffset = element.getChildByName("MtcOffset");
+    if (mtcOffset)
+    {
+        MTCSender::Position position;
+        position.hour = mtcOffset->getIntAttribute("hour");
+        position.minute = mtcOffset->getIntAttribute("minute");
+        position.second = mtcOffset->getIntAttribute("second");
+        m_tracksContainer.setMtcOffset(position);
+    }
 
     juce::XmlElement* boundsXml = element.getChildByName("Bounds");
 
@@ -385,7 +406,9 @@ void Player::configureMidi()
     if (!m_PlayerMidiDialog)
     {
         m_PlayerMidiDialog.emplace(m_tracksContainer.getMtcEnabled(),
+            m_tracksContainer.getMtcOffset(),
             std::bind(&TracksContainer::setMtcEnabled, &m_tracksContainer, std::placeholders::_1),
+            std::bind(&TracksContainer::setMtcOffset, &m_tracksContainer, std::placeholders::_1),
             [&]() { m_PlayerMidiDialog.reset(); });
     }
     m_PlayerMidiDialog->addToDesktop();

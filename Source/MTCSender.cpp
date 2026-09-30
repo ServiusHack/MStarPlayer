@@ -4,6 +4,8 @@
 
 #include "juce_gui_basics/juce_gui_basics.h"
 
+MTCSender::Position::Position() = default;
+
 MTCSender::MTCSender()
 {
     // In your constructor, you should add any child components, and
@@ -53,15 +55,15 @@ juce::Array<juce::MidiDeviceInfo> MTCSender::getDevices()
     return infos;
 }
 
-void MTCSender::start()
+void MTCSender::start(MTCSender::Position startPosition)
 {
-    m_frame = 0;
-    m_second = 0;
-    m_minute = 0;
-    m_hour = 0;
+    m_position = startPosition;
 
-    auto message = juce::MidiMessage::fullFrame(
-        m_hour, m_minute, m_second, m_frame, juce::MidiMessage::SmpteTimecodeType::fps25);
+    auto message = juce::MidiMessage::fullFrame(m_position.hour,
+        m_position.minute,
+        m_position.second,
+        m_position.frame,
+        juce::MidiMessage::SmpteTimecodeType::fps25);
     for (auto& output : outputs)
     {
         output->sendMessageNow(message);
@@ -88,14 +90,17 @@ void MTCSender::setPosition(double position)
     std::unique_lock<std::mutex> lock_guard(m_mutex);
     double unused;
 
-    m_frame = static_cast<int>(modf(position, &unused) * 25);
-    m_second = static_cast<int>(position) % 60;
-    m_minute = (static_cast<int>(position) / 60) % 60;
-    m_hour = (static_cast<int>(position) / 60 / 60) % 60;
+    m_position.frame = static_cast<int>(modf(position, &unused) * 25);
+    m_position.second = static_cast<int>(position) % 60;
+    m_position.minute = (static_cast<int>(position) / 60) % 60;
+    m_position.hour = (static_cast<int>(position) / 60 / 60) % 60;
     m_piece = Piece::FrameLSB;
 
-    auto message = juce::MidiMessage::fullFrame(
-        m_hour, m_minute, m_second, m_frame, juce::MidiMessage::SmpteTimecodeType::fps25);
+    auto message = juce::MidiMessage::fullFrame(m_position.hour,
+        m_position.minute,
+        m_position.second,
+        m_position.frame,
+        juce::MidiMessage::SmpteTimecodeType::fps25);
     for (auto& output : outputs)
     {
         output->sendMessageNow(message);
@@ -121,18 +126,18 @@ void MTCSender::hiResTimerCallback()
     if (++m_quarter >= 4)
     {
         m_quarter = 0;
-        if (++m_frame >= 25)
+        if (++m_position.frame >= 25)
         {
-            m_frame = 0;
-            if (++m_second >= 60)
+            m_position.frame = 0;
+            if (++m_position.second >= 60)
             {
-                m_second = 0;
-                if (++m_minute >= 60)
+                m_position.second = 0;
+                if (++m_position.minute >= 60)
                 {
-                    m_minute = 0;
-                    if (++m_hour >= 24)
+                    m_position.minute = 0;
+                    if (++m_position.hour >= 24)
                     {
-                        m_hour = 0;
+                        m_position.hour = 0;
                     }
                 }
             }
@@ -145,21 +150,21 @@ int MTCSender::getValue(Piece piece)
     switch (piece)
     {
     case Piece::FrameLSB:
-        return m_frame & 0b1111;
+        return m_position.frame & 0b1111;
     case Piece::FrameMSB:
-        return (m_frame >> 4) & 0b0001;
+        return (m_position.frame >> 4) & 0b0001;
     case Piece::SecondLSB:
-        return m_second & 0b1111;
+        return m_position.second & 0b1111;
     case Piece::SecondMSB:
-        return (m_second >> 4) & 0b0011;
+        return (m_position.second >> 4) & 0b0011;
     case Piece::MinuteLSB:
-        return m_minute & 0b1111;
+        return m_position.minute & 0b1111;
     case Piece::MinuteMSB:
-        return (m_minute >> 4) & 0b0011;
+        return (m_position.minute >> 4) & 0b0011;
     case Piece::HourLSB:
-        return m_hour & 0b1111;
+        return m_position.hour & 0b1111;
     case Piece::RateAndHourMSB:
-        return ((m_hour >> 4) & 0b0001) | (0b01 << 1);
+        return ((m_position.hour >> 4) & 0b0001) | (0b01 << 1);
     }
 
     std::terminate();

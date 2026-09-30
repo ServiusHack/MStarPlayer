@@ -1,4 +1,5 @@
 #include "TracksContainer.h"
+#include "MTCSender.h"
 
 TracksContainer::TracksContainer(MixerComponent* mixer, SoloBusSettings& soloBusSettings, int outputChannels,
     const Track::TrackConfigChangedCallback& trackConfigChangedCallback,
@@ -54,7 +55,7 @@ void TracksContainer::play()
 {
     if (m_mtcEnabled)
     {
-        m_mtcSender.start();
+        m_mtcSender.start(m_mtcOffset);
     }
     std::for_each(m_tracks.begin(), m_tracks.end(), std::bind(&Track::play, std::placeholders::_1));
 }
@@ -296,9 +297,19 @@ void TracksContainer::setMtcEnabled(bool enabled)
     m_mtcEnabled = enabled;
 }
 
+void TracksContainer::setMtcOffset(MTCSender::Position position)
+{
+    m_mtcOffset = position;
+}
+
 bool TracksContainer::getMtcEnabled() const
 {
     return m_mtcEnabled;
+}
+
+MTCSender::Position TracksContainer::getMtcOffset() const
+{
+    return m_mtcOffset;
 }
 
 void TracksContainer::removeTrack(Track* track)

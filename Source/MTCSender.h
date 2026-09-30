@@ -7,12 +7,21 @@
 class MTCSender : juce::HighResolutionTimer
 {
 public:
+    struct Position
+    {
+        Position();
+        int frame{0};
+        int second{0};
+        int minute{0};
+        int hour{0};
+    };
+
     MTCSender();
     ~MTCSender();
 
     void setDevices(juce::Array<juce::MidiDeviceInfo> deviceInfos);
     juce::Array<juce::MidiDeviceInfo> getDevices();
-    void start();
+    void start(Position startPosition);
     void pause();
     void stop();
     void setPosition(double position);
@@ -40,8 +49,5 @@ private:
     std::mutex m_mutex;
     Piece m_piece{Piece::FrameLSB};
     int m_quarter{0};
-    int m_frame{0};
-    int m_second{0};
-    int m_minute{0};
-    int m_hour{0};
+    Position m_position;
 };

@@ -41,10 +41,13 @@ private:
     // MTC
 public:
     void setMtcEnabled(bool enabled);
+    void setMtcOffset(MTCSender::Position position);
     bool getMtcEnabled() const;
+    MTCSender::Position getMtcOffset() const;
 
 private:
     bool m_mtcEnabled{false};
+    MTCSender::Position m_mtcOffset;
     MTCSender& m_mtcSender;
 
     // Tracks

@@ -213,3 +213,9 @@ countries:de
 "The selected file has more than two channels. This is not supported." = "Die gewählte Audiodatei hat mehr als zwei Spuren. Das wird nicht unterstützt."
 "The selected file has %d channels but this is a mono track." = "Die gewählte Audiodatei hat %d Kanäle aber dies ist eine Mono-Spur."
 "The selected file has %d channel(s) but this is a stereo track." = "Die gewählte Audiodatei hat %d Kanal/Kanäle aber dies ist eine Stereo-Spur."
+
+// MTC
+"MTC Offset:" = "Versatz für MTC:"
+"Hour" = "Stunde"
+"Minute" = "Minute"
+"Second" = "Sekunde"
