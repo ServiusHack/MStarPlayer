@@ -8,6 +8,7 @@ countries:de
 "Channel Names" = "Kanalnamen"
 "Device Channel" = "Gerätekanal"
 "Channel Name" = "Kanalname"
+"Mode" = "Modus"
 "Solo Bus" = "Solo Bus"
 
 # AudioDeviceSelector (Juce)
@@ -39,6 +40,7 @@ countries:de
 
 "configure channels" = "Kanäle konfigurieren"
 "configure appearance" = "Ausssehen konfigurieren"
+"configure MIDI" = "MIDI konfigurieren"
 "load file" = "Datei öffnen"
 "Jingle Mode" = "Jingle-Modus"
 "Multitrack Mode" = "Mehrspur-Modus"
@@ -98,6 +100,7 @@ countries:de
 "Add Playlist Player" = "Playlist-Player hinzufügen"
 "Add a player with a playlist" = "Einen Player mit einer Playlist hinzufügen"
 "Add CD Player" = "CD-Player hinzufügen"
+"Show Test Tone Generator" = "Generator für Testtöne anzeigen"
 "Add a player for audio CDs" = "Einen Player für Audio-CDs hinzufügen"
 "Windows" = "Fenster"
 "Players are floating windows" = "Player sind schwebende Fenster"
@@ -106,6 +109,7 @@ countries:de
 "Show Mixer" = "Mischer anzeigen"
 "Show the mixer in the lower area" = "Mischer am unteren Rand anzeigen"
 "Configure Audio" = "Audio konfigurieren"
+"Configure MIDI" = "MIDI konfigurieren"
 "Configure the audio device to use" = "Das zu verwendende Audiogerät konfigurieren"
 "Edit Settings" = "Einstellungen bearbeiten"
 "Edit the application settings" = "Die Einstellungen der Anwendung bearbeiten"
@@ -115,6 +119,7 @@ countries:de
 "Use a dark look and feel" = "Ein dunkles Aussehen verwenden"
 "About" = "Über"
 "Show information about the application" = "Informationen über die Anwendung anzeigen"
+"Test Tone Generator" = "Generator für Testtöne"
 "Multi-channel, multi-track, multi-player" = "Mehr-Kanal, Mehr-Spur, Mehr-Player"
 "player for audio files" = "Abspielsoftware für Audiodateien"
 "Please select the project file you want to load ..." = "Bitte die zu öffnende Projektdatei auswählen ..."
@@ -180,7 +185,7 @@ countries:de
 
 // SoloBusComponent
 "left channel / mono:" = "linker Kanal / Mono:"
-"right channel:" = "rechter Kanal"
+"right channel:" = "rechter Kanal:"
 "(no choices)" = "(keine Auswahl)"
 
 // SoloBusMixer
@@ -215,7 +220,14 @@ countries:de
 "The selected file has %d channel(s) but this is a stereo track." = "Die gewählte Audiodatei hat %d Kanal/Kanäle aber dies ist eine Stereo-Spur."
 
 // MTC
-"MTC Offset:" = "Versatz für MTC:"
+"Configure MIDI for player" = "MIDI für Player konfigurieren"
+"MTC Offset" = "Versatz für MTC"
 "Hour" = "Stunde"
 "Minute" = "Minute"
 "Second" = "Sekunde"
+
+// TestToneGenerator
+"play" = "abspielen"
+"Tone:" = "Ton:"
+"select all" = "alle auswählen"
+"select none" = "nichts auswählen"
