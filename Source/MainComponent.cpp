@@ -462,11 +462,11 @@ bool MainContentComponent::perform(const juce::ApplicationCommandTarget::Invocat
         {
             juce::DialogWindow::LaunchOptions options;
             options.dialogTitle = TRANS("Test Tone Generator");
-            options.resizable = false;
             options.content.setNonOwned(m_testToneGenerator.get());
             options.componentToCentreAround = this;
             options.useNativeTitleBar = false;
             m_testToneGeneratorWindow.reset(options.create());
+            m_testToneGeneratorWindow->setResizeLimits(296, 220, INT_MAX, INT_MAX);
         }
         m_testToneGeneratorWindow->setVisible(true);
     }

@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Support Plugin V4 API which allows selecting a playlist entry by index.
   **Note:** The CD Player volume will use the new `mstarPlayerVolumeChanged` instead of `mstarTrackVolumeChanged` like in previous API versions.
 
+### Changed
+
+* Test Tone Generator window can be resized.
+
 ### Fixes
 
 * The dialogs to edit or remove files of a track work again.
