@@ -41,7 +41,7 @@ void MTCSender::setDevices(juce::Array<juce::MidiDeviceInfo> deviceInfos)
     {
         juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
             TRANS("Failed opening MIDI output devices"),
-            TRANS("The following MIDI devices could not be opened:\n") + failedDeviceNames.joinIntoString("\n"));
+            TRANS("The following MIDI devices could not be opened:") + "\n" + failedDeviceNames.joinIntoString("\n"));
     }
 }
 

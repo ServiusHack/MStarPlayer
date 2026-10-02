@@ -17,7 +17,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
     comboBox->setJustificationType(juce::Justification::centredLeft);
     comboBox->setTextWhenNothingSelected(juce::String());
     comboBox->setTextWhenNoChoicesAvailable(TRANS("(no choices)"));
-    comboBox->addItem(TRANS("1kHz"), 1);
+    comboBox->addItem("1kHz", 1);
     comboBox->addItem(TRANS("White"), 2);
     comboBox->addListener(this);
 
@@ -62,7 +62,7 @@ TestToneGeneratorComponent::TestToneGeneratorComponent(
     textButton2->setConnectedEdges(juce::Button::ConnectedOnLeft);
     textButton2->addListener(this);
 
-    dbLabel.reset(new juce::Label("new label", TRANS("0 dB")));
+    dbLabel.reset(new juce::Label("new label", "0 dB"));
     addAndMakeVisible(dbLabel.get());
     dbLabel->setFont(juce::Font(fontOptions).withTypefaceStyle("Regular"));
     dbLabel->setJustificationType(juce::Justification::centredLeft);

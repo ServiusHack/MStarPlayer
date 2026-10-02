@@ -381,7 +381,7 @@ PluginLoader::PluginLoader(MyMultiDocumentPanel* pComponent)
         }
         juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
             TRANS("Problems while loading plugins"),
-            TRANS("The following plugins failed to load:\n") + lines);
+            TRANS("The following plugins failed to load:") + "\n" + lines);
     }
 }
 
