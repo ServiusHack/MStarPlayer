@@ -122,9 +122,11 @@ void TestToneGeneratorComponent::paint(juce::Graphics& g)
 
 void TestToneGeneratorComponent::resized()
 {
+    slider->setBounds(8, 56, 40, getHeight() - 104);
+    dbLabel->setBounds(8, getHeight() - 40, 280, 24);
     component->setBounds(56, 56, getWidth() - 64, getHeight() - 144);
-    textButton->setBounds(56, 320, 112, 24);
-    textButton2->setBounds(168, 320, 118, 24);
+    textButton->setBounds(56, getHeight() - 80, (getWidth() - 64) / 2, 24);
+    textButton2->setBounds(56 + (getWidth() - 64) / 2, getHeight() - 80, (getWidth() - 64) / 2, 24);
 }
 
 void TestToneGeneratorComponent::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged)
