@@ -3,7 +3,7 @@
 SoloBusComponent::SoloBusComponent(OutputChannelNames& outputChannelNames, SoloBusSettings& settings)
     : soloBusSettings(settings)
     , label({}, TRANS("left channel / mono:"))
-    , label2({}, TRANS("right channel"))
+    , label2({}, TRANS("right channel:"))
 {
     const juce::FontOptions fontOptions(15.00f, juce::Font::plain);
 

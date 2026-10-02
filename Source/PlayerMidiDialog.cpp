@@ -39,7 +39,7 @@ PlayerMidiDialogComponent::PlayerMidiDialogComponent(bool mtcEnabled, const MTCS
     : m_mtcEnabledChangedCallback(mtcEnabledChangedCallback)
     , m_mtcOffsetChangedCallback(mtcOffsetChangedCallback)
     , m_closeCallback(closeCallback)
-    , m_mtcEnabledButton(TRANS("MTC aktiviert"))
+    , m_mtcEnabledButton(TRANS("MTC enabled"))
     , m_mtcStartPosition(mtcStartPosition)
     , m_mtcOffsetGroup("", TRANS("MTC Offset"))
     , m_mtcOffsetHourInput()

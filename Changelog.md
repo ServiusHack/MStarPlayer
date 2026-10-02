@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Test Tone Generator window can be resized.
+* Translated more text to German.
 
 ### Fixed
 
