@@ -1,0 +1,16 @@
+name: Translations
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  translations-check:
+    name: Check translations
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        submodules: 'true'
+    - name: Run check script
+      run: ./Scripts/check_translations.sh
