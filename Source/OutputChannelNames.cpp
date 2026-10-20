@@ -31,10 +31,10 @@ void OutputChannelNames::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     const juce::AudioDeviceManager* manager = static_cast<juce::AudioDeviceManager*>(source);
 
-    if (m_deviceIdentification != ExtractDeviceIdentification(manager->getCurrentAudioDevice()))
-    {
-        m_audioDevice = manager->getCurrentAudioDevice();
+    m_audioDevice = manager->getCurrentAudioDevice();
 
+    if (m_deviceIdentification != ExtractDeviceIdentification(m_audioDevice))
+    {
         if (m_audioDevice)
         {
             m_deviceOutputChannelNames = m_audioDevice->getOutputChannelNames();
