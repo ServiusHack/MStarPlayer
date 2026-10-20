@@ -20,7 +20,7 @@ const int TotalDurationTextWidth = 70;
 JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksContainer,
     ShowEditDialogCallback showEditDialogCallback, ConfigureChannelsCallback configureChannelsCallback,
     ConfigureMidiCallback configureMidiCallback, ChangePlayerTypeCallback changePlayerTypeCallback,
-    SetUserImageCallback setUserImageCallback)
+    SetUserImageCallback setUserImageCallback, juce::ApplicationProperties& applicationProperties)
     : m_player(player)
     , m_tracksContainer(tracksContainer)
     , m_playImage(juce::Drawable::createFromImageData(BinaryData::play_svg, BinaryData::play_svgSize))
@@ -40,6 +40,7 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     , m_configureButton("Configure")
     , m_fileNameLabel("filename label")
     , m_waveform(juce::Colour(0x55000000))
+    , m_applicationProperties(applicationProperties)
 {
     m_formatManager.registerBasicFormats();
 
@@ -205,6 +206,10 @@ void JinglePlayerWindow::mouseDown(const juce::MouseEvent& event)
     {
         juce::PopupMenu m;
         m.addItem(TRANS("load file"), true, false, [this]() { loadFile(); });
+        m.addItem(TRANS("edit file"),
+            (*m_tracksContainer)[0].getTrackConfig().file != juce::File(),
+            false,
+            [this]() { TrackUi::editTrack(m_applicationProperties, (*m_tracksContainer)[0]); });
         m.addItem(TRANS("configure channels"), true, false, [this]() { m_configureChannelsCallback(); });
         m.addItem(TRANS("configure appearance"), true, false, [this]() { m_showEditDialogCallback(); });
         m.addItem(TRANS("configure MIDI"), true, false, [this]() { m_configureMidiCallback(); });

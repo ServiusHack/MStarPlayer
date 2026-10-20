@@ -26,6 +26,8 @@ public:
     using TrackHasFilesCallback = std::function<bool(int)>;
     using FileLoadedCallback = std::function<void(juce::String)>;
 
+    static void editTrack(juce::ApplicationProperties& applicationProperties, Track& track);
+
     TrackUi(Track& track, juce::ApplicationProperties& applicationProperties, SetPositionCallback setPositionCallback,
         RemoveTrackCallback removeTrackCallback, TrackHasFilesCallback trackHasFilesCallback,
         FileLoadedCallback fileLoadedCallback);
