@@ -38,7 +38,6 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
     , m_progressBar(m_progress)
     , m_playButton("Play", juce::DrawableButton::ImageFitted)
     , m_configureButton("Configure")
-    , m_fileNameLabel("filename label")
     , m_waveform(juce::Colour(0x55000000))
     , m_applicationProperties(applicationProperties)
 {
@@ -81,11 +80,6 @@ JinglePlayerWindow::JinglePlayerWindow(Player& player, TracksContainer* tracksCo
         0.0f);
     addAndMakeVisible(m_configureButton);
     m_configureButton.addMouseListener(this, false);
-
-    // filename label
-    m_fileNameLabel.setColour(juce::Label::textColourId, m_paintColor.contrasting(1.0f));
-    m_fileNameLabel.setJustificationType(juce::Justification::centred);
-    addAndMakeVisible(m_fileNameLabel);
 
     Track::PositionCallback positionCallback = [&](double position, bool finished)
     {
@@ -176,7 +170,6 @@ void JinglePlayerWindow::resized()
         TotalDurationTextWidth,
         ProgressBarHeight);
     m_playButton.setBounds(0, 0, getWidth(), getHeight() - ProgressBarHeight);
-    m_fileNameLabel.setBounds(0, getHeight() - ProgressBarHeight - ProgressBarHeight, getWidth(), ProgressBarHeight);
 
     m_waveform.setBounds(m_configureButton.getWidth(),
         getHeight() - ProgressBarHeight,
@@ -257,8 +250,6 @@ void JinglePlayerWindow::buttonClicked(juce::Button* /*button*/)
 void JinglePlayerWindow::updatePointColor()
 {
     m_paintColor = m_blink ? m_color.contrasting(0.5f) : m_color;
-
-    m_fileNameLabel.setColour(juce::Label::textColourId, m_paintColor.contrasting(1.0f));
 }
 
 void JinglePlayerWindow::setColor(const juce::Colour& color)
