@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Test Tone Generator window can be resized.
 
-### Fixes
+### Fixed
 
 * The dialogs to edit or remove files of a track work again.
 * Actually call `mstarPlayerVolumeChanged` for plugins.
