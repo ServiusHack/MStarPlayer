@@ -69,7 +69,6 @@ private:
     std::unique_ptr<juce::Drawable> m_playImage;
     std::unique_ptr<juce::Drawable> m_stopImage;
     std::unique_ptr<juce::Drawable> m_userImage;
-    juce::Label m_fileNameLabel;
 
     // configuration menu actions
     void loadFile();
