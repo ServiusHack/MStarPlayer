@@ -4,6 +4,35 @@
 
 #include "BinaryData.h"
 
+void TrackUi::editTrack(juce::ApplicationProperties& applicationProperties, Track& track)
+{
+    if (!juce::File(applicationProperties.getUserSettings()->getValue("audioEditor")).existsAsFile())
+    {
+        juce::AlertWindow::showMessageBoxAsync(
+            juce::AlertWindow::WarningIcon, TRANS("No audio editor"), TRANS("No audio editor was configured."));
+        return;
+    }
+
+    juce::ChildProcess process;
+    juce::StringArray arguments(applicationProperties.getUserSettings()->getValue("audioEditor"));
+    arguments.add(track.getTrackConfig().file.getFullPathName());
+    if (!process.start(arguments))
+    {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+            TRANS("Failed launch audio editor"),
+            TRANS("Failed to start the audio editor."));
+        return;
+    }
+
+    juce::File file(track.getTrackConfig().file);
+    track.unloadFile();
+    juce::AlertWindow::showMessageBox(juce::AlertWindow::NoIcon,
+        TRANS("Audio editor launched"),
+        TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it "
+              "again."));
+    track.loadFileIntoTransport(file);
+}
+
 TrackUi::TrackUi(Track& track, juce::ApplicationProperties& applicationProperties,
     SetPositionCallback setPositionCallback, RemoveTrackCallback removeTrackCallback,
     TrackHasFilesCallback trackHasFilesCallback, FileLoadedCallback fileLoadedCallback)
@@ -158,35 +187,7 @@ void TrackUi::buttonClicked(juce::Button* button)
         m.addItem(TRANS("edit file"),
             m_track.getTrackConfig().file != juce::File(),
             false,
-            [this]()
-            {
-                if (!juce::File(m_applicationProperties.getUserSettings()->getValue("audioEditor")).existsAsFile())
-                {
-                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
-                        TRANS("No audio editor"),
-                        TRANS("No audio editor was configured."));
-                    return;
-                }
-
-                juce::ChildProcess process;
-                juce::StringArray arguments(m_applicationProperties.getUserSettings()->getValue("audioEditor"));
-                arguments.add(m_track.getTrackConfig().file.getFullPathName());
-                if (!process.start(arguments))
-                {
-                    juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
-                        TRANS("Failed launch audio editor"),
-                        TRANS("Failed to start the audio editor."));
-                    return;
-                }
-
-                juce::File file(m_track.getTrackConfig().file);
-                m_track.unloadFile();
-                juce::AlertWindow::showMessageBox(juce::AlertWindow::NoIcon,
-                    TRANS("Audio editor launched"),
-                    TRANS("Modify the file in the audio editor. Click on 'ok' after the file was saved to load it "
-                          "again."));
-                m_track.loadFileIntoTransport(file);
-            });
+            [this]() { editTrack(m_applicationProperties, m_track); });
         m.addItem(TRANS("remove file"),
             m_track.getTrackConfig().file != juce::File(),
             false,

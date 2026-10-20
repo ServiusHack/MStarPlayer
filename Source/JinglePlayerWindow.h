@@ -32,7 +32,8 @@ public:
         InterPlayerCommunication::ConfigureChannelsCallback configureChannelsCallback,
         InterPlayerCommunication::ConfigureMidiCallback configureMidiCallback,
         InterPlayerCommunication::ChangePlayerTypeCallback changePlayerTypeCallback,
-        InterPlayerCommunication::SetUserImageCallback setUserImageCallback);
+        InterPlayerCommunication::SetUserImageCallback setUserImageCallback,
+        juce::ApplicationProperties& applicationProperties);
 
     void setColor(const juce::Colour& color);
 
@@ -96,6 +97,8 @@ private:
     Waveform m_waveform;
 
     std::optional<juce::FileChooser> m_currentFileChooser;
+
+    juce::ApplicationProperties& m_applicationProperties;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(JinglePlayerWindow)
 };
