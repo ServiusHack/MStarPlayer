@@ -1,6 +1,7 @@
 #include "MainComponent.h"
 
 #include <assert.h>
+#include <climits>
 
 #include "BinaryData.h"
 
