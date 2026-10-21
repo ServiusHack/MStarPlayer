@@ -19,7 +19,7 @@ jobs:
         clang-format-version: '17'
         check-path: 'Source'
 
-  build:
+  build-windows:
     runs-on: windows-2025-vs2026
 
     steps:
@@ -44,3 +44,26 @@ jobs:
       with:
         name: PDB
         path: ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer.pdb
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        submodules: 'true'
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y xorg-dev libasound2-dev
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel $(nproc)
+
+    - name: Archive executable
+      uses: actions/upload-artifact@v7
+      with:
+        name: MStarPlayer
+        path: ${{github.workspace}}/build/MStarPlayer_artefacts/${{env.BUILD_TYPE}}/MStarPlayer
